@@ -376,6 +376,7 @@
   - CSRF攻撃の対策
   - Rate limitingの実装
 - **演習**
+
   ```typescript
   // 認証付きWebSocket接続
   class AuthenticatedWebSocket {
@@ -536,6 +537,7 @@
   ```
 
 - **実装ポイント**
+
   ```typescript
   // SvelteKitでのSSR + WebSocket統合
   // src/routes/chat/+page.svelte

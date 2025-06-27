@@ -4,9 +4,6 @@
 
 	$: progress = $progressStore;
 	$: overallPercentage = Math.round((progress.completedHours / progress.totalHours) * 100);
-	$: currentPhase =
-		progress.phases.find((phase) => phase.completedLessons < phase.totalLessons) ||
-		progress.phases[progress.phases.length - 1];
 
 	// 最近の学習活動を取得
 	$: recentActivities = progress.phases
@@ -225,7 +222,7 @@
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-			{#each features as feature}
+			{#each features as feature (feature.title)}
 				<div class="card hover:shadow-md transition-shadow duration-200">
 					<div class="text-center">
 						<div class="text-4xl mb-4">{feature.icon}</div>
@@ -254,7 +251,7 @@
 		</div>
 
 		<div class="space-y-8">
-			{#each learningPath as phase, index}
+			{#each learningPath as phase, index (phase.phase)}
 				<div class="flex flex-col md:flex-row items-center">
 					<!-- Phase number -->
 					<div
@@ -335,7 +332,7 @@
 			<h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">最近の学習活動</h2>
 
 			<div class="space-y-4">
-				{#each recentActivities as activity}
+				{#each recentActivities as activity (activity.id)}
 					<div class="card flex items-center justify-between">
 						<div class="flex items-center">
 							<div class="w-3 h-3 bg-green-500 rounded-full mr-4"></div>

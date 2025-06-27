@@ -7,8 +7,21 @@
 	$: progress = $progressStore;
 	$: currentPath = $page.url.pathname;
 
+	// ナビゲーションアイテムの型定義
+	interface NavigationItem {
+		href: string;
+		label: string;
+		icon?: string;
+		lessonId?: string;
+	}
+
+	interface NavigationSection {
+		title: string;
+		items: NavigationItem[];
+	}
+
 	// ナビゲーションメニューの定義
-	const navigationSections = [
+	const navigationSections: NavigationSection[] = [
 		{
 			title: 'はじめに',
 			items: [
@@ -122,13 +135,13 @@
 >
 	<div class="flex-1 flex flex-col overflow-y-auto">
 		<nav class="flex-1 px-4 py-6 space-y-6">
-			{#each navigationSections as section}
+			{#each navigationSections as section (section.title)}
 				<div>
 					<h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
 						{section.title}
 					</h3>
 					<div class="mt-2 space-y-1">
-						{#each section.items as item}
+						{#each section.items as item (item.href)}
 							<div class="flex items-center group">
 								<a
 									href={item.href}
@@ -154,7 +167,7 @@
 									{:else if item.lessonId}
 										<!-- レッスン完了チェックボックス -->
 										<div class="mr-3 flex-shrink-0">
-											{#if isLessonCompleted(item.lessonId)}
+											{#if item.lessonId && isLessonCompleted(item.lessonId)}
 												<div
 													class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
 												>
@@ -180,8 +193,13 @@
 									<button
 										type="button"
 										class="ml-2 p-1 rounded-md text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
-										on:click={() => toggleLessonCompletion(item.lessonId)}
-										title={isLessonCompleted(item.lessonId) ? '未完了にする' : '完了にする'}
+										on:click={() => item.lessonId && toggleLessonCompletion(item.lessonId)}
+										title={item.lessonId && isLessonCompleted(item.lessonId)
+											? '未完了にする'
+											: '完了にする'}
+										aria-label={item.lessonId && isLessonCompleted(item.lessonId)
+											? 'レッスンを未完了にする'
+											: 'レッスンを完了にする'}
 									>
 										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path
@@ -205,7 +223,7 @@
 			<div class="space-y-3">
 				<h4 class="text-sm font-medium text-gray-900">学習進捗サマリー</h4>
 
-				{#each progress.phases as phase}
+				{#each progress.phases as phase (phase.phase)}
 					<div class="space-y-1">
 						<div class="flex justify-between text-xs text-gray-600">
 							<span>Phase {phase.phase}: {phase.name}</span>
@@ -259,13 +277,13 @@
 
 			<div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
 				<nav class="px-4 space-y-6">
-					{#each navigationSections as section}
+					{#each navigationSections as section (section.title)}
 						<div>
 							<h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
 								{section.title}
 							</h3>
 							<div class="mt-2 space-y-1">
-								{#each section.items as item}
+								{#each section.items as item (item.href)}
 									<a
 										href={item.href}
 										class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
@@ -290,7 +308,7 @@
 											</svg>
 										{:else if item.lessonId}
 											<div class="mr-3 flex-shrink-0">
-												{#if isLessonCompleted(item.lessonId)}
+												{#if item.lessonId && isLessonCompleted(item.lessonId)}
 													<div
 														class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
 													>

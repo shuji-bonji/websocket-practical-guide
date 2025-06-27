@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { progressStore } from '$lib/stores/progress';
-	import { page } from '$app/stores';
 
 	export let sidebarOpen = false;
 
@@ -100,6 +99,7 @@
 						rel="noopener noreferrer"
 						class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
 						title="GitHub"
+						aria-label="GitHubリポジトリを開く"
 					>
 						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
 							<path
@@ -113,6 +113,7 @@
 						type="button"
 						class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
 						title="設定"
+						aria-label="設定メニューを開く"
 					>
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
