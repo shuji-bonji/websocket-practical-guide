@@ -78,9 +78,11 @@ interface WebSocketMessage<T = any> {
 
 ### Documentation (`memo/`)
 Comprehensive WebSocket learning materials including:
-- `curriculum.md` - 50-60 hour structured learning curriculum
-- Technical deep-dives on WebSocket protocols, subprotocols, and real-time communication patterns
-- Use cases covering 11 major categories from chat to IoT
+- `table-of-contents.md` - Complete learning resource index and curriculum overview
+- `curriculum.md` - 50-60 hour structured learning curriculum (4 phases: Basic → Implementation → Testing → Practice)
+- Technical deep-dives: WebSocket protocols, End-to-End vs Hop-by-Hop communication, subprotocols
+- Use cases covering 11 major categories from chat to IoT and PWA integration
+- WebTransport comparison for future technology understanding
 
 ### Configuration
 - `svelte.config.js` - SvelteKit configuration with MDSveX support
@@ -88,10 +90,24 @@ Comprehensive WebSocket learning materials including:
 - `tsconfig.json` - TypeScript configuration
 - `eslint.config.js` - ESLint configuration with Svelte support
 
+## Learning Site Architecture
+
+### MDSveX Integration
+- `.svelte` files for interactive components
+- `.svx` files for Markdown with embedded Svelte components
+- File-based routing: `src/routes/` structure maps to URL paths
+- Dynamic routes supported: `[slug]/+page.svelte` for lesson pages
+
+### Content Management Strategy
+- Learning content in `memo/` as pure Markdown for easy editing
+- Interactive demos and exercises as Svelte components in `src/lib/`
+- Gradual progression from theory (Markdown) to practice (interactive components)
+
 ## Development Notes
 
 - Always run `npm run check` before committing to ensure type safety
-- The memo/ directory contains extensive technical documentation - reference when implementing WebSocket features
-- Focus on understanding native WebSocket API before exploring third-party libraries
-- The curriculum progresses from RxJS patterns to Svelte stores for state management
-- Project targets PWA-compatible applications with Service Worker integration
+- Start with `memo/table-of-contents.md` for complete learning resource overview
+- The curriculum progresses through 4 phases: Basic understanding → Implementation → Testing → Practice projects
+- Focus on native WebSocket API mastery before exploring Socket.IO (covered as optional in Phase 4)
+- Project emphasizes PWA integration and Service Worker compatibility
+- Reference technical deep-dive documents in `memo/` when implementing WebSocket features
