@@ -2,7 +2,7 @@
 
 ## 📚 カリキュラム概要
 **総学習時間**: 約50-60時間  
-**対象者**: TypeScript/JavaScript中級者、Angular+RxJS経験者、Svelte学習者、PWA・リアルタイム通信に興味がある開発者  
+**対象者**: TypeScript/JavaScript中級者、RxJS経験者、Svelte学習者、PWA・リアルタイム通信に興味がある開発者  
 **最終目標**: **ブラウザ標準WebSocket API**を使ったモダンなリアルタイムWebアプリケーション（PWA対応）の設計・実装ができる
 
 **主要技術スタック**: 
@@ -14,7 +14,7 @@
 **学習方針**: 
 - **WebSocket API（ブラウザ標準）をマスター**してから応用技術を学習
 - Socket.IOは応用・オプション扱い（高度な機能が必要な場合のみ）
-- Angular+RxJS経験を活かしたパターン学習からSvelteへの移行
+- RxJS経験を活かしたパターン学習からSvelteへの移行
 
 
 ## 1. WebSocket 入門（学習時間: 5-7時間）
@@ -165,57 +165,10 @@
 ### 3.2 イベントベース通信モデル（2時間）
 - **学習内容**
   - `onopen`, `onmessage`, `onclose`, `onerror`イベント
-  - **Angular+RxJS経験者向け**: ObservableパターンでのWebSocket管理
+  - **RxJS経験者向け**: ObservableパターンでのWebSocket管理
   - **Svelteへの移行**: Svelteストア（Writable, Readable）でのWebSocket管理
   - Promise/async-awaitでのラッピング
 - **演習**
-  ```typescript
-  // Angular+RxJS パターン（経験活用）
-  import { Injectable } from '@angular/core';
-  import { Observable, Subject, BehaviorSubject } from 'rxjs';
-
-  @Injectable()
-  export class WebSocketService {
-    private ws$: Subject<MessageEvent> = new Subject();
-    private connectionStatus$ = new BehaviorSubject<boolean>(false);
-
-    connect(url: string): Observable<MessageEvent> {
-      const ws = new WebSocket(url);
-      
-      ws.onopen = () => this.connectionStatus$.next(true);
-      ws.onmessage = event => this.ws$.next(event);
-      ws.onclose = () => this.connectionStatus$.next(false);
-      
-      return this.ws$.asObservable();
-    }
-  }
-
-  // Svelteストア版（学習目標）
-  import { writable, type Writable } from 'svelte/store';
-
-  export function createWebSocketStore(url: string) {
-    const { subscribe, set, update } = writable({
-      connected: false,
-      data: null,
-      error: null
-    });
-
-    let ws: WebSocket;
-
-    return {
-      subscribe,
-      connect: () => {
-        ws = new WebSocket(url);
-        ws.onopen = () => update(state => ({ ...state, connected: true }));
-        ws.onmessage = event => update(state => ({ 
-          ...state, 
-          data: JSON.parse(event.data) 
-        }));
-      },
-      send: (data: any) => ws.send(JSON.stringify(data))
-    };
-  }
-  ```
 
 ### 3.3 クライアント・サーバー役割分担（1-2時間）
 - **学習内容**
@@ -671,7 +624,7 @@ socket.emit('message', { content: 'Hello' });
 
 ### 実装レベル
 - [ ] **TypeScript + ブラウザ標準WebSocket API**でクライアントを実装できる
-- [ ] **Angular+RxJSパターン**でWebSocket管理ができる
+- [ ] **RxJSパターン**でWebSocket管理ができる
 - [ ] **SvelteKit**でリアルタイムWebアプリケーションを構築できる
 - [ ] Svelteストアを使ったWebSocket状態管理ができる
 - [ ] **Node.js + 標準`ws`ライブラリ**でWebSocketサーバーを構築できる
@@ -690,7 +643,7 @@ socket.emit('message', { content: 'Hello' });
 
 ## 🚀 学習の進め方
 
-1. **Phase 1 (基礎)**: WebSocket API + あなたのAngular+RxJS経験活用
+1. **Phase 1 (基礎)**: WebSocket API
 2. **Phase 2 (移行)**: RxJSパターンからSvelteストアへの移行
 3. **Phase 3 (実践)**: PWA統合とプロダクション対応
 4. **Phase 4 (応用)**: 必要に応じてSocket.IO等の高度な機能学習
