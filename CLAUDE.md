@@ -9,18 +9,21 @@ This is a WebSocket learning project built with SvelteKit and TypeScript. The pr
 ## Development Commands
 
 ### Core Development
+
 - `npm run dev` - Start development server
 - `npm run dev -- --open` - Start dev server and open in browser
 - `npm run build` - Create production build
 - `npm run preview` - Preview production build
 
 ### Code Quality & Testing
+
 - `npm run check` - Run Svelte type checking
 - `npm run check:watch` - Run type checking in watch mode
 - `npm run lint` - Run ESLint and Prettier checks
 - `npm run format` - Format code with Prettier
 
 ### SvelteKit Specific
+
 - `npm run prepare` - Sync SvelteKit (runs automatically before other commands)
 
 ## Technology Stack
@@ -35,7 +38,9 @@ This is a WebSocket learning project built with SvelteKit and TypeScript. The pr
 ## Architecture & Learning Focus
 
 ### WebSocket-First Approach
+
 This project emphasizes learning **browser-standard WebSocket API** first before exploring higher-level abstractions. The comprehensive curriculum in `memo/curriculum.md` covers:
+
 - Native WebSocket API mastery (50-60 hour curriculum)
 - Subprotocol design and implementation
 - PWA integration with Service Workers
@@ -43,6 +48,7 @@ This project emphasizes learning **browser-standard WebSocket API** first before
 - 11 major WebSocket use case categories
 
 ### SvelteKit Integration
+
 - Uses SvelteKit's SSR capabilities with client-side WebSocket connections
 - Implements reactive WebSocket state management using Svelte stores
 - MDSveX integration allows markdown documentation within Svelte components
@@ -50,34 +56,39 @@ This project emphasizes learning **browser-standard WebSocket API** first before
 ### Key Implementation Patterns
 
 **WebSocket Store Pattern:**
+
 ```typescript
 interface WebSocketStore {
-  connected: boolean;
-  error: string | null;
-  data: any[];
+	connected: boolean;
+	error: string | null;
+	data: any[];
 }
 ```
 
 **Subprotocol Design:**
+
 ```typescript
 interface WebSocketMessage<T = any> {
-  type: string;
-  id?: string;
-  timestamp: number;
-  payload: T;
+	type: string;
+	id?: string;
+	timestamp: number;
+	payload: T;
 }
 ```
 
 ## Project Structure
 
 ### Source Code
+
 - `src/routes/` - SvelteKit pages and routes
 - `src/lib/` - Reusable components and utilities (accessible via `$lib` alias)
 - `src/app.html` - HTML template
 - `src/app.d.ts` - TypeScript definitions
 
 ### Documentation (`memo/`)
+
 Comprehensive WebSocket learning materials including:
+
 - `table-of-contents.md` - Complete learning resource index and curriculum overview
 - `curriculum.md` - 50-60 hour structured learning curriculum (4 phases: Basic → Implementation → Testing → Practice)
 - Technical deep-dives: WebSocket protocols, End-to-End vs Hop-by-Hop communication, subprotocols
@@ -85,6 +96,7 @@ Comprehensive WebSocket learning materials including:
 - WebTransport comparison for future technology understanding
 
 ### Configuration
+
 - `svelte.config.js` - SvelteKit configuration with MDSveX support
 - `vite.config.ts` - Vite build configuration with SvelteKit plugin
 - `tsconfig.json` - TypeScript configuration
@@ -93,12 +105,14 @@ Comprehensive WebSocket learning materials including:
 ## Learning Site Architecture
 
 ### MDSveX Integration
+
 - `.svelte` files for interactive components
 - `.svx` files for Markdown with embedded Svelte components
 - File-based routing: `src/routes/` structure maps to URL paths
 - Dynamic routes supported: `[slug]/+page.svelte` for lesson pages
 
 ### Content Management Strategy
+
 - Learning content in `memo/` as pure Markdown for easy editing
 - Interactive demos and exercises as Svelte components in `src/lib/`
 - Gradual progression from theory (Markdown) to practice (interactive components)

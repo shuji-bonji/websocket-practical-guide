@@ -1,0 +1,321 @@
+<script lang="ts">
+	import { progressStore, progressActions } from '$lib/stores/progress';
+	import { page } from '$app/stores';
+
+	export let open = false;
+
+	$: progress = $progressStore;
+	$: currentPath = $page.url.pathname;
+
+	// ナビゲーションメニューの定義
+	const navigationSections = [
+		{
+			title: 'はじめに',
+			items: [
+				{ href: '/', label: 'ホーム', icon: 'home' },
+				{ href: '/curriculum', label: 'カリキュラム概要', icon: 'book' },
+				{ href: '/table-of-contents', label: '目次', icon: 'list' }
+			]
+		},
+		{
+			title: 'Phase 1: 基礎理解',
+			items: [
+				{ href: '/lessons/1.1', label: '1.1 WebSocketとは何か', lessonId: '1.1' },
+				{ href: '/lessons/1.2', label: '1.2 HTTPの限界とWebSocketの優位性', lessonId: '1.2' },
+				{ href: '/lessons/1.3', label: '1.3 WebSocketの利用例と適用場面', lessonId: '1.3' },
+				{ href: '/lessons/1.4', label: '1.4 WebSocket vs 他技術の比較理解', lessonId: '1.4' },
+				{ href: '/lessons/2.1', label: '2.1 WebSocketを理解するためのHTTP基礎', lessonId: '2.1' },
+				{ href: '/lessons/2.2', label: '2.2 OSI参照モデルとWebSocketの位置', lessonId: '2.2' },
+				{
+					href: '/lessons/2.3',
+					label: '2.3 HTTP/1.1からHTTP/3までのWebSocket対応',
+					lessonId: '2.3'
+				},
+				{ href: '/lessons/2.4', label: '2.4 WebSocket接続確立プロセス', lessonId: '2.4' },
+				{ href: '/lessons/2.5', label: '2.5 セキュリティとポート管理', lessonId: '2.5' },
+				{ href: '/lessons/3.1', label: '3.1 WebSocket接続ライフサイクル', lessonId: '3.1' },
+				{ href: '/lessons/3.2', label: '3.2 イベントベース通信モデル', lessonId: '3.2' },
+				{ href: '/lessons/3.3', label: '3.3 クライアント・サーバー役割分担', lessonId: '3.3' },
+				{ href: '/lessons/4.1', label: '4.1 WebSocket URL と接続確立', lessonId: '4.1' },
+				{ href: '/lessons/4.2', label: '4.2 ブラウザ標準WebSocket API実装', lessonId: '4.2' },
+				{ href: '/lessons/4.3', label: '4.3 接続失敗と再接続処理', lessonId: '4.3' }
+			]
+		},
+		{
+			title: 'Phase 2: 実装技術',
+			items: [
+				{ href: '/lessons/5.1', label: '5.1 WebSocketオブジェクトとSvelteストア', lessonId: '5.1' },
+				{ href: '/lessons/5.2', label: '5.2 データ送受信パターン', lessonId: '5.2' },
+				{ href: '/lessons/5.3', label: '5.3 高度なエラーハンドリング', lessonId: '5.3' },
+				{ href: '/lessons/6.1', label: '6.1 WebSocketフレーム構造', lessonId: '6.1' },
+				{ href: '/lessons/6.2', label: '6.2 バイナリデータ送信', lessonId: '6.2' },
+				{ href: '/lessons/6.3', label: '6.3 WebSocketサブプロトコルの設計', lessonId: '6.3' },
+				{ href: '/lessons/7.1', label: '7.1 セキュリティ実装', lessonId: '7.1' },
+				{ href: '/lessons/7.2', label: '7.2 PWAとWebSocketの統合', lessonId: '7.2' },
+				{ href: '/lessons/7.3', label: '7.3 スケーラビリティと負荷対策', lessonId: '7.3' }
+			]
+		},
+		{
+			title: 'Phase 3: テスト・評価',
+			items: [
+				{ href: '/lessons/8.1', label: '8.1 クライアント側テスト', lessonId: '8.1' },
+				{ href: '/lessons/8.2', label: '8.2 サーバー側テスト', lessonId: '8.2' },
+				{ href: '/lessons/8.3', label: '8.3 E2Eテスト', lessonId: '8.3' },
+				{ href: '/lessons/9.1', label: '9.1 代替技術の比較', lessonId: '9.1' },
+				{ href: '/lessons/9.2', label: '9.2 適用判断基準', lessonId: '9.2' }
+			]
+		},
+		{
+			title: 'Phase 4: 実践開発',
+			items: [
+				{ href: '/lessons/10.1', label: '10.1 PWA対応リアルタイムチャット', lessonId: '10.1' },
+				{ href: '/lessons/10.2', label: '10.2 リアルタイム共同編集システム', lessonId: '10.2' }
+			]
+		},
+		{
+			title: '応用編',
+			items: [
+				{ href: '/socket-io', label: 'Socket.IO（オプション）', icon: 'extension' },
+				{ href: '/resources', label: '学習リソース', icon: 'library' },
+				{ href: '/tools', label: 'デバッグツール', icon: 'tools' }
+			]
+		}
+	];
+
+	// アイコンコンポーネント
+	function getIcon(iconName: string) {
+		const icons: Record<string, string> = {
+			home: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+			book: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+			list: 'M4 6h16M4 10h16M4 14h16M4 18h16',
+			extension:
+				'M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z',
+			library: 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z',
+			tools:
+				'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'
+		};
+		return icons[iconName] || icons.book;
+	}
+
+	// レッスンの完了状態を取得
+	function isLessonCompleted(lessonId: string): boolean {
+		for (const phase of progress.phases) {
+			const lesson = phase.lessons.find((l) => l.id === lessonId);
+			if (lesson) return lesson.completed;
+		}
+		return false;
+	}
+
+	// レッスン完了状態をトグル
+	function toggleLessonCompletion(lessonId: string) {
+		if (isLessonCompleted(lessonId)) {
+			progressActions.uncompleteLesson(lessonId);
+		} else {
+			progressActions.completeLesson(lessonId);
+		}
+	}
+</script>
+
+<!-- Desktop Sidebar -->
+<aside
+	class="hidden lg:flex lg:w-80 lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16 lg:bg-gray-50 lg:border-r lg:border-gray-200"
+>
+	<div class="flex-1 flex flex-col overflow-y-auto">
+		<nav class="flex-1 px-4 py-6 space-y-6">
+			{#each navigationSections as section}
+				<div>
+					<h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+						{section.title}
+					</h3>
+					<div class="mt-2 space-y-1">
+						{#each section.items as item}
+							<div class="flex items-center group">
+								<a
+									href={item.href}
+									class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
+									item.href
+										? 'bg-primary-100 text-primary-700 border-r-2 border-primary-500'
+										: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
+								>
+									{#if item.icon}
+										<svg
+											class="mr-3 h-5 w-5 flex-shrink-0"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d={getIcon(item.icon)}
+											/>
+										</svg>
+									{:else if item.lessonId}
+										<!-- レッスン完了チェックボックス -->
+										<div class="mr-3 flex-shrink-0">
+											{#if isLessonCompleted(item.lessonId)}
+												<div
+													class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+												>
+													<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+														<path
+															fill-rule="evenodd"
+															d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+															clip-rule="evenodd"
+														/>
+													</svg>
+												</div>
+											{:else}
+												<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+											{/if}
+										</div>
+									{/if}
+
+									<span class="truncate">{item.label}</span>
+								</a>
+
+								<!-- レッスン完了ボタン -->
+								{#if item.lessonId}
+									<button
+										type="button"
+										class="ml-2 p-1 rounded-md text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+										on:click={() => toggleLessonCompletion(item.lessonId)}
+										title={isLessonCompleted(item.lessonId) ? '未完了にする' : '完了にする'}
+									>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M5 13l4 4L19 7"
+											/>
+										</svg>
+									</button>
+								{/if}
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/each}
+		</nav>
+
+		<!-- Progress summary -->
+		<div class="p-4 bg-white border-t border-gray-200">
+			<div class="space-y-3">
+				<h4 class="text-sm font-medium text-gray-900">学習進捗サマリー</h4>
+
+				{#each progress.phases as phase}
+					<div class="space-y-1">
+						<div class="flex justify-between text-xs text-gray-600">
+							<span>Phase {phase.phase}: {phase.name}</span>
+							<span>{phase.completedLessons}/{phase.totalLessons}</span>
+						</div>
+						<div class="progress-bar h-1">
+							<div
+								class="progress-fill h-1"
+								style="width: {(phase.completedLessons / phase.totalLessons) * 100}%"
+							></div>
+						</div>
+					</div>
+				{/each}
+
+				<div class="pt-2 border-t border-gray-100">
+					<div class="flex justify-between text-sm font-medium text-gray-900">
+						<span>全体進捗</span>
+						<span>{Math.round((progress.completedHours / progress.totalHours) * 100)}%</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</aside>
+
+<!-- Mobile Sidebar -->
+{#if open}
+	<!-- Backdrop -->
+	<div class="fixed inset-0 flex z-40 lg:hidden">
+		<div class="fixed inset-0 bg-gray-600 bg-opacity-75" on:click={() => (open = false)}></div>
+
+		<!-- Mobile sidebar panel -->
+		<div class="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+			<div class="absolute top-0 right-0 -mr-12 pt-2">
+				<button
+					type="button"
+					class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+					on:click={() => (open = false)}
+				>
+					<span class="sr-only">サイドバーを閉じる</span>
+					<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				</button>
+			</div>
+
+			<div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+				<nav class="px-4 space-y-6">
+					{#each navigationSections as section}
+						<div>
+							<h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+								{section.title}
+							</h3>
+							<div class="mt-2 space-y-1">
+								{#each section.items as item}
+									<a
+										href={item.href}
+										class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
+										item.href
+											? 'bg-primary-100 text-primary-700'
+											: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
+										on:click={() => (open = false)}
+									>
+										{#if item.icon}
+											<svg
+												class="mr-3 h-5 w-5 flex-shrink-0"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d={getIcon(item.icon)}
+												/>
+											</svg>
+										{:else if item.lessonId}
+											<div class="mr-3 flex-shrink-0">
+												{#if isLessonCompleted(item.lessonId)}
+													<div
+														class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+													>
+														<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+															<path
+																fill-rule="evenodd"
+																d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																clip-rule="evenodd"
+															/>
+														</svg>
+													</div>
+												{:else}
+													<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+												{/if}
+											</div>
+										{/if}
+
+										<span class="truncate">{item.label}</span>
+									</a>
+								{/each}
+							</div>
+						</div>
+					{/each}
+				</nav>
+			</div>
+		</div>
+	</div>
+{/if}
