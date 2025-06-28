@@ -30,7 +30,6 @@
 				htmlLabels: true
 			},
 			sequence: {
-				actorBkg: '#374151',
 				actorBorder: '#6b7280',
 				actorTextColor: '#f9fafb',
 				actorLineColor: '#9ca3af',
@@ -43,7 +42,7 @@
 				noteBorderColor: '#6b7280',
 				noteBkgColor: '#374151',
 				noteTextColor: '#f9fafb'
-			}
+			} as any
 		});
 
 		try {
