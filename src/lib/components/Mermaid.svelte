@@ -10,7 +10,7 @@
 	let errorMessage: string = '';
 	let isLoading: boolean = true;
 	let mermaid: {
-		initialize: (config: MermaidConfig) => void;
+		initialize: (config: Record<string, unknown>) => void;
 		render: (id: string, chart: string) => Promise<{ svg: string }>;
 	} | null = null;
 	let isBrowser = false;

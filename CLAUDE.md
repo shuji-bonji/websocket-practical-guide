@@ -35,6 +35,213 @@ This is a WebSocket learning project built with SvelteKit and TypeScript. The pr
 - **Code Quality**: ESLint + Prettier
 - **Target**: PWA-enabled real-time applications using native WebSocket API
 
+## Claude Code Collaboration Guidelines
+
+### Effective Communication Patterns
+
+When requesting work from Claude Code, follow these proven patterns for optimal results:
+
+#### 1. **Single-Task Focus**
+
+```markdown
+✅ GOOD: Fix TypeScript errors in Mermaid component
+❌ BAD: Fix TypeScript errors, update documentation, and refactor stores
+```
+
+#### 2. **Concrete File Specifications**
+
+```markdown
+✅ GOOD:
+Create src/lib/types/mermaid.ts with MermaidConfig interface
+Modify src/lib/components/Mermaid.svelte to remove 'as any'
+
+❌ BAD:
+Fix type issues in the codebase
+```
+
+#### 3. **Step-by-Step Instructions**
+
+```markdown
+✅ GOOD:
+Step 1: Create type definition file
+Step 2: Update component imports  
+Step 3: Remove any type assertions
+Step 4: Verify with npm run check
+
+❌ BAD:
+Make the types work properly
+```
+
+#### 4. **Clear Success Criteria**
+
+```markdown
+✅ GOOD:
+Complete when:
+
+- npm run lint shows 0 errors
+- npm run check shows 0 errors
+- No 'as any' usage remains
+
+❌ BAD:
+Make sure everything works
+```
+
+### Request Templates
+
+#### **Type Safety Fix Template**
+
+````markdown
+# Task: Fix TypeScript Type Safety
+
+## Target Files
+
+- src/lib/components/[ComponentName].svelte
+- src/lib/types/[type-definition].ts
+
+## Specific Requirements
+
+1. Remove all 'as any' usage
+2. Remove all 'eslint-disable' comments
+3. Create proper type definitions
+4. Ensure npm run lint passes
+
+## Success Criteria
+
+```bash
+npm run lint    # 0 errors
+npm run check   # 0 errors
+```
+````
+
+````
+
+#### **Component Creation Template**
+
+```markdown
+# Task: Create [ComponentName] Component
+
+## Requirements
+- TypeScript with strict typing
+- Svelte 5 patterns (no DOM manipulation)
+- Props interface definition
+- Responsive design with TailwindCSS
+
+## File Structure
+````
+
+src/lib/components/[category]/
+├── [ComponentName].svelte
+└── types.ts (if complex props)
+
+```
+
+## Success Criteria
+- Component renders without errors
+- Props are fully typed
+- Follows project style guidelines
+```
+
+#### **Refactoring Template**
+
+```markdown
+# Task: Refactor [Feature] for [Reason]
+
+## Current State
+
+[Describe current implementation]
+
+## Target State
+
+[Describe desired outcome]
+
+## Constraints
+
+- Maintain backward compatibility
+- Follow Svelte 5 patterns
+- Preserve existing functionality
+
+## Verification Steps
+
+1. npm run check
+2. npm run lint
+3. Manual testing of [specific features]
+```
+
+### Common Request Pitfalls to Avoid
+
+#### **❌ Vague Requests**
+
+```markdown
+"Fix the issues in the code"
+"Make it work better"
+"Update to latest standards"
+```
+
+#### **❌ Multiple Unrelated Tasks**
+
+```markdown
+"Fix types AND add tests AND update documentation"
+```
+
+#### **❌ Missing Context**
+
+```markdown
+"Update the component" (which component? how? why?)
+```
+
+#### **❌ No Success Criteria**
+
+```markdown
+"Improve the code quality" (how do we know it's improved?)
+```
+
+### Debugging and Issue Resolution
+
+#### **Error Reporting Format**
+
+When reporting issues to Claude Code:
+
+````markdown
+# Issue: [Brief Description]
+
+## Error Output
+
+```bash
+[Exact error message from terminal]
+```
+````
+
+## Expected Behavior
+
+[What should happen]
+
+## Current File State
+
+[Relevant code snippet or file path]
+
+## Environment
+
+- Node.js version: [version]
+- npm version: [version]
+- OS: [operating system]
+
+````
+
+#### **Progressive Problem Solving**
+
+For complex issues, break down requests:
+
+```markdown
+# Phase 1: Identify root cause
+Analyze error in [specific file]
+
+# Phase 2: Create minimal fix
+Fix only the immediate type error
+
+# Phase 3: Verify solution
+Ensure fix doesn't break existing functionality
+````
+
 ## TypeScript & Code Quality Standards
 
 ### Type Safety Philosophy
@@ -324,3 +531,23 @@ When creating Svelte components:
 - **Maintain 14px typography** in all `.svx` learning content for consistency
 - **Never use `any` or eslint-disable** - create proper type definitions instead
 - **Follow Svelte 5 reactive patterns** for all UI state management
+
+## Claude Code Best Practices Summary
+
+### ✅ Do This
+
+1. **Single-task requests** with clear objectives
+2. **Specific file paths** and code examples
+3. **Step-by-step instructions** in logical order
+4. **Measurable success criteria** (npm run commands)
+5. **Include context** about project constraints
+
+### ❌ Avoid This
+
+1. **Multi-task requests** covering unrelated areas
+2. **Vague descriptions** without specific targets
+3. **Missing success criteria** or verification steps
+4. **Requests without file structure** information
+5. **Assumptions about current code state**
+
+Following these guidelines ensures efficient collaboration with Claude Code and maintains high code quality throughout the project.
