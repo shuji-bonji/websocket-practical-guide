@@ -115,7 +115,7 @@
 
 						<div class="mt-4 md:mt-0 flex items-center space-x-6">
 							<a
-								href="https://github.com"
+								href="https://github.com/shuji-bonji/websocket-learning"
 								target="_blank"
 								rel="noopener noreferrer"
 								class="text-gray-500 hover:text-gray-900"

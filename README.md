@@ -1,3 +1,11 @@
+<!-- [![Build and Deploy](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml) -->
+
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
+[![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.0-red?logo=svelte&labelColor=000)](https://svelte.dev/)
+
 # WebSocket Learning Project
 
 ブラウザ標準WebSocket APIを中心としたリアルタイムWebアプリケーション学習プロジェクト。SvelteKit + TypeScript + MDsveXで構築された学習サイトです。

@@ -94,7 +94,7 @@
 				<div class="flex items-center space-x-2">
 					<!-- GitHub link -->
 					<a
-						href="https://github.com"
+						href="https://github.com/shuji-bonji/websocket-learning"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"

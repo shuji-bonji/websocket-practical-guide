@@ -261,7 +261,7 @@
 					</div>
 
 					<!-- Arrow (hidden on mobile) -->
-					{#if index < learningPath.length - 1}
+					{#if index < learningPath.length}
 						<div class="hidden md:block mx-4">
 							<svg
 								class="w-6 h-6 text-gray-400"
