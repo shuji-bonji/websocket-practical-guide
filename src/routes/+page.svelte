@@ -1,30 +1,35 @@
 <script lang="ts">
 	import { progressStore } from '$lib/stores/progress';
-	import { onMount } from 'svelte';
 
-	$: progress = $progressStore;
-	$: overallPercentage = Math.round((progress.completedHours / progress.totalHours) * 100);
+	let progress = $derived($progressStore);
+	let overallPercentage = $derived(
+		Math.round((progress.completedHours / progress.totalHours) * 100)
+	);
 
 	// 最近の学習活動を取得
-	$: recentActivities = progress.phases
-		.flatMap((phase) => phase.lessons.filter((lesson) => lesson.completed && lesson.completedAt))
-		.sort((a, b) => (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0))
-		.slice(0, 5);
+	let recentActivities = $derived(
+		progress.phases
+			.flatMap((phase) => phase.lessons.filter((lesson) => lesson.completed && lesson.completedAt))
+			.sort((a, b) => (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0))
+			.slice(0, 5)
+	);
 
 	// 次の推奨レッスンを取得
-	$: nextLesson = (() => {
-		for (const phase of progress.phases) {
-			const incomplete = phase.lessons.find((lesson) => !lesson.completed);
-			if (incomplete) {
-				return {
-					lessonId: incomplete.id,
-					phaseNumber: phase.phase,
-					phaseName: phase.name
-				};
+	let nextLesson = $derived(
+		(() => {
+			for (const phase of progress.phases) {
+				const incomplete = phase.lessons.find((lesson) => !lesson.completed);
+				if (incomplete) {
+					return {
+						lessonId: incomplete.id,
+						phaseNumber: phase.phase,
+						phaseName: phase.name
+					};
+				}
 			}
-		}
-		return null;
-	})();
+			return null;
+		})()
+	);
 
 	// フィーチャー一覧
 	const features = [
@@ -93,10 +98,7 @@
 		}
 	];
 
-	let mounted = false;
-	onMount(() => {
-		mounted = true;
-	});
+	let mounted = $derived(typeof window !== 'undefined');
 </script>
 
 <svelte:head>

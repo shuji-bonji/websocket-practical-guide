@@ -1,46 +1,50 @@
 <script lang="ts">
 	import { progressStore } from '$lib/stores/progress';
-	import { onMount } from 'svelte';
 
-	export let lessonId: string;
-	export let sectionTitle: string = '';
-	export let showNavigation: boolean = true;
+	interface Props {
+		lessonId: string;
+		sectionTitle?: string;
+		showNavigation?: boolean;
+	}
 
-	$: progress = $progressStore;
-	$: currentLesson = progress.phases.flatMap((p) => p.lessons).find((l) => l.id === lessonId);
-	$: isCompleted = currentLesson?.completed || false;
+	let { lessonId, sectionTitle = '', showNavigation = true }: Props = $props();
 
-	let mounted = false;
-	onMount(() => {
-		mounted = true;
-	});
+	let progress = $derived($progressStore);
+	let currentLesson = $derived(
+		progress.phases.flatMap((p) => p.lessons).find((l) => l.id === lessonId)
+	);
+	let isCompleted = $derived(currentLesson?.completed || false);
+
+	let mounted = $derived(typeof window !== 'undefined');
 
 	// セクション内のレッスン進捗を取得
-	$: sectionProgress = (() => {
-		if (!lessonId) return null;
+	let sectionProgress = $derived(
+		(() => {
+			if (!lessonId) return null;
 
-		// レッスンIDからセクションを特定 (例: "1.1" -> Section 1)
-		const [phaseStr, sectionStr] = lessonId.split('.');
-		const phaseNumber = parseInt(phaseStr);
-		// const sectionNumber = parseInt(sectionStr); // Will be used for future section-specific progress
+			// レッスンIDからセクションを特定 (例: "1.1" -> Section 1)
+			const [phaseStr, sectionStr] = lessonId.split('.');
+			const phaseNumber = parseInt(phaseStr);
+			// const sectionNumber = parseInt(sectionStr); // Will be used for future section-specific progress
 
-		const currentPhase = progress.phases[phaseNumber - 1];
-		if (!currentPhase) return null;
+			const currentPhase = progress.phases[phaseNumber - 1];
+			if (!currentPhase) return null;
 
-		// セクション内のレッスンを取得 (同じセクション番号の最初の桁)
-		const sectionLessons = currentPhase.lessons.filter((lesson) => {
-			const [, lessonSectionStr] = lesson.id.split('.');
-			return lessonSectionStr && lessonSectionStr[0] === sectionStr;
-		});
+			// セクション内のレッスンを取得 (同じセクション番号の最初の桁)
+			const sectionLessons = currentPhase.lessons.filter((lesson) => {
+				const [, lessonSectionStr] = lesson.id.split('.');
+				return lessonSectionStr && lessonSectionStr[0] === sectionStr;
+			});
 
-		const completedCount = sectionLessons.filter((l) => l.completed).length;
+			const completedCount = sectionLessons.filter((l) => l.completed).length;
 
-		return {
-			total: sectionLessons.length,
-			completed: completedCount,
-			percentage: Math.round((completedCount / sectionLessons.length) * 100)
-		};
-	})();
+			return {
+				total: sectionLessons.length,
+				completed: completedCount,
+				percentage: Math.round((completedCount / sectionLessons.length) * 100)
+			};
+		})()
+	);
 </script>
 
 {#if mounted}

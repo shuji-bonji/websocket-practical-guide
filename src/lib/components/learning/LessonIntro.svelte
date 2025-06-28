@@ -1,27 +1,23 @@
 <script lang="ts">
 	import { progressStore, progressActions } from '$lib/stores/progress';
-	import { onMount } from 'svelte';
 
-	export let lessonId: string;
-	export let title: string;
-	export let duration: string;
-	export let difficulty: '初級' | '中級' | '上級' = '初級';
-	export let prerequisites: string[] = [];
-
-	$: progress = $progressStore;
-	$: currentLesson = progress.phases.flatMap((p) => p.lessons).find((l) => l.id === lessonId);
-	$: isCompleted = currentLesson?.completed || false;
-
-	// リアクティブ更新の確認
-	$: {
-		// ProgressTrackerコンポーネントとの同期を確実にする
-		void isCompleted;
+	interface Props {
+		lessonId: string;
+		title: string;
+		duration: string;
+		difficulty?: '初級' | '中級' | '上級';
+		prerequisites?: string[];
 	}
 
-	let mounted = false;
-	onMount(() => {
-		mounted = true;
-	});
+	let { lessonId, title, duration, difficulty = '初級', prerequisites = [] }: Props = $props();
+
+	let progress = $derived($progressStore);
+	let currentLesson = $derived(
+		progress.phases.flatMap((p) => p.lessons).find((l) => l.id === lessonId)
+	);
+	let isCompleted = $derived(currentLesson?.completed || false);
+
+	let mounted = $derived(typeof window !== 'undefined');
 
 	const difficultyColors = {
 		初級: 'bg-green-100 text-green-800',
@@ -81,7 +77,7 @@
 				{#key isCompleted}
 					<button
 						type="button"
-						on:click={toggleCompletion}
+						onclick={toggleCompletion}
 						class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md {isCompleted
 							? 'text-green-700 bg-green-100 hover:bg-green-200'
 							: 'text-blue-700 bg-blue-100 hover:bg-blue-200'} transition-colors duration-200"

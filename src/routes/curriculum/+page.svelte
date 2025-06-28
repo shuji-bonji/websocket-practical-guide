@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { progressStore } from '$lib/stores/progress';
-	import { onMount } from 'svelte';
 
-	$: progress = $progressStore;
+	let progress = $derived($progressStore);
 
 	// カリキュラム全体の概要データ
 	const curriculumOverview = {
@@ -147,10 +146,7 @@
 		}
 	];
 
-	let mounted = false;
-	onMount(() => {
-		mounted = true;
-	});
+	let mounted = $derived(typeof window !== 'undefined');
 
 	// 各Phaseの進捗率を計算
 	function getPhaseProgress(phaseNumber: number): number {

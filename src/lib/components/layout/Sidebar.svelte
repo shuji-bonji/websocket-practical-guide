@@ -1,20 +1,17 @@
 <script lang="ts">
 	import { progressStore, progressActions } from '$lib/stores/progress';
-	import { onMount } from 'svelte';
 
-	export let open = false;
-
-	$: progress = $progressStore;
-
-	// 進捗状態のリアクティブ監視
-	$: {
-		// サイドバーの進捗表示を確実に更新
-		void progress;
+	interface Props {
+		open?: boolean;
 	}
 
-	let currentPath = '';
+	let { open = $bindable(false) }: Props = $props();
 
-	onMount(() => {
+	let progress = $derived($progressStore);
+
+	let currentPath = $state('');
+
+	$effect(() => {
 		if (typeof window !== 'undefined') {
 			currentPath = window.location.pathname;
 
@@ -137,9 +134,13 @@
 		return icons[iconName] || icons.book;
 	}
 
-	// レッスンの完了状態を取得（リアクティブ版）
-	$: lessonCompletionMap = new Map(
-		progress.phases.flatMap((phase) => phase.lessons.map((lesson) => [lesson.id, lesson.completed]))
+	// レッスンの完了状態を取得（Runes版）
+	let lessonCompletionMap = $derived(
+		new Map(
+			progress.phases.flatMap((phase) =>
+				phase.lessons.map((lesson) => [lesson.id, lesson.completed])
+			)
+		)
 	);
 
 	// レッスンの完了状態を取得
@@ -223,7 +224,7 @@
 									<button
 										type="button"
 										class="ml-2 p-1 rounded-md text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
-										on:click={() => item.lessonId && toggleLessonCompletion(item.lessonId)}
+										onclick={() => item.lessonId && toggleLessonCompletion(item.lessonId)}
 										title={item.lessonId && isLessonCompleted(item.lessonId)
 											? '未完了にする'
 											: '完了にする'}
@@ -285,8 +286,8 @@
 	<div class="fixed inset-0 flex z-40 lg:hidden">
 		<div
 			class="fixed inset-0 bg-gray-600 bg-opacity-75"
-			on:click={() => (open = false)}
-			on:keydown={(e) => e.key === 'Escape' && (open = false)}
+			onclick={() => (open = false)}
+			onkeydown={(e) => e.key === 'Escape' && (open = false)}
 			role="button"
 			tabindex="0"
 			aria-label="サイドバーを閉じる"
@@ -298,7 +299,7 @@
 				<button
 					type="button"
 					class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-					on:click={() => (open = false)}
+					onclick={() => (open = false)}
 				>
 					<span class="sr-only">サイドバーを閉じる</span>
 					<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,7 +328,7 @@
 										item.href
 											? 'bg-primary-100 text-primary-700'
 											: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
-										on:click={() => (open = false)}
+										onclick={() => (open = false)}
 									>
 										{#if item.icon}
 											<svg

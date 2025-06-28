@@ -1,5 +1,3 @@
-import { writable, type Writable } from 'svelte/store';
-
 // Browser detection without SvelteKit dependency
 const browser = typeof window !== 'undefined';
 
@@ -165,8 +163,20 @@ function recalculateProgress(progress: OverallProgress): OverallProgress {
 	return progress;
 }
 
+import { writable, type Writable } from 'svelte/store';
+
 // Svelteストア
 export const progressStore: Writable<OverallProgress> = writable(loadProgress());
+
+// 進捗状態の取得関数（必要に応じて使用）
+export function getProgress(): OverallProgress {
+	let currentProgress: OverallProgress = loadProgress();
+	const unsubscribe = progressStore.subscribe((value) => {
+		currentProgress = value;
+	});
+	unsubscribe(); // メモリリークを防ぐ
+	return currentProgress;
+}
 
 // 進捗更新関数
 export const progressActions = {
@@ -176,7 +186,7 @@ export const progressActions = {
 			const updated = { ...progress };
 
 			for (const phase of updated.phases) {
-				const lesson = phase.lessons.find((l) => l.id === lessonId);
+				const lesson = phase.lessons.find((l: LessonProgress) => l.id === lessonId);
 				if (lesson && !lesson.completed) {
 					lesson.completed = true;
 					lesson.completedAt = new Date();
@@ -197,7 +207,7 @@ export const progressActions = {
 			const updated = { ...progress };
 
 			for (const phase of updated.phases) {
-				const lesson = phase.lessons.find((l) => l.id === lessonId);
+				const lesson = phase.lessons.find((l: LessonProgress) => l.id === lessonId);
 				if (lesson && lesson.completed) {
 					lesson.completed = false;
 					lesson.completedAt = undefined;
@@ -219,7 +229,7 @@ export const progressActions = {
 			const updated = { ...progress };
 
 			for (const phase of updated.phases) {
-				const lesson = phase.lessons.find((l) => l.id === lessonId);
+				const lesson = phase.lessons.find((l: LessonProgress) => l.id === lessonId);
 				if (lesson) {
 					lesson.timeSpent = (lesson.timeSpent || 0) + minutes;
 					break;

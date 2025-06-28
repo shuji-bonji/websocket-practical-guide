@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { progressStore } from '$lib/stores/progress';
 
-	$: progress = $progressStore;
+	let progress = $derived($progressStore);
 
 	// Phase 1のレッスン一覧
 	const phase1Lessons = [

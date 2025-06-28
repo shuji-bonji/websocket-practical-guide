@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { progressStore } from '$lib/stores/progress';
-	import { onMount } from 'svelte';
 
-	$: progress = $progressStore;
-	$: phase1Progress = progress.phases[0];
+	let progress = $derived($progressStore);
+	let phase1Progress = $derived(progress.phases[0]);
 
 	// Phase 1 詳細データ
 	const phase1Data = {
@@ -282,10 +281,7 @@
 		}
 	];
 
-	let mounted = false;
-	onMount(() => {
-		mounted = true;
-	});
+	let mounted = $derived(typeof window !== 'undefined');
 
 	// セクションの進捗率を計算
 	function getSectionProgress(sectionId: number): number {
@@ -304,20 +300,22 @@
 	}
 
 	// 次の推奨レッスンを取得
-	$: nextLesson = (() => {
-		if (!phase1Progress) return null;
-		for (const section of sections) {
-			const incompleteLesson = section.lessons.find((lesson) => !isLessonCompleted(lesson.id));
-			if (incompleteLesson) {
-				return {
-					lessonId: incompleteLesson.id,
-					title: incompleteLesson.title,
-					sectionTitle: section.title
-				};
+	let nextLesson = $derived(
+		(() => {
+			if (!phase1Progress) return null;
+			for (const section of sections) {
+				const incompleteLesson = section.lessons.find((lesson) => !isLessonCompleted(lesson.id));
+				if (incompleteLesson) {
+					return {
+						lessonId: incompleteLesson.id,
+						title: incompleteLesson.title,
+						sectionTitle: section.title
+					};
+				}
 			}
-		}
-		return null;
-	})();
+			return null;
+		})()
+	);
 </script>
 
 <svelte:head>

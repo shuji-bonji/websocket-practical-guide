@@ -2,12 +2,11 @@
 	import '../app.css';
 	import Header from '$lib/components/layout/Header.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
-	import { onMount } from 'svelte';
 
-	let sidebarOpen = false;
+	let sidebarOpen = $state(false);
 
 	// ページ変更時にモバイルサイドバーを閉じる
-	onMount(() => {
+	$effect(() => {
 		const handleRouteChange = () => {
 			sidebarOpen = false;
 		};

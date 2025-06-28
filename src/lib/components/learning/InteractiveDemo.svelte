@@ -1,31 +1,40 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-
 	// Browser detection without SvelteKit dependency
 	const browser = typeof window !== 'undefined';
 
-	export let title: string;
-	export let description: string;
-	export let demoType: 'basic-connection' | 'echo-test' | 'message-exchange' = 'basic-connection';
-	export let wsUrl: string = 'wss://echo.websocket.org';
+	interface Props {
+		title: string;
+		description: string;
+		demoType?: 'basic-connection' | 'echo-test' | 'message-exchange';
+		wsUrl?: string;
+	}
+
+	let {
+		title,
+		description,
+		demoType = 'basic-connection',
+		wsUrl = 'wss://echo.websocket.org'
+	}: Props = $props();
 
 	let websocket: WebSocket | null = null;
-	let connectionState: 'disconnected' | 'connecting' | 'connected' | 'error' = 'disconnected';
-	let messages: Array<{ type: 'sent' | 'received' | 'system'; content: string; timestamp: Date }> =
-		[];
-	let messageInput = '';
-	let connectionTime: Date | null = null;
+	let connectionState = $state<'disconnected' | 'connecting' | 'connected' | 'error'>(
+		'disconnected'
+	);
+	let messages = $state<
+		Array<{ type: 'sent' | 'received' | 'system'; content: string; timestamp: Date }>
+	>([]);
+	let messageInput = $state('');
+	let connectionTime = $state<Date | null>(null);
 
-	let mounted = false;
+	let mounted = $state(false);
 
-	onMount(() => {
+	$effect(() => {
 		mounted = true;
-	});
-
-	onDestroy(() => {
-		if (websocket) {
-			websocket.close();
-		}
+		return () => {
+			if (websocket) {
+				websocket.close();
+			}
+		};
 	});
 
 	function addMessage(type: 'sent' | 'received' | 'system', content: string) {
@@ -104,19 +113,23 @@
 		});
 	}
 
-	$: stateColor = {
-		disconnected: 'text-gray-600',
-		connecting: 'text-yellow-600',
-		connected: 'text-green-600',
-		error: 'text-red-600'
-	}[connectionState];
+	let stateColor = $derived(
+		{
+			disconnected: 'text-gray-600',
+			connecting: 'text-yellow-600',
+			connected: 'text-green-600',
+			error: 'text-red-600'
+		}[connectionState]
+	);
 
-	$: stateText = {
-		disconnected: '切断',
-		connecting: '接続中...',
-		connected: '接続済み',
-		error: 'エラー'
-	}[connectionState];
+	let stateText = $derived(
+		{
+			disconnected: '切断',
+			connecting: '接続中...',
+			connected: '接続済み',
+			error: 'エラー'
+		}[connectionState]
+	);
 </script>
 
 <div class="bg-white border border-gray-200 rounded-lg p-6 my-8">
@@ -150,7 +163,7 @@
 			{#if connectionState === 'disconnected' || connectionState === 'error'}
 				<button
 					type="button"
-					on:click={connect}
+					onclick={connect}
 					class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
 					disabled={!mounted}
 				>
@@ -159,7 +172,7 @@
 			{:else if connectionState === 'connected'}
 				<button
 					type="button"
-					on:click={disconnect}
+					onclick={disconnect}
 					class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
 				>
 					切断
@@ -169,7 +182,7 @@
 			{#if messages.length > 0}
 				<button
 					type="button"
-					on:click={clearMessages}
+					onclick={clearMessages}
 					class="bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors"
 				>
 					ログクリア
@@ -189,14 +202,14 @@
 					id="message-input"
 					type="text"
 					bind:value={messageInput}
-					on:keydown={(e) => e.key === 'Enter' && sendMessage()}
+					onkeydown={(e) => e.key === 'Enter' && sendMessage()}
 					placeholder="メッセージを入力してください"
 					class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 					disabled={connectionState !== 'connected'}
 				/>
 				<button
 					type="button"
-					on:click={sendMessage}
+					onclick={sendMessage}
 					disabled={connectionState !== 'connected' || !messageInput.trim()}
 					class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
 				>
