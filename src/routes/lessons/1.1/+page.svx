@@ -1,0 +1,218 @@
+---
+title: "WebSocketとは何か"
+description: "WebSocketの基本概念とブラウザ標準APIの重要性を理解する"
+duration: "1時間"
+difficulty: "初級"
+---
+
+<script>
+  import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
+  import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
+  import InteractiveDemo from '$lib/components/learning/InteractiveDemo.svelte';
+  import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+  import NextLesson from '$lib/components/learning/NextLesson.svelte';
+</script>
+
+<LessonIntro 
+  lessonId="1.1"
+  title="WebSocketとは何か"
+  duration="1時間"
+  difficulty="初級"
+  prerequisites={['JavaScript基礎', 'HTTP基本理解', 'ブラウザ開発者ツール使用経験']}
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🎯 このレッスンで学ぶこと
+
+このレッスンでは、WebSocketの基本概念を理解し、なぜWebSocketが現代のWebアプリケーション開発において重要なのかを学習します。
+
+- **WebSocketの基本定義**と従来のHTTP通信との違い
+- **ブラウザ標準WebSocket API**から学ぶ理由
+- **リアルタイム通信**が必要になる背景
+- **WebSocketの歴史**と標準化の意義
+
+
+## 📝 WebSocketの基本定義
+
+**WebSocket**は、クライアント（ブラウザ）とサーバー間で**持続的な双方向通信**を可能にするWeb技術です。
+
+### 従来のHTTP通信との根本的違い
+
+従来のHTTP通信では、以下のような制限がありました：
+
+- **リクエスト・レスポンス型**：クライアントからの要求に対してサーバーが応答する一方向通信
+- **接続の都度確立**：毎回新しい接続を確立し、レスポンス後に切断
+- **サーバーからの能動的通信不可**：サーバーから先制的にデータを送信できない
+
+WebSocketは、これらの制限を解決し、**持続的で双方向のリアルタイム通信**を実現します。
+
+</div>
+</div>
+
+<ConceptDiagram 
+  title="WebSocket vs HTTP通信パターン"
+  type="comparison"
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🌐 ブラウザ標準WebSocket APIの重要性
+
+### なぜ最初にブラウザ標準APIから学ぶのか？
+
+多くの学習教材では**Socket.IO**のようなライブラリから始めることがありますが、このコースでは**ブラウザ標準WebSocket API**を最初に学習します。理由は以下の通りです：
+
+#### 1. **技術の本質理解**
+- WebSocketプロトコルの動作原理を直接理解できる
+- RFC 6455仕様に基づいた標準的な実装を学習
+- 他のライブラリの内部動作も理解しやすくなる
+
+#### 2. **実用性とパフォーマンス**
+- **軽量**：追加ライブラリなしでWebSocket機能を使用
+- **高性能**：オーバーヘッドが最小限
+- **長期保守性**：ブラウザ標準なので将来にわたって安定
+
+#### 3. **学習の順序性**
+- 基本→応用の自然な学習フロー
+- Socket.IOなどの高度な機能が必要な場面の判断ができる
+- PWA対応など、モダンWebアプリでの統合が容易
+
+### 2016年以降のブラウザ対応状況
+
+WebSocket APIは**2011年にRFC 6455として標準化**され、現在では：
+
+- **Chrome 16+** (2012年〜)
+- **Firefox 11+** (2012年〜)  
+- **Safari 6+** (2012年〜)
+- **Edge/IE 10+** (2012年〜)
+
+**2016年以降のモダンブラウザ**では標準対応となっており、実用性に問題はありません。
+
+
+## ⚡ リアルタイム通信の必要性
+
+現代のWebアプリケーションでは、以下のようなユースケースでリアルタイム通信が必要とされています：
+
+### 1. **ユーザー体験の向上**
+- **即座のフィードバック**：チャット、通知、ライブアップデート
+- **協調作業**：リアルタイム共同編集、同期作業
+- **レスポンシブな操作**：ゲーム、インタラクティブアプリ
+
+### 2. **業務効率化**
+- **リアルタイムダッシュボード**：監視、分析、KPI表示
+- **ライブデータ配信**：株価、為替、スポーツスコア
+- **IoT連携**：センサーデータ、デバイス制御
+
+### 3. **技術的優位性**
+- **サーバーリソース効率化**：ポーリングによる無駄なリクエスト削減
+- **ネットワーク帯域の節約**：オーバーヘッドの最小化
+- **スケーラビリティ**：効率的な接続管理
+
+
+## 📚 WebSocketの歴史と標準化
+
+### RFC 6455の意義
+
+**RFC 6455**（2011年12月）は、WebSocketプロトコルの正式な標準仕様です：
+
+- **統一されたプロトコル仕様**：ブラウザ間の互換性確保
+- **セキュリティ考慮**：Origin検証、フレーミング仕様
+- **拡張性**：サブプロトコル、拡張機能のサポート
+
+### WebSocketプロトコルの進化
+
+```
+2008年: Ian Hickson氏がWebSocketの初期仕様を提案
+2009年: 最初のブラウザ実装（Chrome dev版）
+2010年: セキュリティ脆弱性の発見と仕様改定
+2011年: RFC 6455として正式標準化
+2012年以降: 主要ブラウザで標準サポート
+2016年以降: モダンWebアプリでの本格普及
+```
+
+### 現在の普及状況
+
+- **99%以上のブラウザ**がWebSocketをサポート
+- **大規模Webサービス**での採用（Discord、Slack、WhatsApp Web等）
+- **PWA、SPA**での標準的な技術選択肢
+- **Node.js、Python、Java**等、サーバーサイドでも豊富なライブラリ
+
+
+## 🔍 実際に体験してみよう
+
+理論を学んだ後は、実際にWebSocketの動作を体験してみましょう。
+
+</div>
+</div>
+
+<InteractiveDemo 
+  title="WebSocket基本接続テスト"
+  description="実際にWebSocket接続を確立し、基本的な動作を確認してみましょう。エコーサーバーに接続して、送信したメッセージがそのまま返ってくることを体験できます。"
+  demoType="echo-test"
+  wsUrl="wss://echo.websocket.org"
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 🔍 デモで確認できること
+
+1. **接続確立プロセス**：「接続中...」→「接続済み」の状態変化
+2. **双方向通信**：メッセージの送信と即座の受信
+3. **持続的接続**：一度接続すれば、複数回のメッセージ交換が可能
+4. **低遅延通信**：ほぼ瞬時にメッセージがエコーされる
+
+
+## 💡 重要なポイント
+
+### WebSocketとHTTPの関係
+
+WebSocketは**HTTPを置き換える技術ではありません**。適切な使い分けが重要です：
+
+- **HTTP**：リソース取得、RESTful API、静的コンテンツ配信
+- **WebSocket**：リアルタイム通信、双方向データ交換、持続的セッション
+
+### 次のレッスンへの準備
+
+このレッスンでWebSocketの基本概念を理解しました。次のレッスンでは：
+
+- **HTTPの具体的な制限**とその解決方法
+- **ポーリング手法の問題点**の詳細分析  
+- **WebSocketによる優位性**の技術的根拠
+
+を学習していきます。
+
+
+## 📖 参考資料
+
+### 公式仕様・ドキュメント
+- [RFC 6455 - The WebSocket Protocol](https://tools.ietf.org/html/rfc6455)
+- [MDN WebSocket API](https://developer.mozilla.org/ja/docs/Web/API/WebSocket)
+- [WebSocket API Specification](https://websockets.spec.whatwg.org/)
+
+### ブラウザ対応状況
+- [Can I use WebSocket](https://caniuse.com/websockets)
+- [WebSocket Browser Compatibility](https://developer.mozilla.org/ja/docs/Web/API/WebSocket#browser_compatibility)
+
+### 技術背景
+- [Real-time web technologies guide](https://ably.com/topic/websockets)
+- [WebSocket vs HTTP performance comparison](https://blog.feathersjs.com/why-we-built-the-best-web-framework-you-ve-never-heard-of-1912bcb9b4d9)
+
+</div>
+</div>
+
+<ProgressTracker 
+  lessonId="1.1"
+  sectionTitle="WebSocket 入門"
+/>
+
+<NextLesson 
+  nextLessonId="1.2"
+  nextLessonTitle="HTTPの限界とWebSocketの優位性"
+  nextLessonUrl="/lessons/1.2"
+  completionMessage="WebSocketの基本概念を理解しました！"
+  showCompletion={false}
+/>

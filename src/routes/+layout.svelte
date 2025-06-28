@@ -109,7 +109,7 @@
 					<div class="flex flex-col md:flex-row justify-between items-center">
 						<div class="flex items-center space-x-4">
 							<p class="text-base text-gray-600">
-								© 2024 WebSocket Learning. 学習目的で作成されました。
+								© 2025 WebSocket Learning. 学習目的で作成されました。
 							</p>
 						</div>
 
