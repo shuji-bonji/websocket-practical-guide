@@ -26,6 +26,12 @@
 	};
 
 	function toggleCompletion() {
+		console.log('Toggle completion for lesson:', lessonId);
+		console.log('Current completion state:', isCompleted);
+		console.log('Current lesson data:', currentLesson);
+		console.log('All lessons in progress store:', progress.phases.flatMap((p) => p.lessons));
+		console.log('Looking for lessonId:', lessonId);
+		
 		if (isCompleted) {
 			progressActions.uncompleteLesson(lessonId);
 		} else {

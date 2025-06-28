@@ -48,17 +48,18 @@
 			items: [
 				{ href: '/', label: 'ホーム', icon: 'home' },
 				{ href: '/curriculum', label: 'カリキュラム概要', icon: 'book' },
-				{ href: '/lessons', label: 'レッスン一覧', icon: 'lessons' },
+				{ href: '/phase1', label: 'Phase 1: WebSocket基礎理解', icon: 'lessons' },
 				{ href: '/table-of-contents', label: '目次', icon: 'list' }
 			]
 		},
 		{
-			title: 'Phase 1: 基礎理解',
+			title: 'Phase 1: WebSocket入門',
 			items: [
-				{ href: '/lessons/1.1', label: '1.1 WebSocketとは何か', lessonId: '1.1' },
-				{ href: '/lessons/1.2', label: '1.2 HTTPの限界とWebSocketの優位性', lessonId: '1.2' },
-				{ href: '/lessons/1.3', label: '1.3 WebSocketの利用例と適用場面', lessonId: '1.3' },
-				{ href: '/lessons/1.4', label: '1.4 WebSocket vs 他技術の比較理解', lessonId: '1.4' },
+				{ href: '/phase1/introduction', label: 'セクション概要', icon: 'book' },
+				{ href: '/phase1/introduction/what-is-websocket', label: '1.1 WebSocketとは何か', lessonId: 'phase1-introduction-what-is-websocket' },
+				{ href: '/phase1/introduction/http-limitations', label: '1.2 HTTPの限界とWebSocketの優位性', lessonId: 'phase1-introduction-http-limitations' },
+				{ href: '/phase1/introduction/use-cases', label: '1.3 WebSocketの利用例と適用場面', lessonId: 'phase1-use-cases' },
+				{ href: '/phase1/introduction/comparison', label: '1.4 WebSocket vs 他技術の比較理解', lessonId: 'phase1-introduction-comparison' },
 				{ href: '/lessons/2.1', label: '2.1 WebSocketを理解するためのHTTP基礎', lessonId: '2.1' },
 				{ href: '/lessons/2.2', label: '2.2 OSI参照モデルとWebSocketの位置', lessonId: '2.2' },
 				{

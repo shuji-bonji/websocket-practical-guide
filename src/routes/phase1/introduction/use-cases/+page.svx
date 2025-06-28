@@ -540,7 +540,7 @@ WebSocketの11の主要利用例から見えるアーキテクチャパターン
 />
 
 <NextLesson 
-  nextLessonId="1.4"
+  nextLessonId="phase1-introduction-comparison"
   nextLessonTitle="WebSocket vs 他技術の比較理解"
-  nextLessonPath="/lessons/1.4"
+  nextLessonPath="/phase1/introduction/comparison"
 />

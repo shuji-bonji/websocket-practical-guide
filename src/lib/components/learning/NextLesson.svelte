@@ -1,9 +1,18 @@
 <script lang="ts">
 	export let nextLessonId: string;
 	export let nextLessonTitle: string;
-	export let nextLessonUrl: string;
+	export let nextLessonPath: string;
 	export let completionMessage: string = 'このレッスンを完了しました！';
 	export let showCompletion: boolean = false;
+
+	// デバッグログ
+	console.log('NextLesson component props:', {
+		nextLessonId,
+		nextLessonTitle,
+		nextLessonPath,
+		completionMessage,
+		showCompletion
+	});
 </script>
 
 <div class="bg-white border border-gray-200 rounded-lg p-6 my-8">
@@ -35,10 +44,15 @@
 		<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
 			<div class="text-sm text-blue-700 mb-2">次のレッスン</div>
 			<div class="font-medium text-blue-900">{nextLessonId}: {nextLessonTitle}</div>
+			<div class="text-xs text-gray-500 mt-1">Path: {nextLessonPath}</div>
 		</div>
 
 		<div class="space-y-3">
-			<a href={nextLessonUrl} class="btn-primary inline-flex items-center">
+			<a 
+				href={nextLessonPath} 
+				class="btn-primary inline-flex items-center"
+				onclick={() => console.log('NextLesson button clicked, navigating to:', nextLessonPath)}
+			>
 				次のレッスンに進む
 				<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

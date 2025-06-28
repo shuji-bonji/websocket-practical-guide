@@ -15,7 +15,7 @@ difficulty: "初級"
 </script>
 
 <LessonIntro 
-  lessonId="1.1"
+  lessonId="phase1-introduction-what-is-websocket"
   title="WebSocketとは何か"
   duration="1時間"
   difficulty="初級"
@@ -120,7 +120,7 @@ sequenceDiagram
 
 ### 2016年以降のブラウザ対応状況
 
-WebSocket APIは**2011年にRFC 6455として標準化**され、現在では。
+WebSocket APIは**2011年にRFC 6455として標準化**され、現在では全主要ブラウザでサポートされています。
 
 - **Chrome 16+** (2012年〜)
 - **Firefox 11+** (2012年〜)  
@@ -215,7 +215,7 @@ WebSocketは**HTTPを置き換える技術ではありません**。適切な使
 
 ### 次のレッスンへの準備
 
-このレッスンでWebSocketの基本概念を理解しました。次のレッスンでは。
+このレッスンでWebSocketの基本概念を理解しました。次のレッスンでは：
 
 - **HTTPの具体的な制限**とその解決方法
 - **ポーリング手法の問題点**の詳細分析  
@@ -243,14 +243,14 @@ WebSocketは**HTTPを置き換える技術ではありません**。適切な使
 </div>
 
 <ProgressTracker 
-  lessonId="1.1"
-  sectionTitle="WebSocket 入門"
+  lessonId="phase1-introduction-what-is-websocket"
+  sectionTitle="WebSocket入門"
 />
 
 <NextLesson 
-  nextLessonId="1.2"
+  nextLessonId="phase1-introduction-http-limitations"
   nextLessonTitle="HTTPの限界とWebSocketの優位性"
-  nextLessonUrl="/lessons/1.2"
+  nextLessonPath="/phase1/introduction/http-limitations"
   completionMessage="WebSocketの基本概念を理解しました！"
   showCompletion={false}
 />

@@ -15,7 +15,7 @@ difficulty: "初級"
 </script>
 
 <LessonIntro 
-  lessonId="1.2"
+  lessonId="phase1-introduction-http-limitations"
   title="HTTPの限界とWebSocketの優位性"
   duration="1時間"
   difficulty="初級"
@@ -343,14 +343,14 @@ ws.send('Hello Server!');
 </div>
 
 <ProgressTracker 
-  lessonId="1.2"
-  sectionTitle="WebSocket 入門"
+  lessonId="phase1-introduction-http-limitations"
+  sectionTitle="WebSocket入門"
 />
 
 <NextLesson 
-  nextLessonId="1.3"
+  nextLessonId="phase1-introduction-use-cases"
   nextLessonTitle="WebSocketの利用例と適用場面"
-  nextLessonUrl="/lessons/1.3"
+  nextLessonPath="/phase1/introduction/use-cases"
   completionMessage="HTTPの制限とWebSocketの優位性を理解しました！"
   showCompletion={false}
 />

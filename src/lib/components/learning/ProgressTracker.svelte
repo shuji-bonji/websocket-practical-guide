@@ -22,18 +22,36 @@
 		(() => {
 			if (!lessonId) return null;
 
-			// レッスンIDからセクションを特定 (例: "1.1" -> Section 1)
-			const [phaseStr, sectionStr] = lessonId.split('.');
-			const phaseNumber = parseInt(phaseStr);
-			// const sectionNumber = parseInt(sectionStr); // Will be used for future section-specific progress
+			// レッスンIDからセクションを特定
+			let phaseNumber: number;
+			let sectionName: string;
+
+			if (lessonId.startsWith('phase')) {
+				// 新しい形式: "phase1-introduction-what-is-websocket"
+				const parts = lessonId.split('-');
+				phaseNumber = parseInt(parts[0].replace('phase', ''));
+				sectionName = parts[1]; // "introduction"
+			} else {
+				// 古い形式: "1.1"
+				const [phaseStr, sectionStr] = lessonId.split('.');
+				phaseNumber = parseInt(phaseStr);
+				sectionName = `section${sectionStr ? sectionStr[0] : '1'}`;
+			}
 
 			const currentPhase = progress.phases[phaseNumber - 1];
 			if (!currentPhase) return null;
 
-			// セクション内のレッスンを取得 (同じセクション番号の最初の桁)
+			// セクション内のレッスンを取得
 			const sectionLessons = currentPhase.lessons.filter((lesson) => {
-				const [, lessonSectionStr] = lesson.id.split('.');
-				return lessonSectionStr && lessonSectionStr[0] === sectionStr;
+				if (lesson.id.startsWith('phase')) {
+					// 新しい形式のレッスン
+					const parts = lesson.id.split('-');
+					return parts.length > 1 && parts[1] === sectionName;
+				} else {
+					// 古い形式のレッスン
+					const [, lessonSectionStr] = lesson.id.split('.');
+					return lessonSectionStr && lessonSectionStr[0] === sectionName.replace('section', '');
+				}
 			});
 
 			const completedCount = sectionLessons.filter((l) => l.completed).length;
@@ -96,7 +114,7 @@
 
 		<!-- Phase全体の進捗 -->
 		{#if lessonId}
-			{@const phaseNumber = parseInt(lessonId.split('.')[0])}
+			{@const phaseNumber = lessonId.startsWith('phase') ? parseInt(lessonId.split('-')[0].replace('phase', '')) : parseInt(lessonId.split('.')[0])}
 			{@const phaseProgress = progress.phases[phaseNumber - 1]}
 			{#if phaseProgress}
 				<div class="p-3 bg-blue-50 rounded-lg">

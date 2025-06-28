@@ -36,7 +36,7 @@
 			accentColor: 'bg-blue-600',
 			lessons: [
 				{
-					id: '1.1',
+					id: 'phase1-introduction-what-is-websocket',
 					title: 'WebSocketとは何か',
 					duration: '1時間',
 					description: 'WebSocketの定義、基本概念、ブラウザ標準WebSocket APIの重要性',
@@ -52,7 +52,7 @@
 					]
 				},
 				{
-					id: '1.2',
+					id: 'phase1-introduction-http-limitations',
 					title: 'HTTPの限界とWebSocketの優位性',
 					duration: '1時間',
 					description: 'HTTP通信の制限を理解し、WebSocketによる双方向通信の利点を学習',
@@ -68,7 +68,7 @@
 					]
 				},
 				{
-					id: '1.3',
+					id: 'phase1-use-cases',
 					title: 'WebSocketの利用例と適用場面',
 					duration: '2-3時間',
 					description: 'WebSocketの11の主要カテゴリーと実際の適用事例を詳しく学習',
@@ -93,7 +93,7 @@
 					]
 				},
 				{
-					id: '1.4',
+					id: 'phase1-introduction-comparison',
 					title: 'WebSocket vs 他技術の比較理解',
 					duration: '1時間',
 					description: '他の通信技術との違いを理解し、適切な技術選択ができるようになる',
@@ -299,6 +299,24 @@
 		return phase1Progress.lessons.find((l) => l.id === lessonId)?.completed || false;
 	}
 
+	// lessonIdから適切なパスを生成
+	function getLessonPath(lessonId: string): string {
+		// 新しいPhase構造のlessonIdマッピング
+		const lessonPaths: Record<string, string> = {
+			'phase1-introduction-what-is-websocket': '/phase1/introduction/what-is-websocket',
+			'phase1-introduction-http-limitations': '/phase1/introduction/http-limitations', 
+			'phase1-use-cases': '/phase1/introduction/use-cases',
+			'phase1-introduction-comparison': '/phase1/introduction/comparison',
+			// 古いIDとの後方互換性
+			'1.1': '/phase1/introduction/what-is-websocket',
+			'1.2': '/phase1/introduction/http-limitations', 
+			'1.3': '/phase1/introduction/use-cases',
+			'1.4': '/phase1/introduction/comparison'
+		};
+		
+		return lessonPaths[lessonId] || `/lessons/${lessonId}`;
+	}
+
 	// 次の推奨レッスンを取得
 	let nextLesson = $derived(
 		(() => {
@@ -309,7 +327,8 @@
 					return {
 						lessonId: incompleteLesson.id,
 						title: incompleteLesson.title,
-						sectionTitle: section.title
+						sectionTitle: section.title,
+						path: getLessonPath(incompleteLesson.id)
 					};
 				}
 			}
@@ -365,7 +384,7 @@
 					<div class="text-center">
 						<div class="text-blue-200 text-sm mb-2">次の推奨レッスン</div>
 						<a
-							href="/lessons/{nextLesson.lessonId}"
+							href={nextLesson.path}
 							class="btn-primary bg-white text-blue-600 hover:bg-gray-50"
 						>
 							{nextLesson.lessonId}: {nextLesson.title}
@@ -445,7 +464,7 @@
 									</div>
 								</div>
 							</div>
-							<a href="/lessons/{section.lessons[0].id}" class="btn-secondary"> セクション開始 </a>
+							<a href={getLessonPath(section.lessons[0].id)} class="btn-secondary"> セクション開始 </a>
 						</div>
 						<p class="text-gray-600">{section.description}</p>
 					</div>
@@ -516,7 +535,7 @@
 
 									<div class="ml-6">
 										<a
-											href="/lessons/{lesson.id}"
+											href={getLessonPath(lesson.id)}
 											class="btn-primary {isLessonCompleted(lesson.id)
 												? 'bg-green-600 hover:bg-green-700'
 												: ''}"
@@ -579,7 +598,7 @@
 						<p class="mb-4">
 							{nextLesson.sectionTitle} の続きを学習しましょう
 						</p>
-						<a href="/lessons/{nextLesson.lessonId}" class="btn-primary">
+						<a href={nextLesson.path} class="btn-primary">
 							{nextLesson.lessonId}: {nextLesson.title}
 						</a>
 					</div>
