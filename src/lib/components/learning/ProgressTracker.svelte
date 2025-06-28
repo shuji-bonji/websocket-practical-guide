@@ -114,7 +114,9 @@
 
 		<!-- Phase全体の進捗 -->
 		{#if lessonId}
-			{@const phaseNumber = lessonId.startsWith('phase') ? parseInt(lessonId.split('-')[0].replace('phase', '')) : parseInt(lessonId.split('.')[0])}
+			{@const phaseNumber = lessonId.startsWith('phase')
+				? parseInt(lessonId.split('-')[0].replace('phase', ''))
+				: parseInt(lessonId.split('.')[0])}
 			{@const phaseProgress = progress.phases[phaseNumber - 1]}
 			{#if phaseProgress}
 				<div class="p-3 bg-blue-50 rounded-lg">

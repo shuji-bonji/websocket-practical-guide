@@ -53,59 +53,244 @@
 			]
 		},
 		{
-			title: 'Phase 1: WebSocket入門',
+			title: 'Phase 1: WebSocket入門 (1. 入門)',
 			items: [
 				{ href: '/phase1/introduction', label: 'セクション概要', icon: 'book' },
-				{ href: '/phase1/introduction/what-is-websocket', label: '1.1 WebSocketとは何か', lessonId: 'phase1-introduction-what-is-websocket' },
-				{ href: '/phase1/introduction/http-limitations', label: '1.2 HTTPの限界とWebSocketの優位性', lessonId: 'phase1-introduction-http-limitations' },
-				{ href: '/phase1/introduction/use-cases', label: '1.3 WebSocketの利用例と適用場面', lessonId: 'phase1-use-cases' },
-				{ href: '/phase1/introduction/comparison', label: '1.4 WebSocket vs 他技術の比較理解', lessonId: 'phase1-introduction-comparison' },
-				{ href: '/lessons/2.1', label: '2.1 WebSocketを理解するためのHTTP基礎', lessonId: '2.1' },
-				{ href: '/lessons/2.2', label: '2.2 OSI参照モデルとWebSocketの位置', lessonId: '2.2' },
 				{
-					href: '/lessons/2.3',
-					label: '2.3 HTTP/1.1からHTTP/3までのWebSocket対応',
-					lessonId: '2.3'
+					href: '/phase1/introduction/what-is-websocket',
+					label: '1.1 WebSocketとは何か',
+					lessonId: 'phase1-introduction-what-is-websocket'
 				},
-				{ href: '/lessons/2.4', label: '2.4 WebSocket接続確立プロセス', lessonId: '2.4' },
-				{ href: '/lessons/2.5', label: '2.5 セキュリティとポート管理', lessonId: '2.5' },
-				{ href: '/lessons/3.1', label: '3.1 WebSocket接続ライフサイクル', lessonId: '3.1' },
-				{ href: '/lessons/3.2', label: '3.2 イベントベース通信モデル', lessonId: '3.2' },
-				{ href: '/lessons/3.3', label: '3.3 クライアント・サーバー役割分担', lessonId: '3.3' },
-				{ href: '/lessons/4.1', label: '4.1 WebSocket URL と接続確立', lessonId: '4.1' },
-				{ href: '/lessons/4.2', label: '4.2 ブラウザ標準WebSocket API実装', lessonId: '4.2' },
-				{ href: '/lessons/4.3', label: '4.3 接続失敗と再接続処理', lessonId: '4.3' }
+				{
+					href: '/phase1/introduction/http-limitations',
+					label: '1.2 HTTPの限界とWebSocketの優位性',
+					lessonId: 'phase1-introduction-http-limitations'
+				},
+				{
+					href: '/phase1/introduction/use-cases',
+					label: '1.3 WebSocketの利用例と適用場面',
+					lessonId: 'phase1-use-cases'
+				},
+				{
+					href: '/phase1/introduction/comparison',
+					label: '1.4 WebSocket vs 他技術の比較理解',
+					lessonId: 'phase1-introduction-comparison'
+				}
 			]
 		},
 		{
-			title: 'Phase 2: 実装技術',
+			title: 'Phase 1: ネットワーク技術 (2. ネットワーク)',
 			items: [
-				{ href: '/lessons/5.1', label: '5.1 WebSocketオブジェクトとSvelteストア', lessonId: '5.1' },
-				{ href: '/lessons/5.2', label: '5.2 データ送受信パターン', lessonId: '5.2' },
-				{ href: '/lessons/5.3', label: '5.3 高度なエラーハンドリング', lessonId: '5.3' },
-				{ href: '/lessons/6.1', label: '6.1 WebSocketフレーム構造', lessonId: '6.1' },
-				{ href: '/lessons/6.2', label: '6.2 バイナリデータ送信', lessonId: '6.2' },
-				{ href: '/lessons/6.3', label: '6.3 WebSocketサブプロトコルの設計', lessonId: '6.3' },
-				{ href: '/lessons/7.1', label: '7.1 セキュリティ実装', lessonId: '7.1' },
-				{ href: '/lessons/7.2', label: '7.2 PWAとWebSocketの統合', lessonId: '7.2' },
-				{ href: '/lessons/7.3', label: '7.3 スケーラビリティと負荷対策', lessonId: '7.3' }
+				{ href: '/phase1/network-tech', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase1/network-tech/http-basics',
+					label: '2.1 WebSocketを理解するためのHTTP基礎',
+					lessonId: 'phase1-network-tech-http-basics'
+				},
+				{
+					href: '/phase1/network-tech/osi-model',
+					label: '2.2 OSI参照モデルとWebSocketの位置',
+					lessonId: 'phase1-network-tech-osi-model'
+				},
+				{
+					href: '/phase1/network-tech/http-versions',
+					label: '2.3 HTTP/1.1からHTTP/3までのWebSocket対応',
+					lessonId: 'phase1-network-tech-http-versions'
+				},
+				{
+					href: '/phase1/network-tech/connection-process',
+					label: '2.4 WebSocket接続確立プロセス',
+					lessonId: 'phase1-network-tech-connection-process'
+				},
+				{
+					href: '/phase1/network-tech/security',
+					label: '2.5 セキュリティとポート管理',
+					lessonId: 'phase1-network-tech-security'
+				}
 			]
 		},
 		{
-			title: 'Phase 3: テスト・評価',
+			title: 'Phase 1: API基本構造 (3. API構造)',
 			items: [
-				{ href: '/lessons/8.1', label: '8.1 クライアント側テスト', lessonId: '8.1' },
-				{ href: '/lessons/8.2', label: '8.2 サーバー側テスト', lessonId: '8.2' },
-				{ href: '/lessons/8.3', label: '8.3 E2Eテスト', lessonId: '8.3' },
-				{ href: '/lessons/9.1', label: '9.1 代替技術の比較', lessonId: '9.1' },
-				{ href: '/lessons/9.2', label: '9.2 適用判断基準', lessonId: '9.2' }
+				{ href: '/phase1/api-structure', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase1/api-structure/lifecycle',
+					label: '3.1 WebSocket接続ライフサイクル',
+					lessonId: 'phase1-api-structure-lifecycle'
+				},
+				{
+					href: '/phase1/api-structure/event-model',
+					label: '3.2 イベントベース通信モデル',
+					lessonId: 'phase1-api-structure-event-model'
+				},
+				{
+					href: '/phase1/api-structure/roles',
+					label: '3.3 クライアント・サーバー役割分担',
+					lessonId: 'phase1-api-structure-roles'
+				}
 			]
 		},
 		{
-			title: 'Phase 4: 実践開発',
+			title: 'Phase 1: 基本操作 (4. 基本操作)',
 			items: [
-				{ href: '/lessons/10.1', label: '10.1 PWA対応リアルタイムチャット', lessonId: '10.1' },
-				{ href: '/lessons/10.2', label: '10.2 リアルタイム共同編集システム', lessonId: '10.2' }
+				{ href: '/phase1/basic-operations', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase1/basic-operations/url-connection',
+					label: '4.1 WebSocket URL と接続確立',
+					lessonId: 'phase1-basic-operations-url-connection'
+				},
+				{
+					href: '/phase1/basic-operations/api-implementation',
+					label: '4.2 ブラウザ標準WebSocket API実装',
+					lessonId: 'phase1-basic-operations-api-implementation'
+				},
+				{
+					href: '/phase1/basic-operations/reconnection',
+					label: '4.3 接続失敗と再接続処理',
+					lessonId: 'phase1-basic-operations-reconnection'
+				}
+			]
+		},
+		{
+			title: 'Phase 2: データ通信 (5. データ通信)',
+			items: [
+				{ href: '/phase2/data-communication', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase2/data-communication/svelte-stores',
+					label: '5.1 WebSocketオブジェクトとSvelteストア',
+					lessonId: 'phase2-data-communication-svelte-stores'
+				},
+				{
+					href: '/phase2/data-communication/send-receive',
+					label: '5.2 データ送受信パターン',
+					lessonId: 'phase2-data-communication-send-receive'
+				},
+				{
+					href: '/phase2/data-communication/error-handling',
+					label: '5.3 高度なエラーハンドリング',
+					lessonId: 'phase2-data-communication-error-handling'
+				}
+			]
+		},
+		{
+			title: 'Phase 2: フレーム・プロトコル (6. フレーム・プロトコル)',
+			items: [
+				{ href: '/phase2/frames-protocols', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase2/frames-protocols/frame-structure',
+					label: '6.1 WebSocketフレーム構造',
+					lessonId: 'phase2-frames-protocols-frame-structure'
+				},
+				{
+					href: '/phase2/frames-protocols/binary-data',
+					label: '6.2 バイナリデータ送信',
+					lessonId: 'phase2-frames-protocols-binary-data'
+				},
+				{
+					href: '/phase2/frames-protocols/subprotocols',
+					label: '6.3 WebSocketサブプロトコルの設計',
+					lessonId: 'phase2-frames-protocols-subprotocols'
+				},
+				{
+					href: '/phase2/frames-protocols/graphql-ws',
+					label: '6.4 GraphQL WebSocket統合',
+					lessonId: 'phase2-frames-protocols-graphql-ws'
+				},
+				{
+					href: '/phase2/frames-protocols/mqtt',
+					label: '6.5 MQTT over WebSocket',
+					lessonId: 'phase2-frames-protocols-mqtt'
+				},
+				{
+					href: '/phase2/frames-protocols/custom',
+					label: '6.6 カスタムプロトコル設計',
+					lessonId: 'phase2-frames-protocols-custom'
+				}
+			]
+		},
+		{
+			title: 'Phase 2: 高度なトピック (7. 高度なトピック)',
+			items: [
+				{ href: '/phase2/advanced-topics', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase2/advanced-topics/security',
+					label: '7.1 セキュリティ実装',
+					lessonId: 'phase2-advanced-topics-security'
+				},
+				{
+					href: '/phase2/advanced-topics/pwa-integration',
+					label: '7.2 PWAとWebSocketの統合',
+					lessonId: 'phase2-advanced-topics-pwa-integration'
+				},
+				{
+					href: '/phase2/advanced-topics/scalability',
+					label: '7.3 スケーラビリティと負荷対策',
+					lessonId: 'phase2-advanced-topics-scalability'
+				}
+			]
+		},
+		{
+			title: 'Phase 3: テスト手法 (8. テスト手法)',
+			items: [
+				{ href: '/phase3/testing', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase3/testing/client-testing',
+					label: '8.1 クライアント側テスト',
+					lessonId: 'phase3-testing-client-testing'
+				},
+				{
+					href: '/phase3/testing/server-testing',
+					label: '8.2 サーバー側テスト',
+					lessonId: 'phase3-testing-server-testing'
+				},
+				{
+					href: '/phase3/testing/e2e-testing',
+					label: '8.3 E2Eテスト',
+					lessonId: 'phase3-testing-e2e-testing'
+				}
+			]
+		},
+		{
+			title: 'Phase 3: 技術比較 (9. 技術比較)',
+			items: [
+				{ href: '/phase3/comparison', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase3/comparison/alternatives',
+					label: '9.1 代替技術の比較',
+					lessonId: 'phase3-comparison-alternatives'
+				},
+				{
+					href: '/phase3/comparison/selection-criteria',
+					label: '9.2 適用判断基準',
+					lessonId: 'phase3-comparison-selection-criteria'
+				}
+			]
+		},
+		{
+			title: 'Phase 4: 実践プロジェクト (10. 実践プロジェクト)',
+			items: [
+				{ href: '/phase4/projects', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase4/projects/chat-app',
+					label: '10.1 PWA対応リアルタイムチャット',
+					lessonId: 'phase4-projects-chat-app'
+				},
+				{
+					href: '/phase4/projects/collaborative-editor',
+					label: '10.2 リアルタイム共同編集システム',
+					lessonId: 'phase4-projects-collaborative-editor'
+				}
+			]
+		},
+		{
+			title: 'Phase 4: Socket.IO (オプション)',
+			items: [
+				{ href: '/phase4/socket-io', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase4/socket-io/overview',
+					label: 'Socket.IO概要と活用場面',
+					lessonId: 'phase4-socket-io-overview'
+				}
 			]
 		},
 		{

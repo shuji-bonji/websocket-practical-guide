@@ -39,6 +39,7 @@
 			<!-- Page content -->
 			<div class="py-6">
 				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<!-- Layout slot for page content - this is the correct usage in SvelteKit layouts -->
 					<slot />
 				</div>
 			</div>

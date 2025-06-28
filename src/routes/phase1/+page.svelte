@@ -304,17 +304,17 @@
 		// 新しいPhase構造のlessonIdマッピング
 		const lessonPaths: Record<string, string> = {
 			'phase1-introduction-what-is-websocket': '/phase1/introduction/what-is-websocket',
-			'phase1-introduction-http-limitations': '/phase1/introduction/http-limitations', 
+			'phase1-introduction-http-limitations': '/phase1/introduction/http-limitations',
 			'phase1-use-cases': '/phase1/introduction/use-cases',
 			'phase1-introduction-comparison': '/phase1/introduction/comparison',
 			// 古いIDとの後方互換性
 			'1.1': '/phase1/introduction/what-is-websocket',
-			'1.2': '/phase1/introduction/http-limitations', 
+			'1.2': '/phase1/introduction/http-limitations',
 			'1.3': '/phase1/introduction/use-cases',
 			'1.4': '/phase1/introduction/comparison'
 		};
-		
-		return lessonPaths[lessonId] || `/lessons/${lessonId}`;
+
+		return lessonPaths[lessonId] || `/phase1/introduction/${lessonId}`;
 	}
 
 	// 次の推奨レッスンを取得
@@ -383,10 +383,7 @@
 				<div class="hidden lg:block">
 					<div class="text-center">
 						<div class="text-blue-200 text-sm mb-2">次の推奨レッスン</div>
-						<a
-							href={nextLesson.path}
-							class="btn-primary bg-white text-blue-600 hover:bg-gray-50"
-						>
+						<a href={nextLesson.path} class="btn-primary bg-white text-blue-600 hover:bg-gray-50">
 							{nextLesson.lessonId}: {nextLesson.title}
 						</a>
 					</div>
@@ -464,7 +461,9 @@
 									</div>
 								</div>
 							</div>
-							<a href={getLessonPath(section.lessons[0].id)} class="btn-secondary"> セクション開始 </a>
+							<a href={getLessonPath(section.lessons[0].id)} class="btn-secondary">
+								セクション開始
+							</a>
 						</div>
 						<p class="text-gray-600">{section.description}</p>
 					</div>

@@ -128,10 +128,11 @@ src/routes/
 ├── +page.svelte          # / (トップページ)
 ├── about/
 │   └── +page.svelte      # /about
-├── lessons/
-│   ├── +page.svelte      # /lessons
-│   └── [slug]/
-│       └── +page.svelte  # /lessons/[slug] (動的ルート)
+├── phase1/
+│   ├── +page.svelte      # /phase1 (Phase 1概要)
+│   └── introduction/
+│       └── [lesson]/
+│           └── +page.svx # /phase1/introduction/[lesson] (学習コンテンツ)
 └── +layout.svelte        # 全ページ共通レイアウト
 ```
 

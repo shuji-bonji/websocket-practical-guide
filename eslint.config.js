@@ -35,6 +35,10 @@ export default ts.config(
 				parser: ts.parser,
 				svelteConfig
 			}
+		},
+		rules: {
+			// <slot /> usage in layout files is correct and necessary
+			'svelte/slot-element-deprecated': 'off'
 		}
 	}
 );

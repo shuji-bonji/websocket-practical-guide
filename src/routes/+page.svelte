@@ -140,22 +140,20 @@
 					</svg>
 				</a>
 
-				{#if nextLesson}
-					<a
-						href="/lessons/{nextLesson.lessonId}"
-						class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-primary-700 transition-colors duration-200"
-					>
-						学習を始める
-						<svg class="ml-2 -mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4V8a3 3 0 013-3h6a3 3 0 013 3v2M7 21h10a2 2 0 002-2v-5a2 2 0 00-2-2H7a2 2 0 00-2 2v5a2 2 0 002 2z"
-							/>
-						</svg>
-					</a>
-				{/if}
+				<a
+					href="/phase1"
+					class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-primary-700 transition-colors duration-200"
+				>
+					学習を始める
+					<svg class="ml-2 -mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4V8a3 3 0 013-3h6a3 3 0 013 3v2M7 21h10a2 2 0 002-2v-5a2 2 0 00-2-2H7a2 2 0 00-2 2v5a2 2 0 002 2z"
+						/>
+					</svg>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -198,8 +196,8 @@
 				{#if nextLesson}
 					<div class="mt-6">
 						<p class="text-gray-600 mb-3">次の推奨レッスン:</p>
-						<a href="/lessons/{nextLesson.lessonId}" class="btn-primary">
-							{nextLesson.lessonId} - Phase {nextLesson.phaseNumber}: {nextLesson.phaseName}
+						<a href="/phase{nextLesson.phaseNumber}" class="btn-primary">
+							Phase {nextLesson.phaseNumber}: {nextLesson.phaseName}
 						</a>
 					</div>
 				{:else}
