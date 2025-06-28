@@ -11,6 +11,7 @@ difficulty: "初級"
   import InteractiveDemo from '$lib/components/learning/InteractiveDemo.svelte';
   import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
   import NextLesson from '$lib/components/learning/NextLesson.svelte';
+  import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
 <LessonIntro 
@@ -40,7 +41,7 @@ difficulty: "初級"
 
 ### 従来のHTTP通信との根本的違い
 
-従来のHTTP通信では、以下のような制限がありました：
+従来のHTTP通信では、以下のような制限がありました。
 
 - **リクエスト・レスポンス型**：クライアントからの要求に対してサーバーが応答する一方向通信
 - **接続の都度確立**：毎回新しい接続を確立し、レスポンス後に切断
@@ -51,10 +52,47 @@ WebSocketは、これらの制限を解決し、**持続的で双方向のリア
 </div>
 </div>
 
-<ConceptDiagram 
-  title="WebSocket vs HTTP通信パターン"
-  type="comparison"
-/>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center">HTTP通信パターン</h3>
+    <Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバー
+    
+    C->>S: HTTP Request
+    S-->>C: HTTP Response
+    Note over C,S: 接続終了
+    
+    C->>S: HTTP Request
+    S-->>C: HTTP Response
+    Note over C,S: 接続終了
+    
+    C->>S: HTTP Request
+    S-->>C: HTTP Response
+    Note over C,S: 接続終了
+    `} />
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center">WebSocket通信パターン</h3>
+    <Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバー
+    
+    C->>S: Handshake Request
+    S-->>C: Handshake Response
+    Note over C,S: 持続的接続確立
+    
+    C->>S: メッセージ
+    S-->>C: メッセージ
+    C->>S: メッセージ
+    S-->>C: メッセージ
+    Note over C,S: 双方向通信継続
+    `} />
+  </div>
+</div>
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -63,7 +101,7 @@ WebSocketは、これらの制限を解決し、**持続的で双方向のリア
 
 ### なぜ最初にブラウザ標準APIから学ぶのか？
 
-多くの学習教材では**Socket.IO**のようなライブラリから始めることがありますが、このコースでは**ブラウザ標準WebSocket API**を最初に学習します。理由は以下の通りです：
+多くの学習教材では**Socket.IO**のようなライブラリから始めることがありますが、このコースでは**ブラウザ標準WebSocket API**を最初に学習します。理由は以下の通りです。
 
 #### 1. **技術の本質理解**
 - WebSocketプロトコルの動作原理を直接理解できる
@@ -82,7 +120,7 @@ WebSocketは、これらの制限を解決し、**持続的で双方向のリア
 
 ### 2016年以降のブラウザ対応状況
 
-WebSocket APIは**2011年にRFC 6455として標準化**され、現在では：
+WebSocket APIは**2011年にRFC 6455として標準化**され、現在では。
 
 - **Chrome 16+** (2012年〜)
 - **Firefox 11+** (2012年〜)  
@@ -94,7 +132,7 @@ WebSocket APIは**2011年にRFC 6455として標準化**され、現在では：
 
 ## ⚡ リアルタイム通信の必要性
 
-現代のWebアプリケーションでは、以下のようなユースケースでリアルタイム通信が必要とされています：
+現代のWebアプリケーションでは、以下のようなユースケースでリアルタイム通信が必要とされています。
 
 ### 1. **ユーザー体験の向上**
 - **即座のフィードバック**：チャット、通知、ライブアップデート
@@ -116,7 +154,7 @@ WebSocket APIは**2011年にRFC 6455として標準化**され、現在では：
 
 ### RFC 6455の意義
 
-**RFC 6455**（2011年12月）は、WebSocketプロトコルの正式な標準仕様です：
+**RFC 6455**（2011年12月）は、WebSocketプロトコルの正式な標準仕様です。
 
 - **統一されたプロトコル仕様**：ブラウザ間の互換性確保
 - **セキュリティ考慮**：Origin検証、フレーミング仕様
@@ -170,14 +208,14 @@ WebSocket APIは**2011年にRFC 6455として標準化**され、現在では：
 
 ### WebSocketとHTTPの関係
 
-WebSocketは**HTTPを置き換える技術ではありません**。適切な使い分けが重要です：
+WebSocketは**HTTPを置き換える技術ではありません**。適切な使い分けが重要です。
 
 - **HTTP**：リソース取得、RESTful API、静的コンテンツ配信
 - **WebSocket**：リアルタイム通信、双方向データ交換、持続的セッション
 
 ### 次のレッスンへの準備
 
-このレッスンでWebSocketの基本概念を理解しました。次のレッスンでは：
+このレッスンでWebSocketの基本概念を理解しました。次のレッスンでは。
 
 - **HTTPの具体的な制限**とその解決方法
 - **ポーリング手法の問題点**の詳細分析  
