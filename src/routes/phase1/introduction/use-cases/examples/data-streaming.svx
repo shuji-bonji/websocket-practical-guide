@@ -1,0 +1,609 @@
+---
+title: 'データ配信・ストリーミングシステム詳細'
+description: '株価情報、スポーツスコア、ライブデータ配信のWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+# 📊 データ配信・ストリーミングシステム詳細
+
+## 1. 金融データ配信プラットフォーム
+
+### リアルタイム株価配信システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "データソース"
+        EX1[📈 NYSE] --> AGG[📊 データ集約器]
+        EX2[📈 NASDAQ] --> AGG
+        EX3[📈 FOREX] --> AGG
+        EX4[📈 CRYPTO] --> AGG
+    end
+    
+    subgraph "データ処理パイプライン"
+        AGG --> VAL[✅ データ検証]
+        VAL --> ENR[🔄 データ拡張]
+        ENR --> CALC[⚡ 指標計算]
+        CALC --> NORM[📏 正規化]
+    end
+    
+    subgraph "配信システム"
+        NORM --> WS[WebSocketハブ]
+        WS --> FLT[🔍 フィルタリング]
+        FLT --> COMP[🗜️ 圧縮]
+        COMP --> DIST[📡 配信]
+    end
+    
+    subgraph "クライアント"
+        DIST --> T1[💻 トレーディングデスク]
+        DIST --> T2[📱 モバイルアプリ]
+        DIST --> T3[📊 分析ツール]
+        DIST --> T4[🤖 アルゴ取引]
+    end
+    
+    subgraph "補助機能"
+        HIST[📚 履歴データ] --> ENR
+        ALT[🚨 アラート] --> WS
+        CACHE[⚡ Redisキャッシュ] --> WS
+    end
+    
+    style AGG fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style DIST fill:#fff3e0
+    style T1 fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 高頻度取引データ配信
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant EX as 取引所
+    participant AGG as データ集約器
+    participant WS as WebSocketサーバー
+    participant HFT as 高頻度取引システム
+    participant UI as ユーザーUI
+
+    Note over EX,UI: 1秒間に数千件の更新
+    
+    loop 高頻度データフィード
+        EX->>AGG: 価格更新 (1ms間隔)
+        AGG->>AGG: バッチ処理 (10ms)
+        AGG->>WS: 差分データ配信
+        
+        alt HFTクライアント
+            WS->>HFT: 即座配信 (<1ms)
+            HFT->>HFT: アルゴリズム判定
+        else 一般クライアント
+            WS->>UI: バッファ済み配信 (100ms)
+            UI->>UI: UI更新
+        end
+    end
+    
+    Note over AGG,HFT: レイテンシ最適化
+    Note over WS,UI: スループット最適化
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. スポーツライブスコアシステム
+
+### リアルタイムスコア配信
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "データ収集"
+        S1[⚽ サッカー] --> DC[📊 データコレクター]
+        S2[🏀 バスケ] --> DC
+        S3[⚾ 野球] --> DC
+        S4[🏈 アメフト] --> DC
+    end
+    
+    subgraph "イベント処理"
+        DC --> EP[⚡ イベントプロセッサー]
+        EP --> ET[🏷️ イベントタイプ分類]
+        ET --> PR[📊 優先度設定]
+        PR --> FMT[📝 フォーマット]
+    end
+    
+    subgraph "配信エンジン"
+        FMT --> WS[WebSocketサーバー]
+        WS --> SUB[👥 購読管理]
+        SUB --> PUSH[📤 プッシュ配信]
+    end
+    
+    subgraph "配信先"
+        PUSH --> SP[📱 スポーツアプリ]
+        PUSH --> WEB[💻 Webサイト]
+        PUSH --> TV[📺 放送局]
+        PUSH --> BET[🎰 賭博サイト]
+    end
+    
+    subgraph "補助システム"
+        STAT[📈 統計計算] --> EP
+        PRED[🔮 予測エンジン] --> EP
+        NOTI[🔔 通知システム] --> WS
+    end
+    
+    style DC fill:#e8f5e8
+    style EP fill:#f3e5f5
+    style WS fill:#fff3e0
+    style PUSH fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### イベント優先度管理
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "イベント分類"
+        E1[⚽ ゴール] --> P1[🔴 最高優先度]
+        E2[🟨 イエローカード] --> P2[🟡 高優先度]
+        E3[👤 選手交代] --> P3[🟢 中優先度]
+        E4[📊 統計更新] --> P4[⚪ 低優先度]
+    end
+    
+    subgraph "配信制御"
+        P1 --> D1[📡 即座配信]
+        P2 --> D2[📡 1秒以内配信]
+        P3 --> D3[📡 5秒以内配信]
+        P4 --> D4[📡 バッチ配信]
+    end
+    
+    subgraph "対象クライアント"
+        D1 --> ALL[👥 全クライアント]
+        D2 --> PREM[💎 プレミアム]
+        D3 --> PREM
+        D3 --> STD[📱 スタンダード]
+        D4 --> STD
+    end
+    
+    style P1 fill:#ffebee
+    style P2 fill:#fff8e1
+    style P3 fill:#e8f5e8
+    style P4 fill:#f3e5f5
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. IoTセンサーデータストリーミング
+
+### 大規模IoTデータ配信
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "IoTデバイス層 (数万台)"
+        T1[🌡️ 温度センサー] --> GW[🌐 IoTゲートウェイ]
+        H1[💧 湿度センサー] --> GW
+        P1[🔋 電力メーター] --> GW
+        G1[🌍 GPS tracker] --> GW
+        C1[📹 カメラ] --> GW
+    end
+    
+    subgraph "エッジ処理"
+        GW --> EDGE[⚡ エッジコンピューティング]
+        EDGE --> AGG[📊 データ集約]
+        AGG --> FLT[🔍 フィルタリング]
+        FLT --> COMP[🗜️ 圧縮]
+    end
+    
+    subgraph "クラウド処理"
+        COMP --> CLOUD[☁️ クラウドプラットフォーム]
+        CLOUD --> ML[🤖 ML処理]
+        ML --> ANL[📈 分析エンジン]
+        ANL --> WS[WebSocketサーバー]
+    end
+    
+    subgraph "配信先"
+        WS --> DASH[📊 ダッシュボード]
+        WS --> MOB[📱 モバイルアプリ]
+        WS --> API[🔌 APIクライアント]
+        WS --> ALERT[🚨 アラートシステム]
+    end
+    
+    style GW fill:#e3f2fd
+    style EDGE fill:#e8f5e8
+    style CLOUD fill:#f3e5f5
+    style WS fill:#fff3e0
+`} />
+
+<div class="bg-white округ gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### データ圧縮・最適化戦略
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "生データ"
+        RAW[📊 Raw Data] --> SIZE[💾 1MB/sec]
+    end
+    
+    subgraph "圧縮パイプライン"
+        RAW --> DELTA[🔄 差分圧縮]
+        DELTA --> GZIP[🗜️ Gzip圧縮]
+        GZIP --> BATCH[📦 バッチング]
+    end
+    
+    subgraph "適応配信"
+        BATCH --> HIGH[📡 高品質 (100KB/sec)]
+        BATCH --> MED[📡 中品質 (50KB/sec)]
+        BATCH --> LOW[📡 低品質 (20KB/sec)]
+    end
+    
+    subgraph "クライアント別"
+        HIGH --> DESK[💻 デスクトップ]
+        MED --> TAB[📱 タブレット]
+        LOW --> MOB[📱 モバイル]
+    end
+    
+    style DELTA fill:#e3f2fd
+    style GZIP fill:#e8f5e8
+    style BATCH fill:#f3e5f5
+    style HIGH fill:#fff3e0
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. ライブメディアストリーミング
+
+### ライブ配信システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "コンテンツ生成"
+        C1[📹 カメラ] --> ENC[🔄 エンコーダー]
+        C2[🎤 マイク] --> ENC
+        C3[🖥️ 画面共有] --> ENC
+    end
+    
+    subgraph "ストリーミング処理"
+        ENC --> PROC[⚡ ストリーミングプロセッサー]
+        PROC --> TRANS[🔄 トランスコーディング]
+        TRANS --> CDN[🌐 CDNエッジ]
+    end
+    
+    subgraph "配信制御"
+        CDN --> WS[WebSocketコントローラー]
+        WS --> META[📋 メタデータ配信]
+        WS --> CHAT[💬 チャット同期]
+        WS --> STAT[📊 統計配信]
+    end
+    
+    subgraph "視聴者側"
+        META --> PLAYER[▶️ プレイヤー]
+        CHAT --> UI[💻 チャットUI]
+        STAT --> DASH[📊 視聴統計]
+    end
+    
+    subgraph "インタラクション"
+        UI --> WS
+        PLAYER --> WS
+        DASH --> WS
+    end
+    
+    style ENC fill:#f3e5f5
+    style PROC fill:#e8f5e8
+    style WS fill:#fff3e0
+    style PLAYER fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 5. 高可用性・スケーラビリティ設計
+
+### 分散ストリーミングアーキテクチャ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "グローバル分散"
+        US[🇺🇸 US Region] --> LB[⚖️ Global Load Balancer]
+        EU[🇪🇺 EU Region] --> LB
+        ASIA[🌏 Asia Region] --> LB
+    end
+    
+    subgraph "リージョナル構成"
+        LB --> R1[📡 WebSocketクラスター1]
+        LB --> R2[📡 WebSocketクラスター2]
+        LB --> R3[📡 WebSocketクラスターN]
+    end
+    
+    subgraph "データレプリケーション"
+        R1 --> MQ[📤 メッセージキュー]
+        R2 --> MQ
+        R3 --> MQ
+        MQ --> SYNC[🔄 データ同期]
+    end
+    
+    subgraph "フェイルオーバー"
+        SYNC --> HEALTH[💓 ヘルスチェック]
+        HEALTH --> SWITCH[🔄 自動切り替え]
+        SWITCH --> BACKUP[🛡️ バックアップ系]
+    end
+    
+    subgraph "監視・復旧"
+        HEALTH --> MON[📊 監視システム]
+        MON --> ALERT[🚨 アラート]
+        ALERT --> OPS[👨‍💻 運用チーム]
+    end
+    
+    style LB fill:#f3e5f5
+    style MQ fill:#e8f5e8
+    style HEALTH fill:#fff3e0
+    style MON fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 6. パフォーマンス最適化
+
+### レイテンシ最適化戦略
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant DS as データソース
+    participant CACHE as キャッシュ層
+    participant WS as WebSocketサーバー
+    participant CLIENT as クライアント
+
+    Note over DS,CLIENT: 目標レイテンシ < 10ms
+    
+    DS->>CACHE: データ更新 (1ms)
+    CACHE->>CACHE: 差分計算 (2ms)
+    CACHE->>WS: 変更通知 (1ms)
+    WS->>CLIENT: 即座配信 (3ms)
+    CLIENT->>CLIENT: 描画更新 (3ms)
+    
+    Note over DS,CLIENT: 合計レイテンシ: 10ms
+    
+    alt 高頻度データ
+        DS->>CACHE: バッチ更新 (5ms)
+        CACHE->>WS: 圧縮配信 (2ms)
+        WS->>CLIENT: ストリーミング (3ms)
+    end
+    
+    Note over CACHE,CLIENT: スループット優先モード
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 💡 実装のベストプラクティス
+
+### 1. 効率的なデータ差分配信
+```javascript
+class EfficientDataStreaming {
+  constructor() {
+    this.lastSnapshot = new Map();
+    this.subscribers = new Map();
+  }
+  
+  updateData(symbol, newData) {
+    const lastData = this.lastSnapshot.get(symbol);
+    const diff = this.calculateDiff(lastData, newData);
+    
+    if (diff.hasChanges) {
+      this.broadcastDiff(symbol, diff);
+      this.lastSnapshot.set(symbol, newData);
+    }
+  }
+  
+  calculateDiff(oldData, newData) {
+    const changes = {};
+    let hasChanges = false;
+    
+    for (const [key, value] of Object.entries(newData)) {
+      if (!oldData || oldData[key] !== value) {
+        changes[key] = value;
+        hasChanges = true;
+      }
+    }
+    
+    return { hasChanges, changes };
+  }
+  
+  broadcastDiff(symbol, diff) {
+    const subscribers = this.subscribers.get(symbol) || [];
+    const message = {
+      type: 'diff',
+      symbol,
+      changes: diff.changes,
+      timestamp: Date.now()
+    };
+    
+    subscribers.forEach(ws => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(message));
+      }
+    });
+  }
+}
+```
+
+### 2. 適応的品質制御
+```javascript
+class AdaptiveQualityControl {
+  constructor() {
+    this.clientProfiles = new Map();
+    this.qualityLevels = {
+      high: { updateRate: 100, compression: 'none' },
+      medium: { updateRate: 500, compression: 'gzip' },
+      low: { updateRate: 2000, compression: 'heavy' }
+    };
+  }
+  
+  adjustQualityForClient(clientId, networkStats) {
+    const profile = this.clientProfiles.get(clientId) || {};
+    
+    if (networkStats.latency > 1000 || networkStats.bandwidth < 1000000) {
+      profile.quality = 'low';
+    } else if (networkStats.latency > 500 || networkStats.bandwidth < 5000000) {
+      profile.quality = 'medium';
+    } else {
+      profile.quality = 'high';
+    }
+    
+    this.clientProfiles.set(clientId, profile);
+    return this.qualityLevels[profile.quality];
+  }
+  
+  sendDataToClient(clientId, data) {
+    const profile = this.clientProfiles.get(clientId);
+    const quality = this.qualityLevels[profile.quality];
+    
+    const processedData = this.processDataForQuality(data, quality);
+    this.sendToWebSocket(clientId, processedData);
+  }
+}
+```
+
+### 3. 高頻度データバッファリング
+```javascript
+class HighFrequencyDataBuffer {
+  constructor(flushInterval = 100) {
+    this.buffer = new Map();
+    this.flushInterval = flushInterval;
+    this.startFlushing();
+  }
+  
+  addData(key, data) {
+    if (!this.buffer.has(key)) {
+      this.buffer.set(key, []);
+    }
+    
+    this.buffer.get(key).push({
+      data,
+      timestamp: Date.now()
+    });
+  }
+  
+  startFlushing() {
+    setInterval(() => {
+      this.flushBuffer();
+    }, this.flushInterval);
+  }
+  
+  flushBuffer() {
+    for (const [key, dataPoints] of this.buffer.entries()) {
+      if (dataPoints.length > 0) {
+        const aggregated = this.aggregateDataPoints(dataPoints);
+        this.sendAggregatedData(key, aggregated);
+        this.buffer.set(key, []); // バッファクリア
+      }
+    }
+  }
+  
+  aggregateDataPoints(dataPoints) {
+    // 平均値、最大値、最小値などの集約
+    return {
+      count: dataPoints.length,
+      latest: dataPoints[dataPoints.length - 1].data,
+      average: this.calculateAverage(dataPoints),
+      timeRange: {
+        start: dataPoints[0].timestamp,
+        end: dataPoints[dataPoints.length - 1].timestamp
+      }
+    };
+  }
+}
+```
+
+### 4. 接続プール管理
+```javascript
+class WebSocketConnectionPool {
+  constructor(maxConnections = 10000) {
+    this.connections = new Map();
+    this.connectionGroups = new Map(); // topic -> Set<connectionId>
+    this.maxConnections = maxConnections;
+  }
+  
+  addConnection(connectionId, ws, topics = []) {
+    if (this.connections.size >= this.maxConnections) {
+      throw new Error('Connection limit reached');
+    }
+    
+    this.connections.set(connectionId, {
+      ws,
+      topics: new Set(topics),
+      lastActivity: Date.now(),
+      messageCount: 0
+    });
+    
+    topics.forEach(topic => {
+      if (!this.connectionGroups.has(topic)) {
+        this.connectionGroups.set(topic, new Set());
+      }
+      this.connectionGroups.get(topic).add(connectionId);
+    });
+  }
+  
+  broadcastToTopic(topic, message) {
+    const connections = this.connectionGroups.get(topic);
+    if (!connections) return;
+    
+    const messageStr = JSON.stringify(message);
+    let successCount = 0;
+    
+    connections.forEach(connectionId => {
+      const conn = this.connections.get(connectionId);
+      if (conn && conn.ws.readyState === WebSocket.OPEN) {
+        try {
+          conn.ws.send(messageStr);
+          conn.messageCount++;
+          conn.lastActivity = Date.now();
+          successCount++;
+        } catch (error) {
+          this.removeConnection(connectionId);
+        }
+      }
+    });
+    
+    return successCount;
+  }
+}
+```
+
+この包括的なデータ配信システムアーキテクチャにより、高性能でスケーラブルなリアルタイムデータ配信を実現できます。
+
+</div>
+</div>

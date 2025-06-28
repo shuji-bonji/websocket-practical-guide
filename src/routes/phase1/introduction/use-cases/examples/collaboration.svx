@@ -1,0 +1,433 @@
+---
+title: '共同編集システム詳細'
+description: 'リアルタイム文書編集、ホワイトボード、コードレビューシステムのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+# 🤝 共同編集システム詳細
+
+## 1. リアルタイム文書編集
+
+### Operational Transformation (OT) アーキテクチャ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "クライアント側"
+        A[👤 編集者A] --> A1[📝 ローカルエディタ]
+        B[👤 編集者B] --> B1[📝 ローカルエディタ]
+        C[👤 編集者C] --> C1[📝 ローカルエディタ]
+    end
+    
+    A1 -->|操作送信| OT[🔄 OTサーバー]
+    B1 -->|操作送信| OT
+    C1 -->|操作送信| OT
+    
+    subgraph "サーバー側処理"
+        OT --> TR[🔀 操作変換エンジン]
+        TR --> ST[📊 状態管理]
+        ST --> HB[📚 履歴バッファ]
+        TR --> CF[⚡ 競合解決]
+    end
+    
+    OT -->|変換済み操作| A1
+    OT -->|変換済み操作| B1
+    OT -->|変換済み操作| C1
+    
+    subgraph "永続化"
+        ST --> DB[💾 文書データベース]
+        HB --> HS[📜 履歴ストレージ]
+    end
+    
+    style OT fill:#f3e5f5
+    style TR fill:#e8f5e8
+    style CF fill:#fff3e0
+    style ST fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 操作変換の詳細フロー
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant A as 編集者A
+    participant S as OTサーバー
+    participant B as 編集者B
+    
+    Note over A,B: 初期状態: "Hello"
+    
+    A->>S: Insert(5, " World") -> "Hello World"
+    B->>S: Insert(0, "Hi ") -> "Hi Hello"
+    
+    S->>S: 競合検知・操作変換
+    Note over S: Transform: Insert(5, " World") vs Insert(0, "Hi ")
+    Note over S: 結果: Insert(8, " World") (位置調整)
+    
+    S->>A: Apply: Insert(0, "Hi ")
+    S->>B: Apply: Insert(8, " World")
+    
+    Note over A,B: 最終状態: "Hi Hello World"
+    
+    A->>A: ローカル状態更新
+    B->>B: ローカル状態更新
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. CRDT (Conflict-free Replicated Data Types) システム
+
+### CRDTベースの分散編集
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "編集者ノード"
+        A[👤 ノードA] --> A1[📄 CRDT状態A]
+        B[👤 ノードB] --> B1[📄 CRDT状態B]
+        C[👤 ノードC] --> C1[📄 CRDT状態C]
+    end
+    
+    A1 <-->|同期| B1
+    B1 <-->|同期| C1
+    A1 <-->|同期| C1
+    
+    subgraph "CRDT操作"
+        A1 --> OP1[🔧 挿入操作]
+        B1 --> OP2[🔧 削除操作]
+        C1 --> OP3[🔧 更新操作]
+    end
+    
+    subgraph "自動マージ"
+        OP1 --> M[🔄 自動マージ]
+        OP2 --> M
+        OP3 --> M
+        M --> CON[✅ 収束状態]
+    end
+    
+    style A1 fill:#e3f2fd
+    style B1 fill:#e8f5e8
+    style C1 fill:#fff3e0
+    style M fill:#f3e5f5
+    style CON fill:#e1f5fe
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. リアルタイムホワイトボード
+
+### 描画データのストリーミング
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "入力層"
+        M[🖱️ マウス/タッチ] --> C[📐 座標取得]
+        C --> S[✏️ ストローク生成]
+    end
+    
+    subgraph "処理層"
+        S --> SC[🎨 スタイル計算]
+        SC --> OPT[⚡ 最適化処理]
+        OPT --> COMP[🗜️ 圧縮]
+    end
+    
+    subgraph "配信層"
+        COMP --> WS[WebSocketサーバー]
+        WS --> BR[📡 ブロードキャスト]
+    end
+    
+    subgraph "レンダリング層"
+        BR --> R1[🖼️ レンダラー1]
+        BR --> R2[🖼️ レンダラー2]
+        BR --> R3[🖼️ レンダラーN]
+    end
+    
+    subgraph "同期管理"
+        WS --> SYNC[🔄 同期エンジン]
+        SYNC --> VS[📍 バージョン管理]
+        VS --> HIST[📚 履歴管理]
+    end
+    
+    style WS fill:#f3e5f5
+    style SYNC fill:#e8f5e8
+    style OPT fill:#fff3e0
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 描画イベントの最適化
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant U as ユーザー
+    participant C as クライアント
+    participant S as WebSocketサーバー
+    participant O as 他のクライアント
+    
+    U->>C: 描画開始
+    C->>C: ローカル描画
+    C->>S: ストローク開始イベント
+    
+    loop 描画中 (高頻度)
+        U->>C: 座標更新
+        C->>C: ローカル描画継続
+        C->>C: バッファリング (16ms間隔)
+    end
+    
+    C->>S: バッファ済み座標群
+    S->>O: 最適化済みストローク
+    O->>O: 補間レンダリング
+    
+    U->>C: 描画終了
+    C->>S: ストローク完了イベント
+    S->>O: 最終ストローク
+    
+    Note over C,O: リアルタイム描画 + 最適化配信
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. コード共同レビューシステム
+
+### Live Code Review アーキテクチャ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "開発者"
+        D1[👨‍💻 開発者1] --> E1[💻 エディタ1]
+        D2[👩‍💻 開発者2] --> E2[💻 エディタ2]
+        D3[👨‍💻 レビュアー] --> E3[💻 エディタ3]
+    end
+    
+    E1 --> WS[WebSocketサーバー]
+    E2 --> WS
+    E3 --> WS
+    
+    subgraph "コード管理"
+        WS --> CM[📝 コード管理]
+        CM --> DI[🔍 差分計算]
+        DI --> SY[🔄 シンタックス解析]
+        SY --> AN[📊 静的解析]
+    end
+    
+    subgraph "レビュー機能"
+        WS --> RC[💬 レビューコメント]
+        RC --> TH[🧵 スレッド管理]
+        TH --> NO[🔔 通知システム]
+    end
+    
+    subgraph "統合機能"
+        AN --> CI[🔧 CI/CD連携]
+        CI --> TEST[🧪 自動テスト]
+        TEST --> REP[📊 レポート生成]
+    end
+    
+    WS --> E1
+    WS --> E2
+    WS --> E3
+    
+    style WS fill:#f3e5f5
+    style CM fill:#e8f5e8
+    style RC fill:#fff3e0
+    style AN fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 5. カーソル・選択範囲の同期
+
+### リアルタイム位置表示
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "ユーザーA"
+        A[👤 カーソル位置] --> A1[📍 座標計算]
+        A1 --> A2[🎨 スタイル適用]
+    end
+    
+    A2 --> WS[WebSocketサーバー]
+    
+    subgraph "位置管理"
+        WS --> PM[📐 位置マッピング]
+        PM --> CM[🔄 座標変換]
+        CM --> UM[👥 ユーザー管理]
+    end
+    
+    subgraph "ユーザーB"
+        WS --> B1[📍 座標復元]
+        B1 --> B2[👻 ゴーストカーソル]
+        B2 --> B[👤 視覚表示]
+    end
+    
+    subgraph "ユーザーC"
+        WS --> C1[📍 座標復元]
+        C1 --> C2[👻 ゴーストカーソル]
+        C2 --> C[👤 視覚表示]
+    end
+    
+    style WS fill:#f3e5f5
+    style PM fill:#e8f5e8
+    style A2 fill:#e3f2fd
+    style B2 fill:#fff3e0
+    style C2 fill:#fce4ec
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 6. パフォーマンス最適化戦略
+
+### データ圧縮・バッチング
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "クライアント最適化"
+        I[⌨️ 入力イベント] --> B[📦 バッチング]
+        B --> C[🗜️ 圧縮]
+        C --> D[🔄 差分計算]
+    end
+    
+    subgraph "ネットワーク最適化"
+        D --> RT[⏱️ レート制限]
+        RT --> PR[📊 優先度判定]
+        PR --> WS[WebSocket送信]
+    end
+    
+    subgraph "サーバー最適化"
+        WS --> DC[🔍 重複除去]
+        DC --> ME[🔄 マージ処理]
+        ME --> BC[📡 ブロードキャスト]
+    end
+    
+    subgraph "受信側最適化"
+        BC --> IN[📥 補間処理]
+        IN --> AN[🎬 アニメーション]
+        AN --> RE[🖼️ レンダリング]
+    end
+    
+    style B fill:#e3f2fd
+    style C fill:#e8f5e8
+    style RT fill:#fff3e0
+    style ME fill:#f3e5f5
+    style IN fill:#fce4ec
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 💡 実装のベストプラクティス
+
+### 1. 操作変換 (OT) 実装
+```javascript
+class OperationTransform {
+  transform(op1, op2) {
+    // 操作の種類に応じた変換ロジック
+    if (op1.type === 'insert' && op2.type === 'insert') {
+      return this.transformInsertInsert(op1, op2);
+    }
+    // その他の組み合わせ...
+  }
+  
+  transformInsertInsert(op1, op2) {
+    if (op1.position <= op2.position) {
+      return [op1, { ...op2, position: op2.position + op1.length }];
+    } else {
+      return [{ ...op1, position: op1.position + op2.length }, op2];
+    }
+  }
+}
+```
+
+### 2. CRDT 実装例
+```javascript
+class YjsDocument {
+  constructor() {
+    this.doc = new Y.Doc();
+    this.text = this.doc.getText('content');
+    this.setupWebSocketProvider();
+  }
+  
+  setupWebSocketProvider() {
+    this.provider = new WebsocketProvider(
+      'ws://localhost:1234', 
+      'document-room', 
+      this.doc
+    );
+  }
+  
+  insert(index, content) {
+    this.text.insert(index, content);
+    // 自動的に他のクライアントに同期
+  }
+}
+```
+
+### 3. リアルタイム描画最適化
+```javascript
+class OptimizedDrawing {
+  constructor() {
+    this.strokeBuffer = [];
+    this.throttleMs = 16; // 60fps
+    this.setupThrottling();
+  }
+  
+  setupThrottling() {
+    setInterval(() => {
+      if (this.strokeBuffer.length > 0) {
+        this.sendBatchedStrokes();
+        this.strokeBuffer = [];
+      }
+    }, this.throttleMs);
+  }
+  
+  addPoint(x, y) {
+    this.strokeBuffer.push({ x, y, timestamp: Date.now() });
+    this.renderLocally(x, y); // 即座にローカル描画
+  }
+}
+```
+
+### 4. 競合解決戦略
+- **Last Writer Wins**: 最後の書き込みが優先
+- **Timestamped Operations**: タイムスタンプベースの順序付け
+- **Consensus-based**: 複数ノードでの合意形成
+- **User Priority**: ユーザー権限に基づく優先度
+
+この詳細なアーキテクチャにより、スムーズで高性能な共同編集システムを構築できます。
+
+</div>
+</div>

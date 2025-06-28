@@ -1,0 +1,546 @@
+---
+title: 'WebSocket利用例アーキテクチャガイド'
+description: 'WebSocketの11の主要利用例を視覚的な図表で理解し、実際のアプリケーション設計に活用する'
+---
+
+<script>
+  import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+  import NextLesson from '$lib/components/learning/NextLesson.svelte';
+</script>
+
+<LessonIntro
+  lessonId="phase1-use-cases"
+  title="WebSocket利用例アーキテクチャガイド"
+  duration="90-120分"
+  difficulty="初級"
+  prerequisites={[
+    "WebSocketの基本概念",
+    "HTTP通信の理解",
+    "システムアーキテクチャの基礎"
+  ]}
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🎯 学習目標
+
+このガイドを完了すると、以下のことができるようになります：
+
+- WebSocketの11の主要利用例を視覚的に理解できる
+- 各利用例のアーキテクチャパターンを説明できる
+- 適切な利用場面を判断できる
+- 実際のシステム設計に応用できる
+
+## 📊 WebSocket利用例カテゴリー概要
+
+WebSocketは以下の11の主要カテゴリーで活用されています：
+
+</div>
+</div>
+
+<Mermaid chart={`
+mindmap
+  root((WebSocket利用例))
+    リアルタイム通信
+      チャット・メッセージング
+      音声・ビデオ通話
+      ライブ配信
+    共同作業
+      ドキュメント共同編集
+      ホワイトボード
+      コードレビュー
+    データ配信
+      株価・為替情報
+      スポーツスコア
+      IoTセンサーデータ
+    通知システム
+      プッシュ通知
+      アラート・警告
+      システム監視
+    エンターテイメント
+      オンラインゲーム
+      VR・メタバース
+      インタラクティブ体験
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 1. 📱 リアルタイム通信システム
+
+### チャット・メッセージングアプリケーション
+
+**代表例:** Discord, Slack, Teams, LINE
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    A[👤 ユーザーA] -->|メッセージ送信| C[WebSocketサーバー]
+    B[👤 ユーザーB] -->|メッセージ送信| C
+    D[👤 ユーザーC] -->|メッセージ送信| C
+    
+    C -->|即座に配信| A
+    C -->|即座に配信| B
+    C -->|即座に配信| D
+    C -->|即座に配信| E[👤 ユーザーD]
+    
+    F[💾 メッセージDB] --> C
+    C --> F
+    
+    subgraph "チャットルーム"
+        C
+        G[🔔 通知エンジン]
+        H[🛡️ 認証システム]
+    end
+    
+    C --> G
+    H --> C
+    
+    style A fill:#e3f2fd
+    style B fill:#e3f2fd
+    style D fill:#e3f2fd
+    style E fill:#e3f2fd
+    style C fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+**アーキテクチャの特徴:**
+- **双方向リアルタイム通信**: ユーザー間の即時メッセージ交換
+- **マルチキャスト配信**: 1つのメッセージを複数の受信者に同時配信
+- **永続化**: メッセージの保存と履歴管理
+- **通知連携**: オフラインユーザーへのプッシュ通知
+
+### 音声・ビデオ通話システム
+
+**代表例:** Zoom, Google Meet, WebRTC アプリケーション
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant A as 👤 発信者
+    participant S as WebSocketサーバー
+    participant B as 👤 受信者
+    participant M as 📹 メディアサーバー
+    
+    A->>S: 通話開始リクエスト
+    S->>B: 着信通知
+    B->>S: 通話受諾
+    S->>A: 接続確立
+    
+    A->>M: 音声・映像ストリーム
+    M->>B: リアルタイム配信
+    B->>M: 音声・映像ストリーム
+    M->>A: リアルタイム配信
+    
+    Note over A,B: WebSocket: シグナリング
+    Note over A,M: WebRTC: メディア配信
+    
+    A->>S: 通話終了
+    S->>B: 切断通知
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. 🤝 共同編集システム
+
+### リアルタイムドキュメント編集
+
+**代表例:** Google Docs, Notion, Figma, VS Code Live Share
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "クライアント側"
+        A[👤 編集者A] --> A1[📝 ローカルエディタ]
+        B[👤 編集者B] --> B1[📝 ローカルエディタ]
+        C[👤 編集者C] --> C1[📝 ローカルエディタ]
+    end
+    
+    A1 -->|変更操作| D[WebSocketサーバー]
+    B1 -->|変更操作| D
+    C1 -->|変更操作| D
+    
+    D -->|操作の同期| A1
+    D -->|操作の同期| B1
+    D -->|操作の同期| C1
+    
+    subgraph "サーバー側"
+        D --> E[🔄 操作変換エンジン]
+        E --> F[📚 文書状態管理]
+        F --> G[💾 永続化ストレージ]
+        E --> H[⚡ 競合解決システム]
+    end
+    
+    I[🎯 カーソル位置] --> D
+    D --> I
+    
+    style A1 fill:#e3f2fd
+    style B1 fill:#e3f2fd  
+    style C1 fill:#e3f2fd
+    style D fill:#f3e5f5
+    style E fill:#fff3e0
+    style F fill:#e8f5e8
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+**技術的特徴:**
+- **操作変換 (Operational Transformation)**: 同時編集時の競合解決
+- **カーソル同期**: 他ユーザーの編集位置をリアルタイム表示
+- **バージョン管理**: 変更履歴の追跡と復元機能
+- **権限管理**: 編集・閲覧権限の動的制御
+
+## 3. 📊 データ配信・ストリーミングシステム
+
+### 金融データ配信プラットフォーム
+
+**代表例:** Bloomberg Terminal, Yahoo Finance, 証券取引アプリ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "データソース"
+        A[📈 株式取引所] --> D[WebSocketハブ]
+        B[💱 為替市場] --> D
+        C[📰 ニュースフィード] --> D
+    end
+    
+    subgraph "配信システム"
+        D --> E[🔄 データ処理エンジン]
+        E --> F[⚡ リアルタイム配信]
+        E --> G[📊 分析エンジン]
+        G --> F
+    end
+    
+    subgraph "クライアント"
+        F -->|リアルタイム更新| H[💻 トレーダーダッシュボード]
+        F -->|リアルタイム更新| I[📱 モバイル取引アプリ]
+        F -->|リアルタイム更新| J[🖥️ 分析ツール]
+    end
+    
+    K[🔔 価格アラート] --> F
+    F --> K
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#fce4ec
+    style F fill:#f1f8e9
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### IoTデータ収集・監視システム
+
+**代表例:** スマートホーム, 産業IoT, 環境監視システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "IoTデバイス層"
+        A[🌡️ 温度センサー] --> G[WebSocketゲートウェイ]
+        B[💡 スマート照明] --> G
+        C[🔒 スマートロック] --> G
+        D[📹 監視カメラ] --> G
+        E[⚡ 電力メーター] --> G
+        F[💨 空気品質センサー] --> G
+    end
+    
+    G --> H[☁️ クラウドプラットフォーム]
+    
+    subgraph "クラウド処理"
+        H --> I[📊 データ分析エンジン]
+        I --> J[🤖 AI/ML処理]
+        J --> K[🔔 アラートシステム]
+        I --> L[📈 ダッシュボード]
+    end
+    
+    subgraph "ユーザーインターフェース"
+        L --> M[📱 スマートフォンアプリ]
+        L --> N[💻 Webダッシュボード]
+        K --> M
+        K --> N
+    end
+    
+    M -->|リモート制御| H
+    N -->|リモート制御| H
+    H -->|制御信号| G
+    
+    style A fill:#ffebee
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e1f5fe
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. 🔔 通知・アラートシステム
+
+### プッシュ通知配信システム
+
+**代表例:** Firebase Cloud Messaging, AWS SNS, カスタム通知システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "通知トリガー"
+        A[👤 ユーザーアクション] --> D[WebSocket通知サーバー]
+        B[⏰ スケジュール] --> D
+        C[🚨 システムイベント] --> D
+    end
+    
+    subgraph "通知処理"
+        D --> E[🎯 ターゲティング]
+        E --> F[📝 メッセージ生成]
+        F --> G[🔄 配信エンジン]
+    end
+    
+    subgraph "配信チャネル"
+        G -->|WebSocket| H[💻 Webアプリ]
+        G -->|WebSocket| I[📱 PWAアプリ]
+        G -->|プッシュAPI| J[📲 ネイティブアプリ]
+        G -->|WebSocket| K[🖥️ デスクトップアプリ]
+    end
+    
+    L[💾 通知履歴] --> D
+    D --> L
+    
+    M[📊 配信統計] --> G
+    G --> M
+    
+    style D fill:#f3e5f5
+    style E fill:#e8f5e8
+    style F fill:#fff3e0
+    style G fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 5. 🎮 エンターテイメント・ゲーミング
+
+### マルチプレイヤーオンラインゲーム
+
+**代表例:** .io系ゲーム, MMORPGブラウザ版, リアルタイム対戦ゲーム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "プレイヤー"
+        A[🎮 プレイヤー1] --> E[WebSocketゲームサーバー]
+        B[🎮 プレイヤー2] --> E
+        C[🎮 プレイヤー3] --> E
+        D[🎮 プレイヤー4] --> E
+    end
+    
+    subgraph "ゲームエンジン"
+        E --> F[🎯 ゲーム状態管理]
+        F --> G[⚡ 物理演算エンジン]
+        G --> H[🔄 同期エンジン]
+        H --> I[🏆 ランキングシステム]
+    end
+    
+    E -->|リアルタイム更新| A
+    E -->|リアルタイム更新| B
+    E -->|リアルタイム更新| C
+    E -->|リアルタイム更新| D
+    
+    J[💾 ゲームデータDB] --> F
+    F --> J
+    
+    K[📊 プレイヤー統計] --> I
+    I --> K
+    
+    style A fill:#e8f5e8
+    style B fill:#e3f2fd
+    style C fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#fce4ec
+    style F fill:#e1f5fe
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### VR・メタバースプラットフォーム
+
+**代表例:** VRChat, Horizon Worlds, Mozilla Hubs
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant A as 🥽 VRユーザーA
+    participant S as WebSocketサーバー
+    participant B as 🥽 VRユーザーB
+    participant M as 🌐 メタバース空間
+    
+    A->>S: アバター位置更新
+    S->>M: 空間状態更新
+    S->>B: 他ユーザー位置同期
+    
+    B->>S: インタラクション実行
+    S->>M: オブジェクト状態変更
+    S->>A: 環境変化通知
+    
+    A->>S: 音声データ
+    S->>B: 3D音声配信
+    
+    Note over A,B: リアルタイム空間共有
+    Note over S,M: 永続的仮想世界
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 6. 🔧 PWA統合アーキテクチャ
+
+### Progressive Web Appとの連携
+
+**特徴:** オフライン対応, プッシュ通知, バックグラウンド同期
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    A[📱 PWAアプリ] -->|WebSocket接続| B[WebSocketサーバー]
+    A -->|オフライン時| C[🔄 Service Worker]
+    C -->|データキャッシュ| D[💾 IndexedDB]
+    
+    B -->|リアルタイムデータ| A
+    B -->|プッシュ通知| E[🔔 Notification API]
+    E --> A
+    
+    F[🌐 オンライン復帰] -->|バックグラウンド同期| B
+    D -->|キャッシュデータ| F
+    
+    subgraph "オフライン機能"
+        C
+        D
+        G[📤 送信キュー]
+        H[🔄 自動再接続]
+    end
+    
+    A --> G
+    G -->|接続復帰時| B
+    H --> B
+    
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#fce4ec
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🛠️ アーキテクチャパターンの選択指針
+
+### システム要件による分類
+
+| 要件 | 推奨パターン | 特徴 |
+|------|--------------|------|
+| **低遅延重視** | P2P + WebSocket | ゲーム、VR、音声通話 |
+| **大量配信** | Hub & Spoke | ライブ配信、株価情報 |
+| **協調作業** | CRDT + WebSocket | 共同編集、ホワイトボード |
+| **イベント駆動** | Pub/Sub + WebSocket | 通知、アラート |
+| **ステート管理** | State Machine + WebSocket | 複雑なワークフロー |
+
+### スケーラビリティ考慮事項
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "小規模 (~1,000接続)"
+        A[シングルサーバー] --> A1[インメモリ状態管理]
+    end
+    
+    subgraph "中規模 (~10,000接続)"
+        B[ロードバランサー] --> B1[複数WebSocketサーバー]
+        B1 --> B2[Redis Cluster]
+        B2 --> B3[メッセージキュー]
+    end
+    
+    subgraph "大規模 (100,000+接続)"
+        C[CDN + Edge Computing] --> C1[分散WebSocketファーム]
+        C1 --> C2[Kafka/Apache Pulsar]
+        C2 --> C3[マイクロサービス群]
+        C3 --> C4[分散ストレージ]
+    end
+    
+    style A fill:#e8f5e8
+    style B fill:#fff3e0
+    style C fill:#f3e5f5
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🎯 まとめ
+
+WebSocketの11の主要利用例から見えるアーキテクチャパターン：
+
+### **共通の設計原則**
+
+1. **リアルタイム性**: 低遅延でのデータ配信
+2. **双方向性**: クライアント・サーバー間の相互通信
+3. **状態同期**: 複数クライアント間での一貫性保持
+4. **スケーラビリティ**: 接続数増加への対応
+5. **耐障害性**: 接続断・復旧への適切な対処
+
+### **技術選択のポイント**
+
+- **データ量**: 小さなメッセージ vs 大量ストリーミング
+- **更新頻度**: リアルタイム vs バッチ処理
+- **同時接続数**: 小規模 vs 大規模システム
+- **一貫性要件**: 強一貫性 vs 結果整合性
+- **レイテンシ**: ミリ秒レベル vs 秒レベル
+
+次のフェーズでは、これらのパターンを実際に実装していきます！
+
+</div>
+</div>
+
+<ProgressTracker 
+  lessonId="phase1-use-cases"
+  sectionTitle="WebSocket基礎理解"
+/>
+
+<NextLesson 
+  nextLessonId="1.4"
+  nextLessonTitle="WebSocket vs 他技術の比較理解"
+  nextLessonPath="/lessons/1.4"
+/>

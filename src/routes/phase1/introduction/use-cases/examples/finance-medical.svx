@@ -1,0 +1,803 @@
+---
+title: '金融・医療システム詳細'
+description: 'トレーディング、決済、電子カルテ、遠隔医療システムのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+# 💰 金融・医療システム詳細
+
+## 1. 金融取引システム
+
+### 高頻度取引プラットフォーム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "市場データフィード"
+        NYSE[📈 NYSE] --> MDF[📊 マーケットデータフィード]
+        NASDAQ[📈 NASDAQ] --> MDF
+        FOREX[💱 FX市場] --> MDF
+        CRYPTO[₿ 暗号通貨] --> MDF
+    end
+    
+    subgraph "データ処理基盤"
+        MDF --> NORM[🔄 正規化エンジン]
+        NORM --> CALC[⚡ 指標計算]
+        CALC --> RISK[📊 リスク計算]
+        RISK --> SIGNAL[🎯 シグナル生成]
+    end
+    
+    subgraph "取引システム"
+        SIGNAL --> ALGO[🤖 アルゴリズム取引]
+        ALGO --> OMS[📋 注文管理システム]
+        OMS --> RISK_MGMT[🛡️ リスク管理]
+        RISK_MGMT --> EXECUTION[⚡ 約定システム]
+    end
+    
+    subgraph "リアルタイム配信"
+        CALC --> WS[WebSocketサーバー]
+        OMS --> WS
+        EXECUTION --> WS
+        WS --> TRADER[💻 トレーダー端末]
+        WS --> MOBILE[📱 モバイルアプリ]
+        WS --> API[🔌 APIクライアント]
+    end
+    
+    subgraph "コンプライアンス"
+        EXECUTION --> TRADE_REP[📋 取引報告]
+        TRADE_REP --> REGULATORY[🏛️ 規制報告]
+        REGULATORY --> AUDIT[🔍 監査証跡]
+    end
+    
+    subgraph "決済システム"
+        EXECUTION --> SETTLEMENT[💳 決済システム]
+        SETTLEMENT --> CLEARING[🏦 清算機関]
+        CLEARING --> CUSTODY[🔒 カストディ]
+    end
+    
+    style MDF fill:#f3e5f5
+    style ALGO fill:#e8f5e8
+    style WS fill:#fff3e0
+    style EXECUTION fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 超低遅延取引フロー
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant M as 市場データ
+    participant P as 価格エンジン
+    participant A as アルゴ取引
+    participant R as リスクエンジン
+    participant O as 注文システム
+    participant E as 取引所
+
+    Note over M,E: 目標遅延: 1ms以下
+    
+    M->>P: 価格更新 (10μs)
+    P->>P: 価格計算 (50μs)
+    P->>A: シグナル送信 (20μs)
+    
+    A->>A: 取引判定 (100μs)
+    A->>R: リスクチェック (50μs)
+    R->>R: ポジション確認 (30μs)
+    R->>O: 注文承認 (20μs)
+    
+    O->>E: 注文送信 (200μs)
+    E->>O: 約定通知 (300μs)
+    O->>A: 約定確認 (50μs)
+    
+    Note over M,E: 合計遅延: 830μs
+    
+    par WebSocket配信
+        P->>WebSocket: 価格配信 (並行)
+        O->>WebSocket: 約定配信 (並行)
+        WebSocket->>Trader: UI更新 (並行)
+    end
+    
+    Note over M,E: ハードウェア最適化・専用回線使用
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. デジタル決済システム
+
+### リアルタイム決済プラットフォーム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "決済手段"
+        CARD[💳 クレジットカード] --> GATEWAY[🌐 決済ゲートウェイ]
+        BANK[🏦 銀行振込] --> GATEWAY
+        WALLET[📱 デジタルウォレット] --> GATEWAY
+        CRYPTO[₿ 暗号通貨] --> GATEWAY
+    end
+    
+    subgraph "決済処理"
+        GATEWAY --> AUTH[🔐 認証・認可]
+        AUTH --> FRAUD[🕵️ 不正検知]
+        FRAUD --> ROUTING[🔄 ルーティング]
+        ROUTING --> PROCESSOR[⚡ 決済プロセッサー]
+    end
+    
+    subgraph "リアルタイム通知"
+        PROCESSOR --> WS[WebSocketサーバー]
+        WS --> MERCHANT[🏪 加盟店システム]
+        WS --> CUSTOMER[👤 顧客アプリ]
+        WS --> ADMIN[👨‍💼 管理画面]
+    end
+    
+    subgraph "リスク管理"
+        FRAUD --> ML[🤖 機械学習エンジン]
+        ML --> SCORE[📊 リスクスコア]
+        SCORE --> BLOCK[🚫 ブロック判定]
+        BLOCK --> REVIEW[👁️ 人的レビュー]
+    end
+    
+    subgraph "コンプライアンス"
+        PROCESSOR --> KYC[👤 KYC/AML]
+        KYC --> REPORT[📋 規制報告]
+        REPORT --> MONITORING[👁️ 取引監視]
+    end
+    
+    subgraph "決済完了"
+        PROCESSOR --> SETTLEMENT[💰 資金決済]
+        SETTLEMENT --> RECONCILE[📊 照合処理]
+        RECONCILE --> LEDGER[📚 総勘定元帳]
+    end
+    
+    style GATEWAY fill:#f3e5f5
+    style FRAUD fill:#e8f5e8
+    style WS fill:#fff3e0
+    style ML fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 不正検知・リアルタイム監視
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "取引データ"
+        TRANSACTION[💳 取引データ] --> FEATURES[📊 特徴量抽出]
+        FEATURES --> VELOCITY[📈 Velocity Check]
+        FEATURES --> PATTERN[🔍 パターン分析]
+        FEATURES --> GEO[🌍 地理的分析]
+    end
+    
+    subgraph "リアルタイム検知"
+        VELOCITY --> ML[🤖 ML不正検知]
+        PATTERN --> ML
+        GEO --> ML
+        ML --> SCORE[📊 リスクスコア]
+        SCORE --> THRESHOLD[⚖️ 閾値判定]
+    end
+    
+    subgraph "自動対応"
+        THRESHOLD --> APPROVE[✅ 承認]
+        THRESHOLD --> REVIEW[❓ レビュー要求]
+        THRESHOLD --> BLOCK[🚫 ブロック]
+        REVIEW --> MANUAL[👤 人的判定]
+    end
+    
+    subgraph "通知システム"
+        BLOCK --> WS[WebSocketサーバー]
+        REVIEW --> WS
+        MANUAL --> WS
+        WS --> MERCHANT[🏪 加盟店通知]
+        WS --> CUSTOMER[📱 顧客通知]
+        WS --> ANALYST[👨‍💻 アナリスト画面]
+    end
+    
+    style ML fill:#f3e5f5
+    style THRESHOLD fill:#e8f5e8
+    style WS fill:#fff3e0
+    style ANALYST fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. 医療情報システム
+
+### 電子カルテ・リアルタイム連携
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "医療データ入力"
+        EMR[📋 電子カルテ] --> CLINICAL[🩺 診療データ]
+        CLINICAL --> VITAL[💓 バイタルサイン]
+        VITAL --> LAB[🔬 検査結果]
+        LAB --> IMAGE[🖼️ 医療画像]
+    end
+    
+    subgraph "データ統合基盤"
+        IMAGE --> HL7[🔗 HL7 FHIR]
+        HL7 --> INTEGRATION[🔄 統合エンジン]
+        INTEGRATION --> CDR[📚 臨床データリポジトリ]
+        CDR --> TERMINOLOGY[📖 医学用語辞書]
+    end
+    
+    subgraph "リアルタイム配信"
+        INTEGRATION --> WS[WebSocketサーバー]
+        WS --> DOCTOR[👨‍⚕️ 医師端末]
+        WS --> NURSE[👩‍⚕️ 看護師端末]
+        WS --> MONITOR[📊 監視画面]
+        WS --> MOBILE[📱 モバイル端末]
+    end
+    
+    subgraph "意思決定支援"
+        CDR --> CDS[🧠 意思決定支援]
+        CDS --> ALERT[🚨 アラート生成]
+        ALERT --> DRUG[💊 薬剤相互作用]
+        ALERT --> ALLERGY[⚠️ アレルギー警告]
+    end
+    
+    subgraph "セキュリティ・プライバシー"
+        WS --> HIPAA[🔒 HIPAA準拠]
+        HIPAA --> ENCRYPT[🔐 暗号化]
+        ENCRYPT --> ACCESS[🛡️ アクセス制御]
+        ACCESS --> AUDIT[📋 監査ログ]
+    end
+    
+    subgraph "外部連携"
+        INTEGRATION --> LAB_SYS[🔬 検査システム]
+        INTEGRATION --> PACS[🖼️ PACSシステム]
+        INTEGRATION --> PHARMACY[💊 薬局システム]
+        INTEGRATION --> INSURANCE[🏥 保険システム]
+    end
+    
+    style HL7 fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style CDS fill:#fff3e0
+    style HIPAA fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 患者モニタリングシステム
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant P as 患者
+    participant M as 医療機器
+    participant G as ゲートウェイ
+    participant W as WebSocketサーバー
+    participant N as 看護師ステーション
+    participant D as 医師
+
+    P->>M: バイタルサイン測定
+    M->>G: 生体データ送信 (1秒間隔)
+    G->>G: データ検証・正規化
+    
+    G->>W: リアルタイムデータ配信
+    W->>N: 監視画面更新
+    
+    alt 正常値の場合
+        Note over P,D: 通常監視継続
+    else 異常値検知
+        G->>W: 緊急アラート
+        W->>N: 即座通知
+        W->>D: 医師呼び出し
+        N->>W: アラート確認
+        D->>W: 対応指示
+        W->>N: 指示配信
+    else 重篤な異常
+        G->>W: 最高優先度アラート
+        W->>N: 緊急通知
+        W->>D: 緊急呼び出し
+        W->>Emergency: 緊急チーム召集
+    end
+    
+    Note over P,D: 継続的リアルタイム監視
+    Note over G,W: 患者安全最優先設計
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. 遠隔医療システム
+
+### テレヘルスプラットフォーム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "患者側"
+        PATIENT[👤 患者] --> DEVICE[📱 患者デバイス]
+        DEVICE --> CAMERA[📹 カメラ]
+        DEVICE --> MIC[🎤 マイク]
+        DEVICE --> SENSOR[📊 センサー]
+    end
+    
+    subgraph "通信基盤"
+        CAMERA --> WEBRTC[📡 WebRTC]
+        MIC --> WEBRTC
+        SENSOR --> WS[WebSocketサーバー]
+        WEBRTC --> MEDIA[🎬 メディアサーバー]
+        MEDIA --> WS
+    end
+    
+    subgraph "医療従事者側"
+        WS --> DOC_DEVICE[💻 医師端末]
+        DOC_DEVICE --> DOC_CAMERA[📹 医師カメラ]
+        DOC_DEVICE --> DOC_MIC[🎤 医師マイク]
+        DOC_DEVICE --> EMR_INT[📋 EMR統合]
+    end
+    
+    subgraph "診療支援機能"
+        WS --> ANNOTATION[✏️ 画面共有注釈]
+        WS --> PRESCRIPTION[💊 電子処方箋]
+        WS --> APPOINTMENT[📅 予約管理]
+        WS --> BILLING[💰 診療費計算]
+    end
+    
+    subgraph "品質管理"
+        MEDIA --> QOS[📊 QoS監視]
+        QOS --> ADAPTIVE[🔄 適応制御]
+        ADAPTIVE --> BANDWIDTH[📡 帯域幅調整]
+        BANDWIDTH --> QUALITY[🎛️ 品質調整]
+    end
+    
+    subgraph "セキュリティ"
+        WS --> E2E[🔐 End-to-End暗号化]
+        E2E --> HIPAA_COMP[🛡️ HIPAA準拠]
+        HIPAA_COMP --> ACCESS_LOG[📋 アクセスログ]
+    end
+    
+    style WEBRTC fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style QOS fill:#fff3e0
+    style E2E fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 5. 医療AI・診断支援
+
+### AIアシスタント統合システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "医療データ入力"
+        SYMPTOMS[🩺 症状データ] --> AI[🤖 医療AIエンジン]
+        LABS[🔬 検査結果] --> AI
+        IMAGES[🖼️ 医療画像] --> AI
+        HISTORY[📚 既往歴] --> AI
+    end
+    
+    subgraph "AI分析処理"
+        AI --> NLP[📝 自然言語処理]
+        AI --> VISION[👁️ 画像認識AI]
+        AI --> PREDICTION[🔮 予測モデル]
+        AI --> RECOMMENDATION[💡 推奨エンジン]
+    end
+    
+    subgraph "診断支援"
+        RECOMMENDATION --> DIAGNOSIS[🎯 診断候補]
+        DIAGNOSIS --> CONFIDENCE[📊 信頼度]
+        CONFIDENCE --> EVIDENCE[📄 根拠提示]
+        EVIDENCE --> GUIDELINE[📋 ガイドライン参照]
+    end
+    
+    subgraph "リアルタイム配信"
+        GUIDELINE --> WS[WebSocketサーバー]
+        WS --> DOCTOR_UI[👨‍⚕️ 医師UI]
+        WS --> ALERT_SYS[🚨 アラートシステム]
+        WS --> SECOND_OPINION[👥 セカンドオピニオン]
+    end
+    
+    subgraph "フィードバックループ"
+        DOCTOR_UI --> VALIDATION[✅ 医師検証]
+        VALIDATION --> LEARNING[📈 継続学習]
+        LEARNING --> MODEL_UPDATE[🔄 モデル更新]
+    end
+    
+    style AI fill:#f3e5f5
+    style RECOMMENDATION fill:#e8f5e8
+    style WS fill:#fff3e0
+    style LEARNING fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 💡 実装のベストプラクティス
+
+### 1. 高頻度取引システム
+```javascript
+class HighFrequencyTradingSystem {
+  constructor() {
+    this.orderBook = new OrderBook();
+    this.riskEngine = new RiskEngine();
+    this.executionEngine = new ExecutionEngine();
+    this.marketData = new MarketDataProcessor();
+    this.latencyMonitor = new LatencyMonitor();
+  }
+  
+  async processMarketData(data) {
+    const startTime = process.hrtime.bigint();
+    
+    try {
+      // 1. 市場データ正規化 (目標: 10μs)
+      const normalizedData = this.marketData.normalize(data);
+      
+      // 2. シグナル生成 (目標: 50μs)
+      const signals = await this.generateSignals(normalizedData);
+      
+      // 3. リスクチェック (目標: 30μs)
+      const riskApprovedSignals = await this.riskEngine.validate(signals);
+      
+      // 4. 注文生成・送信 (目標: 100μs)
+      const orders = await this.createOrders(riskApprovedSignals);
+      
+      // 5. WebSocket配信 (並行処理)
+      this.broadcastMarketUpdate(normalizedData);
+      
+      const endTime = process.hrtime.bigint();
+      const latency = Number(endTime - startTime) / 1000; // マイクロ秒
+      
+      this.latencyMonitor.record('total_processing', latency);
+      
+      return orders;
+      
+    } catch (error) {
+      this.handleTradingError(error, data);
+      throw error;
+    }
+  }
+  
+  generateSignals(marketData) {
+    // 超高速シグナル生成
+    const signals = [];
+    
+    // VWAP戦略
+    const vwapSignal = this.calculateVWAPSignal(marketData);
+    if (vwapSignal.strength > 0.8) {
+      signals.push(vwapSignal);
+    }
+    
+    // 平均回帰戦略
+    const meanReversionSignal = this.calculateMeanReversion(marketData);
+    if (meanReversionSignal.strength > 0.7) {
+      signals.push(meanReversionSignal);
+    }
+    
+    // アービトラージ
+    const arbSignal = this.detectArbitrage(marketData);
+    if (arbSignal.strength > 0.9) {
+      signals.push(arbSignal);
+    }
+    
+    return signals;
+  }
+  
+  broadcastMarketUpdate(data) {
+    // 超低遅延配信
+    const message = {
+      type: 'market_update',
+      symbol: data.symbol,
+      price: data.price,
+      volume: data.volume,
+      timestamp: data.timestamp,
+      sequenceNumber: this.getSequenceNumber()
+    };
+    
+    // 圧縮配信
+    const compressed = this.compress(message);
+    this.websocket.broadcast(compressed);
+  }
+}
+```
+
+### 2. 不正検知システム
+```javascript
+class FraudDetectionSystem {
+  constructor() {
+    this.mlModels = new Map();
+    this.ruleEngine = new RuleEngine();
+    this.featureExtractor = new FeatureExtractor();
+    this.velocityTracker = new VelocityTracker();
+  }
+  
+  async analyzeTransaction(transaction) {
+    const startTime = Date.now();
+    
+    // 特徴量抽出
+    const features = await this.extractFeatures(transaction);
+    
+    // 並列分析実行
+    const [
+      mlScore,
+      ruleScore,
+      velocityScore,
+      geoScore
+    ] = await Promise.all([
+      this.runMLAnalysis(features),
+      this.runRuleAnalysis(transaction),
+      this.checkVelocity(transaction),
+      this.analyzeGeography(transaction)
+    ]);
+    
+    // 総合スコア計算
+    const riskScore = this.calculateCompositeScore({
+      ml: mlScore,
+      rules: ruleScore,
+      velocity: velocityScore,
+      geography: geoScore
+    });
+    
+    // 決定とアクション
+    const decision = this.makeDecision(riskScore);
+    
+    // リアルタイム通知
+    await this.notifyStakeholders(transaction, decision, riskScore);
+    
+    const processingTime = Date.now() - startTime;
+    
+    return {
+      transactionId: transaction.id,
+      decision: decision.action,
+      riskScore: riskScore,
+      processingTime: processingTime,
+      details: decision.details
+    };
+  }
+  
+  async runMLAnalysis(features) {
+    // アンサンブルモデルで分析
+    const models = ['xgboost', 'neural_network', 'isolation_forest'];
+    
+    const scores = await Promise.all(
+      models.map(modelName => {
+        const model = this.mlModels.get(modelName);
+        return model.predict(features);
+      })
+    );
+    
+    // 重み付き平均
+    return {
+      score: scores.reduce((acc, score, i) => acc + score * this.modelWeights[i], 0),
+      individual: scores,
+      confidence: this.calculateConfidence(scores)
+    };
+  }
+  
+  async notifyStakeholders(transaction, decision, riskScore) {
+    const notification = {
+      type: 'fraud_analysis',
+      transactionId: transaction.id,
+      merchantId: transaction.merchantId,
+      amount: transaction.amount,
+      decision: decision.action,
+      riskScore: riskScore,
+      timestamp: new Date().toISOString()
+    };
+    
+    // 即座通知が必要な場合
+    if (decision.action === 'BLOCK' || riskScore > 0.8) {
+      // 高優先度通知
+      this.websocket.broadcast('fraud_alert', {
+        ...notification,
+        priority: 'high',
+        requiresImmediate: true
+      });
+      
+      // SMS/メール通知も並行送信
+      this.sendUrgentNotification(notification);
+    } else {
+      // 通常通知
+      this.websocket.broadcast('fraud_analysis', notification);
+    }
+  }
+}
+```
+
+### 3. 医療データ統合システム
+```javascript
+class MedicalDataIntegrator {
+  constructor() {
+    this.fhirClient = new FHIRClient();
+    this.hl7Parser = new HL7Parser();
+    this.terminologyService = new TerminologyService();
+    this.cdsEngine = new ClinicalDecisionSupport();
+  }
+  
+  async processPatientData(patientData) {
+    // HL7 FHIR準拠のデータ変換
+    const fhirData = await this.convertToFHIR(patientData);
+    
+    // 医学用語の標準化
+    const standardizedData = await this.standardizeTerminology(fhirData);
+    
+    // 意思決定支援分析
+    const cdsResults = await this.runClinicalDecisionSupport(standardizedData);
+    
+    // リアルタイム配信
+    await this.broadcastPatientUpdate(standardizedData, cdsResults);
+    
+    return {
+      patientId: standardizedData.patient.id,
+      fhirData: standardizedData,
+      alerts: cdsResults.alerts,
+      recommendations: cdsResults.recommendations
+    };
+  }
+  
+  async runClinicalDecisionSupport(patientData) {
+    const alerts = [];
+    const recommendations = [];
+    
+    // 薬剤相互作用チェック
+    const drugInteractions = await this.checkDrugInteractions(
+      patientData.medications
+    );
+    if (drugInteractions.length > 0) {
+      alerts.push({
+        type: 'drug_interaction',
+        severity: 'high',
+        details: drugInteractions
+      });
+    }
+    
+    // アレルギー警告
+    const allergyAlerts = await this.checkAllergies(
+      patientData.allergies,
+      patientData.medications
+    );
+    alerts.push(...allergyAlerts);
+    
+    // 診断支援
+    const diagnosticSuggestions = await this.suggestDiagnosis(patientData);
+    recommendations.push(...diagnosticSuggestions);
+    
+    return { alerts, recommendations };
+  }
+  
+  async broadcastPatientUpdate(patientData, cdsResults) {
+    const careTeam = await this.getCareTeam(patientData.patient.id);
+    
+    const update = {
+      type: 'patient_update',
+      patientId: patientData.patient.id,
+      vitals: patientData.vitals,
+      alerts: cdsResults.alerts,
+      timestamp: new Date().toISOString()
+    };
+    
+    // 担当医療チームにのみ配信
+    careTeam.forEach(member => {
+      this.websocket.sendToUser(member.id, update);
+    });
+    
+    // 緊急アラートの場合は追加通知
+    const criticalAlerts = cdsResults.alerts.filter(alert => 
+      alert.severity === 'critical'
+    );
+    
+    if (criticalAlerts.length > 0) {
+      this.websocket.broadcast('critical_alert', {
+        type: 'critical_patient_alert',
+        patientId: patientData.patient.id,
+        alerts: criticalAlerts,
+        requiresImmediate: true
+      });
+    }
+  }
+}
+```
+
+### 4. 遠隔医療品質管理
+```javascript
+class TelemedicineQualityManager {
+  constructor() {
+    this.qosMonitor = new QoSMonitor();
+    this.adaptiveStreaming = new AdaptiveStreaming();
+    this.networkAnalyzer = new NetworkAnalyzer();
+  }
+  
+  async monitorSessionQuality(sessionId) {
+    const metrics = {
+      video: {
+        resolution: '1080p',
+        framerate: 30,
+        bitrate: 2000000,
+        packetLoss: 0,
+        latency: 50
+      },
+      audio: {
+        sampleRate: 48000,
+        bitrate: 128000,
+        packetLoss: 0,
+        latency: 20
+      }
+    };
+    
+    // リアルタイム品質監視
+    setInterval(async () => {
+      const currentMetrics = await this.measureQuality(sessionId);
+      
+      // 品質劣化検知
+      if (this.isQualityDegraded(currentMetrics, metrics)) {
+        await this.adaptQuality(sessionId, currentMetrics);
+        
+        // 医療従事者に通知
+        this.websocket.sendToSession(sessionId, {
+          type: 'quality_alert',
+          metrics: currentMetrics,
+          adaptation: 'automatic_quality_adjustment'
+        });
+      }
+      
+      // 品質統計の配信
+      this.websocket.sendToSession(sessionId, {
+        type: 'quality_metrics',
+        metrics: currentMetrics
+      });
+      
+    }, 1000); // 1秒間隔
+  }
+  
+  async adaptQuality(sessionId, currentMetrics) {
+    // 帯域幅に基づく適応
+    if (currentMetrics.bandwidth < 1000000) { // 1Mbps未満
+      await this.adaptiveStreaming.adjustVideo(sessionId, {
+        resolution: '720p',
+        framerate: 15,
+        bitrate: 800000
+      });
+    } else if (currentMetrics.bandwidth < 500000) { // 500kbps未満
+      await this.adaptiveStreaming.adjustVideo(sessionId, {
+        resolution: '480p',
+        framerate: 10,
+        bitrate: 400000
+      });
+    }
+    
+    // 遅延に基づく適応
+    if (currentMetrics.latency > 200) {
+      await this.adaptiveStreaming.enableLowLatencyMode(sessionId);
+    }
+  }
+}
+```
+
+この包括的な金融・医療システムアーキテクチャにより、高い信頼性とセキュリティを備えたリアルタイムシステムを構築できます。
+
+</div>
+</div>

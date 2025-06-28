@@ -1,0 +1,813 @@
+---
+title: 'セキュリティ・監査システム詳細'
+description: 'セキュリティ監視、侵入検知、監査ログシステムのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+# 🛡️ セキュリティ・監査システム詳細
+
+## 1. セキュリティ監視プラットフォーム
+
+### リアルタイム脅威検知システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "データ収集層"
+        FIREWALL[🔥 ファイアウォール] --> SIEM[🔍 SIEM システム]
+        IDS[🚨 侵入検知システム] --> SIEM
+        ENDPOINT[🖥️ エンドポイント] --> SIEM
+        NETWORK[🌐 ネットワーク監視] --> SIEM
+        APP[📱 アプリケーション] --> SIEM
+    end
+    
+    subgraph "分析エンジン"
+        SIEM --> CORRELATION[🔄 相関分析]
+        CORRELATION --> ML[🤖 機械学習検知]
+        ML --> BEHAVIOR[📊 行動分析]
+        BEHAVIOR --> THREAT[🎯 脅威インテリジェンス]
+    end
+    
+    subgraph "リアルタイム配信"
+        THREAT --> WS[WebSocketサーバー]
+        WS --> ALERT[🚨 アラート配信]
+        ALERT --> DASHBOARD[📊 セキュリティダッシュボード]
+        ALERT --> MOBILE[📱 モバイル通知]
+        ALERT --> EMAIL[📧 メール通知]
+    end
+    
+    subgraph "対応システム"
+        DASHBOARD --> SOC[👥 SOCチーム]
+        SOC --> RESPONSE[🔧 インシデント対応]
+        RESPONSE --> BLOCK[🚫 自動ブロック]
+        RESPONSE --> ISOLATE[🔒 隔離処理]
+    end
+    
+    subgraph "証跡管理"
+        WS --> AUDIT[📋 監査ログ]
+        AUDIT --> COMPLIANCE[✅ コンプライアンス]
+        COMPLIANCE --> REPORT[📄 レポート生成]
+    end
+    
+    style SIEM fill:#f3e5f5
+    style ML fill:#e8f5e8
+    style WS fill:#fff3e0
+    style SOC fill:#e3f2fd
+    style AUDIT fill:#ffebee
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 侵入検知・防止システム (IDS/IPS)
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant A as 攻撃者
+    participant N as ネットワーク
+    participant IDS as IDS/IPSセンサー
+    participant WS as WebSocketサーバー
+    participant SOC as SOCアナリスト
+    participant AUTO as 自動対応システム
+
+    A->>N: 悪意のあるトラフィック
+    N->>IDS: パケット監視
+    IDS->>IDS: シグネチャ照合・異常検知
+    
+    alt 既知の攻撃パターン
+        IDS->>AUTO: 即座ブロック指示
+        AUTO->>N: 自動ファイアウォール更新
+        IDS->>WS: 高優先度アラート
+        WS->>SOC: リアルタイム通知
+    else 未知の異常行動
+        IDS->>WS: 中優先度アラート
+        WS->>SOC: 分析要求通知
+        SOC->>IDS: 詳細調査指示
+        IDS->>WS: 調査結果配信
+        SOC->>AUTO: 対応策指示
+    end
+    
+    AUTO->>WS: 対応完了通知
+    WS->>SOC: 状況更新配信
+    
+    Note over A,AUTO: リアルタイム脅威対応
+    Note over IDS,SOC: 人間とAIの協調防御
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. 認証・アクセス制御システム
+
+### ゼロトラストアーキテクチャ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "ユーザー認証"
+        USER[👤 ユーザー] --> MFA[🔐 多要素認証]
+        MFA --> BIOMETRIC[👆 生体認証]
+        BIOMETRIC --> DEVICE[📱 デバイス認証]
+    end
+    
+    subgraph "認証システム"
+        DEVICE --> AUTHZ[🛡️ 認証サーバー]
+        AUTHZ --> POLICY[📋 ポリシーエンジン]
+        POLICY --> RBAC[👥 RBAC]
+        RBAC --> ABAC[🎯 ABAC]
+    end
+    
+    subgraph "リアルタイム監視"
+        AUTHZ --> WS[WebSocketサーバー]
+        WS --> SESSION[📊 セッション監視]
+        SESSION --> ANOMALY[🚨 異常検知]
+        ANOMALY --> RISK[📊 リスク評価]
+    end
+    
+    subgraph "適応制御"
+        RISK --> ADAPTIVE[🔄 適応認証]
+        ADAPTIVE --> STEPUP[📈 段階認証]
+        STEPUP --> CHALLENGE[❓ 追加認証]
+        CHALLENGE --> RESTRICT[🚫 アクセス制限]
+    end
+    
+    subgraph "監査・コンプライアンス"
+        WS --> AUTHLOG[📋 認証ログ]
+        AUTHLOG --> GDPR[🇪🇺 GDPR対応]
+        GDPR --> SOX[📊 SOX法対応]
+        SOX --> AUDIT[🔍 監査証跡]
+    end
+    
+    style AUTHZ fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style ANOMALY fill:#ffebee
+    style ADAPTIVE fill:#fff3e0
+    style AUDIT fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### セッション管理・監視
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "セッション作成"
+        LOGIN[🔑 ログイン] --> TOKEN[🎫 JWTトークン生成]
+        TOKEN --> FINGERPRINT[👆 デバイスフィンガープリント]
+        FINGERPRINT --> SESSION[📋 セッション管理]
+    end
+    
+    subgraph "リアルタイム監視"
+        SESSION --> WS[WebSocketサーバー]
+        WS --> ACTIVITY[📊 アクティビティ監視]
+        ACTIVITY --> GEO[🌍 地理的位置確認]
+        GEO --> CONCURRENT[📱 同時セッション監視]
+    end
+    
+    subgraph "異常検知"
+        CONCURRENT --> DETECT[🚨 異常検知]
+        DETECT --> IMPOSSIBLE[⚡ 不可能移動]
+        DETECT --> SUSPICIOUS[🔍 疑わしい行動]
+        DETECT --> BRUTE[💥 ブルートフォース]
+    end
+    
+    subgraph "自動対応"
+        BRUTE --> TERMINATE[❌ セッション終了]
+        SUSPICIOUS --> CHALLENGE[❓ 追加認証要求]
+        IMPOSSIBLE --> BLOCK[🚫 IPブロック]
+        TERMINATE --> NOTIFY[📢 ユーザー通知]
+    end
+    
+    style SESSION fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style DETECT fill:#ffebee
+    style TERMINATE fill:#fff3e0
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. 監査ログ・コンプライアンスシステム
+
+### 包括的監査ログ収集
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "ログソース"
+        APP[📱 アプリケーション] --> COLLECTOR[📊 ログコレクター]
+        OS[🖥️ OS・システム] --> COLLECTOR
+        DB[💾 データベース] --> COLLECTOR
+        NETWORK[🌐 ネットワーク機器] --> COLLECTOR
+        SECURITY[🛡️ セキュリティ機器] --> COLLECTOR
+    end
+    
+    subgraph "ログ処理"
+        COLLECTOR --> NORMALIZE[🔄 正規化]
+        NORMALIZE --> ENRICH[📈 エンリッチメント]
+        ENRICH --> CLASSIFY[🏷️ 分類]
+        CLASSIFY --> INDEX[📂 インデックス]
+    end
+    
+    subgraph "リアルタイム分析"
+        INDEX --> WS[WebSocketサーバー]
+        WS --> STREAM[🌊 ストリーム分析]
+        STREAM --> PATTERN[🔍 パターン検索]
+        PATTERN --> CORRELATION[🔄 相関分析]
+    end
+    
+    subgraph "アラート・通知"
+        CORRELATION --> THRESHOLD[📊 閾値監視]
+        THRESHOLD --> ALERT[🚨 アラート生成]
+        ALERT --> ESCALATION[📈 エスカレーション]
+        ESCALATION --> INCIDENT[📋 インシデント作成]
+    end
+    
+    subgraph "長期保存・検索"
+        INDEX --> ARCHIVE[📦 アーカイブ]
+        ARCHIVE --> RETENTION[⏳ 保持期間管理]
+        RETENTION --> SEARCH[🔍 高速検索]
+        SEARCH --> FORENSICS[🔬 フォレンジック分析]
+    end
+    
+    style COLLECTOR fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style CORRELATION fill:#fff3e0
+    style ARCHIVE fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### コンプライアンス自動化
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant S as システム操作
+    participant L as ログ収集
+    participant C as コンプライアンスエンジン
+    participant W as WebSocket配信
+    participant A as 監査担当者
+    participant R as 規制当局
+
+    S->>L: 操作ログ生成
+    L->>C: リアルタイムログ送信
+    C->>C: 規制要件チェック
+    
+    alt SOX法対応
+        C->>C: 財務関連操作検証
+        C->>W: SOX違反候補検知
+        W->>A: 即座アラート配信
+    else GDPR対応
+        C->>C: 個人データアクセス監視
+        C->>W: GDPR違反可能性通知
+        W->>A: プライバシー担当者通知
+    else PCI DSS対応
+        C->>C: カード情報取り扱い監視
+        C->>W: PCI違反検知
+        W->>A: セキュリティ担当者通知
+    end
+    
+    A->>C: 違反確認・調査
+    C->>W: 調査結果配信
+    W->>A: 対応状況更新
+    
+    alt 重大違反の場合
+        A->>R: 規制当局への報告
+        R->>A: 報告受理確認
+    end
+    
+    Note over S,R: 自動コンプライアンス監視
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. インシデント対応システム
+
+### 自動インシデント対応
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "インシデント検知"
+        ALERT[🚨 アラート発生] --> TRIAGE[🔍 トリアージ]
+        TRIAGE --> SEVERITY[📊 重要度判定]
+        SEVERITY --> CLASSIFY[🏷️ 分類]
+    end
+    
+    subgraph "自動対応"
+        CLASSIFY --> PLAYBOOK[📋 プレイブック選択]
+        PLAYBOOK --> ISOLATE[🔒 システム隔離]
+        ISOLATE --> COLLECT[📊 証跡収集]
+        COLLECT --> ANALYZE[🔬 初期分析]
+    end
+    
+    subgraph "チーム連携"
+        ANALYZE --> WS[WebSocketサーバー]
+        WS --> ONCALL[📞 オンコール通知]
+        ONCALL --> COLLAB[🤝 チーム協調]
+        COLLAB --> DECISION[🎯 対応判断]
+    end
+    
+    subgraph "対応実行"
+        DECISION --> REMEDIATE[🔧 修復作業]
+        REMEDIATE --> CONTAIN[🛡️ 封じ込め]
+        CONTAIN --> ERADICATE[🧹 根絶]
+        ERADICATE --> RECOVER[🔄 復旧]
+    end
+    
+    subgraph "事後処理"
+        RECOVER --> LESSON[📚 教訓抽出]
+        LESSON --> UPDATE[🔄 プレイブック更新]
+        UPDATE --> REPORT[📄 報告書作成]
+        REPORT --> COMPLIANCE[✅ コンプライアンス報告]
+    end
+    
+    style TRIAGE fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style REMEDIATE fill:#fff3e0
+    style LESSON fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 5. 脅威インテリジェンス統合
+
+### リアルタイム脅威情報配信
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "脅威情報源"
+        OSINT[🌐 OSINT] --> FEED[📡 脅威フィード]
+        COMMERCIAL[💼 商用TI] --> FEED
+        GOVERNMENT[🏛️ 政府機関] --> FEED
+        COMMUNITY[👥 コミュニティ] --> FEED
+    end
+    
+    subgraph "情報処理"
+        FEED --> PARSE[🔄 パース処理]
+        PARSE --> STIX[📋 STIX/TAXII変換]
+        STIX --> ENRICH[📈 エンリッチメント]
+        ENRICH --> SCORE[📊 スコアリング]
+    end
+    
+    subgraph "配信システム"
+        SCORE --> WS[WebSocketサーバー]
+        WS --> FILTER[🔍 フィルタリング]
+        FILTER --> PRIORITY[📊 優先度制御]
+        PRIORITY --> DISTRIBUTE[📡 配信]
+    end
+    
+    subgraph "統合システム"
+        DISTRIBUTE --> SIEM[🔍 SIEM統合]
+        DISTRIBUTE --> FIREWALL[🔥 ファイアウォール]
+        DISTRIBUTE --> ENDPOINT[🖥️ エンドポイント]
+        DISTRIBUTE --> DNS[🌐 DNS設定]
+    end
+    
+    subgraph "フィードバック"
+        SIEM --> VALIDATE[✅ 有効性検証]
+        VALIDATE --> FEEDBACK[🔄 フィードバック]
+        FEEDBACK --> IMPROVE[📈 改善]
+    end
+    
+    style FEED fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style DISTRIBUTE fill:#fff3e0
+    style VALIDATE fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 💡 実装のベストプラクティス
+
+### 1. セキュリティイベント監視
+```javascript
+class SecurityEventMonitor {
+  constructor() {
+    this.rules = new Map();
+    this.correlationEngine = new CorrelationEngine();
+    this.threatIntelligence = new ThreatIntelligence();
+    this.incidents = new Map();
+  }
+  
+  async processSecurityEvent(event) {
+    // イベント正規化
+    const normalizedEvent = this.normalizeEvent(event);
+    
+    // 脅威インテリジェンス照合
+    const threatMatch = await this.threatIntelligence.match(normalizedEvent);
+    if (threatMatch) {
+      normalizedEvent.threatLevel = threatMatch.severity;
+      normalizedEvent.indicators = threatMatch.indicators;
+    }
+    
+    // ルールベース検知
+    const ruleMatches = this.checkRules(normalizedEvent);
+    
+    // 相関分析
+    const correlationResult = await this.correlationEngine.analyze(normalizedEvent);
+    
+    // インシデント生成判定
+    if (this.shouldCreateIncident(ruleMatches, correlationResult)) {
+      const incident = await this.createIncident(normalizedEvent, correlationResult);
+      await this.notifyIncident(incident);
+    }
+    
+    // WebSocket配信
+    this.broadcastSecurityEvent(normalizedEvent);
+  }
+  
+  checkRules(event) {
+    const matches = [];
+    
+    for (const [ruleId, rule] of this.rules) {
+      if (this.evaluateRule(rule, event)) {
+        matches.push({
+          ruleId,
+          severity: rule.severity,
+          description: rule.description,
+          mitre: rule.mitreAttack
+        });
+      }
+    }
+    
+    return matches;
+  }
+  
+  async createIncident(event, correlation) {
+    const incident = {
+      id: this.generateIncidentId(),
+      severity: this.calculateSeverity(event, correlation),
+      title: this.generateTitle(event),
+      description: this.generateDescription(event, correlation),
+      timeline: [event],
+      status: 'open',
+      assignee: null,
+      createdAt: new Date(),
+      artifacts: this.extractArtifacts(event)
+    };
+    
+    this.incidents.set(incident.id, incident);
+    
+    // 自動対応の実行
+    await this.executePlaybook(incident);
+    
+    return incident;
+  }
+  
+  broadcastSecurityEvent(event) {
+    // セキュリティダッシュボードに配信
+    this.websocket.broadcast('security_event', {
+      type: 'security_event',
+      event: event,
+      timestamp: Date.now()
+    });
+    
+    // 高優先度イベントは即座通知
+    if (event.priority === 'high' || event.priority === 'critical') {
+      this.websocket.broadcast('urgent_alert', {
+        type: 'urgent_alert',
+        message: `High priority security event: ${event.title}`,
+        event: event
+      });
+    }
+  }
+}
+```
+
+### 2. 認証セッション監視
+```javascript
+class AuthenticationMonitor {
+  constructor() {
+    this.sessions = new Map();
+    this.riskEngine = new RiskEngine();
+    this.geoLocation = new GeoLocationService();
+    this.deviceFingerprinting = new DeviceFingerprinting();
+  }
+  
+  async monitorAuthentication(authEvent) {
+    // セッション情報更新
+    const session = await this.updateSession(authEvent);
+    
+    // リスク評価
+    const riskScore = await this.calculateRiskScore(authEvent, session);
+    
+    // 異常検知
+    const anomalies = await this.detectAnomalies(authEvent, session);
+    
+    // WebSocket配信
+    this.broadcastAuthEvent({
+      type: 'authentication_event',
+      user: authEvent.userId,
+      action: authEvent.action,
+      riskScore: riskScore,
+      anomalies: anomalies,
+      session: session.id
+    });
+    
+    // 高リスクの場合は追加認証
+    if (riskScore > 0.8) {
+      await this.requestStepUpAuthentication(session);
+    }
+    
+    // 異常検知の場合はセッション監視強化
+    if (anomalies.length > 0) {
+      await this.enhanceSessionMonitoring(session);
+    }
+  }
+  
+  async calculateRiskScore(authEvent, session) {
+    const factors = [];
+    
+    // 地理的要因
+    const geoRisk = await this.assessGeographicRisk(authEvent.ipAddress, session.user);
+    factors.push({ type: 'geographic', score: geoRisk });
+    
+    // デバイス要因
+    const deviceRisk = await this.assessDeviceRisk(authEvent.deviceFingerprint, session.user);
+    factors.push({ type: 'device', score: deviceRisk });
+    
+    // 行動要因
+    const behaviorRisk = await this.assessBehaviorRisk(authEvent, session.user);
+    factors.push({ type: 'behavior', score: behaviorRisk });
+    
+    // 時間要因
+    const temporalRisk = await this.assessTemporalRisk(authEvent.timestamp, session.user);
+    factors.push({ type: 'temporal', score: temporalRisk });
+    
+    return this.riskEngine.calculateCompositeScore(factors);
+  }
+  
+  async detectAnomalies(authEvent, session) {
+    const anomalies = [];
+    
+    // 不可能移動検知
+    const impossibleTravel = await this.detectImpossibleTravel(authEvent, session);
+    if (impossibleTravel) {
+      anomalies.push({
+        type: 'impossible_travel',
+        severity: 'high',
+        details: impossibleTravel
+      });
+    }
+    
+    // 同時多地点ログイン
+    const concurrentLogins = await this.detectConcurrentLogins(authEvent, session);
+    if (concurrentLogins.length > 1) {
+      anomalies.push({
+        type: 'concurrent_logins',
+        severity: 'medium',
+        details: concurrentLogins
+      });
+    }
+    
+    // ブルートフォース攻撃
+    const bruteForce = await this.detectBruteForce(authEvent);
+    if (bruteForce) {
+      anomalies.push({
+        type: 'brute_force',
+        severity: 'high',
+        details: bruteForce
+      });
+    }
+    
+    return anomalies;
+  }
+}
+```
+
+### 3. 監査ログ処理システム
+```javascript
+class AuditLogProcessor {
+  constructor() {
+    this.complianceRules = new Map();
+    this.retentionPolicies = new Map();
+    this.encryptionKeys = new EncryptionKeyManager();
+  }
+  
+  async processAuditLog(logEntry) {
+    // ログ正規化
+    const normalizedLog = this.normalizeLog(logEntry);
+    
+    // デジタル署名
+    const signedLog = await this.signLog(normalizedLog);
+    
+    // 暗号化
+    const encryptedLog = await this.encryptLog(signedLog);
+    
+    // インデックス作成
+    await this.indexLog(encryptedLog);
+    
+    // コンプライアンスチェック
+    const complianceResults = await this.checkCompliance(normalizedLog);
+    
+    // WebSocket配信（重要なイベントのみ）
+    if (this.shouldBroadcast(normalizedLog)) {
+      this.broadcastAuditEvent(normalizedLog, complianceResults);
+    }
+    
+    // 保持期間管理
+    await this.applyRetentionPolicy(encryptedLog);
+    
+    return {
+      logId: encryptedLog.id,
+      complianceStatus: complianceResults,
+      retentionDate: encryptedLog.retentionDate
+    };
+  }
+  
+  async checkCompliance(logEntry) {
+    const results = [];
+    
+    for (const [ruleId, rule] of this.complianceRules) {
+      const result = await this.evaluateComplianceRule(rule, logEntry);
+      if (!result.compliant) {
+        results.push({
+          ruleId: ruleId,
+          regulation: rule.regulation,
+          violation: result.violation,
+          severity: result.severity,
+          remediation: result.remediation
+        });
+      }
+    }
+    
+    return results;
+  }
+  
+  broadcastAuditEvent(logEntry, complianceResults) {
+    const event = {
+      type: 'audit_event',
+      category: logEntry.category,
+      user: logEntry.user,
+      action: logEntry.action,
+      resource: logEntry.resource,
+      timestamp: logEntry.timestamp,
+      complianceStatus: complianceResults.length === 0 ? 'compliant' : 'violation',
+      violations: complianceResults
+    };
+    
+    // 違反があった場合は即座通知
+    if (complianceResults.length > 0) {
+      this.websocket.broadcast('compliance_violation', {
+        type: 'compliance_violation',
+        event: event,
+        urgency: this.calculateUrgency(complianceResults)
+      });
+    }
+    
+    // 通常の監査イベント配信
+    this.websocket.broadcast('audit_log', event);
+  }
+}
+```
+
+### 4. インシデント対応自動化
+```javascript
+class IncidentResponseAutomation {
+  constructor() {
+    this.playbooks = new Map();
+    this.workflows = new Map();
+    this.approvals = new Map();
+  }
+  
+  async executePlaybook(incident) {
+    const playbook = this.selectPlaybook(incident);
+    if (!playbook) return;
+    
+    const execution = {
+      id: this.generateExecutionId(),
+      incidentId: incident.id,
+      playbookId: playbook.id,
+      status: 'running',
+      steps: [],
+      startTime: new Date()
+    };
+    
+    // WebSocket経由で実行開始通知
+    this.broadcastExecution('started', execution);
+    
+    try {
+      for (const step of playbook.steps) {
+        const stepResult = await this.executeStep(step, incident, execution);
+        execution.steps.push(stepResult);
+        
+        // ステップ完了通知
+        this.broadcastExecution('step_completed', execution, stepResult);
+        
+        // 人間の承認が必要な場合
+        if (step.requiresApproval) {
+          await this.requestApproval(execution, step);
+        }
+      }
+      
+      execution.status = 'completed';
+      execution.endTime = new Date();
+      
+    } catch (error) {
+      execution.status = 'failed';
+      execution.error = error.message;
+      execution.endTime = new Date();
+    }
+    
+    // 実行完了通知
+    this.broadcastExecution('completed', execution);
+    
+    return execution;
+  }
+  
+  async executeStep(step, incident, execution) {
+    const stepResult = {
+      stepId: step.id,
+      name: step.name,
+      startTime: new Date(),
+      status: 'running'
+    };
+    
+    try {
+      switch (step.type) {
+        case 'isolate_system':
+          await this.isolateSystem(step.target);
+          break;
+          
+        case 'block_ip':
+          await this.blockIP(step.ipAddress);
+          break;
+          
+        case 'collect_evidence':
+          stepResult.evidence = await this.collectEvidence(step.targets);
+          break;
+          
+        case 'notify_team':
+          await this.notifyTeam(step.team, incident);
+          break;
+          
+        case 'run_script':
+          stepResult.output = await this.runScript(step.script, step.parameters);
+          break;
+      }
+      
+      stepResult.status = 'completed';
+      stepResult.endTime = new Date();
+      
+    } catch (error) {
+      stepResult.status = 'failed';
+      stepResult.error = error.message;
+      stepResult.endTime = new Date();
+    }
+    
+    return stepResult;
+  }
+  
+  broadcastExecution(event, execution, stepResult = null) {
+    this.websocket.broadcast('playbook_execution', {
+      type: 'playbook_execution',
+      event: event,
+      execution: {
+        id: execution.id,
+        incidentId: execution.incidentId,
+        status: execution.status,
+        currentStep: stepResult?.stepId,
+        progress: this.calculateProgress(execution)
+      },
+      stepResult: stepResult
+    });
+  }
+}
+```
+
+この包括的なセキュリティ・監査システムアーキテクチャにより、リアルタイムでの脅威検知と対応が可能になります。
+
+</div>
+</div>

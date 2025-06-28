@@ -1,0 +1,508 @@
+---
+title: '通知・アラートシステム詳細'
+description: 'リアルタイム通知、プッシュメッセージ、システム監視アラートのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+# 🔔 通知・アラートシステム詳細
+
+## 1. リアルタイム通知配信システム
+
+### マルチチャネル通知アーキテクチャ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "イベントソース"
+        A[👤 ユーザーアクション] --> E[📅 イベントコレクター]
+        B[⏰ スケジュールタスク] --> E
+        C[🚨 システムアラート] --> E
+        D[🔧 API呼び出し] --> E
+    end
+    
+    subgraph "通知エンジン"
+        E --> F[🎯 ターゲティング]
+        F --> G[📝 メッセージ生成]
+        G --> H[🔄 配信ルーター]
+    end
+    
+    subgraph "配信チャネル"
+        H -->|WebSocket| I[💻 Webブラウザ]
+        H -->|WebSocket| J[📱 PWAアプリ]
+        H -->|Push API| K[📲 モバイルアプリ]
+        H -->|WebSocket| L[🖥️ デスクトップ]
+        H -->|Email| M[📧 メール]
+        H -->|SMS| N[📱 SMS]
+    end
+    
+    subgraph "管理機能"
+        O[⚙️ 設定管理] --> F
+        P[📊 配信統計] --> H
+        Q[💾 通知履歴] --> G
+    end
+    
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style H fill:#fff3e0
+    style I fill:#e3f2fd
+    style J fill:#e1f5fe
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 通知フロー詳細
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant T as イベントトリガー
+    participant E as 通知エンジン
+    participant D as 配信サーバー
+    participant C as クライアント
+    participant P as プッシュサービス
+
+    T->>E: イベント発生
+    E->>E: ユーザー設定確認
+    E->>E: メッセージ生成
+    
+    alt オンラインユーザー
+        E->>D: WebSocket配信
+        D->>C: リアルタイム通知
+        C-->>D: 受信確認
+    else オフラインユーザー
+        E->>P: プッシュ通知
+        P->>C: デバイス通知
+        C-->>P: 受信確認
+    end
+    
+    E->>E: 配信ログ記録
+    
+    Note over T,P: マルチチャネル配信保証
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. ユーザープリファレンス管理
+
+### 通知設定システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "ユーザー設定"
+        U[👤 ユーザー] --> S[⚙️ 設定UI]
+        S --> P1[🔔 通知種別設定]
+        S --> P2[⏰ 時間帯設定]
+        S --> P3[📱 デバイス設定]
+        S --> P4[🎯 フィルター設定]
+    end
+    
+    subgraph "設定管理"
+        P1 --> DB[💾 設定DB]
+        P2 --> DB
+        P3 --> DB
+        P4 --> DB
+        
+        DB --> C[⚡ 設定キャッシュ]
+    end
+    
+    subgraph "配信制御"
+        C --> F[🔍 フィルタリング]
+        F --> R[📊 レート制限]
+        R --> Q[⏳ キューイング]
+        Q --> D[📤 配信実行]
+    end
+    
+    style DB fill:#e8f5e8
+    style C fill:#fff3e0
+    style F fill:#f3e5f5
+    style D fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. システム監視・アラートシステム
+
+### リアルタイム監視ダッシュボード
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "監視対象"
+        S1[🖥️ Webサーバー] --> M[📊 監視エージェント]
+        S2[💾 データベース] --> M
+        S3[🌐 ネットワーク] --> M
+        S4[🔧 アプリケーション] --> M
+    end
+    
+    subgraph "アラート処理"
+        M --> A[🚨 アラートエンジン]
+        A --> T[📏 閾値判定]
+        T --> E[⚡ エスカレーション]
+        E --> N[🔔 通知生成]
+    end
+    
+    subgraph "配信先"
+        N --> WS[WebSocketサーバー]
+        WS --> D1[💻 管理ダッシュボード]
+        WS --> D2[📱 モバイルアプリ]
+        WS --> D3[📧 メール通知]
+        WS --> D4[📲 SMS通知]
+    end
+    
+    subgraph "インシデント管理"
+        N --> I[📋 インシデント作成]
+        I --> W[🔄 ワークフロー]
+        W --> R[📝 対応記録]
+    end
+    
+    style M fill:#f3e5f5
+    style A fill:#fff3e0
+    style N fill:#e8f5e8
+    style WS fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### アラートエスカレーション
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant M as 監視システム
+    participant A as アラートエンジン
+    participant T as チーム
+    participant E as エスカレーション
+    participant L as リーダー
+
+    M->>A: 異常検知
+    A->>A: 重要度判定
+    
+    alt 低重要度
+        A->>T: Slack通知
+        T-->>A: 確認 (30分以内)
+    else 中重要度
+        A->>T: WebSocket + プッシュ通知
+        T-->>A: 確認 (15分以内)
+        
+        alt 未対応時
+            A->>E: エスカレーション実行
+            E->>L: 緊急通知
+        end
+    else 高重要度
+        A->>T: 全チャネル緊急通知
+        A->>E: 即座にエスカレーション
+        A->>L: リーダー直接通知
+    end
+    
+    Note over M,L: 重要度別対応フロー
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. PWA統合通知システム
+
+### Service Worker連携
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "PWAアプリ"
+        A[📱 PWAアプリ] --> SW[🔄 Service Worker]
+        SW --> N[🔔 Notification API]
+        SW --> B[📂 Background Sync]
+    end
+    
+    subgraph "WebSocket通信"
+        A -->|アクティブ時| WS[WebSocketサーバー]
+        WS -->|リアルタイム| A
+    end
+    
+    subgraph "プッシュ通知"
+        PS[📡 Push Service] --> SW
+        WS --> PS
+        SW --> N
+    end
+    
+    subgraph "オフライン対応"
+        SW --> C[💾 キャッシュストレージ]
+        B --> WS
+        C --> B
+    end
+    
+    subgraph "統合制御"
+        WS --> UC[🎯 統合制御]
+        PS --> UC
+        UC --> DM[📊 配信管理]
+        DM --> L[📝 ログ記録]
+    end
+    
+    style SW fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style UC fill:#fff3e0
+    style N fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 5. 大規模配信システム
+
+### スケーラブル通知配信
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "ロードバランサー"
+        LB[⚖️ WebSocketロードバランサー]
+    end
+    
+    subgraph "WebSocketサーバー群"
+        WS1[WebSocketサーバー1]
+        WS2[WebSocketサーバー2]
+        WS3[WebSocketサーバー3]
+        WS4[WebSocketサーバーN]
+    end
+    
+    subgraph "メッセージング基盤"
+        MQ[📡 メッセージキュー]
+        PS[📤 Pub/Subシステム]
+        BR[📊 ブローカー]
+    end
+    
+    subgraph "通知処理"
+        NE[🔔 通知エンジン群]
+        FT[🔍 フィルタリング]
+        RT[📊 レート制限]
+    end
+    
+    subgraph "永続化層"
+        DB[💾 通知履歴DB]
+        CACHE[⚡ Redisキャッシュ]
+        QUEUE[📦 遅延キュー]
+    end
+    
+    LB --> WS1
+    LB --> WS2
+    LB --> WS3
+    LB --> WS4
+    
+    WS1 --> PS
+    WS2 --> PS
+    WS3 --> PS
+    WS4 --> PS
+    
+    PS --> MQ
+    MQ --> NE
+    NE --> FT
+    FT --> RT
+    RT --> QUEUE
+    
+    NE --> CACHE
+    RT --> DB
+    
+    style LB fill:#f3e5f5
+    style PS fill:#e8f5e8
+    style NE fill:#fff3e0
+    style CACHE fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 6. 通知分析・最適化
+
+### 配信効果測定
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "配信データ"
+        S[📤 送信ログ] --> A[📊 分析エンジン]
+        D[📥 配信ログ] --> A
+        O[👁️ 開封ログ] --> A
+        C[👆 クリックログ] --> A
+    end
+    
+    subgraph "分析処理"
+        A --> M[📈 メトリクス計算]
+        M --> SEG[👥 セグメント分析]
+        SEG --> OPT[⚡ 最適化提案]
+    end
+    
+    subgraph "可視化"
+        M --> DB[📊 ダッシュボード]
+        SEG --> RP[📋 レポート]
+        OPT --> AL[🚨 アラート]
+    end
+    
+    subgraph "フィードバックループ"
+        OPT --> TS[⏰ 配信時間最適化]
+        OPT --> FS[🎯 フリーケンシー最適化]
+        OPT --> CS[📝 コンテンツ最適化]
+    end
+    
+    style A fill:#f3e5f5
+    style M fill:#e8f5e8
+    style OPT fill:#fff3e0
+    style DB fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 💡 実装のベストプラクティス
+
+### 1. 通知設定管理
+```javascript
+class NotificationPreferences {
+  constructor(userId) {
+    this.userId = userId;
+    this.preferences = this.loadPreferences();
+  }
+  
+  shouldSendNotification(notificationType, timeZone) {
+    const pref = this.preferences[notificationType];
+    if (!pref.enabled) return false;
+    
+    const currentTime = new Date().toLocaleString("en-US", {timeZone});
+    const hour = new Date(currentTime).getHours();
+    
+    return hour >= pref.quietHours.start && hour <= pref.quietHours.end;
+  }
+  
+  updatePreference(type, settings) {
+    this.preferences[type] = { ...this.preferences[type], ...settings };
+    this.savePreferences();
+  }
+}
+```
+
+### 2. レート制限実装
+```javascript
+class NotificationRateLimiter {
+  constructor() {
+    this.userLimits = new Map(); // userId -> { count, resetTime }
+    this.globalLimit = { maxPerMinute: 1000, current: 0 };
+  }
+  
+  canSendNotification(userId, notificationType) {
+    // ユーザー別制限チェック
+    const userLimit = this.getUserLimit(userId);
+    if (userLimit.count >= this.getLimitForType(notificationType)) {
+      return false;
+    }
+    
+    // グローバル制限チェック
+    if (this.globalLimit.current >= this.globalLimit.maxPerMinute) {
+      return false;
+    }
+    
+    return true;
+  }
+  
+  recordNotification(userId) {
+    this.incrementUserCount(userId);
+    this.globalLimit.current++;
+  }
+}
+```
+
+### 3. 配信保証機能
+```javascript
+class ReliableNotificationDelivery {
+  constructor() {
+    this.pendingNotifications = new Map();
+    this.retryDelays = [1000, 5000, 15000, 60000]; // 指数バックオフ
+  }
+  
+  async sendWithRetry(notification, maxRetries = 3) {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        await this.sendNotification(notification);
+        return { success: true, attempts: attempt + 1 };
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw new Error(`Failed after ${maxRetries + 1} attempts: ${error.message}`);
+        }
+        
+        const delay = this.retryDelays[attempt] || 60000;
+        await this.sleep(delay);
+      }
+    }
+  }
+  
+  handleFailedDelivery(notification, error) {
+    // Dead Letter Queue への移動
+    this.moveToDeadLetterQueue(notification, error);
+    // 管理者への通知
+    this.notifyAdministrators(notification, error);
+  }
+}
+```
+
+### 4. リアルタイム監視メトリクス
+```javascript
+class NotificationMetrics {
+  constructor() {
+    this.metrics = {
+      sent: 0,
+      delivered: 0,
+      opened: 0,
+      clicked: 0,
+      failed: 0
+    };
+    this.setupRealTimeReporting();
+  }
+  
+  setupRealTimeReporting() {
+    setInterval(() => {
+      this.sendMetricsUpdate();
+    }, 5000); // 5秒間隔でメトリクス送信
+  }
+  
+  recordEvent(eventType, metadata = {}) {
+    this.metrics[eventType]++;
+    
+    // リアルタイムダッシュボードに送信
+    this.broadcastMetricUpdate({
+      type: eventType,
+      count: this.metrics[eventType],
+      timestamp: Date.now(),
+      metadata
+    });
+  }
+}
+```
+
+この包括的な通知システムアーキテクチャにより、高可用性でスケーラブルな通知配信を実現できます。
+
+</div>
+</div>

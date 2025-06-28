@@ -1,0 +1,279 @@
+---
+title: 'リアルタイム通信システム詳細'
+description: 'チャット、メッセージング、音声・ビデオ通話システムのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+# 📱 リアルタイム通信システム詳細
+
+## 1. チャット・メッセージングシステム
+
+### 基本アーキテクチャ
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "クライアント層"
+        A[📱 モバイルアプリ] --> G[WebSocketゲートウェイ]
+        B[💻 Webアプリ] --> G
+        C[🖥️ デスクトップアプリ] --> G
+    end
+    
+    subgraph "アプリケーション層"
+        G --> H[🔄 メッセージルーター]
+        H --> I[👥 ルーム管理]
+        H --> J[🔐 認証・認可]
+        H --> K[🔔 通知エンジン]
+    end
+    
+    subgraph "データ層"
+        I --> L[💾 メッセージDB]
+        J --> M[👤 ユーザーDB]
+        K --> N[📤 通知キュー]
+    end
+    
+    subgraph "外部サービス"
+        K --> O[📲 プッシュ通知]
+        K --> P[📧 メール通知]
+    end
+    
+    style G fill:#f3e5f5
+    style H fill:#e8f5e8
+    style I fill:#e3f2fd
+    style J fill:#fff3e0
+    style K fill:#fce4ec
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### メッセージフロー詳細
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant A as 👤 送信者
+    participant G as WebSocketゲートウェイ
+    participant R as メッセージルーター
+    participant D as メッセージDB
+    participant B as 👤 受信者
+
+    A->>G: メッセージ送信
+    G->>R: メッセージ検証
+    R->>D: メッセージ保存
+    D-->>R: 保存完了
+    R->>G: 配信リスト取得
+    G->>B: リアルタイム配信
+    G->>A: 送信完了通知
+    
+    Note over A,B: 平均遅延 < 100ms
+    Note over D: 永続化保証
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 2. グループチャット機能
+
+### ルーム管理システム
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph LR
+    subgraph "ルーム A"
+        A1[👤 ユーザー1] --> RA[WebSocketコネクション]
+        A2[👤 ユーザー2] --> RA
+        A3[👤 ユーザー3] --> RA
+    end
+    
+    subgraph "ルーム B"
+        B1[👤 ユーザー4] --> RB[WebSocketコネクション]
+        B2[👤 ユーザー5] --> RB
+    end
+    
+    RA --> M[メッセージルーター]
+    RB --> M
+    
+    M --> RM[ルーム管理]
+    RM --> AC[アクセス制御]
+    RM --> MM[メンバー管理]
+    RM --> PM[権限管理]
+    
+    style RA fill:#e3f2fd
+    style RB fill:#e8f5e8
+    style M fill:#f3e5f5
+    style RM fill:#fff3e0
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. 音声・ビデオ通話システム
+
+### WebRTC + WebSocket ハイブリッド構成
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TD
+    subgraph "発信者側"
+        A[👤 発信者] --> A1[📹 カメラ/マイク]
+        A1 --> A2[WebRTC Peer]
+    end
+    
+    subgraph "シグナリングサーバー"
+        S[WebSocketサーバー] --> S1[🔄 SDP交換]
+        S1 --> S2[🧭 ICE候補交換]
+        S2 --> S3[📞 通話状態管理]
+    end
+    
+    subgraph "受信者側"
+        B[👤 受信者] --> B1[📺 スピーカー/ディスプレイ]
+        B1 --> B2[WebRTC Peer]
+    end
+    
+    A2 -.->|直接P2P通信| B2
+    A2 -->|シグナリング| S
+    B2 -->|シグナリング| S
+    
+    subgraph "メディアサーバー (SFU)"
+        M[📡 Selective Forwarding Unit]
+        M1[🔄 ストリーム分配]
+        M2[📊 品質適応制御]
+    end
+    
+    A2 -.->|大人数通話時| M
+    M -.-> B2
+    
+    style S fill:#f3e5f5
+    style M fill:#e8f5e8
+    style A2 fill:#e3f2fd
+    style B2 fill:#e3f2fd
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### 通話品質管理
+
+</div>
+</div>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as WebSocketサーバー
+    participant Q as 品質監視
+    participant A as 適応制御
+
+    C->>S: 品質統計送信
+    S->>Q: 品質分析
+    Q->>A: 品質低下検知
+    A->>S: ビットレート調整指示
+    S->>C: 品質設定変更
+    C->>C: エンコード設定適用
+    
+    Note over C,A: 動的品質調整
+    Note over Q: RTT, パケットロス, ジッター監視
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 4. スケーラビリティパターン
+
+### 水平スケーリング構成
+
+</div>
+</div>
+
+<Mermaid chart={`
+graph TB
+    subgraph "ロードバランサー層"
+        LB[🔄 WebSocketロードバランサー]
+    end
+    
+    subgraph "WebSocketサーバー群"
+        WS1[WebSocketサーバー1]
+        WS2[WebSocketサーバー2]
+        WS3[WebSocketサーバー3]
+        WS4[WebSocketサーバーN]
+    end
+    
+    subgraph "メッセージバス"
+        MB[📡 Redis Pub/Sub]
+        MQ[📤 メッセージキュー]
+    end
+    
+    subgraph "永続化層"
+        DB1[💾 メッセージDB]
+        DB2[👤 ユーザーDB]
+        CACHE[⚡ Redisキャッシュ]
+    end
+    
+    LB --> WS1
+    LB --> WS2
+    LB --> WS3
+    LB --> WS4
+    
+    WS1 --> MB
+    WS2 --> MB
+    WS3 --> MB
+    WS4 --> MB
+    
+    MB --> MQ
+    MQ --> DB1
+    MQ --> DB2
+    
+    WS1 --> CACHE
+    WS2 --> CACHE
+    WS3 --> CACHE
+    WS4 --> CACHE
+    
+    style LB fill:#f3e5f5
+    style MB fill:#e8f5e8
+    style CACHE fill:#fff3e0
+`} />
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 💡 実装のベストプラクティス
+
+### 1. 接続管理
+- **ハートビート/Ping-Pong**: 接続状態の定期確認
+- **自動再接続**: 切断時の透明な復旧
+- **接続プール**: 効率的なリソース管理
+
+### 2. メッセージ配信保証
+- **At-least-once配信**: メッセージ重複を許容した確実な配信
+- **Idempotency**: 重複メッセージの冪等処理
+- **オフライン配信**: 未接続時のメッセージ蓄積
+
+### 3. セキュリティ
+- **認証トークン**: JWTベースのセッション管理
+- **レート制限**: スパム・DoS攻撃対策
+- **暗号化**: WSS (WebSocket Secure) の使用
+
+### 4. 監視・運用
+- **メトリクス収集**: 接続数、メッセージレート、レスポンス時間
+- **アラート**: 異常検知とエスカレーション
+- **ログ分析**: トラブルシューティング支援
+
+この詳細なアーキテクチャにより、高品質なリアルタイム通信システムを構築できます。
+
+</div>
+</div>
