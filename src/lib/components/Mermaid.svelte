@@ -1,15 +1,23 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import mermaid from 'mermaid';
+	import type { MermaidConfig } from '$lib/types/mermaid';
 
 	export let chart: string;
-	export let id: string = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+	export let id: string = `mermaid-${Math.random().toString(36).substring(2, 11)}`;
 
-	let container: HTMLElement;
+	// リアクティブな状態管理
+	let svgContent: string = '';
+	let errorMessage: string = '';
+	let isLoading: boolean = true;
+	let mermaid: {
+		initialize: (config: MermaidConfig) => void;
+		render: (id: string, chart: string) => Promise<{ svg: string }>;
+	} | null = null;
+	let isBrowser = false;
 
 	onMount(async () => {
-		// Mermaidの初期化
-		mermaid.initialize({
+		// TypeScript型安全なMermaid設定
+		const config: MermaidConfig = {
 			startOnLoad: false,
 			theme: 'dark',
 			themeVariables: {
@@ -42,28 +50,76 @@
 				noteBorderColor: '#6b7280',
 				noteBkgColor: '#374151',
 				noteTextColor: '#f9fafb'
-			} as any
-		});
+			}
+		};
+
+		// ブラウザ環境を確認
+		isBrowser = typeof window !== 'undefined';
+		if (!isBrowser) {
+			isLoading = false;
+			return;
+		}
 
 		try {
+			// 動的インポートでSSRエラーを回避
+			const mermaidModule = await import('mermaid');
+			mermaid = mermaidModule.default;
+
+			// ✅ 型安全なMermaid初期化（eslint-disableもas anyも不要）
+			mermaid.initialize(config);
+
 			// チャートをレンダリング
 			const { svg } = await mermaid.render(id, chart);
-			if (container) {
-				// eslint-disable-next-line svelte/no-dom-manipulating
-				container.innerHTML = svg;
-			}
+			svgContent = svg;
+			errorMessage = '';
 		} catch (error) {
 			console.error('Mermaid rendering error:', error);
-			if (container) {
-				// eslint-disable-next-line svelte/no-dom-manipulating
-				container.innerHTML = `<p class="text-red-600">図表の表示に失敗しました: ${error}</p>`;
-			}
+			svgContent = '';
+			errorMessage = `図表の表示に失敗しました: ${error}`;
+		} finally {
+			isLoading = false;
 		}
 	});
+
+	// チャートが変更された時の再レンダリング (無限ループ防止)
+	$: if (chart && isBrowser && mermaid) {
+		renderChart();
+	}
+
+	async function renderChart() {
+		if (!isBrowser || !mermaid) return;
+
+		try {
+			isLoading = true;
+			const { svg } = await mermaid.render(`${id}-${Date.now()}`, chart);
+			svgContent = svg;
+			errorMessage = '';
+		} catch (error) {
+			console.error('Mermaid rendering error:', error);
+			svgContent = '';
+			errorMessage = `図表の表示に失敗しました: ${error}`;
+		} finally {
+			isLoading = false;
+		}
+	}
 </script>
 
-<div bind:this={container} class="mermaid-container my-6 flex justify-center">
-	<!-- Mermaidチャートがここに挿入される -->
+<!-- ✅ Svelte 5推奨：条件分岐とディレクティブ使用 -->
+<div class="mermaid-container my-6 flex justify-center">
+	{#if isLoading}
+		<div class="flex items-center justify-center p-8">
+			<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+			<span class="ml-2 text-gray-600">図表を生成中...</span>
+		</div>
+	{:else if errorMessage}
+		<p class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+			{errorMessage}
+		</p>
+	{:else if svgContent}
+		<!-- {@html} ディレクティブでSVGを安全にレンダリング -->
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html svgContent}
+	{/if}
 </div>
 
 <style>
@@ -126,5 +182,16 @@
 
 	:global(.mermaid-container .noteText) {
 		fill: #f9fafb;
+	}
+
+	/* ローディングアニメーション */
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.animate-spin {
+		animation: spin 1s linear infinite;
 	}
 </style>

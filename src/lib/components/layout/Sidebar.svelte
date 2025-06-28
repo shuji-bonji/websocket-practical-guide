@@ -1,11 +1,29 @@
 <script lang="ts">
 	import { progressStore, progressActions } from '$lib/stores/progress';
-	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	export let open = false;
 
 	$: progress = $progressStore;
-	$: currentPath = $page.url.pathname;
+
+	let currentPath = '';
+
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			currentPath = window.location.pathname;
+
+			// Listen for navigation changes
+			const updatePath = () => {
+				currentPath = window.location.pathname;
+			};
+
+			window.addEventListener('popstate', updatePath);
+
+			return () => {
+				window.removeEventListener('popstate', updatePath);
+			};
+		}
+	});
 
 	// ナビゲーションアイテムの型定義
 	interface NavigationItem {

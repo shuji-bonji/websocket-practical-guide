@@ -1,5 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
-import { browser } from '$app/environment';
+
+// Browser detection without SvelteKit dependency
+const browser = typeof window !== 'undefined';
 
 export interface LessonProgress {
 	id: string;

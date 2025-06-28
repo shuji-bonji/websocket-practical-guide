@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { browser } from '$app/environment';
+
+	// Browser detection without SvelteKit dependency
+	const browser = typeof window !== 'undefined';
 
 	export let title: string;
 	export let description: string;
