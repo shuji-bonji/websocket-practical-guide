@@ -37,6 +37,17 @@ This is a WebSocket learning project built with SvelteKit and TypeScript. The pr
 
 ## Claude Code Collaboration Guidelines
 
+### Please code with the latest Svelte specification.
+
+Be sure to check the latest Svelte5 spec:
+
+https://svelte.dev/docs/llms
+
+https://svelte.dev/llms.txt
+https://svelte.dev/llms-full.txt
+https://svelte.dev/llms-medium.txt
+https://svelte.dev/llms-small.txt
+
 ### Effective Communication Patterns
 
 When requesting work from Claude Code, follow these proven patterns for optimal results:

@@ -186,7 +186,8 @@ export const progressActions = {
 
 			const recalculated = recalculateProgress(updated);
 			saveProgress(recalculated);
-			return recalculated;
+			// 確実にリアクティブ更新をトリガーするため、新しいオブジェクトを返す
+			return JSON.parse(JSON.stringify(recalculated));
 		});
 	},
 
@@ -207,7 +208,8 @@ export const progressActions = {
 
 			const recalculated = recalculateProgress(updated);
 			saveProgress(recalculated);
-			return recalculated;
+			// 確実にリアクティブ更新をトリガーするため、新しいオブジェクトを返す
+			return JSON.parse(JSON.stringify(recalculated));
 		});
 	},
 

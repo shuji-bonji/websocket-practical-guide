@@ -6,6 +6,12 @@
 
 	$: progress = $progressStore;
 
+	// 進捗状態のリアクティブ監視
+	$: {
+		// サイドバーの進捗表示を確実に更新
+		void progress;
+	}
+
 	let currentPath = '';
 
 	onMount(() => {
@@ -131,13 +137,14 @@
 		return icons[iconName] || icons.book;
 	}
 
+	// レッスンの完了状態を取得（リアクティブ版）
+	$: lessonCompletionMap = new Map(
+		progress.phases.flatMap((phase) => phase.lessons.map((lesson) => [lesson.id, lesson.completed]))
+	);
+
 	// レッスンの完了状態を取得
 	function isLessonCompleted(lessonId: string): boolean {
-		for (const phase of progress.phases) {
-			const lesson = phase.lessons.find((l) => l.id === lessonId);
-			if (lesson) return lesson.completed;
-		}
-		return false;
+		return lessonCompletionMap.get(lessonId) || false;
 	}
 
 	// レッスン完了状態をトグル
@@ -188,21 +195,23 @@
 									{:else if item.lessonId}
 										<!-- レッスン完了チェックボックス -->
 										<div class="mr-3 flex-shrink-0">
-											{#if item.lessonId && isLessonCompleted(item.lessonId)}
-												<div
-													class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
-												>
-													<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-														<path
-															fill-rule="evenodd"
-															d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-															clip-rule="evenodd"
-														/>
-													</svg>
-												</div>
-											{:else}
-												<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
-											{/if}
+											{#key lessonCompletionMap.get(item.lessonId)}
+												{#if item.lessonId && isLessonCompleted(item.lessonId)}
+													<div
+														class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+													>
+														<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+															<path
+																fill-rule="evenodd"
+																d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																clip-rule="evenodd"
+															/>
+														</svg>
+													</div>
+												{:else}
+													<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+												{/if}
+											{/key}
 										</div>
 									{/if}
 

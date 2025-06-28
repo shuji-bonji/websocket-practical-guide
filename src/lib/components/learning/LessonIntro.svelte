@@ -9,8 +9,14 @@
 	export let prerequisites: string[] = [];
 
 	$: progress = $progressStore;
-	$: isCompleted =
-		progress.phases.flatMap((p) => p.lessons).find((l) => l.id === lessonId)?.completed || false;
+	$: currentLesson = progress.phases.flatMap((p) => p.lessons).find((l) => l.id === lessonId);
+	$: isCompleted = currentLesson?.completed || false;
+
+	// リアクティブ更新の確認
+	$: {
+		// ProgressTrackerコンポーネントとの同期を確実にする
+		void isCompleted;
+	}
 
 	let mounted = false;
 	onMount(() => {
@@ -72,34 +78,36 @@
 		<!-- 完了ボタン -->
 		<div class="mt-4 lg:mt-0 lg:ml-6">
 			{#if mounted}
-				<button
-					type="button"
-					on:click={toggleCompletion}
-					class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md {isCompleted
-						? 'text-green-700 bg-green-100 hover:bg-green-200'
-						: 'text-blue-700 bg-blue-100 hover:bg-blue-200'} transition-colors duration-200"
-				>
-					{#if isCompleted}
-						<svg class="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								fill-rule="evenodd"
-								d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-						完了済み
-					{:else}
-						<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M9 12l2 2 4-4"
-							/>
-						</svg>
-						完了としてマーク
-					{/if}
-				</button>
+				{#key isCompleted}
+					<button
+						type="button"
+						on:click={toggleCompletion}
+						class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md {isCompleted
+							? 'text-green-700 bg-green-100 hover:bg-green-200'
+							: 'text-blue-700 bg-blue-100 hover:bg-blue-200'} transition-colors duration-200"
+					>
+						{#if isCompleted}
+							<svg class="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+								<path
+									fill-rule="evenodd"
+									d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							完了済み
+						{:else}
+							<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M9 12l2 2 4-4"
+								/>
+							</svg>
+							完了としてマーク
+						{/if}
+					</button>
+				{/key}
 			{/if}
 		</div>
 	</div>
