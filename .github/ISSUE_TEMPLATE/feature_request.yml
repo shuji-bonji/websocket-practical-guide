@@ -1,0 +1,155 @@
+name: ✨ Feature Request
+description: Suggest a new feature for the WebSocket Learning project
+title: '[FEATURE] '
+labels: ['enhancement', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide detailed information about your idea.
+
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Target Learning Phase
+      description: Which phase would this feature belong to?
+      options:
+        - Phase 1 (Basic Understanding)
+        - Phase 2 (Implementation Technology)
+        - Phase 3 (Testing & Evaluation)
+        - Phase 4 (Production Development)
+        - General/Infrastructure
+        - Cross-phase
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - WebSocket Component
+        - Educational Content
+        - Developer Experience
+        - Testing Infrastructure
+        - Documentation
+        - Performance Enhancement
+        - UI/UX Improvement
+        - Build/Deployment
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+      placeholder: I would like to see...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Describe any alternative solutions or features you've considered.
+
+  - type: textarea
+    id: educational_value
+    attributes:
+      label: Educational Value
+      description: How would this feature enhance the WebSocket learning experience?
+      placeholder: This would help learners understand...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would improve experience significantly
+        - High - Essential for learning objectives
+        - Critical - Blocking current learning goals
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Estimated Complexity
+      description: How complex do you think this feature would be to implement?
+      options:
+        - Simple - Small change or addition
+        - Medium - Moderate development effort
+        - Complex - Significant development effort
+        - Major - Large architectural changes
+        - Unknown
+
+  - type: textarea
+    id: technical_details
+    attributes:
+      label: Technical Implementation Ideas
+      description: If you have ideas about how this could be implemented technically, please share them.
+      placeholder: |
+        - Could be implemented as a new Svelte component
+        - Might require changes to the WebSocket manager
+        - Should follow Svelte 5 patterns
+        - Needs to be compatible with GitHub Pages (for Phase 1)
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What would need to be true for this feature to be considered complete?
+      placeholder: |
+        - [ ] Feature works in all supported browsers
+        - [ ] Educational documentation is provided
+        - [ ] Tests are added
+        - [ ] Example usage is demonstrated
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Project Constraints
+      description: Please confirm this feature aligns with project constraints
+      options:
+        - label: Feature respects phase-specific constraints (e.g., no server code in Phase 1)
+          required: true
+        - label: Feature uses Svelte 5 patterns (no legacy Svelte 3/4 syntax)
+          required: true
+        - label: Feature maintains educational focus over technical complexity
+          required: true
+        - label: Feature is compatible with GitHub Pages deployment (if Phase 1)
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, or examples about the feature request here.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have considered how this fits into the WebSocket learning curriculum
+          required: true
+        - label: I have thought about the educational value of this feature
+          required: true
