@@ -15,33 +15,14 @@ export default defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: 'html',
-	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-	use: {
-		/* Base URL to use in actions like `await page.goto('/')`. */
-		baseURL: 'http://localhost:4173',
 
-		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-		trace: 'on-first-retry',
-
-		/* Take screenshot on failure */
-		screenshot: 'only-on-failure',
-
-		/* Record video on failure */
-		video: 'retain-on-failure',
-
-		/* Visual comparisons */
-		expect: {
-			// Threshold for pixel differences in visual comparisons
-			threshold: 0.2,
-			// Maximum allowed pixel difference
-			maxDiffPixels: 100
-		}
-	},
+	/* Global test timeout */
+	timeout: process.env.CI ? 60000 : 30000,
 
 	/* Global timeout for expect assertions */
 	expect: {
 		/* Maximum time expect() should wait for the condition to be met */
-		timeout: 10000,
+		timeout: process.env.CI ? 20000 : 10000,
 		/* Threshold for visual comparisons */
 		toHaveScreenshot: { threshold: 0.2, maxDiffPixels: 100 },
 		toMatchSnapshot: { threshold: 0.2, maxDiffPixels: 100 }
@@ -91,5 +72,31 @@ export default defineConfig({
 		url: 'http://localhost:4173',
 		reuseExistingServer: !process.env.CI,
 		timeout: 120000
+	},
+
+	/* CI-specific environment variables for WebSocket testing */
+	use: {
+		...(process.env.CI && {
+			/* Longer timeouts for CI environment */
+			actionTimeout: 15000,
+			navigationTimeout: 15000,
+			/* Additional CI-specific settings */
+			extraHTTPHeaders: {
+				'X-CI-Environment': 'true'
+			}
+		}),
+		/* Base URL to use in actions like `await page.goto('/')`. */
+		baseURL: 'http://localhost:4173',
+
+		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+		trace: 'on-first-retry',
+
+		/* Take screenshot on failure */
+		screenshot: 'only-on-failure',
+
+		/* Record video on failure */
+		video: 'retain-on-failure'
+
+		/* Visual comparisons configured in global expect settings above */
 	}
 });

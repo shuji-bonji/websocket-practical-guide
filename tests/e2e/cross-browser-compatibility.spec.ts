@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+import {
+	getWebSocketTimeouts,
+	testWebSocketWithFallback,
+	logWebSocketTestEnvironment
+} from './utils/websocket-test-helpers.js';
 
 /**
  * Cross-browser compatibility test matrix for WebSocket functionality
@@ -48,6 +53,9 @@ test.describe('Cross-Browser WebSocket Compatibility Matrix', () => {
 				await page.goto(url);
 				await page.waitForLoadState('networkidle');
 
+				// Log test environment for debugging
+				logWebSocketTestEnvironment();
+
 				// Skip connection tests on certain pages that don't have WebSocket demos
 				const hasConnectionDemo = (await page.locator('button:has-text("接続")').count()) > 0;
 				if (!hasConnectionDemo) {
@@ -55,61 +63,45 @@ test.describe('Cross-Browser WebSocket Compatibility Matrix', () => {
 					return;
 				}
 
-				// Test connection behavior
-				const connectButton = page.locator('button:has-text("接続")');
-				await connectButton.click();
+				// Use resilient WebSocket testing with browser-specific timeouts
+				const timeouts = getWebSocketTimeouts();
+				const browserMultiplier = browserName === 'webkit' ? 1.5 : 1.0;
+				const adjustedTimeout = Math.floor(timeouts.connection * browserMultiplier);
 
-				// Different browsers might have different connection timings
-				const browserTimeouts = {
-					chromium: 8000,
-					firefox: 10000,
-					webkit: 12000
-				};
+				await testWebSocketWithFallback(
+					page,
+					async (connected: boolean) => {
+						if (connected) {
+							console.log(`${browserName}: WebSocket connection successful`);
 
-				const timeout = browserTimeouts[browserName as keyof typeof browserTimeouts] || 10000;
-
-				try {
-					// Wait for any connection state change (connected, error, or timeout)
-					await page.waitForSelector(
-						'[data-connection-state="connected"], [data-connection-state="error"]',
-						{
-							timeout: Math.min(timeout, 5000) // Cap at 5 seconds for CI stability
-						}
-					);
-
-					const connectionState = await page
-						.locator('[data-connection-state]')
-						.getAttribute('data-connection-state');
-
-					if (connectionState === 'connected') {
-						// Test message sending if input is available and we're connected
-						const messageInput = page.locator('input[type="text"]').first();
-						if ((await messageInput.count()) > 0) {
-							await messageInput.fill(`Cross-browser test from ${browserName}`);
-							const sendButton = page.locator('button:has-text("送信")');
-							if ((await sendButton.count()) > 0) {
-								await sendButton.click();
-								// Just wait briefly, don't require message to appear (external service dependent)
-								await page.waitForTimeout(1000);
+							// Test message sending if input is available and we're connected
+							const messageInput = page.locator('input[type="text"]').first();
+							if ((await messageInput.count()) > 0) {
+								await messageInput.fill(`Cross-browser test from ${browserName}`);
+								const sendButton = page.locator('button:has-text("送信")');
+								if ((await sendButton.count()) > 0) {
+									await sendButton.click();
+									// Just wait briefly, don't require message to appear (external service dependent)
+									await page.waitForTimeout(1000);
+								}
 							}
-						}
 
-						// Test disconnection
-						const disconnectButton = page.locator('button:has-text("切断")');
-						if ((await disconnectButton.count()) > 0) {
-							await disconnectButton.click();
-							await page.waitForSelector('[data-connection-state="disconnected"]', {
-								timeout: 3000
-							});
+							// Test disconnection
+							const disconnectButton = page.locator('button:has-text("切断")');
+							if ((await disconnectButton.count()) > 0) {
+								await disconnectButton.click();
+								await page.waitForSelector('[data-connection-state="disconnected"]', {
+									timeout: timeouts.disconnect
+								});
+							}
+						} else {
+							console.log(`${browserName}: Connection failed but UI handled gracefully`);
+							// Verify UI is still functional
+							await expect(page.locator('button:has-text("接続")')).toBeVisible();
 						}
-					} else {
-						console.log(`${browserName}: Connection failed but UI handled gracefully`);
-					}
-				} catch (error) {
-					console.log(`Connection test failed on ${browserName} for ${url}:`, String(error));
-					// This is expected in CI environments with network restrictions
-					// The important thing is that the browser supports the WebSocket API and UI doesn't crash
-				}
+					},
+					{ connectionTimeout: adjustedTimeout }
+				);
 			});
 
 			test('should render UI consistently across browsers', async ({ page, browserName }) => {
