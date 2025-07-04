@@ -1,116 +1,361 @@
 <script lang="ts">
-	// Browser detection without SvelteKit dependency
-	const browser = typeof window !== 'undefined';
+	import {
+		PUBLIC_WEBSOCKET_SERVICES,
+		WEBSOCKET_READY_STATE_LABELS,
+		WEBSOCKET_CLOSE_CODES
+	} from '$lib/types/websocket';
+	import type {
+		PublicWebSocketService,
+		Phase1WebSocketMessage,
+		Phase1ConnectionMetrics,
+		WebSocketEducationalEvent,
+		Phase1DemoConfig
+	} from '$lib/types/websocket';
+	import { browser } from '$lib/utils/environment';
+
+	// Safe WebSocket constants for SSR
+	const WS_OPEN = typeof WebSocket !== 'undefined' ? WebSocket.OPEN : 1;
+	const WS_CLOSED = typeof WebSocket !== 'undefined' ? WebSocket.CLOSED : 3;
 
 	interface Props {
 		title: string;
 		description: string;
-		demoType?: 'basic-connection' | 'echo-test' | 'message-exchange';
-		wsUrl?: string;
+		demoConfig?: Partial<Phase1DemoConfig>;
+		serviceFilter?: PublicWebSocketService['reliability'][];
 	}
 
 	let {
 		title,
 		description,
-		demoType = 'basic-connection',
-		wsUrl = 'wss://echo.websocket.org'
+		demoConfig = {
+			demoType: 'echo',
+			autoReconnect: true,
+			maxReconnectAttempts: 3,
+			reconnectDelay: 2000,
+			showEducationalHints: true
+		},
+		serviceFilter = ['high', 'medium']
 	}: Props = $props();
 
-	let websocket: WebSocket | null = null;
-	let connectionState = $state<'disconnected' | 'connecting' | 'connected' | 'error'>(
-		'disconnected'
-	);
-	let messages = $state<
-		Array<{ type: 'sent' | 'received' | 'system'; content: string; timestamp: Date }>
-	>([]);
-	let messageInput = $state('');
-	let connectionTime = $state<Date | null>(null);
+	// WebSocket management
+	let websocket = $state<WebSocket | null>(null);
+	let connectionState = $state<
+		'disconnected' | 'connecting' | 'connected' | 'error' | 'reconnecting'
+	>('disconnected');
+	let currentService = $state<PublicWebSocketService | null>(null);
+	let serviceIndex = $state(0);
+	let reconnectAttempts = $state(0);
 
+	// Messages and events
+	let messages = $state<Phase1WebSocketMessage[]>([]);
+	let educationalEvents = $state<WebSocketEducationalEvent[]>([]);
+	let messageInput = $state('');
+
+	// Connection metrics
+	let connectionMetrics = $state<Phase1ConnectionMetrics>({
+		messagesSent: 0,
+		messagesReceived: 0,
+		uptime: 0,
+		averageLatency: 0,
+		stabilityScore: 100
+	});
+	let connectionStartTime = $state<number | null>(null);
+	let lastPingTime = $state<number | null>(null);
+
+	// UI state
 	let mounted = $state(false);
+	let showMetrics = $state(false);
+	let showEvents = $state(false);
+	let isComposing = $state(false);
+
+	// Available services based on filter
+	let availableServices = $derived(
+		PUBLIC_WEBSOCKET_SERVICES.filter((service) => serviceFilter.includes(service.reliability))
+	);
+
+	// Current WebSocket ready state
+	let readyState = $derived(websocket ? websocket.readyState : WS_CLOSED);
+
+	// Connection quality indicator
+	let connectionQuality = $derived(() => {
+		if (!currentService) return 'unknown';
+		if (connectionMetrics.stabilityScore >= 90) return 'excellent';
+		if (connectionMetrics.stabilityScore >= 70) return 'good';
+		if (connectionMetrics.stabilityScore >= 50) return 'fair';
+		return 'poor';
+	});
 
 	$effect(() => {
 		mounted = true;
+		// Initialize first service
+		if (availableServices.length > 0) {
+			currentService = availableServices[0];
+		}
+
 		return () => {
-			if (websocket) {
-				websocket.close();
-			}
+			cleanupConnection();
 		};
 	});
 
-	function addMessage(type: 'sent' | 'received' | 'system', content: string) {
-		messages = [
-			...messages,
-			{
-				type,
-				content,
-				timestamp: new Date()
+	// Update connection metrics periodically
+	$effect(() => {
+		if (connectionStartTime && connectionState === 'connected') {
+			const interval = setInterval(() => {
+				connectionMetrics.uptime = Date.now() - (connectionStartTime || 0);
+			}, 1000);
+
+			return () => clearInterval(interval);
+		}
+	});
+
+	function addMessage(
+		type: Phase1WebSocketMessage['type'],
+		content: string,
+		metadata?: Phase1WebSocketMessage['metadata']
+	) {
+		const message: Phase1WebSocketMessage = {
+			id: crypto.randomUUID(),
+			type,
+			content,
+			timestamp: Date.now(),
+			service: currentService?.name,
+			metadata
+		};
+
+		messages = [...messages.slice(-99), message]; // Keep last 100 messages
+
+		// Update metrics
+		if (type === 'sent') {
+			connectionMetrics.messagesSent++;
+			lastPingTime = Date.now();
+		} else if (type === 'received') {
+			connectionMetrics.messagesReceived++;
+			// Calculate latency if this is a response to our ping
+			if (lastPingTime) {
+				const latency = Date.now() - lastPingTime;
+				connectionMetrics.averageLatency = (connectionMetrics.averageLatency + latency) / 2;
+				lastPingTime = null;
 			}
-		];
+		}
+	}
+
+	function addEducationalEvent(
+		type: WebSocketEducationalEvent['type'],
+		description: string,
+		details?: WebSocketEducationalEvent['details']
+	) {
+		const event: WebSocketEducationalEvent = {
+			id: crypto.randomUUID(),
+			timestamp: Date.now(),
+			type,
+			description,
+			details
+		};
+
+		educationalEvents = [...educationalEvents.slice(-49), event]; // Keep last 50 events
+	}
+
+	function cleanupConnection() {
+		if (websocket) {
+			websocket.close();
+			websocket = null;
+		}
+		reconnectAttempts = 0;
+		connectionStartTime = null;
+		lastPingTime = null;
 	}
 
 	function connect() {
-		if (!browser) return;
+		if (!browser || !currentService) return;
 
 		connectionState = 'connecting';
-		addMessage('system', 'WebSocket接続を開始しています...');
+		addMessage('system', `🔄 ${currentService.name}への接続を開始しています...`);
+		addEducationalEvent('handshake', `WebSocket handshake initiated to ${currentService.url}`);
 
 		try {
-			websocket = new WebSocket(wsUrl);
+			websocket = new WebSocket(currentService.url);
+			connectionStartTime = Date.now();
 
 			websocket.onopen = () => {
 				connectionState = 'connected';
-				connectionTime = new Date();
-				addMessage('system', `✅ WebSocket接続が確立されました (${wsUrl})`);
+				reconnectAttempts = 0;
+				addMessage('system', `✅ ${currentService?.name}に接続されました`, {
+					size: 0,
+					latency: Date.now() - (connectionStartTime || 0),
+					frameType: 'text'
+				});
+				addEducationalEvent('open', 'WebSocket connection established', {
+					protocol: websocket?.protocol || 'none'
+				});
 			};
 
 			websocket.onmessage = (event) => {
-				addMessage('received', event.data);
+				const size = typeof event.data === 'string' ? event.data.length : event.data.byteLength;
+				addMessage('received', event.data, {
+					size,
+					frameType: typeof event.data === 'string' ? 'text' : 'binary'
+				});
+				addEducationalEvent('message', `Received ${typeof event.data} message (${size} bytes)`);
 			};
 
 			websocket.onclose = (event) => {
+				const wasConnected = connectionState === 'connected';
 				connectionState = 'disconnected';
-				connectionTime = null;
-				addMessage(
-					'system',
-					`🔌 WebSocket接続が切断されました (コード: ${event.code}, 理由: ${event.reason || '不明'})`
-				);
+				connectionStartTime = null;
+
+				const closeReason = WEBSOCKET_CLOSE_CODES[event.code] || '不明';
+				addMessage('system', `🔌 接続が切断されました (${event.code}: ${closeReason})`);
+				addEducationalEvent('close', `Connection closed with code ${event.code}`, {
+					code: event.code,
+					reason: event.reason || closeReason
+				});
+
+				// Auto-reconnect with fallback
+				if (
+					wasConnected &&
+					demoConfig.autoReconnect &&
+					reconnectAttempts < (demoConfig.maxReconnectAttempts || 3)
+				) {
+					attemptReconnect();
+				}
 			};
 
 			websocket.onerror = () => {
 				connectionState = 'error';
-				addMessage('system', '❌ WebSocket接続でエラーが発生しました');
+				connectionMetrics.stabilityScore = Math.max(0, connectionMetrics.stabilityScore - 10);
+				addMessage('error', `❌ ${currentService?.name}への接続でエラーが発生しました`);
+				addEducationalEvent('error', 'WebSocket connection error occurred');
 			};
 		} catch (error) {
 			connectionState = 'error';
-			addMessage('system', `❌ WebSocket接続に失敗: ${error}`);
+			addMessage('error', `❌ WebSocket接続に失敗: ${error}`);
+			addEducationalEvent('error', `Connection failed: ${error}`);
 		}
+	}
+
+	function attemptReconnect() {
+		if (reconnectAttempts >= (demoConfig.maxReconnectAttempts || 3)) {
+			// Try next service
+			if (serviceIndex < availableServices.length - 1) {
+				serviceIndex++;
+				currentService = availableServices[serviceIndex];
+				reconnectAttempts = 0;
+				addMessage('system', `🔄 フォールバック: ${currentService.name}に切り替えています...`);
+			} else {
+				addMessage('system', '❌ 全てのサービスへの接続に失敗しました');
+				return;
+			}
+		}
+
+		reconnectAttempts++;
+		connectionState = 'reconnecting';
+		addMessage(
+			'system',
+			`🔄 再接続を試行しています... (${reconnectAttempts}/${demoConfig.maxReconnectAttempts})`
+		);
+
+		setTimeout(() => {
+			connect();
+		}, demoConfig.reconnectDelay || 2000);
 	}
 
 	function disconnect() {
-		if (websocket) {
-			websocket.close();
-		}
+		cleanupConnection();
+		connectionState = 'disconnected';
+		addMessage('system', '🔌 接続を手動で切断しました');
+		addEducationalEvent('close', 'Manual disconnection requested by user');
 	}
 
 	function sendMessage() {
-		if (websocket && websocket.readyState === WebSocket.OPEN && messageInput.trim()) {
+		if (websocket && websocket.readyState === WS_OPEN && messageInput.trim()) {
 			const message = messageInput.trim();
+
 			websocket.send(message);
-			addMessage('sent', message);
-			messageInput = '';
+			addMessage('sent', message, {
+				size: message.length,
+				frameType: 'text'
+			});
+			addEducationalEvent('message', `Sent text message (${message.length} bytes)`);
+			messageInput = ''; // Clear input after sending
 		}
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		// 日本語入力中（変換中）はEnterキーでの送信を無効化
+		if (event.key === 'Enter' && !isComposing && canSend) {
+			event.preventDefault();
+			sendMessage();
+		}
+	}
+
+	function switchService(service: PublicWebSocketService) {
+		if (connectionState === 'connected' || connectionState === 'connecting') {
+			disconnect();
+		}
+		currentService = service;
+		serviceIndex = availableServices.indexOf(service);
+		reconnectAttempts = 0;
+		addMessage('system', `🔄 サービスを${service.name}に切り替えました`);
 	}
 
 	function clearMessages() {
 		messages = [];
+		educationalEvents = [];
+		connectionMetrics = {
+			messagesSent: 0,
+			messagesReceived: 0,
+			uptime: 0,
+			averageLatency: 0,
+			stabilityScore: 100
+		};
 	}
 
-	function formatTime(date: Date): string {
-		return date.toLocaleTimeString('ja-JP', {
+	function testPing() {
+		if (websocket && websocket.readyState === WS_OPEN) {
+			const pingMessage = `ping-${Date.now()}`;
+			messageInput = pingMessage;
+			sendMessage();
+		}
+	}
+
+	function formatTime(timestamp: number): string {
+		return new Date(timestamp).toLocaleTimeString('ja-JP', {
 			hour: '2-digit',
 			minute: '2-digit',
 			second: '2-digit'
 		});
+	}
+
+	function formatUptime(ms: number): string {
+		const seconds = Math.floor(ms / 1000);
+		const minutes = Math.floor(seconds / 60);
+		const hours = Math.floor(minutes / 60);
+
+		if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+		if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+		return `${seconds}s`;
+	}
+
+	function getQualityColor(quality: string): string {
+		switch (quality) {
+			case 'excellent':
+				return 'text-green-600';
+			case 'good':
+				return 'text-blue-600';
+			case 'fair':
+				return 'text-yellow-600';
+			case 'poor':
+				return 'text-red-600';
+			default:
+				return 'text-gray-600';
+		}
+	}
+
+	function getServiceIcon(service: PublicWebSocketService): string {
+		if (service.name.includes('Echo')) return '🔊';
+		if (service.name.includes('Postman')) return '📦';
+		if (service.name.includes('SocketsBay')) return '🏗️';
+		return '🌐';
 	}
 
 	let stateColor = $derived(
@@ -118,6 +363,7 @@
 			disconnected: 'text-gray-600',
 			connecting: 'text-yellow-600',
 			connected: 'text-green-600',
+			reconnecting: 'text-blue-600',
 			error: 'text-red-600'
 		}[connectionState]
 	);
@@ -127,55 +373,98 @@
 			disconnected: '切断',
 			connecting: '接続中...',
 			connected: '接続済み',
+			reconnecting: '再接続中...',
 			error: 'エラー'
 		}[connectionState]
 	);
+
+	let isConnected = $derived(connectionState === 'connected' && websocket?.readyState === WS_OPEN);
+	let canConnect = $derived(connectionState === 'disconnected' || connectionState === 'error');
+	let canSend = $derived(isConnected && messageInput.trim().length > 0);
 </script>
 
 <div class="bg-white border border-gray-200 rounded-lg p-6 my-8">
 	<div class="mb-6">
 		<h3 class="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-		<p class="text-gray-600 text-sm">{description}</p>
+		<p class="text-gray-600 text-sm mb-4">{description}</p>
+
+		<!-- Service Selection -->
+		{#if availableServices.length > 1}
+			<div class="mb-4">
+				<div class="block text-sm font-medium text-gray-700 mb-2">🌐 WebSocketサービス選択</div>
+				<div class="flex flex-wrap gap-2">
+					{#each availableServices as service (service.url)}
+						<button
+							type="button"
+							onclick={() => switchService(service)}
+							class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors
+								{currentService?.url === service.url
+								? 'bg-blue-100 text-blue-800 border border-blue-300'
+								: 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'}"
+							disabled={connectionState === 'connecting' || connectionState === 'reconnecting'}
+						>
+							<span class="mr-1">{getServiceIcon(service)}</span>
+							{service.name}
+							<span class="ml-1 text-xs opacity-75">({service.reliability})</span>
+						</button>
+					{/each}
+				</div>
+			</div>
+		{/if}
 	</div>
 
 	<!-- 接続状態表示 -->
 	<div class="mb-6 p-4 bg-gray-50 rounded-lg">
-		<div class="flex items-center justify-between mb-3">
+		<div class="flex items-center justify-between mb-4">
 			<div class="flex items-center space-x-3">
 				<span class="text-sm font-medium text-gray-700">接続状態:</span>
 				<span class="font-medium {stateColor}">{stateText}</span>
-				{#if connectionState === 'connected'}
+				{#if isConnected}
 					<div
 						class="w-3 h-3 bg-green-500 rounded-full animate-pulse"
 						title="接続中"
 						aria-label="接続中"
 					></div>
 				{/if}
+				{#if currentService && isConnected}
+					<span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
+						{currentService.name}
+					</span>
+				{/if}
 			</div>
-			{#if connectionTime}
-				<span class="text-xs text-gray-500">
-					接続時刻: {formatTime(connectionTime)}
-				</span>
-			{/if}
+
+			<div class="flex items-center space-x-4 text-xs text-gray-500">
+				{#if connectionStartTime && isConnected}
+					<span>接続時間: {formatUptime(connectionMetrics.uptime)}</span>
+				{/if}
+				{#if websocket}
+					<span>ReadyState: {WEBSOCKET_READY_STATE_LABELS[readyState]}</span>
+				{/if}
+				{#if isConnected}
+					<span class={getQualityColor(connectionQuality())}>
+						接続品質: {connectionQuality()}
+					</span>
+				{/if}
+			</div>
 		</div>
 
-		<div class="flex space-x-3">
-			{#if connectionState === 'disconnected' || connectionState === 'error'}
+		<div class="flex flex-wrap gap-3">
+			{#if canConnect}
 				<button
 					type="button"
 					onclick={connect}
-					class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
-					disabled={!mounted}
+					class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+					disabled={!mounted || !currentService}
 				>
-					WebSocket接続
+					🔗 WebSocket接続
 				</button>
-			{:else if connectionState === 'connected'}
+			{:else if isConnected}
 				<button
 					type="button"
 					onclick={disconnect}
 					class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
 				>
-					切断
+					🔌 切断
 				</button>
 			{/if}
 
@@ -185,52 +474,140 @@
 					onclick={clearMessages}
 					class="bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors"
 				>
-					ログクリア
+					🧹 クリア
 				</button>
 			{/if}
+
+			<button
+				type="button"
+				onclick={() => (showMetrics = !showMetrics)}
+				class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"
+			>
+				📊 {showMetrics ? 'メトリクス非表示' : 'メトリクス表示'}
+			</button>
+
+			<button
+				type="button"
+				onclick={() => (showEvents = !showEvents)}
+				class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+			>
+				📜 {showEvents ? 'イベント非表示' : 'イベント表示'}
+			</button>
 		</div>
 	</div>
 
-	<!-- メッセージ送信 (エコーテスト用) -->
-	{#if demoType === 'echo-test' || demoType === 'message-exchange'}
+	<!-- メトリクス表示 -->
+	{#if showMetrics}
+		<div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+			<h4 class="text-sm font-semibold text-blue-900 mb-3">📊 接続メトリクス</h4>
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+				<div class="bg-white p-3 rounded border">
+					<div class="text-lg font-bold text-blue-600">{connectionMetrics.messagesSent}</div>
+					<div class="text-gray-600">送信メッセージ</div>
+				</div>
+				<div class="bg-white p-3 rounded border">
+					<div class="text-lg font-bold text-green-600">{connectionMetrics.messagesReceived}</div>
+					<div class="text-gray-600">受信メッセージ</div>
+				</div>
+				<div class="bg-white p-3 rounded border">
+					<div class="text-lg font-bold text-purple-600">
+						{Math.round(connectionMetrics.averageLatency)}ms
+					</div>
+					<div class="text-gray-600">平均レイテンシ</div>
+				</div>
+				<div class="bg-white p-3 rounded border">
+					<div class="text-lg font-bold {getQualityColor(connectionQuality())}">
+						{connectionMetrics.stabilityScore}%
+					</div>
+					<div class="text-gray-600">安定性スコア</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	<!-- 教育イベント -->
+	{#if showEvents && educationalEvents.length > 0}
+		<div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+			<h4 class="text-sm font-semibold text-indigo-900 mb-3">📜 WebSocketイベント</h4>
+			<div class="max-h-32 overflow-y-auto space-y-2">
+				{#each educationalEvents.slice(-5) as event (event.id)}
+					<div class="text-xs bg-white p-2 rounded border">
+						<div class="flex items-center justify-between">
+							<span class="font-medium text-indigo-700">{event.type.toUpperCase()}</span>
+							<span class="text-gray-500">{formatTime(event.timestamp)}</span>
+						</div>
+						<div class="text-gray-700 mt-1">{event.description}</div>
+						{#if event.details}
+							<div class="text-gray-500 mt-1 font-mono text-xs">
+								{JSON.stringify(event.details)}
+							</div>
+						{/if}
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/if}
+
+	<!-- メッセージ送信 -->
+	{#if demoConfig.demoType === 'echo' || demoConfig.demoType === 'broadcast'}
 		<div class="mb-6">
 			<label for="message-input" class="block text-sm font-medium text-gray-700 mb-2">
-				メッセージ送信
+				💬 メッセージ送信
 			</label>
-			<div class="flex space-x-3">
+			<div class="flex space-x-2">
 				<input
 					id="message-input"
 					type="text"
 					bind:value={messageInput}
-					onkeydown={(e) => e.key === 'Enter' && sendMessage()}
+					onkeydown={handleKeydown}
+					oncompositionstart={() => (isComposing = true)}
+					oncompositionend={() => (isComposing = false)}
 					placeholder="メッセージを入力してください"
-					class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-					disabled={connectionState !== 'connected'}
+					class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+					disabled={!isConnected}
 				/>
 				<button
 					type="button"
 					onclick={sendMessage}
-					disabled={connectionState !== 'connected' || !messageInput.trim()}
+					disabled={!canSend}
 					class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
 				>
-					送信
+					🚀 送信
 				</button>
+				{#if demoConfig.demoType === 'echo'}
+					<button
+						type="button"
+						onclick={testPing}
+						disabled={!isConnected}
+						class="bg-yellow-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+						title="レイテンシテスト用のpingメッセージを送信"
+					>
+						🏓 Ping
+					</button>
+				{/if}
 			</div>
 		</div>
 	{/if}
 
 	<!-- メッセージログ -->
 	<div class="border border-gray-200 rounded-md">
-		<div class="bg-gray-50 px-4 py-2 border-b border-gray-200">
-			<h4 class="text-sm font-medium text-gray-700">通信ログ</h4>
+		<div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+			<h4 class="text-sm font-medium text-gray-700">📝 通信ログ</h4>
+			<div class="text-xs text-gray-500">
+				{messages.length}件 | 送信: {connectionMetrics.messagesSent} | 受信: {connectionMetrics.messagesReceived}
+			</div>
 		</div>
 		<div class="h-64 overflow-y-auto p-4 space-y-2">
 			{#if messages.length === 0}
 				<div class="text-center text-gray-500 text-sm py-8">
-					WebSocketに接続すると通信ログが表示されます
+					<div class="text-4xl mb-2">🔗</div>
+					<p>WebSocketに接続すると通信ログが表示されます</p>
+					{#if currentService}
+						<p class="text-xs mt-2">接続先: {currentService.name}</p>
+					{/if}
 				</div>
 			{:else}
-				{#each messages as message (message.timestamp.getTime())}
+				{#each messages as message (message.id)}
 					<div
 						class="flex items-start space-x-3 {message.type === 'sent'
 							? 'justify-end'
@@ -241,18 +618,30 @@
 								? 'bg-blue-500 text-white'
 								: message.type === 'received'
 									? 'bg-green-100 text-green-800 border border-green-200'
-									: 'bg-yellow-100 text-yellow-800 border border-yellow-200'}"
+									: message.type === 'error'
+										? 'bg-red-100 text-red-800 border border-red-200'
+										: 'bg-yellow-100 text-yellow-800 border border-yellow-200'}"
 						>
-							<div class="font-medium">
-								{message.type === 'sent'
-									? '送信'
-									: message.type === 'received'
-										? '受信'
-										: 'システム'}
+							<div class="flex items-center justify-between mb-1">
+								<span class="font-medium text-xs">
+									{message.type === 'sent'
+										? '🚀 送信'
+										: message.type === 'received'
+											? '📨 受信'
+											: message.type === 'error'
+												? '❌ エラー'
+												: '💻 システム'}
+								</span>
+								{#if message.metadata?.size}
+									<span class="text-xs opacity-75">{message.metadata.size}B</span>
+								{/if}
 							</div>
-							<div class="mt-1">{message.content}</div>
-							<div class="text-xs opacity-75 mt-1">
-								{formatTime(message.timestamp)}
+							<div class="break-words">{message.content}</div>
+							<div class="flex items-center justify-between mt-1 text-xs opacity-75">
+								<span>{formatTime(message.timestamp)}</span>
+								{#if message.metadata?.latency}
+									<span>{message.metadata.latency}ms</span>
+								{/if}
 							</div>
 						</div>
 					</div>
@@ -264,15 +653,35 @@
 	<!-- 学習ポイント -->
 	<div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
 		<div class="text-sm text-blue-800">
-			<span class="font-medium">🔍 観察ポイント：</span>
+			<span class="font-medium">🎓 フェーズ1学習ポイント：</span>
 			<ul class="mt-2 space-y-1 ml-4">
-				<li>• WebSocket接続の確立プロセス</li>
-				<li>• 双方向通信の実現</li>
-				<li>• 接続の持続性</li>
-				{#if demoType === 'echo-test'}
-					<li>• エコーサーバーによる即座のレスポンス</li>
+				<li>• 🌐 パブリックWebSocketサービスの利用</li>
+				<li>• 🔄 自動フォールバック機能</li>
+				<li>• 📊 接続メトリクスの監視</li>
+				<li>• 📡 WebSocket ReadyStateの理解</li>
+				{#if demoConfig.demoType === 'echo'}
+					<li>• 📢 エコーサーバーでの即座レスポンス</li>
+					<li>• ⏱️ レイテンシ測定とパフォーマンス解析</li>
+				{:else if demoConfig.demoType === 'broadcast'}
+					<li>• 📡 ブロードキャスト通信の体験</li>
+					<li>• 👥 マルチクライアント環境の理解</li>
+				{:else}
+					<li>• 🔗 WebSocketライフサイクルの観察</li>
+					<li>• 🔌 接続切断パターンの学習</li>
 				{/if}
 			</ul>
+
+			{#if demoConfig.showEducationalHints && currentService}
+				<div class="mt-3 p-3 bg-white rounded border border-blue-300">
+					<div class="font-medium text-blue-900 mb-1">💡 サービス情報:</div>
+					<div class="text-xs space-y-1">
+						<div><strong>名前:</strong> {currentService.name}</div>
+						<div><strong>信頼性:</strong> {currentService.reliability}</div>
+						<div><strong>レイテンシ:</strong> {currentService.latency}</div>
+						<div><strong>機能:</strong> {currentService.features.join(', ')}</div>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

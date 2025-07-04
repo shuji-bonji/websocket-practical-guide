@@ -9,21 +9,41 @@
 
 	let progress = $derived($progressStore);
 
+	// 現在のパスを取得・監視
 	let currentPath = $state('');
 
 	$effect(() => {
+		// ブラウザ環境でのみ実行
 		if (typeof window !== 'undefined') {
+			// 初期パス設定
 			currentPath = window.location.pathname;
 
-			// Listen for navigation changes
+			// ページ遷移の監視
 			const updatePath = () => {
 				currentPath = window.location.pathname;
 			};
 
+			// SvelteKitの履歴変更を監視
 			window.addEventListener('popstate', updatePath);
+
+			// プログラム的なナビゲーションを監視
+			const originalPushState = history.pushState;
+			const originalReplaceState = history.replaceState;
+
+			history.pushState = function (...args) {
+				originalPushState.apply(history, args);
+				updatePath();
+			};
+
+			history.replaceState = function (...args) {
+				originalReplaceState.apply(history, args);
+				updatePath();
+			};
 
 			return () => {
 				window.removeEventListener('popstate', updatePath);
+				history.pushState = originalPushState;
+				history.replaceState = originalReplaceState;
 			};
 		}
 	});
@@ -362,7 +382,7 @@
 									href={item.href}
 									class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
 									item.href
-										? 'bg-primary-100 text-primary-700 border-r-2 border-primary-500'
+										? 'bg-blue-100 text-blue-700 border-r-2 border-blue-500'
 										: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
 								>
 									{#if item.icon}
@@ -512,7 +532,7 @@
 										href={item.href}
 										class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
 										item.href
-											? 'bg-primary-100 text-primary-700'
+											? 'bg-blue-100 text-blue-700'
 											: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
 										onclick={() => (open = false)}
 									>

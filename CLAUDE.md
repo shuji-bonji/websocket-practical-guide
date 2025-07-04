@@ -4,7 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a WebSocket learning project built with SvelteKit and TypeScript. The project focuses on mastering browser-standard WebSocket API before exploring advanced libraries like Socket.IO. It includes comprehensive documentation and aims to build PWA-compatible real-time web applications.
+This is a **WebSocket learning project** built with SvelteKit and TypeScript. The project focuses on mastering **browser-standard WebSocket API** before exploring advanced libraries like Socket.IO. It includes comprehensive documentation and aims to build PWA-compatible real-time web applications.
+
+### 🎯 **Core Learning Strategy: Phase-Based WebSocket Environments**
+
+The project implements a **4-phase learning approach** with increasingly sophisticated WebSocket communication environments:
+
+- **Phase 1**: GitHub Pages + Public WebSocket services (immediate learning start)
+- **Phase 2**: Local Node.js servers + Docker (protocol deep-dive)
+- **Phase 3**: Test environments + Mock servers (quality assurance)
+- **Phase 4**: Cloud deployment (Vercel/Railway) (production experience)
 
 ## Development Commands
 
@@ -36,6 +45,153 @@ This is a WebSocket learning project built with SvelteKit and TypeScript. The pr
 - **Code Quality**: ESLint + Prettier
 - **Target**: PWA-enabled real-time applications using native WebSocket API
 
+## Phase-Specific WebSocket Implementation Guidelines
+
+### 🌱 **Phase 1: Basic Understanding (GitHub Pages Compatible)**
+
+**Environment**: Static site with public WebSocket services
+
+```typescript
+// Use public WebSocket services for learning (verified working)
+const DEMO_WEBSOCKET_URLS = {
+	echo: 'wss://echo.websocket.org',
+	postman: 'wss://ws.postman-echo.com/raw'
+};
+
+// Client-side only implementation
+export class Phase1WebSocketManager {
+	constructor(url: string) {
+		// Ensure browser environment
+		if (typeof window === 'undefined') return;
+		this.connect(url);
+	}
+}
+```
+
+**Key Constraints**:
+
+- ✅ No server-side WebSocket implementation needed
+- ✅ Works on GitHub Pages static hosting
+- ✅ Focus on WebSocket API basics and protocol understanding
+- ⚠️ **Public WebSocket Service Selection**: Use only verified, authentication-free services
+  - `wss://echo.websocket.org` - Stable, no auth required (Primary)
+  - `wss://ws.postman-echo.com/raw` - Postman's public echo service (Secondary)
+  - ❌ Avoid services requiring authentication or unstable endpoints
+
+### 🔧 **Phase 2: Implementation Technology (Local Development)**
+
+**Environment**: Local Node.js WebSocket servers + Docker
+
+```typescript
+// Local development WebSocket server setup
+// phase2-server/websocket-server.js
+const WebSocket = require('ws');
+
+class Phase2LearningServer {
+	constructor() {
+		// Multiple protocol servers
+		this.basicServer = new WebSocket.Server({ port: 8080 });
+		this.graphqlServer = new WebSocket.Server({
+			port: 8081,
+			handleProtocols: (protocols) => (protocols.includes('graphql-ws') ? 'graphql-ws' : false)
+		});
+		this.mqttServer = new WebSocket.Server({
+			port: 8082,
+			handleProtocols: (protocols) => (protocols.includes('mqtt') ? 'mqtt' : false)
+		});
+	}
+}
+```
+
+**Setup Instructions for Claude Code**:
+
+```bash
+# When working on Phase 2 features:
+cd websocket-learning-apps/phase2-server
+npm install
+npm run dev  # Starts local WebSocket servers
+
+# Or use Docker:
+docker-compose up -d
+```
+
+### 🧪 **Phase 3: Testing & Evaluation (Test-Integrated Environment)**
+
+**Environment**: Vitest + Mock WebSocket servers + E2E testing
+
+```typescript
+// Test WebSocket server for automated testing
+export class WebSocketTestServer {
+	constructor(port = 9999) {
+		this.port = port;
+		this.server = new WebSocket.Server({ port });
+	}
+
+	// Simulate various WebSocket scenarios
+	simulateLatency(ms: number) {
+		/* ... */
+	}
+	simulateConnectionFailure() {
+		/* ... */
+	}
+	simulateServerError() {
+		/* ... */
+	}
+}
+```
+
+**Testing Strategy**:
+
+- Unit tests: WebSocket connection logic
+- Integration tests: Component + WebSocket interaction
+- E2E tests: Full user journey with Playwright
+
+### 🚀 **Phase 4: Production Development (Cloud Deployment)**
+
+**Environment**: Vercel + Railway + Redis + Production WebSocket services
+
+**Vercel Configuration** (for PWA Chat App):
+
+```json
+// vercel.json
+{
+	"functions": {
+		"api/websocket.js": {
+			"runtime": "@vercel/node@18.x"
+		}
+	},
+	"env": {
+		"REDIS_URL": "@redis_url",
+		"WEBSOCKET_SECRET": "@websocket_secret"
+	}
+}
+```
+
+**Railway Configuration** (for Collaborative Editor):
+
+```javascript
+// Production-ready WebSocket server
+class ProductionWebSocketServer {
+	setupCluster() {
+		// Multi-process WebSocket handling
+		// Redis pub/sub for scaling
+		// Health checks and monitoring
+	}
+}
+```
+
+**Deployment Commands**:
+
+```bash
+# Phase 4A: Chat App to Vercel
+cd websocket-learning-apps/chat-app
+vercel --prod
+
+# Phase 4B: Collaborative Editor to Railway
+cd websocket-learning-apps/collaborative-editor
+railway up
+```
+
 ## Svelte 5 Specification Requirements
 
 ### **CRITICAL: Always Use Latest Svelte 5 Specification**
@@ -47,881 +203,355 @@ Before coding any Svelte components, **always reference the latest Svelte 5 docu
 - 📄 **Medium Guide**: https://svelte.dev/llms-medium.txt
 - 📄 **Quick Reference**: https://svelte.dev/llms-small.txt
 
-### **Mandatory Svelte 5 Patterns**
+### **Mandatory Svelte 5 Patterns for WebSocket Components**
 
-#### **1. Use Runes Instead of Legacy Reactive Syntax**
-
-```svelte
-<!-- ❌ LEGACY (Svelte 3/4) - DO NOT USE -->
-<script>
-  export let count = 0;
-  $: doubled = count * 2;
-
-  let items = [];
-  $: filteredItems = items.filter(item => item.active);
-</script>
-
-<!-- ✅ SVELTE 5 RUNES - ALWAYS USE THIS -->
-<script>
-  let { count = $bindable(0) } = $props();
-  let doubled = $derived(count * 2);
-
-  let items = $state([]);
-  let filteredItems = $derived(items.filter(item => item.active));
-</script>
-```
-
-#### **2. State Management with Runes**
+#### **1. WebSocket State Management with Runes**
 
 ```svelte
-<!-- ✅ CORRECT: Use $state for local reactive state -->
+<!-- ✅ CORRECT: Svelte 5 WebSocket Component -->
 <script>
-  let user = $state({ name: '', email: '' });
-  let isLoading = $state(false);
-  let errors = $state([]);
-</script>
+  let { wsUrl, protocols = [] } = $props();
 
-<!-- ❌ INCORRECT: Don't use legacy let declarations for reactive state -->
-<script>
-  let user = { name: '', email: '' }; // This won't be reactive in Svelte 5
-</script>
-```
+  let connectionState = $state('disconnected');
+  let socket = $state(null);
+  let messages = $state([]);
+  let error = $state(null);
 
-#### **3. Props with $props() and $bindable()**
-
-```svelte
-<!-- ✅ CORRECT: Svelte 5 props pattern -->
-<script>
-  let {
-    title,
-    count = $bindable(0),
-    items = [],
-    onUpdate = () => {}
-  } = $props();
-</script>
-
-<!-- ❌ INCORRECT: Legacy export syntax -->
-<script>
-  export let title;
-  export let count = 0;
-  export let items = [];
-</script>
-```
-
-#### **4. Effects with $effect()**
-
-```svelte
-<!-- ✅ CORRECT: Use $effect for side effects -->
-<script>
-  let count = $state(0);
+  let isConnected = $derived(connectionState === 'connected');
+  let canSend = $derived(isConnected && socket?.readyState === WebSocket.OPEN);
 
   $effect(() => {
-    console.log('Count changed:', count);
-    document.title = `Count: ${count}`;
+    if (wsUrl && typeof window !== 'undefined') {
+      connectWebSocket();
+    }
+
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
   });
 
-  // Cleanup effects
-  $effect(() => {
-    const timer = setInterval(() => count++, 1000);
-    return () => clearInterval(timer);
-  });
-</script>
+  function connectWebSocket() {
+    connectionState = 'connecting';
+    socket = new WebSocket(wsUrl, protocols);
 
-<!-- ❌ INCORRECT: Legacy reactive statements -->
-<script>
-  $: console.log('Count changed:', count); // Don't use this pattern
-</script>
-```
+    socket.onopen = () => {
+      connectionState = 'connected';
+      error = null;
+    };
 
-#### **5. Derived State with $derived()**
+    socket.onmessage = (event) => {
+      messages = [...messages, {
+        type: 'received',
+        data: event.data,
+        timestamp: Date.now()
+      }];
+    };
 
-```svelte
-<script>
-	let items = $state([]);
-	let filter = $state('');
+    socket.onerror = (err) => {
+      error = `WebSocket error: ${err.message}`;
+      connectionState = 'error';
+    };
 
-	// ✅ CORRECT: Use $derived for computed values
-	let filteredItems = $derived(
-		items.filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
-	);
-
-	let itemCount = $derived(filteredItems.length);
-	let isEmpty = $derived(itemCount === 0);
-</script>
-```
-
-### **WebSocket Integration with Svelte 5 Runes**
-
-#### **WebSocket Store Pattern (Svelte 5)**
-
-```typescript
-// ✅ CORRECT: src/lib/stores/websocket.svelte.ts
-export function createWebSocketStore(url: string) {
-	let socket = $state<WebSocket | null>(null);
-	let connected = $state(false);
-	let messages = $state<string[]>([]);
-	let error = $state<string | null>(null);
-
-	const connect = () => {
-		socket = new WebSocket(url);
-
-		socket.onopen = () => {
-			connected = true;
-			error = null;
-		};
-
-		socket.onmessage = (event) => {
-			messages.push(event.data);
-		};
-
-		socket.onclose = () => {
-			connected = false;
-		};
-
-		socket.onerror = () => {
-			error = 'Connection failed';
-		};
-	};
-
-	return {
-		get connected() {
-			return connected;
-		},
-		get messages() {
-			return messages;
-		},
-		get error() {
-			return error;
-		},
-		connect,
-		send: (message: string) => socket?.send(message)
-	};
-}
-```
-
-#### **Component Usage of WebSocket Store**
-
-```svelte
-<!-- ✅ CORRECT: Using WebSocket store with Svelte 5 -->
-<script>
-	import { createWebSocketStore } from '$lib/stores/websocket.svelte.js';
-
-	let { url = 'wss://echo.websocket.org' } = $props();
-
-	const ws = createWebSocketStore(url);
-	let messageInput = $state('');
-
-	$effect(() => {
-		ws.connect();
-	});
-</script>
-
-<div>
-	{#if ws.connected}
-		<p>✅ Connected</p>
-	{:else}
-		<p>❌ Disconnected</p>
-	{/if}
-
-	<input bind:value={messageInput} />
-	<button onclick={() => ws.send(messageInput)}>Send</button>
-
-	{#each ws.messages as message}
-		<p>{message}</p>
-	{/each}
-</div>
-```
-
-### **Component Creation Guidelines for Svelte 5**
-
-#### **Template for Interactive Components**
-
-```svelte
-<!-- src/lib/components/example/InteractiveDemo.svelte -->
-<script>
-	// ✅ Props with proper types
-	let {
-		title,
-		description,
-		wsUrl = 'wss://echo.websocket.org',
-		onConnect = () => {},
-		onDisconnect = () => {}
-	} = $props();
-
-	// ✅ Local state with $state
-	let connectionState = $state('disconnected');
-	let messages = $state([]);
-	let inputValue = $state('');
-
-	// ✅ Derived state
-	let canSend = $derived(connectionState === 'connected' && inputValue.trim());
-	let messageCount = $derived(messages.length);
-
-	// ✅ Effects for lifecycle management
-	let socket = $state(null);
-
-	$effect(() => {
-		return () => {
-			// Cleanup when component unmounts
-			if (socket) {
-				socket.close();
-			}
-		};
-	});
-
-	// ✅ Functions for actions
-	const connect = () => {
-		socket = new WebSocket(wsUrl);
-		connectionState = 'connecting';
-
-		socket.onopen = () => {
-			connectionState = 'connected';
-			onConnect();
-		};
-
-		socket.onmessage = (event) => {
-			messages.push({
-				id: Date.now(),
-				content: event.data,
-				timestamp: new Date()
-			});
-		};
-
-		socket.onclose = () => {
-			connectionState = 'disconnected';
-			onDisconnect();
-		};
-	};
-</script>
-
-<div class="demo-container">
-	<h3>{title}</h3>
-	<p>{description}</p>
-
-	<div class="status">
-		Status: {connectionState} ({messageCount} messages)
-	</div>
-
-	{#if connectionState === 'disconnected'}
-		<button onclick={connect}>Connect</button>
-	{:else if connectionState === 'connected'}
-		<input bind:value={inputValue} />
-		<button onclick={() => socket?.send(inputValue)} disabled={!canSend}> Send </button>
-	{/if}
-
-	<div class="messages">
-		{#each messages as message (message.id)}
-			<div class="message">
-				{message.content}
-				<small>{message.timestamp.toLocaleTimeString()}</small>
-			</div>
-		{/each}
-	</div>
-</div>
-```
-
-### **Migration from Legacy Patterns**
-
-When updating existing components, follow this migration checklist:
-
-```svelte
-<!-- BEFORE (Legacy Svelte 3/4) -->
-<script>
-  export let data;
-  export let onUpdate = () => {};
-
-  let processed = [];
-  let loading = false;
-
-  $: processed = data.map(item => ({ ...item, processed: true }));
-
-  $: if (processed.length > 0) {
-    onUpdate(processed);
+    socket.onclose = () => {
+      connectionState = 'disconnected';
+    };
   }
 </script>
 
-<!-- AFTER (Svelte 5 with Runes) -->
+<!-- ❌ LEGACY (Svelte 3/4) - DO NOT USE -->
 <script>
-  let { data, onUpdate = () => {} } = $props();
+  export let wsUrl;
+  export let protocols = [];
 
-  let loading = $state(false);
-  let processed = $derived(data.map(item => ({ ...item, processed: true })));
+  let connectionState = 'disconnected';
+  let socket;
+  let messages = [];
 
-  $effect(() => {
-    if (processed.length > 0) {
-      onUpdate(processed);
-    }
+  $: isConnected = connectionState === 'connected';
+
+  onMount(() => {
+    // Legacy lifecycle management
   });
 </script>
 ```
 
-### **Common Svelte 5 Patterns for This Project**
+#### **2. WebSocket Store Pattern (Svelte 5)**
 
-#### **1. WebSocket Connection Management**
+```typescript
+// src/lib/stores/websocket.svelte.ts
+export class WebSocketStore {
+	private socket = $state<WebSocket | null>(null);
+	private _connectionState = $state<'disconnected' | 'connecting' | 'connected' | 'error'>(
+		'disconnected'
+	);
+	private _messages = $state<WebSocketMessage[]>([]);
+	private _error = $state<string | null>(null);
 
-```svelte
-<script>
-	let { wsUrl } = $props();
-	let socket = $state(null);
-	let connected = $state(false);
+	// Reactive getters
+	get connectionState() {
+		return this._connectionState;
+	}
+	get messages() {
+		return this._messages;
+	}
+	get error() {
+		return this._error;
+	}
+	get isConnected() {
+		return this._connectionState === 'connected';
+	}
 
-	$effect(() => {
-		socket = new WebSocket(wsUrl);
-		// ... setup handlers
+	connect(url: string, protocols?: string[]) {
+		if (typeof window === 'undefined') return;
 
-		return () => socket?.close();
-	});
-</script>
+		this._connectionState = 'connecting';
+		this.socket = new WebSocket(url, protocols);
+
+		this.socket.onopen = () => {
+			this._connectionState = 'connected';
+			this._error = null;
+		};
+
+		this.socket.onmessage = (event) => {
+			this._messages = [
+				...this._messages,
+				{
+					type: 'received',
+					data: event.data,
+					timestamp: Date.now()
+				}
+			];
+		};
+
+		// ... other handlers
+	}
+}
+
+// Usage in components
+const wsStore = new WebSocketStore();
 ```
 
-#### **2. Progress Tracking**
+### **Phase-Specific Component Requirements**
 
-```svelte
-<script>
-	let { lessons } = $props();
-	let completedCount = $state(0);
-	let progress = $derived((completedCount / lessons.length) * 100);
-</script>
-```
+#### **Phase 1 Components**: Basic Demo Components
 
-#### **3. Form Handling**
+- Use `$state` for connection status
+- Handle browser-only WebSocket creation
+- Graceful fallbacks for SSR
 
-```svelte
-<script>
-	let formData = $state({ name: '', email: '' });
-	let errors = $state({});
-	let isValid = $derived(formData.name.length > 0 && formData.email.includes('@'));
-</script>
-```
+#### **Phase 2 Components**: Protocol Implementations
 
-### **Forbidden Patterns in Svelte 5**
+- Type-safe subprotocol handling
+- Binary data processing with proper typing
+- Frame structure visualization
 
-❌ **DO NOT USE THESE LEGACY PATTERNS:**
+#### **Phase 3 Components**: Test-Friendly Components
 
-```svelte
-<!-- ❌ Legacy reactive statements -->
-$: computed = value * 2;
+- Mockable WebSocket dependencies
+- Deterministic state changes
+- Error simulation capabilities
 
-<!-- ❌ Legacy export props -->
-export let prop;
+#### **Phase 4 Components**: Production-Ready Components
 
-<!-- ❌ Legacy store subscriptions -->
-$: data = $store;
-
-<!-- ❌ Legacy bind directives in some contexts -->
-bind:this={element} // Use $effect instead for refs
-```
-
-### **Verification Commands**
-
-After implementing Svelte 5 patterns, always verify:
-
-```bash
-npm run check    # Ensure no Svelte compilation errors
-npm run lint     # Verify code follows Svelte 5 patterns
-npm run dev      # Test in development mode
-```
-
-## Claude Code Collaboration Guidelines
-
-### Effective Communication Patterns
-
-When requesting work from Claude Code, follow these proven patterns for optimal results:
-
-#### 1. **Single-Task Focus**
-
-```markdown
-✅ GOOD: Fix TypeScript errors in Mermaid component
-❌ BAD: Fix TypeScript errors, update documentation, and refactor stores
-```
-
-#### 2. **Concrete File Specifications**
-
-```markdown
-✅ GOOD:
-Create src/lib/types/mermaid.ts with MermaidConfig interface
-Modify src/lib/components/Mermaid.svelte to remove 'as any'
-
-❌ BAD:
-Fix type issues in the codebase
-```
-
-#### 3. **Step-by-Step Instructions**
-
-```markdown
-✅ GOOD:
-Step 1: Create type definition file
-Step 2: Update component imports  
-Step 3: Remove any type assertions
-Step 4: Verify with npm run check
-
-❌ BAD:
-Make the types work properly
-```
-
-#### 4. **Clear Success Criteria**
-
-```markdown
-✅ GOOD:
-Complete when:
-
-- npm run lint shows 0 errors
-- npm run check shows 0 errors
-- No 'as any' usage remains
-
-❌ BAD:
-Make sure everything works
-```
-
-### Request Templates
-
-#### **Type Safety Fix Template**
-
-````markdown
-# Task: Fix TypeScript Type Safety
-
-## Target Files
-
-- src/lib/components/[ComponentName].svelte
-- src/lib/types/[type-definition].ts
-
-## Specific Requirements
-
-1. Remove all 'as any' usage
-2. Remove all 'eslint-disable' comments
-3. Create proper type definitions
-4. Ensure npm run lint passes
-
-## Success Criteria
-
-```bash
-npm run lint    # 0 errors
-npm run check   # 0 errors
-```
-````
-
-````
-
-### **Svelte 5 Runes Component Template**
-
-```markdown
-# Task: Create [ComponentName] with Svelte 5 Runes
-
-## Requirements
-- **MANDATORY**: Use Svelte 5 Runes ($state, $derived, $effect, $props)
-- **FORBIDDEN**: Legacy reactive syntax ($:, export let)
-- TypeScript with strict typing
-- Responsive design with TailwindCSS
-
-## Svelte 5 Patterns to Use
-```svelte
-<script>
-  // ✅ Props
-  let { title, data = [] } = $props();
-
-  // ✅ State
-  let isLoading = $state(false);
-  let error = $state(null);
-
-  // ✅ Derived
-  let processedData = $derived(data.filter(item => item.active));
-
-  // ✅ Effects
-  $effect(() => {
-    // Side effects here
-  });
-</script>
-````
-
-## Reference Documentation
-
-Before coding, check: https://svelte.dev/docs/llms
-
-## Success Criteria
-
-- Uses $state for reactive state
-- Uses $derived for computed values
-- Uses $props() for component props
-- Uses $effect() for side effects
-- No legacy $: reactive statements
-- No export let declarations
-
-````
-
-#### **Refactoring Template**
-
-```markdown
-# Task: Refactor [Feature] for [Reason]
-
-## Current State
-[Describe current implementation]
-
-## Target State
-[Describe desired outcome]
-
-## Constraints
-- Maintain backward compatibility
-- Follow Svelte 5 patterns
-- Preserve existing functionality
-
-## Verification Steps
-1. npm run check
-2. npm run lint
-3. Manual testing of [specific features]
-````
-
-### Common Request Pitfalls to Avoid
-
-#### **❌ Vague Requests**
-
-```markdown
-"Fix the issues in the code"
-"Make it work better"
-"Update to latest standards"
-```
-
-#### **❌ Multiple Unrelated Tasks**
-
-```markdown
-"Fix types AND add tests AND update documentation"
-```
-
-#### **❌ Missing Context**
-
-```markdown
-"Update the component" (which component? how? why?)
-```
-
-#### **❌ No Success Criteria**
-
-```markdown
-"Improve the code quality" (how do we know it's improved?)
-```
-
-### Debugging and Issue Resolution
-
-#### **Error Reporting Format**
-
-When reporting issues to Claude Code:
-
-````markdown
-# Issue: [Brief Description]
-
-## Error Output
-
-```bash
-[Exact error message from terminal]
-```
-````
-
-## Expected Behavior
-
-[What should happen]
-
-## Current File State
-
-[Relevant code snippet or file path]
-
-## Environment
-
-- Node.js version: [version]
-- npm version: [version]
-- OS: [operating system]
-
-````
-
-#### **Progressive Problem Solving**
-
-For complex issues, break down requests:
-
-```markdown
-# Phase 1: Identify root cause
-Analyze error in [specific file]
-
-# Phase 2: Create minimal fix
-Fix only the immediate type error
-
-# Phase 3: Verify solution
-Ensure fix doesn't break existing functionality
-````
+- Comprehensive error handling
+- Performance optimization
+- Scalability considerations
 
 ## TypeScript & Code Quality Standards
 
-### Type Safety Philosophy
-
-This project prioritizes **complete type safety** and follows modern TypeScript best practices. All code should be 100% type-safe without compromising on developer experience.
-
-### Critical TypeScript Guidelines
-
-#### 1. **Avoid `any` Type at All Costs**
+### Critical WebSocket Type Definitions
 
 ```typescript
-// ❌ NEVER DO THIS
-function processData(data: any) {}
-const config = someLibrary.initialize(data as any);
-
-// ✅ ALWAYS DO THIS - Create proper type definitions
-interface ProcessedData {
-	id: string;
-	value: number;
-	metadata?: Record<string, unknown>;
-}
-
-function processData(data: ProcessedData) {}
-```
-
-#### 2. **External Library Type Safety**
-
-When working with external libraries that lack proper TypeScript definitions:
-
-```typescript
-// ❌ Don't use eslint-disable as a crutch
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-mermaid.initialize(config as any);
-
-// ✅ Create comprehensive type definitions
-// src/lib/types/mermaid-module.d.ts
-declare module 'mermaid' {
-	export interface MermaidAPI {
-		initialize(config: MermaidConfig): void;
-		render(id: string, definition: string): Promise<{ svg: string }>;
-	}
-	const mermaid: MermaidAPI;
-	export default mermaid;
-}
-
-// Usage becomes fully type-safe
-mermaid.initialize(config); // No any, no eslint-disable needed
-```
-
-#### 3. **Svelte 5 Runes - Mandatory Usage**
-
-**State Management with Runes:**
-
-```svelte
-<!-- ❌ Legacy patterns - NEVER USE -->
-<script>
-  export let data;
-  let processed = [];
-  $: processed = data.map(item => transform(item));
-</script>
-
-<!-- ✅ Svelte 5 Runes - ALWAYS USE -->
-<script>
-  let { data } = $props();
-  let processed = $derived(data.map(item => transform(item)));
-</script>
-```
-
-**Props and State:**
-
-```svelte
-<!-- ✅ Correct Svelte 5 patterns -->
-<script>
-	let { content = '', isEditable = $bindable(false) } = $props();
-
-	let isLoading = $state(true);
-	let errorMessage = $state('');
-
-	let canEdit = $derived(isEditable && !isLoading);
-
-	$effect(() => {
-		if (content) {
-			isLoading = false;
-		}
-	});
-</script>
-
-{#if isLoading}
-	<div>Loading...</div>
-{:else if errorMessage}
-	<p class="error">{errorMessage}</p>
-{:else if content}
-	{@html content}
-{/if}
-```
-
-**Effects for Side Effects:**
-
-```svelte
-<script>
-	let { wsUrl } = $props();
-	let socket = $state(null);
-	let connected = $state(false);
-
-	$effect(() => {
-		socket = new WebSocket(wsUrl);
-		socket.onopen = () => (connected = true);
-		socket.onclose = () => (connected = false);
-
-		return () => socket?.close();
-	});
-</script>
-```
-
-#### 4. **Type Definition Organization**
-
-**File Structure:**
-
-```
-src/lib/types/
-├── mermaid.ts              # Custom library types
-├── mermaid-module.d.ts     # Module declarations
-├── websocket.ts            # WebSocket-related types
-└── common.ts               # Shared interfaces
-```
-
-**Export Strategy:**
-
-```typescript
-// src/lib/index.ts
-export type { MermaidConfig, WebSocketMessage, WebSocketStore } from './types';
-```
-
-### ESLint Configuration Philosophy
-
-The project uses strict ESLint rules to maintain code quality:
-
-- **`@typescript-eslint/no-explicit-any`**: Enforces complete type safety
-- **`svelte/no-dom-manipulating`**: Ensures Svelte-idiomatic code
-- **`svelte/no-at-html-tags`**: Requires careful consideration of HTML injection
-
-### Handling External Dependencies
-
-When integrating external libraries (like Mermaid), follow this pattern:
-
-1. **Check for official types**: `npm install @types/library-name`
-2. **Create custom types**: If none exist, write comprehensive type definitions
-3. **Module augmentation**: Use TypeScript's module augmentation when needed
-4. **Never use `any`**: Always prefer properly typed interfaces
-
-### MDsveX Typography Standards
-
-All MDsveX content should maintain consistent typography:
-
-```css
-/* Unified text sizing across all pages */
-:global(.prose p) {
-	font-size: 0.875rem; /* 14px - optimized for learning content */
-	line-height: 1.6;
-	color: #374151;
-}
-
-/* Responsive typography */
-@media (max-width: 640px) {
-	:global(.prose p) {
-		font-size: 0.8125rem; /* 13px on mobile */
-	}
-}
-```
-
-## Architecture & Learning Focus
-
-### WebSocket-First Approach
-
-This project emphasizes learning **browser-standard WebSocket API** first before exploring higher-level abstractions. The comprehensive curriculum in `memo/curriculum.md` covers:
-
-- Native WebSocket API mastery (50-60 hour curriculum)
-- Subprotocol design and implementation
-- PWA integration with Service Workers
-- Transition from RxJS patterns to Svelte stores
-- 11 major WebSocket use case categories
-
-### SvelteKit Integration
-
-- Uses SvelteKit's SSR capabilities with client-side WebSocket connections
-- Implements reactive WebSocket state management using Svelte stores
-- MDSveX integration allows markdown documentation within Svelte components
-
-### Key Implementation Patterns
-
-**WebSocket Store Pattern:**
-
-```typescript
-interface WebSocketStore {
-	connected: boolean;
-	error: string | null;
-	data: WebSocketMessage[];
-}
-
-interface WebSocketMessage<T = unknown> {
-	type: string;
+// src/lib/types/websocket.ts
+export interface WebSocketMessage<T = unknown> {
 	id?: string;
+	type: string;
 	timestamp: number;
 	payload: T;
 }
-```
 
-**Subprotocol Design:**
-
-```typescript
-interface WebSocketSubprotocol {
+export interface WebSocketSubprotocol {
 	name: string;
 	version: string;
 	messageTypes: Record<string, MessageSchema>;
 }
+
+export interface WebSocketConnectionConfig {
+	url: string;
+	protocols?: string[];
+	reconnect?: boolean;
+	maxReconnectAttempts?: number;
+	reconnectInterval?: number;
+}
+
+// Phase-specific types
+export interface Phase1DemoConfig extends WebSocketConnectionConfig {
+	demoType: 'echo' | 'chat' | 'notification';
+	fallbackUrls?: string[];
+}
+
+export interface Phase4ProductionConfig extends WebSocketConnectionConfig {
+	auth?: {
+		token: string;
+		refreshUrl?: string;
+	};
+	scaling?: {
+		clustered: boolean;
+		redisUrl?: string;
+	};
+}
 ```
 
-**Type-Safe Component Patterns:**
+### No-Any Policy for WebSocket Code
 
 ```typescript
-// Proper prop typing
-export let chart: string;
-export let theme: 'light' | 'dark' = 'dark';
-export let onError: (error: Error) => void = () => {};
+// ❌ NEVER DO THIS
+function handleMessage(data: any) {
+	console.log(data.someProperty); // Type unsafe
+}
 
-// State management
-let state: 'loading' | 'ready' | 'error' = 'loading';
-let content: string = '';
+// ✅ ALWAYS DO THIS
+interface ChatMessage {
+	type: 'chat';
+	user: string;
+	message: string;
+	timestamp: number;
+}
+
+interface SystemMessage {
+	type: 'system';
+	event: 'user_joined' | 'user_left';
+	userId: string;
+}
+
+type WebSocketMessage = ChatMessage | SystemMessage;
+
+function handleMessage(data: WebSocketMessage) {
+	switch (data.type) {
+		case 'chat':
+			// TypeScript knows this is ChatMessage
+			console.log(`${data.user}: ${data.message}`);
+			break;
+		case 'system':
+			// TypeScript knows this is SystemMessage
+			console.log(`System: ${data.event} - ${data.userId}`);
+			break;
+	}
+}
 ```
 
-## Project Structure
+## Claude Code Collaboration Guidelines
 
-### Source Code
+### Phase-Specific Request Patterns
 
-- `src/routes/` - SvelteKit pages and routes
-- `src/lib/` - Reusable components and utilities (accessible via `$lib` alias)
-- `src/lib/types/` - **TypeScript type definitions and module declarations**
-- `src/app.html` - HTML template
-- `src/app.d.ts` - TypeScript definitions
+#### **Phase 1 Request Template**
 
-### Documentation (`memo/`)
+```markdown
+# Task: Implement Phase 1 WebSocket Demo Component
 
-Comprehensive WebSocket learning materials including:
+## Environment Constraints
 
-- `table-of-contents.md` - Complete learning resource index and curriculum overview
-- `curriculum.md` - 50-60 hour structured learning curriculum (4 phases: Basic → Implementation → Testing → Practice)
-- Technical deep-dives: WebSocket protocols, End-to-End vs Hop-by-Hop communication, subprotocols
-- Use cases covering 11 major categories from chat to IoT and PWA integration
-- WebTransport comparison for future technology understanding
+- Must work on GitHub Pages (static hosting)
+- Use public WebSocket services only
+- Browser-only implementation (no server code)
 
-### Configuration
+## Requirements
 
-- `svelte.config.js` - SvelteKit configuration with MDSveX support
-- `vite.config.ts` - Vite build configuration with SvelteKit plugin
-- `tsconfig.json` - TypeScript configuration (includes custom type paths)
-- `eslint.config.js` - ESLint configuration with strict TypeScript rules
+1. Create src/lib/components/WebSocketDemo.svelte
+2. Use echo.websocket.org for testing
+3. Handle SSR gracefully (browser check)
+4. Implement with Svelte 5 runes ($state, $derived, $effect)
 
-## Learning Site Architecture
+## Success Criteria
 
-### MDSveX Integration
+- npm run check passes
+- Component works in browser
+- No server dependencies
+- Graceful SSR handling
+```
 
-- `.svelte` files for interactive components
-- `.svx` files for Markdown with embedded Svelte components
-- File-based routing: `src/routes/` structure maps to URL paths
-- Dynamic routes supported: `[slug]/+page.svelte` for lesson pages
-- **Consistent 14px typography** across all learning content
+#### **Phase 2 Request Template**
 
-### Content Management Strategy
+```markdown
+# Task: Implement Phase 2 Subprotocol Server
 
-- Learning content in `memo/` as pure Markdown for easy editing
-- Interactive demos and exercises as Svelte components in `src/lib/`
-- Gradual progression from theory (Markdown) to practice (interactive components)
-- **Type-safe component integration** in MDsveX files
+## Environment Setup
+
+cd websocket-learning-apps/phase2-server
+npm install
+npm run dev
+
+## Requirements
+
+1. Create GraphQL-WS subprotocol server (port 8081)
+2. Handle subscription messages
+3. Type-safe message handling
+4. Docker Compose integration
+
+## Success Criteria
+
+- Local server starts on port 8081
+- GraphQL-WS protocol negotiation works
+- Client can connect with subprotocol
+- docker-compose up succeeds
+```
+
+#### **Phase 4 Request Template**
+
+```markdown
+# Task: Deploy Phase 4 Production App
+
+## Environment
+
+- Target: Vercel (Chat App) or Railway (Collaborative Editor)
+- Redis: Required for scaling
+- WebSocket: Production-grade implementation
+
+## Requirements
+
+1. Configure vercel.json for WebSocket support
+2. Implement Redis pub/sub for scaling
+3. Add health checks and monitoring
+4. Production error handling
+
+## Success Criteria
+
+- Successful deployment to cloud platform
+- WebSocket connections work in production
+- Redis scaling functional
+- Monitoring and logs available
+```
+
+### Context-Aware Development
+
+When Claude Code is working on this project, always consider:
+
+1. **Which Phase** the feature belongs to
+2. **Environment constraints** for that phase
+3. **WebSocket complexity level** appropriate for the learning stage
+4. **Deployment target** (GitHub Pages vs Local vs Cloud)
+
+### Quality Assurance Commands
+
+```bash
+# Always run these for WebSocket features:
+npm run check           # Type safety verification
+npm run lint           # Code quality (no eslint-disable allowed)
+npm run dev            # Local development test
+npm run build          # Production build test
+
+# Phase-specific testing:
+# Phase 1: Open browser to verify demo
+# Phase 2: Test with local WebSocket servers
+# Phase 3: Run test suite
+# Phase 4: Deploy to staging environment
+```
 
 ## Development Standards
 
-### Pre-Commit Checklist
+### Pre-Commit Checklist for WebSocket Features
 
 Always ensure these pass before committing:
 
@@ -931,68 +561,75 @@ npm run lint     # ESLint + Prettier (must pass without eslint-disable)
 npm run format   # Code formatting
 ```
 
-### Quality Gates
+### WebSocket-Specific Quality Gates
 
-- **Zero `any` types**: All code must be properly typed
-- **Zero eslint-disable comments**: Fix the root cause, don't suppress warnings
-- **Svelte 5 compliance**: Use reactive patterns, avoid DOM manipulation
-- **Type-safe external libraries**: Create proper type definitions
+- **Zero `any` types**: All WebSocket messages must be properly typed
+- **Phase-appropriate complexity**: Don't implement Phase 4 features in Phase 1
+- **Environment compatibility**: Respect the constraints of each phase
+- **Browser compatibility**: Handle SSR gracefully for WebSocket code
+- **Error handling**: Comprehensive error states for connection issues
 
-### Component Development
+### Component Development for WebSocket Features
 
-When creating Svelte components:
+When creating WebSocket-related Svelte components:
 
 1. **Always use Svelte 5 Runes** - $state, $derived, $effect, $props
 2. **Reference latest specification** - https://svelte.dev/docs/llms before coding
-3. **Define clear prop interfaces** with $props()
-4. **Use $derived for computed values** instead of $: reactive statements
-5. **Handle all possible states** (loading, error, success) with $state
-6. **Export reusable types** from component files
-7. **Use $effect for side effects** and cleanup
+3. **Handle browser-only WebSocket creation** with proper SSR guards
+4. **Use $derived for connection states** instead of reactive statements
+5. **Handle all connection states** (connecting, connected, error, disconnected)
+6. **Export reusable WebSocket types** from component files
+7. **Use $effect for WebSocket lifecycle** and cleanup
 
-### **Mandatory Svelte 5 Checklist**
+### Mandatory Svelte 5 Checklist for WebSocket Components
 
-Before submitting any Svelte component, verify:
+Before submitting any WebSocket Svelte component, verify:
 
 - ✅ Uses `$props()` instead of `export let`
-- ✅ Uses `$state()` for reactive local state
-- ✅ Uses `$derived()` instead of `$:` reactive statements
-- ✅ Uses `$effect()` for side effects and lifecycle
-- ✅ No legacy `bind:this` - use `$effect` for refs
-- ✅ No legacy store patterns - use Svelte 5 state management
-- ✅ Follows latest specification from https://svelte.dev/docs/llms
+- ✅ Uses `$state()` for WebSocket connection state
+- ✅ Uses `$derived()` for computed connection properties
+- ✅ Uses `$effect()` for WebSocket lifecycle management
+- ✅ Handles browser-only WebSocket creation properly
+- ✅ No legacy `onMount` for WebSocket setup
+- ✅ Proper cleanup in $effect return function
+- ✅ Type-safe WebSocket message handling
 
-## Development Notes
+## Project Structure Context
 
-- Always run `npm run check` before committing to ensure type safety
-- Start with `memo/table-of-contents.md` for complete learning resource overview
-- The curriculum progresses through 4 phases: Basic understanding → Implementation → Testing → Practice projects
-- Focus on native WebSocket API mastery before exploring Socket.IO (covered as optional in Phase 4)
-- Project emphasizes PWA integration and Service Worker compatibility
-- Reference technical deep-dive documents in `memo/` when implementing WebSocket features
-- **Maintain 14px typography** in all `.svx` learning content for consistency
-- **Never use `any` or eslint-disable** - create proper type definitions instead
-- **Follow Svelte 5 Runes patterns** for all UI state management
-- **Always reference https://svelte.dev/docs/llms** before coding Svelte components
-- **Never use legacy $: reactive syntax** - use $derived() instead
-- **Never use export let** - use $props() instead
+### WebSocket Learning Progression
 
-## Claude Code Best Practices Summary
+The project follows a carefully designed learning progression:
 
-### ✅ Do This
+1. **memo/curriculum.md** - Main 50-60 hour curriculum
+2. **memo/table-of-contents.md** - Complete resource index
+3. **src/routes/phase[1-4]/** - Interactive learning components
+4. **websocket-learning-apps/** - Separate repo for Phase 2-4 implementations
 
-1. **Single-task requests** with clear objectives
-2. **Specific file paths** and code examples
-3. **Step-by-step instructions** in logical order
-4. **Measurable success criteria** (npm run commands)
-5. **Include context** about project constraints
+### Key Implementation Files
 
-### ❌ Avoid This
+- `src/lib/stores/websocket.svelte.ts` - Svelte 5 WebSocket store
+- `src/lib/components/WebSocketDemo.svelte` - Phase 1 demo components
+- `src/lib/types/websocket.ts` - Comprehensive WebSocket type definitions
+- `websocket-learning-apps/phase2-server/` - Local development servers
+- `websocket-learning-apps/chat-app/` - Phase 4A Vercel deployment
+- `websocket-learning-apps/collaborative-editor/` - Phase 4B Railway deployment
 
-1. **Multi-task requests** covering unrelated areas
-2. **Vague descriptions** without specific targets
-3. **Missing success criteria** or verification steps
-4. **Requests without file structure** information
-5. **Assumptions about current code state**
+### Claude Code Best Practices Summary
 
-Following these guidelines ensures efficient collaboration with Claude Code and maintains high code quality throughout the project.
+#### ✅ Do This for WebSocket Features
+
+1. **Phase-aware development** - Consider learning progression
+2. **Environment-specific implementation** - Respect hosting constraints
+3. **Type-safe WebSocket handling** - No any types allowed
+4. **Svelte 5 compliance** - Use runes, not legacy patterns
+5. **Production-ready error handling** - Comprehensive state management
+
+#### ❌ Avoid This
+
+1. **Phase mixing** - Don't implement Phase 4 complexity in Phase 1
+2. **Server dependencies in Phase 1** - Keep GitHub Pages compatible
+3. **Legacy Svelte patterns** - No export let or reactive statements
+4. **Type shortcuts** - No any types or eslint-disable
+5. **Environment assumptions** - Always check browser vs SSR context
+
+Following these guidelines ensures efficient collaboration with Claude Code while maintaining the educational integrity and technical quality of the WebSocket learning project.
