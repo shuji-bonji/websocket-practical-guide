@@ -149,31 +149,53 @@ test.describe('Visual Regression Testing', () => {
 					}
 				);
 
-				// Wait for connection to complete or timeout
+				// Try to wait for connection state change, but don't fail if external service is unavailable
 				try {
-					await page.waitForSelector('[data-connection-state="connected"]', { timeout: 5000 });
-
-					await expect(page.locator('[data-testid="websocket-state-visualizer"]')).toHaveScreenshot(
-						'websocket-connected-state.png',
+					// Give external service a chance to connect, but use shorter timeout
+					await page.waitForSelector(
+						'[data-connection-state="connected"], [data-connection-state="error"]',
 						{
-							animations: 'disabled'
+							timeout: 3000
 						}
 					);
 
-					// Test message sending interface
-					const sendButton = page.locator('[data-testid="send-test-message-button"]');
-					if ((await sendButton.count()) > 0 && (await sendButton.isEnabled())) {
-						await sendButton.click();
-						await page.waitForTimeout(1000);
+					// Check what state we ended up in
+					const connectionState = await page
+						.locator('[data-connection-state]')
+						.getAttribute('data-connection-state');
 
+					if (connectionState === 'connected') {
 						await expect(
 							page.locator('[data-testid="websocket-state-visualizer"]')
-						).toHaveScreenshot('websocket-message-sent-state.png', {
+						).toHaveScreenshot('websocket-connected-state.png', {
+							animations: 'disabled'
+						});
+
+						// Test message sending interface if connected
+						const sendButton = page.locator('[data-testid="send-test-message-button"]');
+						if ((await sendButton.count()) > 0 && (await sendButton.isEnabled())) {
+							await sendButton.click();
+							await page.waitForTimeout(500);
+
+							await expect(
+								page.locator('[data-testid="websocket-state-visualizer"]')
+							).toHaveScreenshot('websocket-message-sent-state.png', {
+								animations: 'disabled'
+							});
+						}
+					} else {
+						// Capture error/timeout state for visual consistency
+						await expect(
+							page.locator('[data-testid="websocket-state-visualizer"]')
+						).toHaveScreenshot('websocket-error-state.png', {
 							animations: 'disabled'
 						});
 					}
-				} catch (error) {
-					console.log('Connection test failed, capturing error state:', error);
+				} catch {
+					// External service unavailable - capture timeout state for visual regression
+					console.log(
+						'External WebSocket service unavailable, capturing timeout state for visual consistency'
+					);
 					await expect(page.locator('[data-testid="websocket-state-visualizer"]')).toHaveScreenshot(
 						'websocket-error-state.png',
 						{
