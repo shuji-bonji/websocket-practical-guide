@@ -70,11 +70,20 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Check WebSocket service availability
+        run: |
+          echo "Checking WebSocket service availability..."
+          curl -f --connect-timeout 10 --max-time 15 https://echo.websocket.org || echo "WebSocket service may be slow/unavailable"
+        continue-on-error: true
+
       - name: Run E2E tests
         run: npm run test:e2e
         env:
           CI: true
           PLAYWRIGHT_CI: true
+          # Extended timeouts for WebSocket connections in CI
+          PLAYWRIGHT_TIMEOUT: 60000
+        timeout-minutes: 15
 
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v4
@@ -109,11 +118,20 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Check WebSocket service availability for ${{ matrix.browser }}
+        run: |
+          echo "Checking WebSocket service availability for ${{ matrix.browser }}..."
+          curl -f --connect-timeout 10 --max-time 15 https://echo.websocket.org || echo "WebSocket service may be slow/unavailable"
+        continue-on-error: true
+
       - name: Run cross-browser tests
         run: npx playwright test --project=${{ matrix.browser }}
         env:
           CI: true
           PLAYWRIGHT_CI: true
+          # Extended timeouts for WebSocket connections in CI
+          PLAYWRIGHT_TIMEOUT: 60000
+        timeout-minutes: 20
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
