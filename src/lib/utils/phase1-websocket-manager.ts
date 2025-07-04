@@ -49,6 +49,9 @@ export class Phase1WebSocketManager {
 			enableFallback: true,
 			connectionTimeout: 10000,
 			visualIndicators: true,
+			maxReconnectAttempts: 3,
+			reconnectDelay: 2000,
+			showEducationalHints: true,
 			...config
 		};
 
@@ -282,9 +285,28 @@ export class Phase1WebSocketManager {
 			handlers.onClose(event);
 		}
 
-		// Handle abnormal closure with fallback
-		if (event.code !== 1000 && event.code !== 1001 && this.config.enableFallback) {
-			this.attemptFallback(handlers);
+		// Handle abnormal closure with reconnection
+		if (event.code !== 1000 && event.code !== 1001) {
+			const attempts = this.connectionState.reconnectAttempts || 0;
+			if (attempts < (this.config.maxReconnectAttempts || 3)) {
+				this.logEducationalEvent({
+					id: crypto.randomUUID(),
+					timestamp: Date.now(),
+					type: 'system',
+					description: `Attempting reconnection (attempt ${attempts + 1}/${this.config.maxReconnectAttempts})`,
+					details: {}
+				});
+
+				this.updateConnectionState('reconnecting', service);
+
+				setTimeout(() => {
+					this.connectToService(service, handlers, true).catch(() => {
+						// Error will be handled in error handler
+					});
+				}, this.config.reconnectDelay || 2000);
+			} else if (this.config.enableFallback) {
+				this.attemptFallback(handlers);
+			}
 		}
 	}
 
@@ -335,13 +357,18 @@ export class Phase1WebSocketManager {
 	/**
 	 * Send a message through the WebSocket
 	 */
-	send(data: string): void {
+	send(data: string): boolean {
 		if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-			throw new Error('WebSocket is not connected');
+			this.log('Cannot send: WebSocket not open');
+			return false;
 		}
 
 		this.socket.send(data);
-		this.metrics.messagesSent++;
+
+		// Update metrics
+		if (this.config.collectMetrics) {
+			this.metrics.messagesSent++;
+		}
 
 		const message: Phase1WebSocketMessage = {
 			id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -357,6 +384,8 @@ export class Phase1WebSocketManager {
 
 		this.messageHistory.push(message);
 		this.log(`📤 Sent: ${data}`);
+
+		return true;
 	}
 
 	/**
@@ -383,6 +412,13 @@ export class Phase1WebSocketManager {
 	 */
 	getConnectionState(): Phase1ConnectionState {
 		return { ...this.connectionState };
+	}
+
+	/**
+	 * Get current state (alias for getConnectionState)
+	 */
+	getState(): Phase1ConnectionState {
+		return this.getConnectionState();
 	}
 
 	/**

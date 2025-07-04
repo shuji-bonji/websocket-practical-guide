@@ -44,7 +44,7 @@
 	let connectionEvents = $state<WebSocketEducationalEvent[]>([]);
 	let isAutoDemo = $state(autoDemo);
 	let demoStep = $state(0);
-	let demoInterval = $state<number | null>(null);
+	let demoInterval = $state<ReturnType<typeof setTimeout> | null>(null);
 
 	// Connection metrics for visualization
 	let connectionMetrics = $state<Phase1ConnectionMetrics>({
@@ -345,7 +345,10 @@
 	let canSend = $derived(currentState === WS_OPEN);
 </script>
 
-<div class="bg-white border border-gray-200 rounded-lg p-6">
+<div
+	class="bg-white border border-gray-200 rounded-lg p-6"
+	data-testid="websocket-state-visualizer"
+>
 	<!-- Header -->
 	<div class="mb-6">
 		<h3 class="text-lg font-semibold text-gray-900 mb-2">🔍 {title}</h3>
@@ -366,6 +369,7 @@
 						{isAutoDemo
 						? 'bg-red-100 text-red-800 border border-red-300'
 						: 'bg-blue-100 text-blue-800 border border-blue-300'}"
+					data-testid="auto-demo-toggle"
 				>
 					{isAutoDemo ? '🛑 自動デモ停止' : '▶️ 自動デモ開始'}
 				</button>
@@ -411,6 +415,7 @@
 			onclick={connect}
 			disabled={!canConnect || isAutoDemo}
 			class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			data-testid="connect-button"
 		>
 			🔗 接続
 		</button>
@@ -420,6 +425,7 @@
 			onclick={sendTestMessage}
 			disabled={!canSend || isAutoDemo}
 			class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			data-testid="send-test-message-button"
 		>
 			📤 テストメッセージ送信
 		</button>
@@ -429,6 +435,7 @@
 			onclick={disconnect}
 			disabled={!canDisconnect || isAutoDemo}
 			class="px-4 py-2 bg-orange-600 text-white rounded-md text-sm font-medium hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			data-testid="disconnect-button"
 		>
 			🔌 切断
 		</button>

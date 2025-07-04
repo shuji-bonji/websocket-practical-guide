@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>
+			Code coverage report for .svelte-kit/output/client/_app/immutable/chunks/B3wq0aj6.js
+		</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="../../../../../../prettify.css" />
+		<link rel="stylesheet" href="../../../../../../base.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="../../../../../../favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style type="text/css">
+			.coverage-summary .sorter {
+				background-image: url(../../../../../../sort-arrow-sprite.png);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrapper">
+			<div class="pad1">
+				<h1>
+					<a href="../../../../../../index.html">All files</a> /
+					<a href="index.html">.svelte-kit/output/client/_app/immutable/chunks</a> B3wq0aj6.js
+				</h1>
+				<div class="clearfix">
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Statements</span>
+						<span class="fraction">0/1</span>
+					</div>
+
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Branches</span>
+						<span class="fraction">0/1</span>
+					</div>
+
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Functions</span>
+						<span class="fraction">0/1</span>
+					</div>
+
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Lines</span>
+						<span class="fraction">0/1</span>
+					</div>
+				</div>
+				<p class="quiet">
+					Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>,
+					<em>p</em> or <em>k</em> for the previous block.
+				</p>
+				<template id="filterTemplate">
+					<div class="quiet">
+						Filter:
+						<input type="search" id="fileSearch" />
+					</div>
+				</template>
+			</div>
+			<div class="status-line low"></div>
+			<pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import{ak as w}from"./Bl4K4MX1.js";const d=typeof window&lt;"u",p={totalPhases:4,completedPhases:0,totalHours:60,completedHours:0,phases:[{phase:1,name:"基礎理解",totalLessons:15,completedLessons:0,estimatedHours:"18.5-21.5",lessons:[{id:"phase1-introduction-what-is-websocket",completed:!1},{id:"phase1-introduction-http-limitations",completed:!1},{id:"phase1-introduction-use-cases",completed:!1},{id:"phase1-introduction-comparison",completed:!1},{id:"phase1-network-tech-http-basics",completed:!1},{id:"phase1-network-tech-osi-model",completed:!1},{id:"phase1-network-tech-http-versions",completed:!1},{id:"phase1-network-tech-connection-process",completed:!1},{id:"phase1-network-tech-security",completed:!1},{id:"phase1-api-structure-lifecycle",completed:!1},{id:"phase1-api-structure-event-model",completed:!1},{id:"phase1-api-structure-roles",completed:!1},{id:"phase1-basic-operations-url-connection",completed:!1},{id:"phase1-basic-operations-api-implementation",completed:!1},{id:"phase1-basic-operations-reconnection",completed:!1}]},{phase:2,name:"実装技術",totalLessons:12,completedLessons:0,estimatedHours:"17-20",lessons:[{id:"phase2-data-communication-svelte-stores",completed:!1},{id:"phase2-data-communication-send-receive",completed:!1},{id:"phase2-data-communication-error-handling",completed:!1},{id:"phase2-frames-protocols-frame-structure",completed:!1},{id:"phase2-frames-protocols-binary-data",completed:!1},{id:"phase2-frames-protocols-subprotocols",completed:!1},{id:"phase2-frames-protocols-graphql-ws",completed:!1},{id:"phase2-frames-protocols-mqtt",completed:!1},{id:"phase2-frames-protocols-custom",completed:!1},{id:"phase2-advanced-topics-security",completed:!1},{id:"phase2-advanced-topics-pwa-integration",completed:!1},{id:"phase2-advanced-topics-scalability",completed:!1}]},{phase:3,name:"テスト・評価",totalLessons:5,completedLessons:0,estimatedHours:"8-10",lessons:[{id:"phase3-testing-client-testing",completed:!1},{id:"phase3-testing-server-testing",completed:!1},{id:"phase3-testing-e2e-testing",completed:!1},{id:"phase3-comparison-alternatives",completed:!1},{id:"phase3-comparison-selection-criteria",completed:!1}]},{phase:4,name:"実践開発",totalLessons:3,completedLessons:0,estimatedHours:"15-20",lessons:[{id:"phase4-projects-chat-app",completed:!1},{id:"phase4-projects-collaborative-editor",completed:!1},{id:"phase4-socket-io-overview",completed:!1}]}]};function u(){var e,r;if(!d)return p;try{const t=localStorage.getItem("websocket-learning-progress");if(t){const o=JSON.parse(t);return((r=(e=o.phases[0])==null?void 0:e.lessons)==null?void 0:r.some(c=&gt;c.id.startsWith("phase1-")))?(o.phases.forEach(c=&gt;{c.lessons.forEach(s=&gt;{s.completedAt&amp;&amp;(s.completedAt=new Date(s.completedAt))})}),o):(console.log("Old progress data detected, using new default structure"),localStorage.removeItem("websocket-learning-progress"),p)}}catch(t){console.warn("Failed to load progress from localStorage:",t)}return p}function i(e){if(d)try{localStorage.setItem("websocket-learning-progress",JSON.stringify(e))}catch(r){console.warn("Failed to save progress to localStorage:",r)}}function m(e){let r=0,t=0;e.phases.forEach(a=&gt;{a.completedLessons=a.lessons.filter(c=&gt;c.completed).length,r+=a.completedLessons,a.completedLessons===a.totalLessons&amp;&amp;t++}),e.completedPhases=t;const o=e.phases.reduce((a,c)=&gt;a+c.totalLessons,0);return e.completedHours=Math.round(r/o*e.totalHours),e}const l=w(u()),h={"1.1":"phase1-introduction-what-is-websocket","1.2":"phase1-introduction-http-limitations","1.3":"phase1-use-cases","1.4":"phase1-introduction-comparison","2.1":"phase1-network-tech-http-basics","2.2":"phase1-network-tech-osi-model","2.3":"phase1-network-tech-http-versions","2.4":"phase1-network-tech-connection-process","2.5":"phase1-network-tech-security","3.1":"phase1-api-structure-lifecycle","3.2":"phase1-api-structure-event-model","3.3":"phase1-api-structure-roles","4.1":"phase1-basic-operations-url-connection","4.2":"phase1-basic-operations-api-implementation","4.3":"phase1-basic-operations-reconnection","5.1":"phase2-data-communication-svelte-stores","5.2":"phase2-data-communication-send-receive","5.3":"phase2-data-communication-error-handling","6.1":"phase2-frames-protocols-frame-structure","6.2":"phase2-frames-protocols-binary-data","6.3":"phase2-frames-protocols-subprotocols","7.1":"phase2-advanced-topics-security","7.2":"phase2-advanced-topics-pwa-integration","7.3":"phase2-advanced-topics-scalability","8.1":"phase3-testing-client-testing","8.2":"phase3-testing-server-testing","8.3":"phase3-testing-e2e-testing","9.1":"phase3-comparison-alternatives","9.2":"phase3-comparison-selection-criteria","10.1":"phase4-projects-chat-app","10.2":"phase4-projects-collaborative-editor"},f={completeLesson:e=&gt;{l.update(r=&gt;{const t={...r},o=h[e]||e;let a=!1;for(const s of t.phases){const n=s.lessons.find(g=&gt;g.id===o);if(n&amp;&amp;!n.completed){n.completed=!0,n.completedAt=new Date,a=!0;break}}if(!a){let s=0;o.startsWith("phase2-")?s=1:o.startsWith("phase3-")?s=2:o.startsWith("phase4-")&amp;&amp;(s=3),s&lt;t.phases.length&amp;&amp;(t.phases[s].lessons.push({id:o,completed:!0,completedAt:new Date}),t.phases[s].totalLessons=t.phases[s].lessons.length)}const c=m(t);return i(c),JSON.parse(JSON.stringify(c))})},uncompleteLesson:e=&gt;{l.update(r=&gt;{const t={...r},o=h[e]||e;for(const c of t.phases){const s=c.lessons.find(n=&gt;n.id===o);if(s&amp;&amp;s.completed){s.completed=!1,s.completedAt=void 0,s.timeSpent=void 0;break}}const a=m(t);return i(a),JSON.parse(JSON.stringify(a))})},recordTime:(e,r)=&gt;{l.update(t=&gt;{const o={...t},a=h[e]||e;for(const c of o.phases){const s=c.lessons.find(n=&gt;n.id===a);if(s){s.timeSpent=(s.timeSpent||0)+r;break}}return i(o),o})},resetProgress:()=&gt;{l.set(p),i(p)},debugProgress:()=&gt;{if(d){const e=u();return console.log("Current progress state:",e),console.log("Phase 1 lessons:",e.phases[0].lessons),e}}};d&amp;&amp;typeof window&lt;"u"&amp;&amp;(window.debugProgress=f.debugProgress,window.resetProgress=f.resetProgress);export{f as a,l as p};<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+&nbsp;</pre></td></tr></table></pre>
+
+			<div class="push"></div>
+			<!-- for sticky footer -->
+		</div>
+		<!-- /wrapper -->
+		<div class="footer quiet pad2 space-top1 center small">
+			Code coverage generated by
+			<a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+			at 2025-07-04T21:28:03.821Z
+		</div>
+		<script src="../../../../../../prettify.js"></script>
+		<script>
+			window.onload = function () {
+				prettyPrint();
+			};
+		</script>
+		<script src="../../../../../../sorter.js"></script>
+		<script src="../../../../../../block-navigation.js"></script>
+	</body>
+</html>

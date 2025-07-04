@@ -2,7 +2,13 @@
 	import '../app.css';
 	import Header from '$lib/components/layout/Header.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
+	import type { Snippet } from 'svelte';
 
+	interface Props {
+		children?: Snippet;
+	}
+
+	let { children }: Props = $props();
 	let sidebarOpen = $state(false);
 
 	// ページ変更時にモバイルサイドバーを閉じる
@@ -40,8 +46,8 @@
 			<!-- Page content -->
 			<div class="py-6">
 				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<!-- Layout slot for page content -->
-					<slot />
+					<!-- Layout content for page content -->
+					{@render children?.()}
 				</div>
 			</div>
 		</main>

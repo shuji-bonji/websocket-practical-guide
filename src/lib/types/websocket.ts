@@ -141,6 +141,12 @@ export interface Phase1WebSocketManagerConfig {
 	connectionTimeout: number;
 	/** Enable visual connection state indicators */
 	visualIndicators: boolean;
+	/** Maximum reconnection attempts */
+	maxReconnectAttempts?: number;
+	/** Delay between reconnection attempts in milliseconds */
+	reconnectDelay?: number;
+	/** Show educational hints and tips */
+	showEducationalHints?: boolean;
 }
 
 /**
