@@ -1,23 +1,141 @@
-node_modules
+# .gitignore - GitHub容量最適化版
 
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Env
+# ===== 基本的な除外ファイル =====
+node_modules/
 .env
 .env.*
 !.env.example
-!.env.test
+.DS_Store
+Thumbs.db
 
-# Vite
+# ===== SvelteKit =====
+.svelte-kit/
+build/
+.output/
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# ===== 開発ツール =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== テスト関連（容量大）=====
+# Vitest
+coverage/
+coverage-*/
+*.lcov
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
+
+# Jest (もしある場合)
+jest-coverage/
+
+# ===== ビルド・配布関連 =====
+dist/
+build/
+.vercel/
+.netlify/
+
+# ===== ログファイル =====
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ===== 一時ファイル =====
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# ===== OS生成ファイル =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ===== エディタ設定 =====
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ===== デプロイメント関連 =====
+.vercel/
+.netlify/
+.railway/
+
+# ===== 大容量開発ファイル =====
+# Storybook
+storybook-static/
+.storybook/public/
+
+# 型チェック結果
+*.tsbuildinfo
+
+# パッケージマネージャー
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/install-state.gz
+.pnp.*
+
+# ===== WebSocket学習プロジェクト固有 =====
+# フェーズ2のローカルサーバーログ
+phase2-server/logs/
+websocket-learning-apps/*/logs/
+
+# 開発用ダンプファイル
+*.dump
+*.sql
+*.db-journal
+
+# メモ・一時ドキュメント
+memo/temp/
+memo/*.tmp
+docs/temp/
+
+# ===== セキュリティ関連 =====
+.env.local
+.env.production
+secrets/
+private/
+*.pem
+*.key
+*.crt
+
+# ===== 分析・レポート（大容量） =====
+# Bundle分析
+bundle-analyzer-report/
+webpack-bundle-analyzer-report/
+
+# パフォーマンス計測
+lighthouse-reports/
+performance-reports/
+
+# Node.js調査ファイル
+node_modules/.cache/
+.eslintcache
+
+# ===== Docker関連 =====
+.dockerignore
+docker-compose.override.yml
+*.dockerignore
