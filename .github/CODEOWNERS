@@ -1,0 +1,43 @@
+# Code Owners for WebSocket Learning Project
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners for the entire repository
+* @shuji-bonji
+
+# Critical configuration files require owner review
+/.github/ @shuji-bonji
+package.json @shuji-bonji
+package-lock.json @shuji-bonji
+tsconfig.json @shuji-bonji
+svelte.config.js @shuji-bonji
+playwright.config.ts @shuji-bonji
+vitest.config.ts @shuji-bonji
+tailwind.config.js @shuji-bonji
+postcss.config.js @shuji-bonji
+eslint.config.js @shuji-bonji
+.prettierrc @shuji-bonji
+
+# Core application files
+/src/lib/stores/ @shuji-bonji
+/src/lib/utils/ @shuji-bonji
+/src/lib/types/ @shuji-bonji
+
+# Testing infrastructure
+/tests/ @shuji-bonji
+/src/test/ @shuji-bonji
+
+# Documentation and learning materials
+/docs/ @shuji-bonji
+/memo/ @shuji-bonji
+CLAUDE.md @shuji-bonji
+README.md @shuji-bonji
+
+# Deployment and CI/CD
+/.github/workflows/ @shuji-bonji
+/vercel.json @shuji-bonji
+
+# WebSocket-specific components (require careful review for educational value)
+/src/lib/components/learning/ @shuji-bonji
+/src/lib/components/phase1/ @shuji-bonji
+/src/lib/components/phase2/ @shuji-bonji
+/src/routes/phase*/ @shuji-bonji
