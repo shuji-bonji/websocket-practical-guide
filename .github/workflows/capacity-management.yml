@@ -1,0 +1,20 @@
+# .github/workflows/capacity-management.yml
+name: Repository Capacity Management
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clean up large files
+        run: |
+          npm run clean:all
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff --staged --quiet || git commit -m "Auto-cleanup: Remove large files [skip ci]"
+          git push
