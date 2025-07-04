@@ -1,5 +1,5 @@
 import { mdsvex } from 'mdsvex';
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import mdsvexConfig from './mdsvex.config.js';
 
@@ -9,10 +9,27 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [vitePreprocess(), mdsvex(mdsvexConfig)],
 	kit: {
-		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-		adapter: adapter()
+		// Configure for GitHub Pages static deployment
+		adapter: adapter({
+			pages: 'build',
+			assets: 'build',
+			fallback: undefined,
+			precompress: false,
+			strict: true
+		}),
+		prerender: {
+			handleHttpError: ({ path, referrer, message }) => {
+				// For Phase 1, ignore 404s for routes that are not yet implemented
+				if (message.includes('404')) {
+					console.warn(
+						`Skipping prerender for missing route: ${path} (referenced from ${referrer})`
+					);
+					return;
+				}
+				// Re-throw other errors
+				throw new Error(message);
+			}
+		}
 	},
 	extensions: ['.svelte', '.svx', '.md']
 };

@@ -198,13 +198,26 @@
 			accentColor: 'bg-purple-600',
 			lessons: [
 				{
-					id: '3.1',
-					title: 'WebSocket接続ライフサイクル',
-					duration: '2時間',
-					description: 'WebSocket接続の開始から終了までのライフサイクル',
+					id: 'phase1-websocket-states',
+					title: 'WebSocket状態とライフサイクル',
+					duration: '30分',
+					description: 'WebSocketの4つの状態と状態遷移を実際の接続で学習',
 					topics: [
-						'接続確立（ハンドシェイク）',
-						'データ通信フェーズ',
+						'ReadyStateの4つの状態（CONNECTING, OPEN, CLOSING, CLOSED）',
+						'状態遷移のタイミングとイベントハンドラ',
+						'正常なクローズハンドシェイクと異常切断',
+						'Close Codeによる切断理由の識別'
+					],
+					exercises: ['リアルタイム状態可視化での接続観察', '異なる公開サービスでの状態比較']
+				},
+				{
+					id: '3.1',
+					title: 'WebSocket接続ライフサイクル詳細',
+					duration: '1.5時間',
+					description: 'WebSocket接続の開始から終了までの詳細なライフサイクル',
+					topics: [
+						'接続確立（ハンドシェイク）の詳細プロセス',
+						'データ通信フェーズでの双方向通信',
 						'接続終了（クローズハンドシェイク）',
 						'異常切断の検出と処理'
 					],
@@ -307,11 +320,13 @@
 			'phase1-introduction-http-limitations': '/phase1/introduction/http-limitations',
 			'phase1-use-cases': '/phase1/introduction/use-cases',
 			'phase1-introduction-comparison': '/phase1/introduction/comparison',
+			'phase1-websocket-states': '/phase1/websocket-states',
 			// 古いIDとの後方互換性
 			'1.1': '/phase1/introduction/what-is-websocket',
 			'1.2': '/phase1/introduction/http-limitations',
 			'1.3': '/phase1/introduction/use-cases',
-			'1.4': '/phase1/introduction/comparison'
+			'1.4': '/phase1/introduction/comparison',
+			'3.1': '/phase1/websocket-states'
 		};
 
 		return lessonPaths[lessonId] || `/phase1/introduction/${lessonId}`;

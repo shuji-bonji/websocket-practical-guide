@@ -179,3 +179,21 @@ src/routes/
 - コード品質維持のため `npm run lint` でチェック
 - `memo/` ディレクトリの学習資料を参考にWebSocket実装
 - ネイティブWebSocket APIの理解を優先し、その後にライブラリを学習
+
+## 🤖 Claude Code開発者向け
+
+### 必須参照ドキュメント
+
+- **[CLAUDE.md](./CLAUDE.md)** - 開発指針とPhase別実装戦略
+- **[memo/claude-code-phases.md](./memo/claude-code-phases.md)** - 詳細な実装ガイド
+- **[memo/websocket-environments.md](./memo/websocket-environments.md)** - 環境戦略と技術詳細
+- **[memo/deployment-strategy.md](./memo/deployment-strategy.md)** - デプロイメント戦略
+
+### Phase別開発指針
+
+Phase別開発では必ず対応する環境制約を確認してください：
+
+- **Phase 1**: GitHub Pages互換（サーバーレス）
+- **Phase 2**: ローカル開発（Docker + Node.js）
+- **Phase 3**: テスト統合（モック + E2E）
+- **Phase 4**: 本番デプロイ（Vercel + Railway）

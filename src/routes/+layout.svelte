@@ -21,6 +21,7 @@
 
 <svelte:head>
 	<meta name="theme-color" content="#2563eb" />
+	<meta name="mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<meta name="apple-mobile-web-app-title" content="WebSocket Learning" />
@@ -39,7 +40,7 @@
 			<!-- Page content -->
 			<div class="py-6">
 				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<!-- Layout slot for page content - this is the correct usage in SvelteKit layouts -->
+					<!-- Layout slot for page content -->
 					<slot />
 				</div>
 			</div>
