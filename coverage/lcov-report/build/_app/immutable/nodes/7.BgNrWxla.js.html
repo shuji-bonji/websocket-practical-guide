@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Code coverage report for build/_app/immutable/nodes/7.BgNrWxla.js</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="../../../../prettify.css" />
+		<link rel="stylesheet" href="../../../../base.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style type="text/css">
+			.coverage-summary .sorter {
+				background-image: url(../../../../sort-arrow-sprite.png);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrapper">
+			<div class="pad1">
+				<h1>
+					<a href="../../../../index.html">All files</a> /
+					<a href="index.html">build/_app/immutable/nodes</a> 7.BgNrWxla.js
+				</h1>
+				<div class="clearfix">
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Statements</span>
+						<span class="fraction">0/98</span>
+					</div>
+
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Branches</span>
+						<span class="fraction">0/1</span>
+					</div>
+
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Functions</span>
+						<span class="fraction">0/1</span>
+					</div>
+
+					<div class="fl pad1y space-right2">
+						<span class="strong">0% </span>
+						<span class="quiet">Lines</span>
+						<span class="fraction">0/98</span>
+					</div>
+				</div>
+				<p class="quiet">
+					Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>,
+					<em>p</em> or <em>k</em> for the previous block.
+				</p>
+				<template id="filterTemplate">
+					<div class="quiet">
+						Filter:
+						<input type="search" id="fileSearch" />
+					</div>
+				</template>
+			</div>
+			<div class="status-line low"></div>
+			<pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import"../chunks/CWj6FrbW.js";import"../chunks/CWSAvt1s.js";import{p as q,al as M,am as K,f as b,t as U,b as m,c as A,s,d as n,v as R,r as a,n as y,e as J,a as z}from"../chunks/Bl4K4MX1.js";import{h as u,M as H}from"../chunks/CX_C1ltw.js";import{L as B,N as F}from"../chunks/BIE5UmyX.js";import{i as C}from"../chunks/BQfqXujC.js";import{p as j}from"../chunks/CczcRi69.js";import{I as Q}from"../chunks/BssGjCzx.js";import{P as V}from"../chunks/B95f0EWd.js";var X=b('&lt;div class="grid grid-cols-1 lg:grid-cols-2 gap-8"&gt;&lt;div class="text-center"&gt;&lt;h4 class="text-md font-medium text-gray-700 mb-4"&gt;従来のHTTP通信&lt;/h4&gt; &lt;div class="space-y-4"&gt;&lt;div class="bg-blue-100 border border-blue-300 rounded-lg p-3"&gt;&lt;div class="text-sm font-medium text-blue-800"&gt;クライアント（ブラウザ）&lt;/div&gt;&lt;/div&gt; &lt;div class="flex items-center justify-center"&gt;&lt;div class="flex-1 border-t-2 border-gray-300 border-dashed"&gt;&lt;/div&gt; &lt;span class="px-2 text-xs text-gray-500"&gt;リクエスト →&lt;/span&gt; &lt;div class="flex-1 border-t-2 border-gray-300 border-dashed"&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="bg-gray-100 border border-gray-300 rounded-lg p-3"&gt;&lt;div class="text-sm font-medium text-gray-700"&gt;サーバー&lt;/div&gt;&lt;/div&gt; &lt;div class="flex items-center justify-center"&gt;&lt;div class="flex-1 border-t-2 border-gray-300 border-dashed"&gt;&lt;/div&gt; &lt;span class="px-2 text-xs text-gray-500"&gt;← レスポンス&lt;/span&gt; &lt;div class="flex-1 border-t-2 border-gray-300 border-dashed"&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="bg-red-100 border border-red-300 rounded-lg p-2"&gt;&lt;div class="text-xs text-red-700"&gt;接続終了&lt;/div&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="mt-4 text-xs text-gray-600"&gt;&lt;div&gt;❌ 毎回接続の確立・切断&lt;/div&gt; &lt;div&gt;❌ サーバーからの能動的通信不可&lt;/div&gt; &lt;div&gt;❌ オーバーヘッドが大きい&lt;/div&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="text-center"&gt;&lt;h4 class="text-md font-medium text-gray-700 mb-4"&gt;WebSocket通信&lt;/h4&gt; &lt;div class="space-y-4"&gt;&lt;div class="bg-green-100 border border-green-300 rounded-lg p-3"&gt;&lt;div class="text-sm font-medium text-green-800"&gt;クライアント（ブラウザ）&lt;/div&gt;&lt;/div&gt; &lt;div class="flex items-center justify-center"&gt;&lt;div class="flex-1 border-t-2 border-green-400"&gt;&lt;/div&gt; &lt;span class="px-2 text-xs text-green-600"&gt;ハンドシェイク&lt;/span&gt; &lt;div class="flex-1 border-t-2 border-green-400"&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="bg-green-100 border border-green-300 rounded-lg p-3"&gt;&lt;div class="text-sm font-medium text-green-800"&gt;サーバー&lt;/div&gt;&lt;/div&gt; &lt;div class="bg-green-50 border-2 border-green-300 border-dashed rounded-lg p-3"&gt;&lt;div class="text-xs text-green-700 space-y-1"&gt;&lt;div&gt;↕️ 双方向リアルタイム通信&lt;/div&gt; &lt;div&gt;🔄 持続的接続&lt;/div&gt; &lt;div&gt;⚡ 低遅延&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="mt-4 text-xs text-gray-600"&gt;&lt;div&gt;✅ 一度の接続確立&lt;/div&gt; &lt;div&gt;✅ 双方向リアルタイム通信&lt;/div&gt; &lt;div&gt;✅ 低オーバーヘッド&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;'),Y=b('&lt;div class="text-center text-gray-500"&gt;&lt;div class="text-sm"&gt;フロー図コンポーネント（今後実装予定）&lt;/div&gt;&lt;/div&gt;'),Z=b('&lt;div class="text-center text-gray-500"&gt;&lt;div class="text-sm"&gt;構造図コンポーネント（今後実装予定）&lt;/div&gt;&lt;/div&gt;'),$=b(`&lt;div class="bg-white border border-gray-200 rounded-lg p-6 my-8"&gt;&lt;h3 class="text-lg font-semibold text-gray-900 mb-6 text-center"&gt; &lt;/h3&gt; &lt;!&gt; &lt;div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"&gt;&lt;div class="text-sm text-blue-800"&gt;&lt;span class="font-medium"&gt;💡 ポイント：&lt;/span&gt; WebSocketは初回のHTTPハンドシェイク後、プロトコルを「アップグレード」して持続的な双方向通信を実現します。<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+<span class="cstat-no" title="statement not covered" >			これにより、リアルタイムなデータ交換が可能になります。&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;`);function ss(x,e){q(e,!1);let f=j(e,"title",8),p=j(e,"type",8,"comparison"),d=j(e,"data",24,()=&gt;({}));M(()=&gt;R(d()),()=&gt;{d()}),K();var l=$(),k=n(l),S=n(k,!0);a(k);var g=s(k,2);{var T=o=&gt;{var r=X();m(o,r)},v=(o,r)=&gt;{{var h=t=&gt;{var c=Y();m(t,c)},P=(t,c)=&gt;{{var _=i=&gt;{var w=Z();m(i,w)};C(t,i=&gt;{p()==="structure"&amp;&amp;i(_)},c)}};C(o,t=&gt;{p()==="flow"?t(h):t(P,!1)},r)}};C(g,o=&gt;{p()==="comparison"?o(T):o(v,!1)})}y(2),a(l),U(()=&gt;J(S,f())),m(x,l),A()}var ns=b('&lt;!&gt; &lt;div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"&gt;&lt;div class="prose max-w-none p-8"&gt;&lt;h2&gt;🎯 このレッスンで学ぶこと&lt;/h2&gt; &lt;p&gt;HTTPプロトコルの本質的な制限を理解し、WebSocketがそれらの課題をどのように解決するかを学習します。&lt;/p&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;HTTPの基本的な制限&lt;/strong&gt;とその技術的背景&lt;/li&gt; &lt;li&gt;&lt;strong&gt;ポーリング手法の問題点&lt;/strong&gt;とパフォーマンスへの影響&lt;/li&gt; &lt;li&gt;&lt;strong&gt;WebSocketの技術的優位性&lt;/strong&gt;の詳細分析&lt;/li&gt; &lt;li&gt;&lt;strong&gt;リアルタイム性要求&lt;/strong&gt;に対する両者の対応能力&lt;/li&gt;&lt;/ul&gt; &lt;h2&gt;📡 HTTPの基本的な制限&lt;/h2&gt; &lt;h3&gt;リクエスト・レスポンス型の本質的制約&lt;/h3&gt; &lt;p&gt;HTTPは&lt;strong&gt;リクエスト・レスポンス型プロトコル&lt;/strong&gt;として設計されており、以下の制限があります：&lt;/p&gt; &lt;h4&gt;1. &lt;strong&gt;一方向通信の制約&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;クライアントからの要求なしに、サーバーから情報を送信できない&lt;/li&gt; &lt;li&gt;常にクライアントが通信の起点となる必要がある&lt;/li&gt; &lt;li&gt;サーバーサイドでデータが更新されても、クライアントに即座に通知できない&lt;/li&gt;&lt;/ul&gt; &lt;h4&gt;2. &lt;strong&gt;接続の都度確立&lt;/strong&gt;&lt;/h4&gt; &lt;pre class="language-undefined"&gt;&lt;!&gt;&lt;/pre&gt; &lt;p&gt;この過程には以下のオーバーヘッドが存在します：&lt;/p&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;ネットワーク遅延&lt;/strong&gt;：毎回の接続確立に時間を要する&lt;/li&gt; &lt;li&gt;&lt;strong&gt;リソース消費&lt;/strong&gt;：サーバー・クライアント双方でのコネクション管理コスト&lt;/li&gt; &lt;li&gt;&lt;strong&gt;帯域幅の無駄&lt;/strong&gt;：HTTPヘッダーの重複送信&lt;/li&gt;&lt;/ul&gt; &lt;h4&gt;3. &lt;strong&gt;ステートレス特性の制約&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;前回のリクエストの状態を保持しない&lt;/li&gt; &lt;li&gt;セッション管理にCookieやトークンが必要&lt;/li&gt; &lt;li&gt;リアルタイム性が要求される場面での情報保持に限界&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt; &lt;!&gt; &lt;div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"&gt;&lt;div class="prose max-w-none p-8"&gt;&lt;h2&gt;🔄 従来の解決手法とその問題点&lt;/h2&gt; &lt;h3&gt;1. &lt;strong&gt;ポーリング（Polling）&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;最も基本的なリアルタイム通信の模擬手法です：&lt;/p&gt; &lt;pre class="language-javascript"&gt;&lt;!&gt;&lt;/pre&gt; &lt;h4&gt;ポーリングの問題点：&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;無駄なリクエスト&lt;/strong&gt;：データ更新がない場合でも定期的にリクエスト送信&lt;/li&gt; &lt;li&gt;&lt;strong&gt;遅延の発生&lt;/strong&gt;：ポーリング間隔によりリアルタイム性が制限される&lt;/li&gt; &lt;li&gt;&lt;strong&gt;サーバー負荷&lt;/strong&gt;：大量の不要なリクエストによるリソース消費&lt;/li&gt; &lt;li&gt;&lt;strong&gt;ネットワーク帯域の浪費&lt;/strong&gt;：HTTPヘッダーの重複送信&lt;/li&gt;&lt;/ul&gt; &lt;!&gt; &lt;h3&gt;2. &lt;strong&gt;ロングポーリング（Long Polling）&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;ポーリングの改良版として考案された手法：&lt;/p&gt; &lt;pre class="language-javascript"&gt;&lt;!&gt;&lt;/pre&gt; &lt;h4&gt;ロングポーリングの制限：&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;タイムアウト管理の複雑さ&lt;/strong&gt;：プロキシやファイアウォールによる接続切断&lt;/li&gt; &lt;li&gt;&lt;strong&gt;スケーラビリティの問題&lt;/strong&gt;：サーバーでの同時接続数制限&lt;/li&gt; &lt;li&gt;&lt;strong&gt;エラーハンドリングの複雑化&lt;/strong&gt;：接続状態の管理が困難&lt;/li&gt;&lt;/ul&gt; &lt;!&gt; &lt;h3&gt;3. &lt;strong&gt;Server-Sent Events (SSE)&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;HTTP上でのサーバープッシュ実現手法：&lt;/p&gt; &lt;pre class="language-javascript"&gt;&lt;!&gt;&lt;/pre&gt; &lt;h4&gt;SSEの制限：&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;単方向通信&lt;/strong&gt;：サーバーからクライアントへのみ&lt;/li&gt; &lt;li&gt;&lt;strong&gt;テキストデータのみ&lt;/strong&gt;：バイナリデータの送信が困難&lt;/li&gt; &lt;li&gt;&lt;strong&gt;ブラウザの接続数制限&lt;/strong&gt;：同一ドメインへの同時接続数に制約&lt;/li&gt;&lt;/ul&gt; &lt;!&gt; &lt;h2&gt;⚡ WebSocketの技術的優位性&lt;/h2&gt; &lt;h3&gt;1. &lt;strong&gt;双方向リアルタイム通信&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;WebSocketは接続確立後、以下の特徴を持ちます：&lt;/p&gt; &lt;pre class="language-javascript"&gt;&lt;!&gt;&lt;/pre&gt; &lt;h4&gt;優位性：&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;即座の双方向通信&lt;/strong&gt;：遅延なしでのデータ交換&lt;/li&gt; &lt;li&gt;&lt;strong&gt;持続的接続&lt;/strong&gt;：一度確立すれば接続を維持&lt;/li&gt; &lt;li&gt;&lt;strong&gt;オーバーヘッド最小化&lt;/strong&gt;：HTTPヘッダーが不要&lt;/li&gt;&lt;/ul&gt; &lt;h3&gt;2. &lt;strong&gt;パフォーマンス比較&lt;/strong&gt;&lt;/h3&gt; &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;方式&lt;/th&gt;&lt;th&gt;レイテンシ&lt;/th&gt;&lt;th&gt;帯域幅効率&lt;/th&gt;&lt;th&gt;サーバー負荷&lt;/th&gt;&lt;th&gt;実装複雑度&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;ポーリング&lt;/td&gt;&lt;td&gt;高（間隔依存）&lt;/td&gt;&lt;td&gt;低&lt;/td&gt;&lt;td&gt;高&lt;/td&gt;&lt;td&gt;低&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ロングポーリング&lt;/td&gt;&lt;td&gt;中&lt;/td&gt;&lt;td&gt;中&lt;/td&gt;&lt;td&gt;中&lt;/td&gt;&lt;td&gt;中&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;SSE&lt;/td&gt;&lt;td&gt;低&lt;/td&gt;&lt;td&gt;高&lt;/td&gt;&lt;td&gt;低&lt;/td&gt;&lt;td&gt;中&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;WebSocket&lt;/td&gt;&lt;td&gt;最低&lt;/td&gt;&lt;td&gt;最高&lt;/td&gt;&lt;td&gt;最低&lt;/td&gt;&lt;td&gt;中〜高&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt; &lt;h3&gt;3. &lt;strong&gt;具体的な利用場面での優位性&lt;/strong&gt;&lt;/h3&gt; &lt;h4&gt;&lt;strong&gt;チャットアプリケーション&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;HTTP/ポーリング&lt;/strong&gt;：メッセージ送信に遅延、大量の無駄なリクエスト&lt;/li&gt; &lt;li&gt;&lt;strong&gt;WebSocket&lt;/strong&gt;：瞬時のメッセージ交換、効率的なリソース使用&lt;/li&gt;&lt;/ul&gt; &lt;h4&gt;&lt;strong&gt;ライブダッシュボード&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;HTTP/ポーリング&lt;/strong&gt;：データ更新頻度とリクエスト数のトレードオフ&lt;/li&gt; &lt;li&gt;&lt;strong&gt;WebSocket&lt;/strong&gt;：リアルタイムでのデータプッシュ、必要時のみ通信&lt;/li&gt;&lt;/ul&gt; &lt;h4&gt;&lt;strong&gt;オンラインゲーム&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;HTTP/ポーリング&lt;/strong&gt;：レスポンス性能が不十分、ゲーム体験に支障&lt;/li&gt; &lt;li&gt;&lt;strong&gt;WebSocket&lt;/strong&gt;：低遅延での状態同期、滑らかなゲーム体験&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt; &lt;!&gt; &lt;div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"&gt;&lt;div class="prose max-w-none p-8"&gt;&lt;h3&gt;🔍 デモで確認できること&lt;/h3&gt; &lt;ol&gt;&lt;li&gt;&lt;strong&gt;レスポンス時間の違い&lt;/strong&gt;：WebSocketの即応性 vs HTTPポーリングの遅延&lt;/li&gt; &lt;li&gt;&lt;strong&gt;リクエスト数の差異&lt;/strong&gt;：WebSocketの効率性 vs HTTPの冗長性&lt;/li&gt; &lt;li&gt;&lt;strong&gt;帯域幅使用量&lt;/strong&gt;：ヘッダーオーバーヘッドの比較&lt;/li&gt; &lt;li&gt;&lt;strong&gt;リアルタイム性&lt;/strong&gt;：データ更新の反映速度&lt;/li&gt;&lt;/ol&gt; &lt;h2&gt;💡 適切な技術選択の指針&lt;/h2&gt; &lt;h3&gt;WebSocketが適している場面&lt;/h3&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;低遅延が要求される&lt;/strong&gt;：ゲーム、トレーディング、リアルタイム協調作業&lt;/li&gt; &lt;li&gt;&lt;strong&gt;頻繁な双方向通信&lt;/strong&gt;：チャット、ライブコメント、インタラクティブアプリ&lt;/li&gt; &lt;li&gt;&lt;strong&gt;持続的なデータストリーム&lt;/strong&gt;：ライブフィード、センサーデータ、監視システム&lt;/li&gt;&lt;/ul&gt; &lt;h3&gt;HTTPが適している場面&lt;/h3&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;リクエスト・レスポンス型の操作&lt;/strong&gt;：CRUD操作、ファイルダウンロード&lt;/li&gt; &lt;li&gt;&lt;strong&gt;キャッシュが有効&lt;/strong&gt;：静的コンテンツ、API応答の再利用&lt;/li&gt; &lt;li&gt;&lt;strong&gt;間欠的な通信&lt;/strong&gt;：ユーザーアクション起点の処理&lt;/li&gt;&lt;/ul&gt; &lt;h3&gt;技術選択の判断基準&lt;/h3&gt; &lt;pre class="language-undefined"&gt;&lt;!&gt;&lt;/pre&gt; &lt;h2&gt;📊 実際の導入効果&lt;/h2&gt; &lt;h3&gt;大規模サービスでの事例&lt;/h3&gt; &lt;h4&gt;&lt;strong&gt;Discord&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;導入前&lt;/strong&gt;：ポーリングベースで高いサーバー負荷&lt;/li&gt; &lt;li&gt;&lt;strong&gt;導入後&lt;/strong&gt;：WebSocketによりリアルタイムメッセージング実現、インフラコスト30%削減&lt;/li&gt;&lt;/ul&gt; &lt;h4&gt;&lt;strong&gt;Slack&lt;/strong&gt;&lt;/h4&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;導入前&lt;/strong&gt;：ロングポーリングによる複雑な接続管理&lt;/li&gt; &lt;li&gt;&lt;strong&gt;導入後&lt;/strong&gt;：WebSocketで単純化されたアーキテクチャ、ユーザー体験向上&lt;/li&gt;&lt;/ul&gt; &lt;h3&gt;パフォーマンス指標の改善&lt;/h3&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;レスポンス時間&lt;/strong&gt;：平均500ms → 50ms（90%改善）&lt;/li&gt; &lt;li&gt;&lt;strong&gt;サーバーリクエスト数&lt;/strong&gt;：毎秒10,000 → 100（99%削減）&lt;/li&gt; &lt;li&gt;&lt;strong&gt;帯域幅使用量&lt;/strong&gt;：HTTPヘッダー分の削減により約40%効率化&lt;/li&gt;&lt;/ul&gt; &lt;h2&gt;🔍 次のレッスンへの準備&lt;/h2&gt; &lt;p&gt;このレッスンでHTTPの制限とWebSocketの優位性を理解しました。次のレッスンでは：&lt;/p&gt; &lt;ul&gt;&lt;li&gt;&lt;strong&gt;WebSocketの具体的な利用例&lt;/strong&gt;の詳細分析&lt;/li&gt; &lt;li&gt;&lt;strong&gt;適用場面の判断方法&lt;/strong&gt;の実践的アプローチ&lt;/li&gt; &lt;li&gt;&lt;strong&gt;実装前の技術選択&lt;/strong&gt;における考慮事項&lt;/li&gt;&lt;/ul&gt; &lt;p&gt;を学習していきます。&lt;/p&gt; &lt;h2&gt;📖 参考資料&lt;/h2&gt; &lt;h3&gt;パフォーマンス比較&lt;/h3&gt; &lt;ul&gt;&lt;li&gt;&lt;a href="https://blog.teamtreehouse.com/an-introduction-to-websockets" rel="nofollow"&gt;WebSocket vs HTTP Performance&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a href="https://ably.com/topic/websockets" rel="nofollow"&gt;Real-time Web Technologies Guide&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt; &lt;h3&gt;技術的背景&lt;/h3&gt; &lt;ul&gt;&lt;li&gt;&lt;a href="https://tools.ietf.org/html/rfc2616" rel="nofollow"&gt;HTTP/1.1 Specification&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a href="https://www.websocket.org/performance.html" rel="nofollow"&gt;WebSocket Performance Analysis&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt; &lt;h3&gt;実装パターン&lt;/h3&gt; &lt;ul&gt;&lt;li&gt;&lt;a href="https://stackoverflow.com/questions/11077857/what-are-long-polling-websockets-server-sent-events-sse-and-comet" rel="nofollow"&gt;Polling vs WebSocket patterns&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt; &lt;!&gt; &lt;!&gt;',1);function us(x){var e=ns(),f=z(e);B(f,{lessonId:"phase1-introduction-http-limitations",title:"HTTPの限界とWebSocketの優位性",duration:"1時間",difficulty:"初級",prerequisites:["HTTP基本理解","WebSocket基本概念","ブラウザ開発者ツール使用経験"]});var p=s(f,2),d=n(p),l=s(n(d),18),k=n(l);u(k,()=&gt;`&lt;code class="language-undefined"&gt;HTTP/1.1の典型的な通信フロー：</span>
+<span class="cstat-no" title="statement not covered" >1. TCP接続確立 (3-way handshake)</span>
+<span class="cstat-no" title="statement not covered" >2. HTTPリクエスト送信</span>
+<span class="cstat-no" title="statement not covered" >3. HTTPレスポンス受信</span>
+<span class="cstat-no" title="statement not covered" >4. TCP接続終了 (4-way handshake)&lt;/code&gt;`),a(l),y(8),a(d),a(p);var S=s(p,2);ss(S,{title:"HTTP vs WebSocket 通信パターン比較",type:"timeline"});var g=s(S,2),T=n(g),v=s(n(T),6),o=n(v);u(o,()=&gt;`&lt;code class="language-javascript"&gt;&lt;span class="token comment"&gt;// 典型的なポーリング実装&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token keyword"&gt;function&lt;/span&gt; &lt;span class="token function"&gt;startPolling&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token function"&gt;setInterval&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token keyword"&gt;async&lt;/span&gt; &lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token operator"&gt;=&gt;&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token keyword"&gt;try&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;span class="token keyword"&gt;const&lt;/span&gt; response &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;await&lt;/span&gt; &lt;span class="token function"&gt;fetch&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'/api/messages'&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;span class="token keyword"&gt;const&lt;/span&gt; newMessages &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;await&lt;/span&gt; response&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;json&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;span class="token function"&gt;updateUI&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;newMessages&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt; &lt;span class="token keyword"&gt;catch&lt;/span&gt; &lt;span class="token punctuation"&gt;(&lt;/span&gt;error&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      console&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;error&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'ポーリングエラー:'&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt; error&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt; &lt;span class="token number"&gt;5000&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt; &lt;span class="token comment"&gt;// 5秒ごとにリクエスト&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;/code&gt;`),a(v);var r=s(v,6);H(r,{chart:`</span>
+<span class="cstat-no" title="statement not covered" >sequenceDiagram</span>
+<span class="cstat-no" title="statement not covered" >    participant C as クライアント</span>
+<span class="cstat-no" title="statement not covered" >    participant S as サーバー</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    loop 定期ポーリング</span>
+<span class="cstat-no" title="statement not covered" >        C-&gt;&gt;S: GET /api/messages</span>
+<span class="cstat-no" title="statement not covered" >        S--&gt;&gt;C: 200 OK (データまたは空)</span>
+<span class="cstat-no" title="statement not covered" >        Note left of C: 5秒待機</span>
+<span class="cstat-no" title="statement not covered" >    end</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    Note over S: データ更新発生</span>
+<span class="cstat-no" title="statement not covered" >    Note over C,S: 最大5秒の遅延でユーザーに反映</span>
+<span class="cstat-no" title="statement not covered" >`});var h=s(r,6),P=n(h);u(P,()=&gt;`&lt;code class="language-javascript"&gt;&lt;span class="token comment"&gt;// ロングポーリング実装例&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token keyword"&gt;async&lt;/span&gt; &lt;span class="token keyword"&gt;function&lt;/span&gt; &lt;span class="token function"&gt;longPoll&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token keyword"&gt;try&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token keyword"&gt;const&lt;/span&gt; response &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;await&lt;/span&gt; &lt;span class="token function"&gt;fetch&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'/api/long-poll'&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      method&lt;span class="token operator"&gt;:&lt;/span&gt; &lt;span class="token string"&gt;'GET'&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      headers&lt;span class="token operator"&gt;:&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt; &lt;span class="token string"&gt;'Content-Type'&lt;/span&gt;&lt;span class="token operator"&gt;:&lt;/span&gt; &lt;span class="token string"&gt;'application/json'&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token keyword"&gt;if&lt;/span&gt; &lt;span class="token punctuation"&gt;(&lt;/span&gt;response&lt;span class="token punctuation"&gt;.&lt;/span&gt;ok&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;span class="token keyword"&gt;const&lt;/span&gt; data &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;await&lt;/span&gt; response&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;json&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;span class="token function"&gt;handleNewData&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;data&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt; &lt;span class="token keyword"&gt;catch&lt;/span&gt; &lt;span class="token punctuation"&gt;(&lt;/span&gt;error&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    console&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;error&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'ロングポーリングエラー:'&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt; error&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt; &lt;span class="token keyword"&gt;finally&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token comment"&gt;// 即座に次のロングポーリングを開始&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;span class="token function"&gt;setTimeout&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;longPoll&lt;span class="token punctuation"&gt;,&lt;/span&gt; &lt;span class="token number"&gt;100&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;/code&gt;`),a(h);var t=s(h,6);H(t,{chart:`</span>
+<span class="cstat-no" title="statement not covered" >sequenceDiagram</span>
+<span class="cstat-no" title="statement not covered" >    participant C as クライアント</span>
+<span class="cstat-no" title="statement not covered" >    participant S as サーバー</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    C-&gt;&gt;S: GET /api/long-poll</span>
+<span class="cstat-no" title="statement not covered" >    Note over S: 接続保持・データ待機</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    Note over S: データ更新発生</span>
+<span class="cstat-no" title="statement not covered" >    S--&gt;&gt;C: 200 OK (データ)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    Note left of C: 即座に再接続</span>
+<span class="cstat-no" title="statement not covered" >    C-&gt;&gt;S: GET /api/long-poll</span>
+<span class="cstat-no" title="statement not covered" >    Note over S: 再び待機状態</span>
+<span class="cstat-no" title="statement not covered" >`});var c=s(t,6),_=n(c);u(_,()=&gt;`&lt;code class="language-javascript"&gt;&lt;span class="token comment"&gt;// SSE実装例&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token keyword"&gt;const&lt;/span&gt; eventSource &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;new&lt;/span&gt; &lt;span class="token class-name"&gt;EventSource&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'/api/events'&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >eventSource&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function-variable function"&gt;onmessage&lt;/span&gt; &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;function&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token parameter"&gt;event&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token keyword"&gt;const&lt;/span&gt; data &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token constant"&gt;JSON&lt;/span&gt;&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;parse&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;event&lt;span class="token punctuation"&gt;.&lt;/span&gt;data&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  &lt;span class="token function"&gt;updateUI&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;data&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >eventSource&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function-variable function"&gt;onerror&lt;/span&gt; &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;function&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token parameter"&gt;event&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  console&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;error&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'SSEエラー:'&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt; event&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;&lt;/code&gt;`),a(c);var i=s(c,6);H(i,{chart:`</span>
+<span class="cstat-no" title="statement not covered" >sequenceDiagram</span>
+<span class="cstat-no" title="statement not covered" >    participant C as クライアント</span>
+<span class="cstat-no" title="statement not covered" >    participant S as サーバー</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    C-&gt;&gt;S: GET /api/events</span>
+<span class="cstat-no" title="statement not covered" >    S--&gt;&gt;C: 200 OK (event-stream)</span>
+<span class="cstat-no" title="statement not covered" >    Note over C,S: 持続的接続確立</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    loop サーバープッシュ</span>
+<span class="cstat-no" title="statement not covered" >        Note over S: データ更新発生</span>
+<span class="cstat-no" title="statement not covered" >        S--&gt;&gt;C: data: 新しいデータ</span>
+<span class="cstat-no" title="statement not covered" >    end</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    Note over C,S: 単方向通信のみ</span>
+<span class="cstat-no" title="statement not covered" >    C-&gt;&gt;S: POST /api/response (別接続)</span>
+<span class="cstat-no" title="statement not covered" >    S--&gt;&gt;C: 200 OK</span>
+<span class="cstat-no" title="statement not covered" >`});var w=s(i,8),L=n(w);u(L,()=&gt;`&lt;code class="language-javascript"&gt;&lt;span class="token comment"&gt;// WebSocket接続確立&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token keyword"&gt;const&lt;/span&gt; ws &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;new&lt;/span&gt; &lt;span class="token class-name"&gt;WebSocket&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'wss://example.com/ws'&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >&lt;span class="token comment"&gt;// サーバーからのメッセージ受信&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >ws&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function-variable function"&gt;onmessage&lt;/span&gt; &lt;span class="token operator"&gt;=&lt;/span&gt; &lt;span class="token keyword"&gt;function&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token parameter"&gt;event&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt; &lt;span class="token punctuation"&gt;&amp;#123;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >  console&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;log&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'受信:'&lt;/span&gt;&lt;span class="token punctuation"&gt;,&lt;/span&gt; event&lt;span class="token punctuation"&gt;.&lt;/span&gt;data&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >&lt;span class="token punctuation"&gt;&amp;#125;&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >&lt;span class="token comment"&gt;// クライアントからのメッセージ送信&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >ws&lt;span class="token punctuation"&gt;.&lt;/span&gt;&lt;span class="token function"&gt;send&lt;/span&gt;&lt;span class="token punctuation"&gt;(&lt;/span&gt;&lt;span class="token string"&gt;'Hello Server!'&lt;/span&gt;&lt;span class="token punctuation"&gt;)&lt;/span&gt;&lt;span class="token punctuation"&gt;;&lt;/span&gt;&lt;/code&gt;`),a(w),y(22),a(T),a(g);var N=s(g,2);Q(N,{title:"HTTP vs WebSocket パフォーマンス比較",description:"同じデータ更新をHTTPポーリングとWebSocketで実装し、レスポンス時間とリクエスト数を比較してみましょう。",demoType:"performance-comparison",wsUrl:"wss://echo.websocket.org"});var W=s(N,2),E=n(W),I=s(n(E),16),G=n(I);u(G,()=&gt;`&lt;code class="language-undefined"&gt;リアルタイム要求度 × 通信頻度 = 適用技術</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >高 × 高 → WebSocket</span>
+<span class="cstat-no" title="statement not covered" >高 × 低 → SSE または WebSocket</span>
+<span class="cstat-no" title="statement not covered" >低 × 高 → ロングポーリング</span>
+<span class="cstat-no" title="statement not covered" >低 × 低 → 通常のHTTP&lt;/code&gt;`),a(I),y(38),a(E),a(W);var D=s(W,2);V(D,{lessonId:"phase1-introduction-http-limitations",sectionTitle:"WebSocket入門"});var O=s(D,2);F(O,{nextLessonId:"phase1-introduction-use-cases",nextLessonTitle:"WebSocketの利用例と適用場面",nextLessonPath:"/phase1/introduction/use-cases",completionMessage:"HTTPの制限とWebSocketの優位性を理解しました！",showCompletion:!1}),m(x,e)}export{us as component};</span>
+&nbsp;</pre></td></tr></table></pre>
+
+			<div class="push"></div>
+			<!-- for sticky footer -->
+		</div>
+		<!-- /wrapper -->
+		<div class="footer quiet pad2 space-top1 center small">
+			Code coverage generated by
+			<a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+			at 2025-07-04T21:28:03.974Z
+		</div>
+		<script src="../../../../prettify.js"></script>
+		<script>
+			window.onload = function () {
+				prettyPrint();
+			};
+		</script>
+		<script src="../../../../sorter.js"></script>
+		<script src="../../../../block-navigation.js"></script>
+	</body>
+</html>

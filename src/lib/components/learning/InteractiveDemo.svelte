@@ -383,7 +383,7 @@
 	let canSend = $derived(isConnected && messageInput.trim().length > 0);
 </script>
 
-<div class="bg-white border border-gray-200 rounded-lg p-6 my-8">
+<div class="bg-white border border-gray-200 rounded-lg p-6 my-8" data-testid="websocket-demo">
 	<div class="mb-6">
 		<h3 class="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
 		<p class="text-gray-600 text-sm mb-4">{description}</p>
@@ -418,7 +418,9 @@
 		<div class="flex items-center justify-between mb-4">
 			<div class="flex items-center space-x-3">
 				<span class="text-sm font-medium text-gray-700">接続状態:</span>
-				<span class="font-medium {stateColor}">{stateText}</span>
+				<span class="font-medium {stateColor}" data-connection-state={connectionState}
+					>{stateText}</span
+				>
 				{#if isConnected}
 					<div
 						class="w-3 h-3 bg-green-500 rounded-full animate-pulse"
@@ -455,14 +457,16 @@
 					onclick={connect}
 					class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
 					disabled={!mounted || !currentService}
+					data-testid="connect-button"
 				>
-					🔗 WebSocket接続
+					🔗 接続
 				</button>
 			{:else if isConnected}
 				<button
 					type="button"
 					onclick={disconnect}
 					class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
+					data-testid="disconnect-button"
 				>
 					🔌 切断
 				</button>
@@ -565,12 +569,14 @@
 					placeholder="メッセージを入力してください"
 					class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
 					disabled={!isConnected}
+					data-testid="message-input"
 				/>
 				<button
 					type="button"
 					onclick={sendMessage}
 					disabled={!canSend}
 					class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+					data-testid="send-button"
 				>
 					🚀 送信
 				</button>

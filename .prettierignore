@@ -1,6 +1,9 @@
-# Package Managers
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lock
-bun.lockb
+# Generated files
+coverage/
+test-results/
+playwright-report/
+build/
+.svelte-kit/
+
+# Claude Code files
+.claude/
