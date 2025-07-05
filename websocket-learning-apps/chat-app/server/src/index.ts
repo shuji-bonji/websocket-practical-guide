@@ -14,13 +14,18 @@ const serverConfig: ServerConfig = {
 	host: process.env.WS_HOST || '0.0.0.0',
 	jwtSecret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
 	dbPath: process.env.DB_PATH || './chat.db',
-	redis: process.env.REDIS_URL ? {
-		host: process.env.REDIS_HOST || 'localhost',
-		port: parseInt(process.env.REDIS_PORT || '6379'),
-		password: process.env.REDIS_PASSWORD
-	} : undefined,
+	redis: process.env.REDIS_URL
+		? {
+				host: process.env.REDIS_HOST || 'localhost',
+				port: parseInt(process.env.REDIS_PORT || '6379'),
+				password: process.env.REDIS_PASSWORD
+			}
+		: undefined,
 	cors: {
-		origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'http://localhost:4173'],
+		origin: process.env.CORS_ORIGIN?.split(',') || [
+			'http://localhost:5173',
+			'http://localhost:4173'
+		],
 		credentials: true
 	},
 	rateLimit: {
@@ -45,7 +50,7 @@ class ChatApplication {
 
 	private initializeApplication(): void {
 		console.log('🚀 Starting WebSocket Chat Application...');
-		
+
 		try {
 			// Initialize database
 			console.log('📦 Initializing database...');
@@ -73,9 +78,8 @@ class ChatApplication {
 			console.log(`📍 WebSocket Server: ws://${serverConfig.host}:${serverConfig.port}`);
 			console.log(`📊 Database: ${serverConfig.dbPath}`);
 			console.log(`🔒 JWT Secret: ${serverConfig.jwtSecret.substring(0, 10)}...`);
-			
+
 			this.setupGracefulShutdown();
-			
 		} catch (error) {
 			console.error('❌ Failed to initialize application:', error);
 			process.exit(1);
@@ -85,7 +89,7 @@ class ChatApplication {
 	private setupGracefulShutdown(): void {
 		const shutdown = async (signal: string) => {
 			console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
-			
+
 			try {
 				// Close HTTP server
 				if (this.httpServer) {

@@ -2,12 +2,7 @@ import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { parse } from 'url';
 import { ChatDatabase } from '../database/Database.js';
 import { AuthManager } from '../auth/AuthManager.js';
-import type { 
-	ApiResponse, 
-	CreateUserRequest, 
-	LoginRequest, 
-	ServerConfig 
-} from '../types/index.js';
+import type { ApiResponse, CreateUserRequest, LoginRequest, ServerConfig } from '../types/index.js';
 
 export class ChatHttpServer {
 	private server;
@@ -19,7 +14,7 @@ export class ChatHttpServer {
 		this.config = config;
 		this.db = db;
 		this.auth = auth;
-		
+
 		this.server = createServer(this.handleRequest.bind(this));
 	}
 
@@ -66,8 +61,8 @@ export class ChatHttpServer {
 	}
 
 	private setCorsHeaders(res: ServerResponse): void {
-		const allowedOrigins = Array.isArray(this.config.cors.origin) 
-			? this.config.cors.origin 
+		const allowedOrigins = Array.isArray(this.config.cors.origin)
+			? this.config.cors.origin
 			: [this.config.cors.origin];
 
 		res.setHeader('Access-Control-Allow-Origin', allowedOrigins.join(','));
@@ -78,7 +73,7 @@ export class ChatHttpServer {
 
 	private async handleRegister(req: IncomingMessage, res: ServerResponse): Promise<void> {
 		const body = await this.parseJsonBody(req);
-		
+
 		if (!this.validateRegisterRequest(body)) {
 			this.sendError(res, 'Invalid request data', 400);
 			return;
@@ -103,19 +98,22 @@ export class ChatHttpServer {
 			}
 
 			const result = await this.auth.register(userData);
-			
-			this.sendSuccess(res, {
-				user: {
-					id: result.user.id,
-					username: result.user.username,
-					email: result.user.email,
-					avatar: result.user.avatar,
-					isOnline: result.user.isOnline,
-					createdAt: result.user.createdAt
-				},
-				token: result.token
-			}, 201);
 
+			this.sendSuccess(
+				res,
+				{
+					user: {
+						id: result.user.id,
+						username: result.user.username,
+						email: result.user.email,
+						avatar: result.user.avatar,
+						isOnline: result.user.isOnline,
+						createdAt: result.user.createdAt
+					},
+					token: result.token
+				},
+				201
+			);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Registration failed';
 			this.sendError(res, message, 400);
@@ -124,7 +122,7 @@ export class ChatHttpServer {
 
 	private async handleLogin(req: IncomingMessage, res: ServerResponse): Promise<void> {
 		const body = await this.parseJsonBody(req);
-		
+
 		if (!this.validateLoginRequest(body)) {
 			this.sendError(res, 'Invalid request data', 400);
 			return;
@@ -137,7 +135,7 @@ export class ChatHttpServer {
 
 		try {
 			const result = await this.auth.login(credentials);
-			
+
 			this.sendSuccess(res, {
 				user: {
 					id: result.user.id,
@@ -150,7 +148,6 @@ export class ChatHttpServer {
 				},
 				token: result.token
 			});
-
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Login failed';
 			this.sendError(res, message, 401);
@@ -168,15 +165,14 @@ export class ChatHttpServer {
 
 		try {
 			const newToken = this.auth.refreshToken(token);
-			
+
 			if (!newToken) {
 				this.sendError(res, 'Invalid or expired token', 401);
 				return;
 			}
 
 			this.sendSuccess(res, { token: newToken });
-
-		} catch (error) {
+		} catch {
 			this.sendError(res, 'Token refresh failed', 401);
 		}
 	}
@@ -213,44 +209,53 @@ export class ChatHttpServer {
 		});
 	}
 
-	private async parseJsonBody(req: IncomingMessage): Promise<any> {
+	private async parseJsonBody(req: IncomingMessage): Promise<unknown> {
 		return new Promise((resolve, reject) => {
 			let body = '';
-			
+
 			req.on('data', (chunk) => {
 				body += chunk.toString();
 			});
-			
+
 			req.on('end', () => {
 				try {
 					resolve(JSON.parse(body));
-				} catch (error) {
+				} catch {
 					reject(new Error('Invalid JSON'));
 				}
 			});
-			
+
 			req.on('error', reject);
 		});
 	}
 
-	private validateRegisterRequest(body: any): boolean {
+	private validateRegisterRequest(
+		body: unknown
+	): body is { username: string; email: string; password: string } {
 		return (
-			body &&
-			typeof body.username === 'string' &&
-			typeof body.email === 'string' &&
-			typeof body.password === 'string' &&
-			body.username.length >= 3 &&
-			body.email.includes('@') &&
-			body.password.length >= 6
+			typeof body === 'object' &&
+			body !== null &&
+			'username' in body &&
+			'email' in body &&
+			'password' in body &&
+			typeof (body as { username: unknown }).username === 'string' &&
+			typeof (body as { email: unknown }).email === 'string' &&
+			typeof (body as { password: unknown }).password === 'string' &&
+			(body as { username: string }).username.length >= 3 &&
+			(body as { email: string }).email.includes('@') &&
+			(body as { password: string }).password.length >= 6
 		);
 	}
 
-	private validateLoginRequest(body: any): boolean {
+	private validateLoginRequest(body: unknown): body is { email: string; password: string } {
 		return (
-			body &&
-			typeof body.email === 'string' &&
-			typeof body.password === 'string' &&
-			body.email.includes('@')
+			typeof body === 'object' &&
+			body !== null &&
+			'email' in body &&
+			'password' in body &&
+			typeof (body as { email: unknown }).email === 'string' &&
+			typeof (body as { password: unknown }).password === 'string' &&
+			(body as { email: string }).email.includes('@')
 		);
 	}
 
