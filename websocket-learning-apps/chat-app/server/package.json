@@ -1,0 +1,50 @@
+{
+	"name": "websocket-chat-server",
+	"version": "1.0.0",
+	"description": "Production-ready WebSocket chat server built with Node.js and TypeScript",
+	"main": "dist/index.js",
+	"type": "module",
+	"scripts": {
+		"build": "tsc",
+		"start": "node dist/index.js",
+		"dev": "tsx watch src/index.ts",
+		"clean": "rm -rf dist",
+		"typecheck": "tsc --noEmit",
+		"lint": "eslint src --ext .ts",
+		"format": "prettier --write src/**/*.ts",
+		"test": "vitest",
+		"test:coverage": "vitest run --coverage"
+	},
+	"dependencies": {
+		"@types/bcryptjs": "^2.4.6",
+		"@types/better-sqlite3": "^7.6.0",
+		"bcryptjs": "^2.4.3",
+		"better-sqlite3": "^12.2.0",
+		"dotenv": "^16.3.0",
+		"jsonwebtoken": "^9.0.0",
+		"nanoid": "^5.0.0",
+		"ws": "^8.16.0"
+	},
+	"devDependencies": {
+		"@types/jsonwebtoken": "^9.0.0",
+		"@types/node": "^20.0.0",
+		"@types/ws": "^8.5.0",
+		"@typescript-eslint/eslint-plugin": "^7.0.0",
+		"@typescript-eslint/parser": "^7.0.0",
+		"eslint": "^8.0.0",
+		"prettier": "^3.0.0",
+		"tsx": "^4.0.0",
+		"typescript": "^5.0.0",
+		"vitest": "^2.0.0"
+	},
+	"keywords": [
+		"websocket",
+		"chat",
+		"real-time",
+		"typescript",
+		"node.js"
+	],
+	"engines": {
+		"node": ">=18.0.0"
+	}
+}
