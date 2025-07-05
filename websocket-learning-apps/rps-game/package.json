@@ -1,0 +1,59 @@
+{
+	"name": "websocket-rps-game",
+	"version": "1.0.0",
+	"description": "Real-time Rock Paper Scissors game built with SvelteKit and WebSocket",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write .",
+		"test": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"server": "node server/index.js",
+		"server:dev": "nodemon server/index.js"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-vercel": "^5.0.0",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"@types/node": "^20.0.0",
+		"@types/ws": "^8.5.0",
+		"@typescript-eslint/eslint-plugin": "^7.0.0",
+		"@typescript-eslint/parser": "^7.0.0",
+		"autoprefixer": "^10.4.0",
+		"eslint": "^8.0.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-svelte": "^2.30.0",
+		"nodemon": "^3.0.0",
+		"postcss": "^8.4.0",
+		"prettier": "^3.0.0",
+		"prettier-plugin-svelte": "^3.0.0",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
+		"tailwindcss": "^3.3.0",
+		"tslib": "^2.4.1",
+		"typescript": "^5.0.0",
+		"vite": "^5.0.0",
+		"vitest": "^2.0.0"
+	},
+	"dependencies": {
+		"nanoid": "^5.0.0",
+		"ws": "^8.16.0"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"keywords": [
+		"websocket",
+		"real-time",
+		"game",
+		"rock-paper-scissors",
+		"sveltekit",
+		"typescript"
+	]
+}
