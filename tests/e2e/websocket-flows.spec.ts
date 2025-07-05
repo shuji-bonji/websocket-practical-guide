@@ -191,17 +191,21 @@ test.describe('WebSocket Connection Flows', () => {
 			// Start auto demo
 			const autoDemoButton = page.locator('[data-testid="auto-demo-toggle"]');
 			await expect(autoDemoButton).toBeVisible();
+			
+			// Check initial state shows start button
+			await expect(autoDemoButton).toContainText('自動デモ開始');
+			
 			await autoDemoButton.click();
 
 			// Verify auto demo is running
-			await expect(page.locator('text=🛑 自動デモ停止')).toBeVisible();
+			await expect(autoDemoButton).toContainText('自動デモ停止');
 
 			// Wait for some automatic state changes
 			await page.waitForTimeout(3000);
 
 			// Stop auto demo
-			await page.locator('[data-testid="auto-demo-toggle"]').click();
-			await expect(page.locator('text=▶️ 自動デモ開始')).toBeVisible();
+			await autoDemoButton.click();
+			await expect(autoDemoButton).toContainText('自動デモ開始');
 		});
 	});
 

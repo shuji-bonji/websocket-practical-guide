@@ -4,9 +4,10 @@ module.exports = {
 			url: [
 				'http://localhost:4173/',
 				'http://localhost:4173/phase1/introduction',
-				'http://localhost:4173/phase2/basic-websocket',
-				'http://localhost:4173/phase3/mock-server',
-				'http://localhost:4173/phase4/production-ready'
+				'http://localhost:4173/phase1/websocket-states',
+				'http://localhost:4173/phase2',
+				'http://localhost:4173/phase3',
+				'http://localhost:4173/phase4'
 			],
 			startServerCommand: 'npm run preview',
 			startServerReadyPattern: 'Local:   http://localhost:4173/',
