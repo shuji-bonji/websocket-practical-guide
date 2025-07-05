@@ -8,8 +8,13 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -23,8 +28,16 @@ jobs:
       - name: Clean up large files
         run: |
           npm run clean:all
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git diff --staged --quiet || git commit -m "Auto-cleanup: Remove large files [skip ci]"
-          git push
+
+          # Check if there are any changes to commit
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Changes detected, committing cleanup..."
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add .
+            git commit -m "Auto-cleanup: Remove large files [skip ci]"
+            git push
+            echo "✅ Cleanup changes committed and pushed"
+          else
+            echo "ℹ️  No files to clean up"
+          fi
