@@ -22,6 +22,7 @@
 		"test:e2e": "playwright test",
 		"test:e2e:visual": "playwright test tests/e2e/visual-regression.spec.ts",
 		"test:e2e:update-snapshots": "playwright test tests/e2e/visual-regression.spec.ts --update-snapshots",
+		"test:visual:update": "playwright test tests/e2e/visual-regression.spec.ts --update-snapshots",
 		"test:all": "npm run test:run && npm run test:e2e",
 		"bench:run": "echo 'Performance benchmarks completed'",
 		"bench:lighthouse": "lhci autorun",

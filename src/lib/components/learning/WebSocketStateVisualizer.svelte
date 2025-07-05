@@ -417,7 +417,7 @@
 			type="button"
 			onclick={connect}
 			disabled={!canConnect || isAutoDemo}
-			class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			class="px-4 py-2 min-h-[44px] bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
 			data-testid="connect-button"
 		>
 			🔗 接続
@@ -427,7 +427,7 @@
 			type="button"
 			onclick={sendTestMessage}
 			disabled={!canSend || isAutoDemo}
-			class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			class="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
 			data-testid="send-test-message-button"
 		>
 			📤 テストメッセージ送信
@@ -437,7 +437,7 @@
 			type="button"
 			onclick={disconnect}
 			disabled={!canDisconnect || isAutoDemo}
-			class="px-4 py-2 bg-orange-600 text-white rounded-md text-sm font-medium hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			class="px-4 py-2 min-h-[44px] bg-orange-600 text-white rounded-md text-sm font-medium hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
 			data-testid="disconnect-button"
 		>
 			🔌 切断
@@ -447,7 +447,7 @@
 			type="button"
 			onclick={clearHistory}
 			disabled={isAutoDemo}
-			class="px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+			class="px-4 py-2 min-h-[44px] bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
 		>
 			🧹 履歴クリア
 		</button>

@@ -432,6 +432,7 @@
 
 	.btn {
 		padding: 0.5rem 1rem;
+		min-height: 44px;
 		border: none;
 		border-radius: 0.25rem;
 		font-size: 0.9rem;
