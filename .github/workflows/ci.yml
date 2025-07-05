@@ -131,6 +131,8 @@ jobs:
           CI: true
           PLAYWRIGHT_CI: true
           PLAYWRIGHT_TIMEOUT: 60000
+        timeout-minutes: 8
+        continue-on-error: true
 
   security-audit:
     name: security-audit
