@@ -125,7 +125,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Run E2E tests
+      - name: Run E2E tests (excluding visual regression)
         run: npx playwright test tests/e2e/websocket-flows.spec.ts --project=chromium --reporter=line
         env:
           CI: true
