@@ -101,7 +101,7 @@ export async function waitForWebSocketConnection(
 						{ timeout: 15000 }
 					);
 					await connectBtn.click();
-				} catch (error) {
+				} catch {
 					console.log('Connect button did not become enabled in time - proceeding with test');
 					// If button doesn't become enabled, that's likely due to external service unavailability
 					// which is expected in CI environment, so we continue the test

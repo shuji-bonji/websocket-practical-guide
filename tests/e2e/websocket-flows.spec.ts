@@ -191,10 +191,10 @@ test.describe('WebSocket Connection Flows', () => {
 			// Start auto demo
 			const autoDemoButton = page.locator('[data-testid="auto-demo-toggle"]');
 			await expect(autoDemoButton).toBeVisible();
-			
+
 			// Check initial state shows start button
 			await expect(autoDemoButton).toContainText('自動デモ開始');
-			
+
 			await autoDemoButton.click();
 
 			// Verify auto demo is running
