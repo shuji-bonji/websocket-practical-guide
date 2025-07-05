@@ -40,7 +40,7 @@
 
 				<div class="message-bubble {isOwn ? 'message-bubble-own' : 'message-bubble-other'}">
 					<!-- Reply indicator -->
-					{#if message.replyTo}
+					{#if message.replyToId}
 						<div class="text-xs text-gray-500 mb-1 pl-2 border-l-2 border-gray-300">
 							Replying to message
 						</div>
@@ -54,7 +54,7 @@
 					<!-- Timestamp and status -->
 					<div class="flex items-center justify-between mt-1 text-xs opacity-75">
 						<span>{formatTime(message.timestamp)}</span>
-						{#if message.edited}
+						{#if message.editedAt}
 							<span class="text-gray-500">edited</span>
 						{/if}
 					</div>
