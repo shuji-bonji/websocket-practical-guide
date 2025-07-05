@@ -9,14 +9,22 @@ export interface User {
 
 export interface ChatMessage {
 	id: string;
-	type: 'message' | 'system' | 'typing' | 'user_joined' | 'user_left';
+	type: 'message' | 'system' | 'join' | 'leave';
 	content: string;
 	userId: string;
 	username: string;
+	roomId: string;
+	replyToId?: string;
 	timestamp: Date;
-	edited?: boolean;
 	editedAt?: Date;
-	replyTo?: string; // Reference to another message ID
+	reactions?: MessageReaction[];
+}
+
+export interface MessageReaction {
+	emoji: string;
+	userId: string;
+	username: string;
+	timestamp: Date;
 }
 
 export interface TypingIndicator {
@@ -37,21 +45,25 @@ export interface ChatRoom {
 }
 
 export interface WebSocketMessage<T = unknown> {
-	id: string;
+	id?: string;
 	type:
+		| 'auth_success'
+		| 'auth_error'
 		| 'chat_message'
+		| 'message_history'
 		| 'typing_start'
 		| 'typing_stop'
 		| 'user_joined'
 		| 'user_left'
-		| 'room_update'
-		| 'error'
+		| 'user_list'
+		| 'room_create'
+		| 'room_join'
+		| 'room_list'
 		| 'ping'
-		| 'pong';
+		| 'pong'
+		| 'error';
 	payload: T;
-	timestamp: Date;
-	userId?: string;
-	roomId?: string;
+	timestamp?: Date;
 }
 
 export interface ConnectionState {

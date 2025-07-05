@@ -24,6 +24,10 @@
 
 	// Connect to chat when component mounts
 	onMount(() => {
+		// Initialize offline features first
+		chatStore.initOfflineFeatures();
+
+		// Then connect to chat
 		chatStore.connect(token, wsUrl);
 
 		// Cleanup on unmount

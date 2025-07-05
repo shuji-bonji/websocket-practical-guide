@@ -9,6 +9,9 @@ A production-ready WebSocket chat application built with SvelteKit and TypeScrip
 - ⌨️ **Typing Indicators** - Real-time typing status updates
 - 👥 **User Presence** - Online/offline status and member list
 - 🔄 **Auto-reconnection** - Automatic reconnection with exponential backoff
+- 📱 **Progressive Web App (PWA)** - Installable app with offline support
+- 🌐 **Offline Functionality** - Message queueing and sync when reconnected
+- 🔔 **Push Notifications** - Background message notifications
 - 📱 **Responsive Design** - Works on desktop and mobile devices
 - 🎨 **Modern UI** - Clean, accessible interface with Tailwind CSS
 - 🚀 **Production Ready** - Configured for Vercel deployment
@@ -17,8 +20,10 @@ A production-ready WebSocket chat application built with SvelteKit and TypeScrip
 
 - **Frontend**: SvelteKit + TypeScript + Tailwind CSS
 - **Backend**: Node.js + WebSocket (ws library)
-- **Authentication**: JWT tokens
+- **Authentication**: JWT tokens + SQLite
 - **State Management**: Svelte 5 runes
+- **PWA**: Service Worker + Web App Manifest
+- **Offline Storage**: localStorage + Background Sync
 - **Deployment**: Vercel (frontend) + Railway/Heroku (backend)
 
 ## Development
@@ -194,15 +199,46 @@ interface WebSocketMessage {
 
 This project is part of the WebSocket learning curriculum and is provided for educational purposes.
 
+## PWA Features
+
+### Service Worker
+
+- **Offline Caching** - App shell and static assets cached for offline use
+- **Network Strategies** - Cache-first for static content, network-first for API calls
+- **Background Sync** - Automatic message synchronization when connection restored
+- **Update Management** - Seamless app updates with user notification
+
+### Web App Manifest
+
+- **Install Prompt** - Add to home screen functionality
+- **App Icons** - Multiple sizes for different devices
+- **Standalone Mode** - Full-screen app experience
+- **Theme Integration** - Matches device theme preferences
+
+### Offline Functionality
+
+- **Message Queueing** - Messages stored locally when offline
+- **Auto-sync** - Pending messages sent when connection restored
+- **Offline Indicator** - Clear visual feedback about connection status
+- **Graceful Degradation** - App remains functional without network
+
+### Push Notifications
+
+- **Background Messages** - Receive notifications when app not focused
+- **Custom Actions** - Reply or dismiss from notification
+- **Permission Management** - Respectful notification permission requests
+
 ## Phase 4 Learning Objectives
 
 This chat application demonstrates:
 
 - Production-ready WebSocket architecture
 - Scalable real-time communication
+- Progressive Web App implementation
+- Advanced offline strategies
 - Professional UI/UX patterns
 - Cloud deployment strategies
 - Security best practices
 - Performance optimization techniques
 
-Perfect for learning advanced WebSocket concepts before moving to libraries like Socket.IO!
+Perfect for learning advanced WebSocket concepts and PWA implementation before moving to libraries like Socket.IO!

@@ -4,8 +4,57 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="Production-ready WebSocket chat application" />
+		<meta
+			name="description"
+			content="Production-ready WebSocket chat application with real-time messaging"
+		/>
 		<title>WebSocket Chat App</title>
+
+		<!-- PWA Manifest -->
+		<link rel="manifest" href="%sveltekit.assets%/manifest.json" />
+
+		<!-- PWA Meta Tags -->
+		<meta name="theme-color" content="#3b82f6" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="apple-mobile-web-app-title" content="Chat App" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="application-name" content="Chat App" />
+
+		<!-- Apple Touch Icons -->
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/icons/icon-152x152.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="%sveltekit.assets%/icons/icon-72x72.png" />
+		<link rel="apple-touch-icon" sizes="96x96" href="%sveltekit.assets%/icons/icon-96x96.png" />
+		<link rel="apple-touch-icon" sizes="128x128" href="%sveltekit.assets%/icons/icon-128x128.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="%sveltekit.assets%/icons/icon-144x144.png" />
+		<link rel="apple-touch-icon" sizes="152x152" href="%sveltekit.assets%/icons/icon-152x152.png" />
+		<link rel="apple-touch-icon" sizes="192x192" href="%sveltekit.assets%/icons/icon-192x192.png" />
+		<link rel="apple-touch-icon" sizes="384x384" href="%sveltekit.assets%/icons/icon-384x384.png" />
+		<link rel="apple-touch-icon" sizes="512x512" href="%sveltekit.assets%/icons/icon-512x512.png" />
+
+		<!-- Microsoft Tiles -->
+		<meta name="msapplication-TileColor" content="#3b82f6" />
+		<meta name="msapplication-TileImage" content="%sveltekit.assets%/icons/icon-144x144.png" />
+		<meta name="msapplication-config" content="%sveltekit.assets%/browserconfig.xml" />
+
+		<!-- Open Graph / Social Media -->
+		<meta property="og:title" content="WebSocket Chat App" />
+		<meta
+			property="og:description"
+			content="Production-ready WebSocket chat application with real-time messaging"
+		/>
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content="%sveltekit.assets%/icons/icon-512x512.png" />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="WebSocket Chat App" />
+		<meta
+			name="twitter:description"
+			content="Production-ready WebSocket chat application with real-time messaging"
+		/>
+		<meta name="twitter:image" content="%sveltekit.assets%/icons/icon-512x512.png" />
+
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

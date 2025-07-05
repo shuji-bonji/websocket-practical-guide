@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import { isOnline, enableBackgroundSync, showNotification } from '$lib/pwa/service-worker';
 import type {
 	ChatMessage,
 	User,
@@ -21,6 +22,7 @@ export class ChatStore {
 	private _currentUser = $state<User | null>(null);
 	private _roomMembers = $state<User[]>([]);
 	private _memberCount = $state<number>(0);
+	private _offlineMessages = $state<ChatMessage[]>([]);
 
 	private reconnectTimer: NodeJS.Timeout | null = null;
 	private pingTimer: NodeJS.Timeout | null = null;
@@ -64,6 +66,10 @@ export class ChatStore {
 
 	get memberCount() {
 		return this._memberCount;
+	}
+
+	get offlineMessages() {
+		return this._offlineMessages;
 	}
 
 	get isConnected() {
@@ -119,24 +125,45 @@ export class ChatStore {
 	}
 
 	// Send chat message
-	sendMessage(content: string, replyTo?: string) {
-		if (!this.canSend) {
-			this.handleError('Cannot send message: not connected');
-			return;
-		}
-
-		const message: WebSocketMessage = {
-			id: nanoid(),
-			type: 'chat_message',
-			payload: { content, replyTo },
+	sendMessage(content: string, replyToId?: string) {
+		// Create message object
+		const messageId = nanoid();
+		const message: ChatMessage = {
+			id: messageId,
+			type: 'message',
+			content,
+			userId: this._currentUser?.id || 'unknown',
+			username: this._currentUser?.username || 'Unknown',
+			roomId: 'default',
+			replyToId,
 			timestamp: new Date()
 		};
 
-		this.sendWebSocketMessage(message);
+		// If online and connected, send immediately
+		if (this.canSend && isOnline()) {
+			const wsMessage: WebSocketMessage = {
+				type: 'chat_message',
+				payload: { content, replyToId },
+				timestamp: new Date()
+			};
 
-		// Stop typing indicator when sending message
-		if (this.isTyping) {
-			this.stopTyping();
+			this.sendWebSocketMessage(wsMessage);
+
+			// Stop typing indicator when sending message
+			if (this.isTyping) {
+				this.stopTyping();
+			}
+		} else {
+			// Store message for later sending when back online
+			this.storeOfflineMessage(message);
+
+			// Add to local messages immediately for better UX
+			this.addMessage({
+				...message,
+				type: 'message' // Mark as pending/offline
+			});
+
+			console.log('[Chat] Message queued for sending when online');
 		}
 	}
 
@@ -148,7 +175,6 @@ export class ChatStore {
 
 		this.isTyping = true;
 		this.sendWebSocketMessage({
-			id: nanoid(),
 			type: 'typing_start',
 			payload: {},
 			timestamp: new Date()
@@ -173,7 +199,6 @@ export class ChatStore {
 
 		if (this.canSend) {
 			this.sendWebSocketMessage({
-				id: nanoid(),
 				type: 'typing_stop',
 				payload: {},
 				timestamp: new Date()
@@ -231,31 +256,52 @@ export class ChatStore {
 	private handleIncomingMessage(message: WebSocketMessage) {
 		switch (message.type) {
 			case 'auth_success':
-				this._currentUser = message.payload.user;
+				this._currentUser = (message.payload as { user: User })?.user;
+				break;
+
+			case 'auth_error':
+				this.handleError(
+					(message.payload as { message: string })?.message || 'Authentication failed'
+				);
 				break;
 
 			case 'message_history':
-				this._messages = message.payload.messages;
+				this._messages = (message.payload as { messages: ChatMessage[] })?.messages || [];
 				break;
 
 			case 'chat_message':
-				this.addMessage(message.payload);
+				this.addMessage(message.payload as ChatMessage);
+
+				// Show notification if app is in background
+				if (typeof document !== 'undefined' && document.hidden) {
+					const msg = message.payload as ChatMessage;
+					showNotification(`New message from ${msg.username}`, {
+						body: msg.content,
+						tag: `message-${msg.id}`,
+						data: { messageId: msg.id, roomId: msg.roomId }
+					});
+				}
 				break;
 
 			case 'typing_start':
-				this._typingUsers = message.payload.typingUsers || [];
+				this.handleTypingStart(message.payload as { userId: string; username: string });
+				break;
+
+			case 'typing_stop':
+				this.handleTypingStop(message.payload as { userId: string; username: string });
 				break;
 
 			case 'user_joined':
-				this.handleUserJoined(message.payload);
+				this.handleUserJoined(message.payload as { user: User; roomId: string });
 				break;
 
 			case 'user_left':
-				this.handleUserLeft(message.payload);
+				this.handleUserLeft(message.payload as { user: User; roomId: string });
 				break;
 
-			case 'room_update':
-				this._memberCount = message.payload.memberCount;
+			case 'user_list':
+				this._roomMembers = (message.payload as { users: User[] })?.users || [];
+				this._memberCount = this._roomMembers.length;
 				break;
 
 			case 'ping':
@@ -263,11 +309,13 @@ export class ChatStore {
 				break;
 
 			case 'pong':
-				this.updateLatency(message.timestamp);
+				if (message.timestamp) {
+					this.updateLatency(message.timestamp);
+				}
 				break;
 
 			case 'error':
-				this.handleError(message.payload.error);
+				this.handleError((message.payload as { error: string })?.error || 'Unknown error');
 				break;
 
 			default:
@@ -285,33 +333,55 @@ export class ChatStore {
 		}
 	}
 
+	// Handle typing start event
+	private handleTypingStart(payload: { userId: string; username: string }) {
+		const existingUser = this._typingUsers.find((user) => user.userId === payload.userId);
+		if (!existingUser) {
+			this._typingUsers = [
+				...this._typingUsers,
+				{
+					userId: payload.userId,
+					username: payload.username,
+					timestamp: new Date()
+				}
+			];
+		}
+	}
+
+	// Handle typing stop event
+	private handleTypingStop(payload: { userId: string; username: string }) {
+		this._typingUsers = this._typingUsers.filter((user) => user.userId !== payload.userId);
+	}
+
 	// Handle user joined event
-	private handleUserJoined(payload: { username: string; timestamp: string }) {
+	private handleUserJoined(payload: { user: User; roomId: string }) {
 		// Add system message
 		this.addMessage({
 			id: nanoid(),
-			type: 'system',
-			content: `${payload.username} joined the chat`,
+			type: 'join',
+			content: `${payload.user.username} joined the chat`,
 			userId: 'system',
 			username: 'System',
-			timestamp: new Date(payload.timestamp)
+			roomId: payload.roomId,
+			timestamp: new Date()
 		});
 	}
 
 	// Handle user left event
-	private handleUserLeft(payload: { username: string; timestamp: string }) {
+	private handleUserLeft(payload: { user: User; roomId: string }) {
 		// Add system message
 		this.addMessage({
 			id: nanoid(),
-			type: 'system',
-			content: `${payload.username} left the chat`,
+			type: 'leave',
+			content: `${payload.user.username} left the chat`,
 			userId: 'system',
 			username: 'System',
-			timestamp: new Date(payload.timestamp)
+			roomId: payload.roomId,
+			timestamp: new Date()
 		});
 
 		// Remove from typing users
-		this._typingUsers = this._typingUsers.filter((user) => user.userId !== payload.userId);
+		this._typingUsers = this._typingUsers.filter((user) => user.userId !== payload.user.id);
 	}
 
 	// Send WebSocket message
@@ -327,9 +397,8 @@ export class ChatStore {
 	// Send pong response
 	private sendPong() {
 		this.sendWebSocketMessage({
-			id: nanoid(),
 			type: 'pong',
-			payload: {},
+			payload: { timestamp: new Date() },
 			timestamp: new Date()
 		});
 	}
@@ -349,9 +418,8 @@ export class ChatStore {
 		this.pingTimer = setInterval(() => {
 			if (this.canSend) {
 				this.sendWebSocketMessage({
-					id: nanoid(),
 					type: 'ping',
-					payload: {},
+					payload: { timestamp: new Date() },
 					timestamp: new Date()
 				});
 			}
@@ -401,6 +469,113 @@ export class ChatStore {
 		if (this.typingTimer) {
 			clearTimeout(this.typingTimer);
 			this.typingTimer = null;
+		}
+	}
+
+	// Store message for offline sending
+	private storeOfflineMessage(message: ChatMessage) {
+		this._offlineMessages = [...this._offlineMessages, message];
+
+		// Enable background sync for message sending
+		enableBackgroundSync('chat-messages-sync');
+
+		// Store in localStorage as backup
+		if (typeof localStorage !== 'undefined') {
+			try {
+				localStorage.setItem('chat-offline-messages', JSON.stringify(this._offlineMessages));
+			} catch (error) {
+				console.error('[Chat] Failed to store offline messages:', error);
+			}
+		}
+	}
+
+	// Load offline messages from storage
+	private loadOfflineMessages() {
+		if (typeof localStorage === 'undefined') return;
+
+		try {
+			const stored = localStorage.getItem('chat-offline-messages');
+			if (stored) {
+				const messages = JSON.parse(stored);
+				this._offlineMessages = messages;
+			}
+		} catch (error) {
+			console.error('[Chat] Failed to load offline messages:', error);
+		}
+	}
+
+	// Send pending offline messages
+	async sendOfflineMessages() {
+		if (this._offlineMessages.length === 0 || !this.canSend) {
+			return;
+		}
+
+		console.log(`[Chat] Sending ${this._offlineMessages.length} offline messages`);
+
+		// Copy messages to send
+		const messagesToSend = [...this._offlineMessages];
+
+		// Clear offline messages
+		this._offlineMessages = [];
+
+		// Clear from localStorage
+		if (typeof localStorage !== 'undefined') {
+			localStorage.removeItem('chat-offline-messages');
+		}
+
+		// Send each message
+		for (const message of messagesToSend) {
+			try {
+				const wsMessage: WebSocketMessage = {
+					type: 'chat_message',
+					payload: {
+						content: message.content,
+						replyToId: message.replyToId
+					},
+					timestamp: message.timestamp
+				};
+
+				this.sendWebSocketMessage(wsMessage);
+
+				// Small delay between messages
+				await new Promise((resolve) => setTimeout(resolve, 100));
+			} catch (error) {
+				console.error('[Chat] Failed to send offline message:', error);
+				// Re-add failed message to offline queue
+				this.storeOfflineMessage(message);
+			}
+		}
+	}
+
+	// Get offline message count
+	getOfflineMessageCount(): number {
+		return this._offlineMessages.length;
+	}
+
+	// Clear all offline messages
+	clearOfflineMessages() {
+		this._offlineMessages = [];
+
+		if (typeof localStorage !== 'undefined') {
+			localStorage.removeItem('chat-offline-messages');
+		}
+	}
+
+	// Initialize offline features
+	initOfflineFeatures() {
+		// Load any stored offline messages
+		this.loadOfflineMessages();
+
+		// Listen for online events to send offline messages
+		if (typeof window !== 'undefined') {
+			window.addEventListener('online', () => {
+				// Wait a bit for connection to stabilize
+				setTimeout(() => {
+					if (this.isConnected) {
+						this.sendOfflineMessages();
+					}
+				}, 2000);
+			});
 		}
 	}
 

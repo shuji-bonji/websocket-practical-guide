@@ -2,6 +2,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { AuthStore } from '$lib/stores/auth.svelte';
+	import {
+		registerServiceWorker,
+		listenForInstallPrompt,
+		requestNotificationPermission
+	} from '$lib/pwa/service-worker';
+	import PWAInstallPrompt from '$lib/components/PWAInstallPrompt.svelte';
+	import PWAUpdateNotification from '$lib/components/PWAUpdateNotification.svelte';
+	import OfflineIndicator from '$lib/components/OfflineIndicator.svelte';
 
 	const authStore = new AuthStore();
 
@@ -11,13 +19,36 @@
 		window.authStore = authStore;
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		// Initialize auth store
 		authStore.init();
+
+		// Initialize PWA features
+		try {
+			// Register service worker
+			await registerServiceWorker();
+
+			// Listen for install prompt
+			listenForInstallPrompt();
+
+			// Request notification permission for chat notifications
+			// (Only if user is authenticated)
+			if (authStore.isAuthenticated) {
+				await requestNotificationPermission();
+			}
+		} catch (error) {
+			console.error('[PWA] Initialization failed:', error);
+		}
 	});
 </script>
 
 <main class="min-h-screen bg-gray-50">
 	<slot />
+
+	<!-- PWA Components -->
+	<PWAInstallPrompt />
+	<PWAUpdateNotification />
+	<OfflineIndicator />
 </main>
 
 <style>

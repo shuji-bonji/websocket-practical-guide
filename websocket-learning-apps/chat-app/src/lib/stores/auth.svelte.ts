@@ -1,11 +1,17 @@
 import { browser } from '$app/environment';
-import { nanoid } from 'nanoid';
 import type { User, AuthState } from '$types/chat';
+
+interface AuthResponse {
+	user: User;
+	token: string;
+}
 
 export class AuthStore {
 	private _authState = $state<AuthState>({
 		isAuthenticated: false
 	});
+
+	private apiUrl = 'http://localhost:3000/api';
 
 	get authState() {
 		return this._authState;
@@ -46,20 +52,29 @@ export class AuthStore {
 		}
 	}
 
-	// Login with username and email
-	async login(username: string, email: string): Promise<boolean> {
+	// Login with email and password
+	async login(email: string, password: string): Promise<boolean> {
 		try {
-			// For demo purposes, create a simple JWT-like token
-			const user: User = {
-				id: nanoid(),
-				username: username.trim(),
-				email: email.trim(),
-				lastSeen: new Date(),
-				isOnline: true
-			};
+			const response = await fetch(`${this.apiUrl}/auth/login`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email: email.trim(), password })
+			});
 
-			// Create a simple token (in production, this would come from your backend)
-			const token = this.createDemoToken(user);
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || 'Login failed');
+			}
+
+			const data: { success: boolean; data: AuthResponse } = await response.json();
+
+			if (!data.success) {
+				throw new Error('Login failed');
+			}
+
+			const { user, token } = data.data;
 			const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
 			this._authState = {
@@ -87,6 +102,60 @@ export class AuthStore {
 		}
 	}
 
+	// Register new user
+	async register(username: string, email: string, password: string): Promise<boolean> {
+		try {
+			const response = await fetch(`${this.apiUrl}/auth/register`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					username: username.trim(),
+					email: email.trim(),
+					password
+				})
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || 'Registration failed');
+			}
+
+			const data: { success: boolean; data: AuthResponse } = await response.json();
+
+			if (!data.success) {
+				throw new Error('Registration failed');
+			}
+
+			const { user, token } = data.data;
+			const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+			this._authState = {
+				isAuthenticated: true,
+				user,
+				token,
+				expiresAt
+			};
+
+			// Store in localStorage
+			if (browser) {
+				localStorage.setItem(
+					'chat-auth',
+					JSON.stringify({
+						...this._authState,
+						expiresAt: expiresAt.toISOString()
+					})
+				);
+			}
+
+			return true;
+		} catch (error) {
+			console.error('Registration failed:', error);
+			return false;
+		}
+	}
+
 	// Logout
 	logout() {
 		this._authState = {
@@ -98,37 +167,42 @@ export class AuthStore {
 		}
 	}
 
-	// Create a demo token (in production, use proper JWT with server-side signing)
-	private createDemoToken(user: User): string {
-		const payload = {
-			id: user.id,
-			username: user.username,
-			email: user.email,
-			iat: Math.floor(Date.now() / 1000),
-			exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60 // 24 hours
-		};
-
-		// Base64 encode the payload (NOT secure for production!)
-		return btoa(JSON.stringify(payload));
-	}
-
 	// Check if token is expired
 	isTokenExpired(): boolean {
 		if (!this._authState.expiresAt) return true;
 		return new Date() > this._authState.expiresAt;
 	}
 
-	// Refresh token (in production, this would call your backend)
+	// Refresh token
 	async refreshToken(): Promise<boolean> {
-		if (!this._authState.user) return false;
+		if (!this._authState.token) return false;
 
 		try {
-			const newToken = this.createDemoToken(this._authState.user);
+			const response = await fetch(`${this.apiUrl}/auth/refresh`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${this._authState.token}`
+				}
+			});
+
+			if (!response.ok) {
+				this.logout();
+				return false;
+			}
+
+			const data: { success: boolean; data: { token: string } } = await response.json();
+
+			if (!data.success) {
+				this.logout();
+				return false;
+			}
+
 			const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
 			this._authState = {
 				...this._authState,
-				token: newToken,
+				token: data.data.token,
 				expiresAt
 			};
 
@@ -145,6 +219,7 @@ export class AuthStore {
 			return true;
 		} catch (error) {
 			console.error('Token refresh failed:', error);
+			this.logout();
 			return false;
 		}
 	}
