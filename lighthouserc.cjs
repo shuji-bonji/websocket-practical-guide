@@ -2,15 +2,14 @@ module.exports = {
 	ci: {
 		collect: {
 			url: [
-				'http://localhost:37375/',
-				'http://localhost:37375/phase1/introduction',
-				'http://localhost:37375/phase1/websocket-states',
-				'http://localhost:37375/phase2',
-				'http://localhost:37375/phase3',
-				'http://localhost:37375/phase4'
+				'http://localhost:4173/',
+				'http://localhost:4173/phase1/introduction',
+				'http://localhost:4173/phase2/basic-websocket',
+				'http://localhost:4173/phase3/mock-server',
+				'http://localhost:4173/phase4/production-ready'
 			],
 			startServerCommand: 'npm run preview',
-			startServerReadyPattern: 'Local:',
+			startServerReadyPattern: 'Local:   http://localhost:4173/',
 			startServerReadyTimeout: 30000,
 			numberOfRuns: 3,
 			settings: {
