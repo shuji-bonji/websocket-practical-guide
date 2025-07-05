@@ -16,13 +16,17 @@ test.describe('WebSocket Connection Flows', () => {
 				'Phase 1'
 			);
 
-			// Check if WebSocket demo components are present
-			await expect(page.locator('[data-testid="websocket-demo"]')).toBeVisible();
+			// Phase 1 is an overview page, so just check it loads correctly
+			await expect(page.locator('text=学習セクション')).toBeVisible();
 		});
 
 		test('should be able to connect to echo service', async ({ page }) => {
-			// Look for connection button
-			const connectButton = page.locator('button:has-text("接続")');
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
+			// Look for connection button with emoji
+			const connectButton = page.locator('[data-testid="connect-button"]');
 			await expect(connectButton).toBeVisible();
 
 			// Click connect button
@@ -56,53 +60,48 @@ test.describe('WebSocket Connection Flows', () => {
 		});
 
 		test('should be able to send and receive messages', async ({ page }) => {
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
 			// Connect first with resilient timeout
-			await page.locator('button:has-text("接続")').click();
+			await page.locator('[data-testid="connect-button"]').click();
 			const timeout = process.env.CI ? 20000 : 10000;
 
 			try {
 				await page.waitForSelector('[data-connection-state="connected"]', { timeout });
 
-				// Find message input and send button
-				const messageInput = page.locator('input[type="text"]').first();
-				const sendButton = page.locator('button:has-text("送信")');
-
-				await expect(messageInput).toBeVisible();
+				// Find send test message button (no input, direct send)
+				const sendButton = page.locator('[data-testid="send-test-message-button"]');
 				await expect(sendButton).toBeVisible();
 
-				// Type a test message
-				const testMessage = 'Hello WebSocket E2E Test!';
-				await messageInput.fill(testMessage);
-
-				// Send the message
+				// Send the test message
 				await sendButton.click();
 
-				// Verify message appears in the message history (longer timeout for echo)
-				await expect(page.locator(`text=${testMessage}`)).toBeVisible({ timeout: 8000 });
+				// Verify message appears in the connection events (longer timeout for echo)
+				await expect(page.locator('text=テストメッセージ')).toBeVisible({ timeout: 8000 });
 			} catch {
 				console.log('WebSocket messaging test skipped - service unavailable');
 				// Test UI functionality even when WebSocket is unavailable
-				const messageInput = page.locator('input[type="text"]').first();
-				const sendButton = page.locator('button:has-text("送信")');
-
-				if ((await messageInput.isVisible()) && (await sendButton.isVisible())) {
-					await messageInput.fill('Test UI without connection');
-					// Verify send button exists but may be disabled
-					await expect(sendButton).toBeVisible();
-				}
+				const sendButton = page.locator('[data-testid="send-test-message-button"]');
+				await expect(sendButton).toBeVisible();
 			}
 		});
 
 		test('should be able to disconnect', async ({ page }) => {
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
 			// Connect first with resilient timeout
-			await page.locator('button:has-text("接続")').click();
+			await page.locator('[data-testid="connect-button"]').click();
 			const timeout = process.env.CI ? 20000 : 10000;
 
 			try {
 				await page.waitForSelector('[data-connection-state="connected"]', { timeout });
 
 				// Find and click disconnect button
-				const disconnectButton = page.locator('button:has-text("切断")');
+				const disconnectButton = page.locator('[data-testid="disconnect-button"]');
 				await expect(disconnectButton).toBeVisible();
 				await disconnectButton.click();
 
@@ -112,11 +111,11 @@ test.describe('WebSocket Connection Flows', () => {
 			} catch {
 				console.log('WebSocket disconnect test skipped - initial connection failed');
 				// Test that disconnect button is available in UI
-				const disconnectButton = page.locator('button:has-text("切断")');
+				const disconnectButton = page.locator('[data-testid="disconnect-button"]');
 				if (await disconnectButton.isVisible()) {
 					await disconnectButton.click();
 					// UI should handle disconnect gracefully
-					await expect(page.locator('button:has-text("接続")')).toBeVisible();
+					await expect(page.locator('[data-testid="connect-button"]')).toBeVisible();
 				}
 			}
 		});
@@ -129,13 +128,16 @@ test.describe('WebSocket Connection Flows', () => {
 			await page.waitForLoadState('networkidle');
 
 			// Check if state visualizer is present
-			await expect(page.locator('text=WebSocket状態可視化')).toBeVisible();
+			await expect(page.locator('[data-testid="websocket-state-visualizer"]')).toBeVisible();
 
-			// Check if ready state labels are displayed
-			await expect(page.locator('text=CONNECTING')).toBeVisible();
-			await expect(page.locator('text=OPEN')).toBeVisible();
-			await expect(page.locator('text=CLOSING')).toBeVisible();
-			await expect(page.locator('text=CLOSED')).toBeVisible();
+			// Check if ready state labels are displayed - use more specific selectors
+			const readyStatesSection = page.locator(
+				'[data-testid="websocket-state-visualizer"] .bg-green-50'
+			);
+			await expect(readyStatesSection.locator('text=CONNECTING').first()).toBeVisible();
+			await expect(readyStatesSection.locator('text=OPEN').first()).toBeVisible();
+			await expect(readyStatesSection.locator('text=CLOSING').first()).toBeVisible();
+			await expect(readyStatesSection.locator('text=CLOSED').first()).toBeVisible();
 		});
 
 		test('should show state transitions during connection lifecycle', async ({ page }) => {
@@ -143,7 +145,7 @@ test.describe('WebSocket Connection Flows', () => {
 			await page.waitForLoadState('networkidle');
 
 			// Start connection
-			await page.locator('button:has-text("接続")').click();
+			await page.locator('[data-testid="connect-button"]').click();
 
 			// Should show CONNECTING state
 			await expect(page.locator('text=CONNECTING').first()).toBeVisible();
@@ -154,7 +156,7 @@ test.describe('WebSocket Connection Flows', () => {
 				await expect(page.locator('text=OPEN').first()).toBeVisible({ timeout: openTimeout });
 
 				// Disconnect
-				await page.locator('button:has-text("切断")').click();
+				await page.locator('[data-testid="disconnect-button"]').click();
 
 				// Should show CLOSED state
 				await expect(page.locator('text=CLOSED').first()).toBeVisible({ timeout: 5000 });
@@ -187,19 +189,19 @@ test.describe('WebSocket Connection Flows', () => {
 			await page.waitForLoadState('networkidle');
 
 			// Start auto demo
-			const autoDemoButton = page.locator('button:has-text("自動デモ開始")');
+			const autoDemoButton = page.locator('[data-testid="auto-demo-toggle"]');
 			await expect(autoDemoButton).toBeVisible();
 			await autoDemoButton.click();
 
 			// Verify auto demo is running
-			await expect(page.locator('button:has-text("自動デモ停止")')).toBeVisible();
+			await expect(page.locator('text=🛑 自動デモ停止')).toBeVisible();
 
 			// Wait for some automatic state changes
 			await page.waitForTimeout(3000);
 
 			// Stop auto demo
-			await page.locator('button:has-text("自動デモ停止")').click();
-			await expect(page.locator('button:has-text("自動デモ開始")')).toBeVisible();
+			await page.locator('[data-testid="auto-demo-toggle"]').click();
+			await expect(page.locator('text=▶️ 自動デモ開始')).toBeVisible();
 		});
 	});
 
@@ -217,10 +219,14 @@ test.describe('WebSocket Connection Flows', () => {
 		});
 
 		test('should handle connection errors gracefully', async ({ page }) => {
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
 			// Test the UI's error handling capabilities with longer timeout for CI
 			const timeout = process.env.CI ? 20000 : 10000;
 
-			await page.locator('button:has-text("接続")').click();
+			await page.locator('[data-testid="connect-button"]').click();
 
 			// Wait for either success or error state with extended timeout
 			const result = await Promise.race([
@@ -245,15 +251,19 @@ test.describe('WebSocket Connection Flows', () => {
 
 			// The page should handle the connection attempt gracefully
 			// Verify UI is still functional regardless of connection outcome
-			await expect(page.locator('button:has-text("接続")')).toBeVisible();
+			await expect(page.locator('[data-testid="connect-button"]')).toBeVisible();
 			expect(['connected', 'error', 'error-text', 'timeout'].includes(result as string)).toBe(true);
 		});
 	});
 
 	test.describe('Cross-Browser Compatibility', () => {
 		test('should work consistently across browsers', async ({ page, browserName }) => {
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
 			// Basic functionality test that should work the same across all browsers
-			await expect(page.locator('h1')).toBeVisible();
+			await expect(page.locator('h1').first()).toBeVisible();
 
 			// Test WebSocket support detection
 			const webSocketSupported = await page.evaluate(() => {
@@ -267,7 +277,11 @@ test.describe('WebSocket Connection Flows', () => {
 		});
 
 		test('should handle browser-specific WebSocket behaviors', async ({ page, browserName }) => {
-			await page.locator('button:has-text("接続")').click();
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
+			await page.locator('[data-testid="connect-button"]').click();
 
 			// Different browsers might have different connection timings, especially in CI
 			const baseTimeout = browserName === 'webkit' ? 15000 : 10000;
@@ -288,10 +302,9 @@ test.describe('WebSocket Connection Flows', () => {
 
 				if (connectionState === 'connected') {
 					// Test message sending if connected
-					const messageInput = page.locator('input[type="text"]').first();
-					if ((await messageInput.count()) > 0) {
-						await messageInput.fill(`Test from ${browserName}`);
-						await page.locator('button:has-text("送信")').click();
+					const sendButton = page.locator('[data-testid="send-test-message-button"]');
+					if ((await sendButton.count()) > 0) {
+						await sendButton.click();
 					}
 					console.log(`${browserName}: WebSocket connection successful`);
 				} else {
@@ -300,7 +313,7 @@ test.describe('WebSocket Connection Flows', () => {
 			} catch {
 				console.log(`Connection test on ${browserName} timed out - testing UI resilience`);
 				// Verify UI is still functional even when WebSocket service is unavailable
-				await expect(page.locator('button:has-text("接続")')).toBeVisible();
+				await expect(page.locator('[data-testid="connect-button"]')).toBeVisible();
 			}
 		});
 	});
@@ -320,14 +333,15 @@ test.describe('WebSocket Connection Flows', () => {
 			// Set mobile viewport
 			await page.setViewportSize({ width: 375, height: 667 });
 
-			await page.goto('/phase1');
+			await page.goto('/phase1/websocket-states');
 			await page.waitForLoadState('networkidle');
 
-			// Check if main elements are still visible and accessible (use first to avoid multiple h1)
-			await expect(page.locator('h1').first()).toBeVisible();
+			// Check if main elements are still visible and accessible
+			// On mobile, the h1 in header might be hidden, so check for page content instead
+			await expect(page.locator('.max-w-7xl').first()).toBeVisible();
 
 			// Test if buttons are tap-friendly (not too small)
-			const connectButton = page.locator('button:has-text("接続")');
+			const connectButton = page.locator('[data-testid="connect-button"]');
 			if ((await connectButton.count()) > 0) {
 				const buttonBox = await connectButton.first().boundingBox();
 				if (buttonBox) {
@@ -338,6 +352,10 @@ test.describe('WebSocket Connection Flows', () => {
 		});
 
 		test('should handle rapid connection/disconnection cycles', async ({ page }) => {
+			// Navigate to websocket-states page for actual WebSocket demo
+			await page.goto('/phase1/websocket-states');
+			await page.waitForLoadState('networkidle');
+
 			// Reduce cycles in CI to avoid timeout issues
 			const cycles = process.env.CI ? 2 : 3;
 			const connectionTimeout = process.env.CI ? 15000 : 5000;
@@ -346,7 +364,7 @@ test.describe('WebSocket Connection Flows', () => {
 				console.log(`Starting connection cycle ${i + 1}/${cycles}`);
 
 				// Connect
-				await page.locator('button:has-text("接続")').click();
+				await page.locator('[data-testid="connect-button"]').click();
 
 				try {
 					// Wait for any connection state change
@@ -361,13 +379,13 @@ test.describe('WebSocket Connection Flows', () => {
 
 					if (state === 'connected') {
 						// Disconnect immediately
-						await page.locator('button:has-text("切断")').click();
+						await page.locator('[data-testid="disconnect-button"]').click();
 						await page.waitForSelector('[data-connection-state="disconnected"]', { timeout: 3000 });
 						console.log(`Cycle ${i + 1} completed successfully`);
 					} else {
 						console.log(`Cycle ${i + 1} - connection failed, testing error handling`);
 						// Ensure UI is still responsive
-						await expect(page.locator('button:has-text("接続")')).toBeVisible();
+						await expect(page.locator('[data-testid="connect-button"]')).toBeVisible();
 					}
 				} catch {
 					console.log(`Cycle ${i + 1} failed - service unavailable`);

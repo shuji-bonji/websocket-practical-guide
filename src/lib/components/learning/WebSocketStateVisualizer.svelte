@@ -358,7 +358,10 @@
 	</div>
 
 	<!-- Current State Display -->
-	<div class="mb-6">
+	<div
+		class="mb-6"
+		data-connection-state={WEBSOCKET_READY_STATE_LABELS[currentState]?.toLowerCase() || 'closed'}
+	>
 		<div class="flex items-center justify-between mb-4">
 			<h4 class="text-md font-medium text-gray-900">📊 現在の状態</h4>
 			<div class="flex items-center space-x-2">
