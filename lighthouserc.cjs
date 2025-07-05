@@ -16,7 +16,7 @@ module.exports = {
 			settings: {
 				onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
 				skipAudits: [
-					'uses-http2', 
+					'uses-http2',
 					'is-on-https',
 					'color-contrast',
 					'link-name',

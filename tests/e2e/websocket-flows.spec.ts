@@ -205,7 +205,7 @@ test.describe('WebSocket Connection Flows', () => {
 
 			// Stop auto demo
 			await autoDemoButton.click();
-			
+
 			// Wait for the auto demo to actually stop (may take a few seconds for current cycle to complete)
 			await expect(autoDemoButton).toContainText('自動デモ開始', { timeout: 10000 });
 		});
