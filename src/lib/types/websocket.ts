@@ -558,3 +558,28 @@ export function isWebSocketFrame(frame: unknown): frame is WebSocketFrame {
 		typeof (frame as Record<string, unknown>).size === 'number'
 	);
 }
+
+// ============================================================================
+// PHASE 3 TYPE DEFINITIONS - TESTING & EVALUATION
+// ============================================================================
+
+/**
+ * Generic WebSocket message interface for Phase 3 testing
+ */
+export interface WebSocketMessage<T = unknown> {
+	id?: string;
+	type: string;
+	timestamp: number;
+	payload: T;
+}
+
+/**
+ * WebSocket connection configuration for testing
+ */
+export interface WebSocketConnectionConfig {
+	url: string;
+	protocols?: string[];
+	reconnect?: boolean;
+	maxReconnectAttempts?: number;
+	reconnectInterval?: number;
+}
