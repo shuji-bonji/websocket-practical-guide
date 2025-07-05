@@ -243,10 +243,16 @@
 			clearTimeout(demoInterval);
 			demoInterval = null;
 		}
+		// Ensure the state is properly set to false
 		isAutoDemo = false;
 	}
 
 	function runDemoStep() {
+		// Check if auto demo was stopped before continuing
+		if (!isAutoDemo) {
+			return;
+		}
+
 		if (demoStep >= DEMO_SEQUENCE.length) {
 			demoStep = 0;
 		}
@@ -272,6 +278,7 @@
 
 		demoStep++;
 
+		// Double-check that auto demo is still enabled before scheduling next step
 		if (isAutoDemo) {
 			demoInterval = setTimeout(() => {
 				runDemoStep();
