@@ -88,8 +88,18 @@ export async function waitForWebSocketConnection(
 			if (attempt < maxRetries) {
 				// Wait before retry
 				await page.waitForTimeout(2000);
-				// Click connect button again
-				await page.locator('button:has-text("接続")').click();
+				// Wait for button to be enabled and click connect button again
+				const connectBtn = page.locator('button:has-text("接続")');
+				await connectBtn.waitFor({ state: 'visible' });
+				// Wait for button to be enabled (not disabled)
+				await page.waitForFunction(
+					() => {
+						const btn = document.querySelector('button[data-testid="connect-button"]');
+						return btn && !btn.hasAttribute('disabled');
+					},
+					{ timeout: 5000 }
+				);
+				await connectBtn.click();
 			}
 		}
 	}
@@ -116,8 +126,24 @@ export async function testWebSocketWithFallback(
 		return;
 	}
 
-	// Click connect button
-	await page.locator('button:has-text("接続")').click();
+	// Wait for button to be enabled and click connect button
+	const connectButton = page.locator('button:has-text("接続")');
+	await connectButton.waitFor({ state: 'visible' });
+
+	// Wait for button to be enabled (not disabled)
+	await page
+		.waitForFunction(
+			() => {
+				const btn = document.querySelector('button[data-testid="connect-button"]');
+				return btn && !btn.hasAttribute('disabled');
+			},
+			{ timeout: 5000 }
+		)
+		.catch(() => {
+			console.log('Connect button did not become enabled in time');
+		});
+
+	await connectButton.click();
 
 	// Wait for connection result
 	const connectionResult = await waitForWebSocketConnection(page, options);
