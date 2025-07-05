@@ -100,34 +100,34 @@ export enum MessageType {
 	// Authentication
 	AUTH_SUCCESS = 'auth_success',
 	AUTH_ERROR = 'auth_error',
-	
+
 	// Chat messages
 	CHAT_MESSAGE = 'chat_message',
 	MESSAGE_HISTORY = 'message_history',
 	MESSAGE_EDIT = 'message_edit',
 	MESSAGE_DELETE = 'message_delete',
 	MESSAGE_REACTION = 'message_reaction',
-	
+
 	// Typing indicators
 	TYPING_START = 'typing_start',
 	TYPING_STOP = 'typing_stop',
-	
+
 	// User presence
 	USER_JOINED = 'user_joined',
 	USER_LEFT = 'user_left',
 	USER_LIST = 'user_list',
-	
+
 	// Room management
 	ROOM_CREATE = 'room_create',
 	ROOM_JOIN = 'room_join',
 	ROOM_LEAVE = 'room_leave',
 	ROOM_UPDATE = 'room_update',
 	ROOM_LIST = 'room_list',
-	
+
 	// Connection health
 	PING = 'ping',
 	PONG = 'pong',
-	
+
 	// Errors
 	ERROR = 'error'
 }

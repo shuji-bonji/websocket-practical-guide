@@ -5,9 +5,7 @@ import type {
 	User,
 	UserSession,
 	WebSocketMessage,
-	ChatMessage,
 	ChatRoom,
-	AuthToken,
 	ServerConfig
 } from '../types/index.js';
 import { MessageType } from '../types/index.js';
@@ -27,7 +25,7 @@ export class ChatWebSocketServer {
 		this.config = config;
 		this.db = db;
 		this.auth = auth;
-		
+
 		this.wss = new WebSocketServer({
 			port: config.port,
 			host: config.host,
@@ -40,10 +38,10 @@ export class ChatWebSocketServer {
 
 	private verifyClient(info: { origin: string; secure: boolean; req: IncomingMessage }): boolean {
 		// Basic CORS check
-		const allowedOrigins = Array.isArray(this.config.cors.origin) 
-			? this.config.cors.origin 
+		const allowedOrigins = Array.isArray(this.config.cors.origin)
+			? this.config.cors.origin
 			: [this.config.cors.origin];
-			
+
 		return allowedOrigins.includes(info.origin) || allowedOrigins.includes('*');
 	}
 
@@ -63,9 +61,8 @@ export class ChatWebSocketServer {
 	}
 
 	private handleConnection(ws: WebSocket, req: IncomingMessage): void {
-		const url = new URL(req.url || '/', `http://${req.headers.host}`);
 		const sessionId = this.generateSessionId();
-		
+
 		console.log(`New WebSocket connection attempt: ${sessionId}`);
 
 		// Set up basic message handler for authentication
@@ -97,13 +94,14 @@ export class ChatWebSocketServer {
 	}
 
 	private handlePreAuthMessage(
-		ws: WebSocket, 
-		message: WebSocketMessage, 
-		sessionId: string, 
+		ws: WebSocket,
+		message: WebSocketMessage,
+		sessionId: string,
 		req: IncomingMessage
 	): void {
 		// Extract token from message or URL
-		const token = message.payload as string || 
+		const token =
+			(message.payload as string) ||
 			new URL(req.url || '/', `http://${req.headers.host}`).searchParams.get('token');
 
 		if (!token) {
@@ -131,7 +129,7 @@ export class ChatWebSocketServer {
 		};
 
 		this.sessions.set(sessionId, session);
-		
+
 		// Track user sockets
 		if (!this.userSockets.has(user.id)) {
 			this.userSockets.set(user.id, new Set());
@@ -159,7 +157,7 @@ export class ChatWebSocketServer {
 		// Send authentication success
 		this.sendMessage(ws, {
 			type: MessageType.AUTH_SUCCESS,
-			payload: { 
+			payload: {
 				user: this.sanitizeUser(user),
 				roomId: session.roomId
 			}
@@ -184,35 +182,44 @@ export class ChatWebSocketServer {
 
 		switch (message.type) {
 			case MessageType.CHAT_MESSAGE:
-				this.handleChatMessage(sessionId, message.payload as any);
+				this.handleChatMessage(
+					sessionId,
+					message.payload as { content: string; replyToId?: string }
+				);
 				break;
-			
+
 			case MessageType.TYPING_START:
 				this.handleTypingStart(sessionId);
 				break;
-			
+
 			case MessageType.TYPING_STOP:
 				this.handleTypingStop(sessionId);
 				break;
-			
+
 			case MessageType.ROOM_JOIN:
 				this.handleRoomJoin(sessionId, message.payload as { roomId: string });
 				break;
-			
+
 			case MessageType.ROOM_CREATE:
-				this.handleRoomCreate(sessionId, message.payload as any);
+				this.handleRoomCreate(
+					sessionId,
+					message.payload as { name: string; description?: string; isPrivate?: boolean }
+				);
 				break;
-			
+
 			case MessageType.PING:
 				this.handlePing(sessionId);
 				break;
-			
+
 			default:
 				console.warn(`Unknown message type: ${message.type}`);
 		}
 	}
 
-	private handleChatMessage(sessionId: string, payload: { content: string; replyToId?: string }): void {
+	private handleChatMessage(
+		sessionId: string,
+		payload: { content: string; replyToId?: string }
+	): void {
 		const session = this.sessions.get(sessionId);
 		if (!session) return;
 
@@ -238,14 +245,18 @@ export class ChatWebSocketServer {
 		if (!session) return;
 
 		session.isTyping = true;
-		
-		this.broadcastToRoom(session.roomId, {
-			type: MessageType.TYPING_START,
-			payload: {
-				userId: session.user.id,
-				username: session.user.username
-			}
-		}, sessionId); // Exclude sender
+
+		this.broadcastToRoom(
+			session.roomId,
+			{
+				type: MessageType.TYPING_START,
+				payload: {
+					userId: session.user.id,
+					username: session.user.username
+				}
+			},
+			sessionId
+		); // Exclude sender
 	}
 
 	private handleTypingStop(sessionId: string): void {
@@ -253,14 +264,18 @@ export class ChatWebSocketServer {
 		if (!session) return;
 
 		session.isTyping = false;
-		
-		this.broadcastToRoom(session.roomId, {
-			type: MessageType.TYPING_STOP,
-			payload: {
-				userId: session.user.id,
-				username: session.user.username
-			}
-		}, sessionId); // Exclude sender
+
+		this.broadcastToRoom(
+			session.roomId,
+			{
+				type: MessageType.TYPING_STOP,
+				payload: {
+					userId: session.user.id,
+					username: session.user.username
+				}
+			},
+			sessionId
+		); // Exclude sender
 	}
 
 	private handleRoomJoin(sessionId: string, payload: { roomId: string }): void {
@@ -275,10 +290,10 @@ export class ChatWebSocketServer {
 
 		// Leave current room
 		this.leaveRoom(sessionId, session.roomId);
-		
+
 		// Join new room
 		this.joinRoom(sessionId, payload.roomId);
-		
+
 		// Update session
 		session.roomId = payload.roomId;
 
@@ -287,13 +302,16 @@ export class ChatWebSocketServer {
 		this.sendUserList(sessionId, payload.roomId);
 	}
 
-	private handleRoomCreate(sessionId: string, payload: { name: string; description?: string; isPrivate?: boolean }): void {
+	private handleRoomCreate(
+		sessionId: string,
+		payload: { name: string; description?: string; isPrivate?: boolean }
+	): void {
 		const session = this.sessions.get(sessionId);
 		if (!session) return;
 
 		try {
 			const room = this.db.createRoom(payload, session.user.id);
-			
+
 			this.sendMessage(session.ws, {
 				type: MessageType.ROOM_CREATE,
 				payload: { room: this.sanitizeRoom(room) }
@@ -333,13 +351,17 @@ export class ChatWebSocketServer {
 		this.roomUsers.get(roomId)!.add(session.user.id);
 
 		// Notify room members
-		this.broadcastToRoom(roomId, {
-			type: MessageType.USER_JOINED,
-			payload: {
-				user: this.sanitizeUser(session.user),
-				roomId
-			}
-		}, sessionId); // Exclude the joining user
+		this.broadcastToRoom(
+			roomId,
+			{
+				type: MessageType.USER_JOINED,
+				payload: {
+					user: this.sanitizeUser(session.user),
+					roomId
+				}
+			},
+			sessionId
+		); // Exclude the joining user
 	}
 
 	private leaveRoom(sessionId: string, roomId: string): void {
@@ -350,13 +372,17 @@ export class ChatWebSocketServer {
 		this.roomUsers.get(roomId)?.delete(session.user.id);
 
 		// Notify room members
-		this.broadcastToRoom(roomId, {
-			type: MessageType.USER_LEFT,
-			payload: {
-				user: this.sanitizeUser(session.user),
-				roomId
-			}
-		}, sessionId); // Exclude the leaving user
+		this.broadcastToRoom(
+			roomId,
+			{
+				type: MessageType.USER_LEFT,
+				payload: {
+					user: this.sanitizeUser(session.user),
+					roomId
+				}
+			},
+			sessionId
+		); // Exclude the leaving user
 	}
 
 	private handleDisconnection(sessionId: string): void {
@@ -401,7 +427,7 @@ export class ChatWebSocketServer {
 		const result = this.db.getMessagesByRoom(roomId, { page: 1, limit: 50 });
 		this.sendMessage(session.ws, {
 			type: MessageType.MESSAGE_HISTORY,
-			payload: { 
+			payload: {
 				messages: result.data,
 				roomId,
 				pagination: {
@@ -419,9 +445,9 @@ export class ChatWebSocketServer {
 
 		const roomUserIds = this.roomUsers.get(roomId) || new Set();
 		const users = Array.from(roomUserIds)
-			.map(userId => this.db.getUserById(userId))
-			.filter(user => user !== null)
-			.map(user => this.sanitizeUser(user!));
+			.map((userId) => this.db.getUserById(userId))
+			.filter((user) => user !== null)
+			.map((user) => this.sanitizeUser(user!));
 
 		this.sendMessage(session.ws, {
 			type: MessageType.USER_LIST,
@@ -429,7 +455,11 @@ export class ChatWebSocketServer {
 		});
 	}
 
-	private broadcastToRoom(roomId: string, message: WebSocketMessage, excludeSessionId?: string): void {
+	private broadcastToRoom(
+		roomId: string,
+		message: WebSocketMessage,
+		excludeSessionId?: string
+	): void {
 		const roomUserIds = this.roomUsers.get(roomId);
 		if (!roomUserIds) return;
 
@@ -439,7 +469,9 @@ export class ChatWebSocketServer {
 
 			for (const ws of userSockets) {
 				// Find session to check if it should be excluded
-				const sessionEntry = Array.from(this.sessions.entries()).find(([, session]) => session.ws === ws);
+				const sessionEntry = Array.from(this.sessions.entries()).find(
+					([, session]) => session.ws === ws
+				);
 				if (sessionEntry && sessionEntry[0] === excludeSessionId) continue;
 
 				if (ws.readyState === WebSocket.OPEN) {
@@ -459,11 +491,13 @@ export class ChatWebSocketServer {
 
 	private sendMessage(ws: WebSocket, message: WebSocketMessage): void {
 		if (ws.readyState === WebSocket.OPEN) {
-			ws.send(JSON.stringify({
-				...message,
-				id: message.id || this.generateMessageId(),
-				timestamp: message.timestamp || new Date()
-			}));
+			ws.send(
+				JSON.stringify({
+					...message,
+					id: message.id || this.generateMessageId(),
+					timestamp: message.timestamp || new Date()
+				})
+			);
 		}
 	}
 
@@ -490,8 +524,10 @@ export class ChatWebSocketServer {
 		const staleThreshold = 5 * 60 * 1000; // 5 minutes
 
 		for (const [sessionId, session] of this.sessions.entries()) {
-			if (now - session.lastSeen.getTime() > staleThreshold || 
-				session.ws.readyState !== WebSocket.OPEN) {
+			if (
+				now - session.lastSeen.getTime() > staleThreshold ||
+				session.ws.readyState !== WebSocket.OPEN
+			) {
 				this.handleDisconnection(sessionId);
 			}
 		}

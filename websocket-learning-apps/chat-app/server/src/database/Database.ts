@@ -127,27 +127,33 @@ export class ChatDatabase {
 			const adminPasswordHash = bcrypt.hashSync('admin123', 10);
 
 			this.db
-				.prepare(`
+				.prepare(
+					`
 					INSERT INTO users (id, username, email, password_hash, is_online)
 					VALUES (?, ?, ?, ?, ?)
-				`)
-				.run(adminId, 'admin', 'admin@chatapp.local', adminPasswordHash, false);
+				`
+				)
+				.run(adminId, 'admin', 'admin@chatapp.local', adminPasswordHash, 0);
 
 			// Create default general room
 			this.db
-				.prepare(`
+				.prepare(
+					`
 					INSERT INTO rooms (id, name, description, is_private, owner_id)
 					VALUES (?, ?, ?, ?, ?)
-				`)
-				.run('general', 'General', 'General chat room for everyone', false, adminId);
+				`
+				)
+				.run('general', 'General', 'General chat room for everyone', 0, adminId);
 
 			// Add admin to the general room
 			this.db
-				.prepare(`
+				.prepare(
+					`
 					INSERT INTO room_members (room_id, user_id, is_admin)
 					VALUES (?, ?, ?)
-				`)
-				.run('general', adminId, true);
+				`
+				)
+				.run('general', adminId, 1);
 
 			console.log('Default data created: admin user and general room');
 		}
@@ -160,18 +166,22 @@ export class ChatDatabase {
 
 		try {
 			this.db
-				.prepare(`
+				.prepare(
+					`
 					INSERT INTO users (id, username, email, password_hash)
 					VALUES (?, ?, ?, ?)
-				`)
+				`
+				)
 				.run(userId, userData.username, userData.email, passwordHash);
 
 			// Add user to general room
 			this.db
-				.prepare(`
+				.prepare(
+					`
 					INSERT INTO room_members (room_id, user_id)
 					VALUES (?, ?)
-				`)
+				`
+				)
 				.run('general', userId);
 
 			return this.getUserById(userId)!;
@@ -189,33 +199,33 @@ export class ChatDatabase {
 	}
 
 	getUserById(userId: string): User | null {
-		const dbUser = this.db
-			.prepare('SELECT * FROM users WHERE id = ?')
-			.get(userId) as DatabaseUser | undefined;
+		const dbUser = this.db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as
+			| DatabaseUser
+			| undefined;
 
 		return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
 	}
 
 	getUserByEmail(email: string): User | null {
-		const dbUser = this.db
-			.prepare('SELECT * FROM users WHERE email = ?')
-			.get(email) as DatabaseUser | undefined;
+		const dbUser = this.db.prepare('SELECT * FROM users WHERE email = ?').get(email) as
+			| DatabaseUser
+			| undefined;
 
 		return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
 	}
 
 	getUserByUsername(username: string): User | null {
-		const dbUser = this.db
-			.prepare('SELECT * FROM users WHERE username = ?')
-			.get(username) as DatabaseUser | undefined;
+		const dbUser = this.db.prepare('SELECT * FROM users WHERE username = ?').get(username) as
+			| DatabaseUser
+			| undefined;
 
 		return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
 	}
 
 	async verifyPassword(email: string, password: string): Promise<User | null> {
-		const dbUser = this.db
-			.prepare('SELECT * FROM users WHERE email = ?')
-			.get(email) as DatabaseUser | undefined;
+		const dbUser = this.db.prepare('SELECT * FROM users WHERE email = ?').get(email) as
+			| DatabaseUser
+			| undefined;
 
 		if (!dbUser) return null;
 
@@ -225,12 +235,14 @@ export class ChatDatabase {
 
 	updateUserOnlineStatus(userId: string, isOnline: boolean): void {
 		this.db
-			.prepare(`
+			.prepare(
+				`
 				UPDATE users 
 				SET is_online = ?, last_seen = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
 				WHERE id = ?
-			`)
-			.run(isOnline, userId);
+			`
+			)
+			.run(isOnline ? 1 : 0, userId);
 	}
 
 	// Room operations
@@ -238,27 +250,31 @@ export class ChatDatabase {
 		const roomId = nanoid();
 
 		this.db
-			.prepare(`
+			.prepare(
+				`
 				INSERT INTO rooms (id, name, description, is_private, owner_id)
 				VALUES (?, ?, ?, ?, ?)
-			`)
-			.run(roomId, roomData.name, roomData.description || '', roomData.isPrivate || false, ownerId);
+			`
+			)
+			.run(roomId, roomData.name, roomData.description || '', roomData.isPrivate ? 1 : 0, ownerId);
 
 		// Add owner to the room
 		this.db
-			.prepare(`
+			.prepare(
+				`
 				INSERT INTO room_members (room_id, user_id, is_admin)
 				VALUES (?, ?, ?)
-			`)
-			.run(roomId, ownerId, true);
+			`
+			)
+			.run(roomId, ownerId, 1);
 
 		return this.getRoomById(roomId)!;
 	}
 
 	getRoomById(roomId: string): ChatRoom | null {
-		const dbRoom = this.db
-			.prepare('SELECT * FROM rooms WHERE id = ?')
-			.get(roomId) as DatabaseRoom | undefined;
+		const dbRoom = this.db.prepare('SELECT * FROM rooms WHERE id = ?').get(roomId) as
+			| DatabaseRoom
+			| undefined;
 
 		if (!dbRoom) return null;
 
@@ -272,7 +288,7 @@ export class ChatDatabase {
 			description: dbRoom.description || '',
 			isPrivate: Boolean(dbRoom.is_private),
 			ownerId: dbRoom.owner_id,
-			members: new Set(members.map(m => m.user_id)),
+			members: new Set(members.map((m) => m.user_id)),
 			typingUsers: new Map(),
 			createdAt: new Date(dbRoom.created_at),
 			lastActivity: new Date(dbRoom.updated_at)
@@ -281,15 +297,17 @@ export class ChatDatabase {
 
 	getRoomsByUserId(userId: string): ChatRoom[] {
 		const dbRooms = this.db
-			.prepare(`
+			.prepare(
+				`
 				SELECT r.* FROM rooms r
 				JOIN room_members rm ON r.id = rm.room_id
 				WHERE rm.user_id = ?
 				ORDER BY r.updated_at DESC
-			`)
+			`
+			)
 			.all(userId) as DatabaseRoom[];
 
-		return dbRooms.map(dbRoom => {
+		return dbRooms.map((dbRoom) => {
 			const members = this.db
 				.prepare('SELECT user_id FROM room_members WHERE room_id = ?')
 				.all(dbRoom.id) as { user_id: string }[];
@@ -300,7 +318,7 @@ export class ChatDatabase {
 				description: dbRoom.description || '',
 				isPrivate: Boolean(dbRoom.is_private),
 				ownerId: dbRoom.owner_id,
-				members: new Set(members.map(m => m.user_id)),
+				members: new Set(members.map((m) => m.user_id)),
 				typingUsers: new Map(),
 				createdAt: new Date(dbRoom.created_at),
 				lastActivity: new Date(dbRoom.updated_at)
@@ -310,10 +328,12 @@ export class ChatDatabase {
 
 	joinRoom(roomId: string, userId: string): void {
 		this.db
-			.prepare(`
+			.prepare(
+				`
 				INSERT OR IGNORE INTO room_members (room_id, user_id)
 				VALUES (?, ?)
-			`)
+			`
+			)
 			.run(roomId, userId);
 	}
 
@@ -328,10 +348,12 @@ export class ChatDatabase {
 		const messageId = nanoid();
 
 		this.db
-			.prepare(`
+			.prepare(
+				`
 				INSERT INTO messages (id, type, content, user_id, room_id, reply_to_id)
 				VALUES (?, ?, ?, ?, ?, ?)
-			`)
+			`
+			)
 			.run(
 				messageId,
 				message.type,
@@ -351,19 +373,21 @@ export class ChatDatabase {
 
 	getMessageById(messageId: string): ChatMessage | null {
 		const dbMessage = this.db
-			.prepare(`
+			.prepare(
+				`
 				SELECT m.*, u.username 
 				FROM messages m
 				JOIN users u ON m.user_id = u.id
 				WHERE m.id = ?
-			`)
+			`
+			)
 			.get(messageId) as (DatabaseMessage & { username: string }) | undefined;
 
 		return dbMessage ? this.mapDatabaseMessageToChatMessage(dbMessage) : null;
 	}
 
 	getMessagesByRoom(
-		roomId: string, 
+		roomId: string,
 		options: PaginationOptions = { page: 1, limit: 50 }
 	): PaginatedResult<ChatMessage> {
 		const offset = (options.page - 1) * options.limit;
@@ -382,9 +406,11 @@ export class ChatDatabase {
 			LIMIT ? OFFSET ?
 		`);
 
-		const dbMessages = messagesQuery.all(roomId, options.limit, offset) as (DatabaseMessage & { username: string })[];
+		const dbMessages = messagesQuery.all(roomId, options.limit, offset) as (DatabaseMessage & {
+			username: string;
+		})[];
 
-		const messages = dbMessages.map(msg => this.mapDatabaseMessageToChatMessage(msg));
+		const messages = dbMessages.map((msg) => this.mapDatabaseMessageToChatMessage(msg));
 
 		return {
 			data: messages,
@@ -409,7 +435,9 @@ export class ChatDatabase {
 		};
 	}
 
-	private mapDatabaseMessageToChatMessage(dbMessage: DatabaseMessage & { username: string }): ChatMessage {
+	private mapDatabaseMessageToChatMessage(
+		dbMessage: DatabaseMessage & { username: string }
+	): ChatMessage {
 		return {
 			id: dbMessage.id,
 			type: dbMessage.type as 'message' | 'system' | 'join' | 'leave',
@@ -430,14 +458,10 @@ export class ChatDatabase {
 		const thirtyDaysAgo = new Date();
 		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-		this.db
-			.prepare('DELETE FROM messages WHERE created_at < ?')
-			.run(thirtyDaysAgo.toISOString());
+		this.db.prepare('DELETE FROM messages WHERE created_at < ?').run(thirtyDaysAgo.toISOString());
 
 		// Set all users as offline
-		this.db
-			.prepare('UPDATE users SET is_online = FALSE')
-			.run();
+		this.db.prepare('UPDATE users SET is_online = FALSE').run();
 	}
 
 	close(): void {

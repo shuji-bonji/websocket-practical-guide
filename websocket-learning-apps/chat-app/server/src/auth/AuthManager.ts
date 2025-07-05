@@ -1,12 +1,5 @@
 import jwt from 'jsonwebtoken';
-import type { 
-	User, 
-	AuthToken, 
-	LoginRequest, 
-	CreateUserRequest,
-	AuthError,
-	ValidationError 
-} from '../types/index.js';
+import type { User, AuthToken, LoginRequest, CreateUserRequest } from '../types/index.js';
 import { ChatDatabase } from '../database/Database.js';
 
 export class AuthManager {
@@ -48,7 +41,7 @@ export class AuthManager {
 		this.validateLoginData(credentials);
 
 		const user = await this.db.verifyPassword(credentials.email, credentials.password);
-		
+
 		if (!user) {
 			throw new Error('Invalid email or password');
 		}
@@ -67,7 +60,7 @@ export class AuthManager {
 		try {
 			const decoded = jwt.verify(token, this.jwtSecret) as AuthToken;
 			return decoded;
-		} catch (error) {
+		} catch {
 			return null;
 		}
 	}
