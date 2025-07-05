@@ -1,0 +1,19 @@
+{
+	"functions": {
+		"api/websocket.js": {
+			"runtime": "@vercel/node@18.x",
+			"memory": 1024,
+			"maxDuration": 30
+		}
+	},
+	"env": {
+		"REDIS_URL": "@redis_url",
+		"JWT_SECRET": "@jwt_secret",
+		"WEBSOCKET_SECRET": "@websocket_secret"
+	},
+	"build": {
+		"env": {
+			"ENABLE_VC_BUILD": "1"
+		}
+	}
+}

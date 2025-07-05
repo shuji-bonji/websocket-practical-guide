@@ -24,6 +24,8 @@
 		"test:e2e:update-snapshots": "playwright test tests/e2e/visual-regression.spec.ts --update-snapshots",
 		"test:all": "npm run test:run && npm run test:e2e",
 		"bench:run": "echo 'Performance benchmarks completed'",
+		"bench:lighthouse": "lhci autorun",
+		"bench:websocket": "vitest run src/test/benchmarks/websocket-performance.bench.ts",
 		"_comment_cleanup": "=== 容量管理・クリーンアップスクリプト ===",
 		"clean": "npm run clean:coverage && npm run clean:playwright && npm run clean:build && npm run clean:cache",
 		"clean:coverage": "rimraf coverage coverage-* .nyc_output jest-coverage",
@@ -44,6 +46,9 @@
 		"coverage:ci": "echo 'Coverage reports generated for CI artifacts'",
 		"_comment_dev": "=== 開発用ユーティリティ ===",
 		"dev:clean": "npm run clean:all && npm install && npm run dev",
+		"dev:websocket": "npm run dev -- --port 5173 & node websocket-learning-apps/phase2-server/src/server.js",
+		"dev:full": "concurrently \"npm run dev\" \"npm run dev:websocket-server\"",
+		"dev:websocket-server": "node websocket-learning-apps/phase2-server/src/server.js",
 		"size:check": "npm run git:size && find . -name 'node_modules' -type d -exec du -sh {} \\; 2>/dev/null | head -3",
 		"size:report": "echo 'Repository Analysis:' && npm run size:check && echo 'Large directories:' && find . -type d -size +50M 2>/dev/null | head -10"
 	},
@@ -84,6 +89,8 @@
 		"ws": "^8.18.3"
 	},
 	"dependencies": {
-		"mermaid": "^11.7.0"
+		"@sveltejs/adapter-vercel": "^5.7.2",
+		"mermaid": "^11.7.0",
+		"rxjs": "^7.8.2"
 	}
 }
