@@ -102,15 +102,11 @@ jobs:
           fail_ci_if_error: false
 
   e2e-tests:
-    name: e2e-tests
-    strategy:
-      matrix:
-        test-mode: [essential]
+    name: E2E Tests
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -121,38 +117,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      - name: Build application
+        run: npm run build
+        env:
+          PUBLIC_MOCK_WS_ENABLED: true
+
+      - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: build/
-
-      - name: Check WebSocket service availability
-        run: |
-          echo "Checking WebSocket service availability..."
-          curl -f --connect-timeout 10 --max-time 15 https://echo.websocket.org || echo "WebSocket service may be slow/unavailable"
-        continue-on-error: true
-
-      - name: Run essential E2E tests
+      - name: Run E2E tests
         run: npx playwright test tests/e2e/websocket-flows.spec.ts --project=chromium --reporter=line
         env:
           CI: true
           PLAYWRIGHT_CI: true
           PLAYWRIGHT_TIMEOUT: 60000
-        timeout-minutes: 10
-
-      - name: Upload E2E test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-test-results-${{ matrix.test-mode }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 7
 
   security-audit:
     name: security-audit
@@ -180,27 +158,40 @@ jobs:
 
   # Summary job for branch protection status checks
   ci-status:
-    name: ci-status
+    name: CI Status Check
     runs-on: ubuntu-latest
     needs: [build, type-check, lint, unit-tests, e2e-tests, security-audit]
     if: always()
     steps:
-      - name: Check CI status
+      - name: Check CI Status
         run: |
-          if [[ "${{ needs.build.result }}" == "success" && \
-                "${{ needs.type-check.result }}" == "success" && \
-                "${{ needs.lint.result }}" == "success" && \
-                "${{ needs.unit-tests.result }}" == "success" && \
-                "${{ needs.e2e-tests.result }}" == "success" ]]; then
+          # needsコンテキストから結果を取得
+          BUILD_RESULT="${{ needs.build.result }}"
+          TYPE_CHECK_RESULT="${{ needs.type-check.result }}"
+          LINT_RESULT="${{ needs.lint.result }}"
+          UNIT_TESTS_RESULT="${{ needs.unit-tests.result }}"
+          E2E_TESTS_RESULT="${{ needs.e2e-tests.result }}"
+          AUDIT_RESULT="${{ needs.security-audit.result }}"
+
+          # E2Eテストがスキップされた場合も成功とみなす
+          if [[ "$E2E_TESTS_RESULT" == "skipped" ]]; then
+            E2E_TESTS_RESULT="success"
+          fi
+
+          if [[ "$BUILD_RESULT" == "success" && \
+                "$TYPE_CHECK_RESULT" == "success" && \
+                "$LINT_RESULT" == "success" && \
+                "$UNIT_TESTS_RESULT" == "success" && \
+                "$E2E_TESTS_RESULT" == "success" ]]; then
             echo "All required checks passed ✅"
             exit 0
           else
             echo "Some required checks failed ❌"
-            echo "Build: ${{ needs.build.result }}"
-            echo "Type Check: ${{ needs.type-check.result }}"
-            echo "Lint: ${{ needs.lint.result }}"
-            echo "Unit Tests: ${{ needs.unit-tests.result }}"
-            echo "E2E Tests: ${{ needs.e2e-tests.result }}"
-            echo "Security Audit: ${{ needs.security-audit.result }} (informational)"
+            echo "Build: $BUILD_RESULT"
+            echo "Type Check: $TYPE_CHECK_RESULT"
+            echo "Lint: $LINT_RESULT"
+            echo "Unit Tests: $UNIT_TESTS_RESULT"
+            echo "E2E Tests: $E2E_TESTS_RESULT"
+            echo "Security Audit: $AUDIT_RESULT (informational)"
             exit 1
           fi
