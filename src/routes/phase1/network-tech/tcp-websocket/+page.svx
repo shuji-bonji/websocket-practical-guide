@@ -1,5 +1,6 @@
 <script>
   import { LessonIntro, NextLesson, ProgressTracker } from '$lib/components/learning';
+  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -12,6 +13,18 @@
 />
 
 <div class="content-wrapper">
+
+<details>
+<summary><h2>📚 学習内容</h2></summary>
+
+このレッスンでは、WebSocket接続確立プロセスの技術的詳細を学習します。
+
+- **End to End vs Hop by Hop通信**の基礎
+- **HTTP/1.1 Upgradeハンドシェイク**の詳細
+- **WebSocketキーの生成と検証**メカニズム
+- **プロキシ・ファイアウォール環境**での動作
+
+</details>
 
 ## 📚 学習内容
 
@@ -150,6 +163,8 @@ Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
   section="network-tech" 
   completed={["2.1", "2.2", "2.3", "2.4"]} 
 />
+
+<CompletionMark lessonId="phase1-network-tech-tcp-websocket" />
 
 <NextLesson 
   nextLessonId="phase1-network-tech-security-ports"

@@ -45,4 +45,34 @@
 	.progress-fill {
 		@apply bg-primary-600 h-full transition-all duration-300 ease-out;
 	}
+
+	/* details/summary のスタイル調整 */
+	details summary {
+		@apply cursor-pointer list-none;
+	}
+
+	details summary::-webkit-details-marker {
+		display: none;
+	}
+
+	details summary::marker {
+		display: none;
+	}
+
+	details summary h2 {
+		@apply relative inline-block;
+	}
+
+	details summary h2::before {
+		content: '▶';
+		@apply absolute -left-6 top-0 text-gray-500 transition-transform duration-200;
+	}
+
+	details[open] summary h2::before {
+		@apply rotate-90;
+	}
+
+	details summary:hover h2::before {
+		@apply text-gray-700;
+	}
 }
