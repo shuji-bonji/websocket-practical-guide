@@ -434,9 +434,9 @@ WebSocketは「リアルタイム双方向通信のデファクトスタンダ�
 />
 
 <NextLesson 
-  nextLessonId="phase2-network-tech"
-  nextLessonTitle="Phase 2: ネットワーク技術基盤"
-  nextLessonPath="/phase2"
-  completionMessage="Phase 1: WebSocket入門を完了しました！"
+  nextLessonId="phase1-network-tech"
+  nextLessonTitle="ネットワーク技術基礎"
+  nextLessonPath="/phase1/network-tech"
+  completionMessage="WebSocket入門の基本概念を学習しました！"
   showCompletion={true}
 />

@@ -321,6 +321,12 @@
 			'phase1-use-cases': '/phase1/introduction/use-cases',
 			'phase1-introduction-comparison': '/phase1/introduction/comparison',
 			'phase1-websocket-states': '/phase1/websocket-states',
+			// ネットワーク技術レッスン
+			'2.1': '/phase1/network-tech/http-basics',
+			'2.2': '/phase1/network-tech/osi-model',
+			'2.3': '/phase1/network-tech/http-versions',
+			'2.4': '/phase1/network-tech/tcp-websocket',
+			'2.5': '/phase1/network-tech/security-ports',
 			// 古いIDとの後方互換性
 			'1.1': '/phase1/introduction/what-is-websocket',
 			'1.2': '/phase1/introduction/http-limitations',

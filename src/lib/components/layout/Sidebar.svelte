@@ -118,14 +118,14 @@
 					lessonId: 'phase1-network-tech-http-versions'
 				},
 				{
-					href: '/phase1/network-tech/connection-process',
+					href: '/phase1/network-tech/tcp-websocket',
 					label: '2.4 WebSocket接続確立プロセス',
-					lessonId: 'phase1-network-tech-connection-process'
+					lessonId: 'phase1-network-tech-tcp-websocket'
 				},
 				{
-					href: '/phase1/network-tech/security',
+					href: '/phase1/network-tech/security-ports',
 					label: '2.5 セキュリティとポート管理',
-					lessonId: 'phase1-network-tech-security'
+					lessonId: 'phase1-network-tech-security-ports'
 				}
 			]
 		},

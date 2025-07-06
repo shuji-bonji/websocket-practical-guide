@@ -52,54 +52,80 @@
 
 			<div class="space-y-4">
 				<!-- Lesson 2.1 -->
-				<div class="border border-gray-100 rounded-md p-4 bg-gray-50">
-					<h4 class="font-semibold text-gray-900 mb-2">2.1 WebSocketを理解するためのHTTP基礎</h4>
-					<p class="text-gray-600 text-sm mb-3">
-						HTTPプロトコルの基本的な仕組みと、WebSocketがHTTPベースでどのように動作するかを学習します。
-					</p>
-					<div class="text-xs text-gray-500">
-						<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">準備中</span>
-						<span class="ml-2">予定実装時間: 45分</span>
+				<a href="/phase1/network-tech/http-basics" class="block hover:bg-blue-50 transition-colors">
+					<div class="border border-gray-100 rounded-md p-4 bg-white">
+						<h4 class="font-semibold text-gray-900 mb-2">2.1 WebSocketを理解するためのHTTP基礎</h4>
+						<p class="text-gray-600 text-sm mb-3">
+							HTTP/1.0とHTTP/1.1の接続管理の違いを理解し、WebSocketがHTTPを前提とする理由を学習します。
+						</p>
+						<div class="flex items-center justify-between">
+							<div class="text-xs text-gray-500">
+								<span class="bg-green-100 text-green-800 px-2 py-1 rounded">✅ 実装完了</span>
+								<span class="ml-2">所要時間: 45分</span>
+							</div>
+							<span class="text-blue-600 text-sm font-medium">学習開始 →</span>
+						</div>
 					</div>
-				</div>
+				</a>
 
 				<!-- Lesson 2.2 -->
-				<div class="border border-gray-100 rounded-md p-4 bg-gray-50">
-					<h4 class="font-semibold text-gray-900 mb-2">2.2 OSI参照モデルとWebSocketの位置</h4>
-					<p class="text-gray-600 text-sm mb-3">
-						ネットワークの7層モデルを理解し、WebSocketがどの層で動作するかを明確にします。
-					</p>
-					<div class="text-xs text-gray-500">
-						<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">準備中</span>
-						<span class="ml-2">予定実装時間: 30分</span>
+				<a href="/phase1/network-tech/osi-model" class="block hover:bg-blue-50 transition-colors">
+					<div class="border border-gray-100 rounded-md p-4 bg-white">
+						<h4 class="font-semibold text-gray-900 mb-2">2.2 OSI参照モデルとWebSocketの位置</h4>
+						<p class="text-gray-600 text-sm mb-3">
+							OSI 7層モデルの各層の役割を理解し、WebSocketが動作する層を特定します。
+						</p>
+						<div class="flex items-center justify-between">
+							<div class="text-xs text-gray-500">
+								<span class="bg-green-100 text-green-800 px-2 py-1 rounded">✅ 実装完了</span>
+								<span class="ml-2">所要時間: 30分</span>
+							</div>
+							<span class="text-blue-600 text-sm font-medium">学習開始 →</span>
+						</div>
 					</div>
-				</div>
+				</a>
 
 				<!-- Lesson 2.3 -->
-				<div class="border border-gray-100 rounded-md p-4 bg-gray-50">
-					<h4 class="font-semibold text-gray-900 mb-2">
-						2.3 HTTP/1.1からHTTP/3までのWebSocket対応
-					</h4>
-					<p class="text-gray-600 text-sm mb-3">
-						HTTPの各バージョンでのWebSocket対応状況と実装上の違いを理解します。
-					</p>
-					<div class="text-xs text-gray-500">
-						<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">準備中</span>
-						<span class="ml-2">予定実装時間: 40分</span>
+				<a
+					href="/phase1/network-tech/http-versions"
+					class="block hover:bg-blue-50 transition-colors"
+				>
+					<div class="border border-gray-100 rounded-md p-4 bg-white">
+						<h4 class="font-semibold text-gray-900 mb-2">
+							2.3 HTTP/1.1からHTTP/3までのWebSocket対応
+						</h4>
+						<p class="text-gray-600 text-sm mb-3">
+							各HTTPバージョンでのWebSocket動作の違いと将来の技術選択について学習します。
+						</p>
+						<div class="flex items-center justify-between">
+							<div class="text-xs text-gray-500">
+								<span class="bg-green-100 text-green-800 px-2 py-1 rounded">✅ 実装完了</span>
+								<span class="ml-2">所要時間: 40分</span>
+							</div>
+							<span class="text-blue-600 text-sm font-medium">学習開始 →</span>
+						</div>
 					</div>
-				</div>
+				</a>
 
 				<!-- Lesson 2.4 -->
-				<div class="border border-gray-100 rounded-md p-4 bg-gray-50">
-					<h4 class="font-semibold text-gray-900 mb-2">2.4 TCPとWebSocketの関係理解</h4>
-					<p class="text-gray-600 text-sm mb-3">
-						TCPプロトコルの基礎とWebSocketがTCPをどのように利用するかを学習します。
-					</p>
-					<div class="text-xs text-gray-500">
-						<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">準備中</span>
-						<span class="ml-2">予定実装時間: 35分</span>
+				<a
+					href="/phase1/network-tech/tcp-websocket"
+					class="block hover:bg-blue-50 transition-colors"
+				>
+					<div class="border border-gray-100 rounded-md p-4 bg-white">
+						<h4 class="font-semibold text-gray-900 mb-2">2.4 TCPとWebSocketの関係理解</h4>
+						<p class="text-gray-600 text-sm mb-3">
+							TCP接続の基礎とWebSocketがTCPをどのように活用するかを詳しく学習します。
+						</p>
+						<div class="flex items-center justify-between">
+							<div class="text-xs text-gray-500">
+								<span class="bg-green-100 text-green-800 px-2 py-1 rounded">✅ 実装完了</span>
+								<span class="ml-2">所要時間: 35分</span>
+							</div>
+							<span class="text-blue-600 text-sm font-medium">学習開始 →</span>
+						</div>
 					</div>
-				</div>
+				</a>
 			</div>
 		</div>
 	</div>

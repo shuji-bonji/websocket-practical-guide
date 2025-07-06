@@ -1,0 +1,316 @@
+---
+title: "WebSocketを理解するためのHTTP基礎"
+description: "HTTP/1.0とHTTP/1.1の接続管理の違いを理解し、WebSocketがHTTPを前提とする理由を学びます"
+duration: 45
+difficulty: "beginner"
+phase: 1
+lesson: "2.1"
+---
+
+<script>
+	import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
+	import NetworkDiagram from '$lib/components/learning/NetworkDiagram.svelte';
+	import HTTPConnectionDemo from '$lib/components/learning/HTTPConnectionDemo.svelte';
+	import NextLesson from '$lib/components/learning/NextLesson.svelte';
+	import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
+	import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+	import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<LessonIntro 
+	lessonId="phase1-network-tech-http-basics"
+	title="WebSocketを理解するためのHTTP基礎"
+	duration="45分"
+	difficulty="beginner"
+	prerequisites={['基本的なWeb知識', 'HTTP通信の概念理解']}
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🎯 学習目標
+
+このレッスンでは、WebSocketを深く理解するために必要なHTTPの基礎知識を習得します：
+
+- **HTTP/1.0とHTTP/1.1の接続管理の違い**を理解
+- **Keep-Alive接続の仕組みとメリット**を把握
+- **WebSocketがHTTP/1.1を前提とする理由**を学習
+
+## 📖 なぜHTTPを学ぶのか？
+
+WebSocketは**HTTPの上に構築**されています。WebSocketの接続確立プロセスは、実際にはHTTPリクエストから始まります：
+
+```http
+GET /chat HTTP/1.1
+Host: example.com
+Upgrade: websocket
+Connection: Upgrade
+```
+
+この仕組みを理解するために、まずHTTPの進化を見ていきましょう。
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 1. HTTP/1.0の接続モデル
+
+### 🔄 シンプルだが非効率な設計
+
+HTTP/1.0では、**1つのリクエスト・レスポンスごとに TCP接続を確立・切断**していました：
+
+</div>
+</div>
+
+<div class="my-8">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h4 class="text-lg font-semibold text-gray-900 mb-4 text-center">HTTP/1.0の接続パターン</h4>
+    <Mermaid chart={`
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    
+    Note over C,S: リクエスト1
+    C->>S: TCP Connect
+    C->>S: HTTP Request
+    S-->>C: HTTP Response
+    C->>S: TCP Disconnect
+    Note over C,S: 接続終了
+    
+    Note over C,S: リクエスト2
+    C->>S: TCP Connect
+    C->>S: HTTP Request
+    S-->>C: HTTP Response
+    C->>S: TCP Disconnect
+    Note over C,S: 接続終了
+    `} />
+  </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### ⚠️ HTTP/1.0の問題点
+
+1. **接続オーバーヘッド**: 毎回のTCP 3-wayハンドシェイク
+2. **サーバーリソース浪費**: 頻繁な接続確立・切断
+3. **レイテンシの増加**: 接続時間が総通信時間に加算
+4. **スケーラビリティの制約**: 同時接続数の限界
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 2. HTTP/1.1の持続的接続
+
+### 🔗 Keep-Alive接続の導入
+
+HTTP/1.1では**持続的接続（Keep-Alive）**がデフォルトになりました：
+
+</div>
+</div>
+
+<div class="my-8">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h4 class="text-lg font-semibold text-gray-900 mb-4 text-center">HTTP/1.1 Keep-Alive接続パターン</h4>
+    <Mermaid chart={`
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    
+    C->>S: TCP Connect
+    Note over C,S: 接続確立（一度だけ）
+    
+    C->>S: HTTP Request 1
+    S-->>C: HTTP Response 1
+    Note over C,S: 接続維持
+    
+    C->>S: HTTP Request 2
+    S-->>C: HTTP Response 2
+    Note over C,S: 接続維持
+    
+    C->>S: HTTP Request 3
+    S-->>C: HTTP Response 3
+    Note over C,S: 接続維持
+    
+    C->>S: TCP Disconnect
+    Note over C,S: 明示的に切断
+    `} />
+  </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+### ✅ HTTP/1.1の改善点
+
+1. **接続再利用**: 複数のリクエスト・レスポンスで同じTCP接続を使用
+2. **パフォーマンス向上**: 接続確立コストを分散
+3. **サーバー効率**: 接続管理オーバーヘッドの削減
+4. **パイプライニング**: 複数リクエストの並列送信（理論上）
+
+### 🔧 Connection: Upgradeヘッダーの仕組み
+
+HTTP/1.1の重要な機能として、**プロトコルアップグレード機構**があります：
+
+```http
+GET /chat HTTP/1.1
+Host: example.com
+Connection: Upgrade
+Upgrade: websocket
+```
+
+これにより、既存のHTTP接続を**他のプロトコルに切り替える**ことが可能になりました。
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 3. WebSocketとHTTPの関係
+
+### 🤝 なぜWebSocketはHTTPを使うのか？
+
+WebSocketがHTTPの上に構築される理由：
+
+1. **既存インフラの活用**
+   - HTTPプロキシとの互換性
+   - ファイアウォールの透過性
+   - 既存のポート（80/443）の利用
+
+2. **段階的移行**
+   - HTTPサーバーからの自然な拡張
+   - 既存のHTTPSセキュリティ機構の活用
+
+3. **標準化のメリット**
+   - ブラウザの標準サポート
+   - 開発者の学習コストの削減
+
+### 🔄 WebSocketアップグレードプロセス
+
+<NetworkDiagram diagramType="websocket-upgrade" title="WebSocketアップグレードプロセス" />
+
+</div>
+</div>
+
+<div class="mt-8">
+<div class="prose max-w-none">
+
+## 4. 実践デモ：接続モデル比較
+
+以下のデモで、実際に各プロトコルの接続パターンを体験してみましょう：
+
+<HTTPConnectionDemo />
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+### 📊 パフォーマンス比較のポイント
+
+デモを実行して以下を観察してください：
+
+1. **HTTP/1.0**: 毎回の接続確立・切断によるオーバーヘッド
+2. **HTTP/1.1**: Keep-Aliveによる接続再利用の効果
+3. **WebSocket**: 一度の接続確立後の高速メッセージング
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 5. 開発者ツールでの確認
+
+### 🛠️ ブラウザ開発者ツールを使った観察
+
+実際のWebSocketアップグレードを観察してみましょう：
+
+1. **Networkタブを開く**
+2. **WebSocketページに接続**
+3. **Request Headersを確認**:
+   ```http
+   Connection: Upgrade
+   Upgrade: websocket
+   Sec-WebSocket-Key: ...
+   Sec-WebSocket-Version: 13
+   ```
+4. **Response Headersを確認**:
+   ```http
+   HTTP/1.1 101 Switching Protocols
+   Upgrade: websocket
+   Connection: Upgrade
+   Sec-WebSocket-Accept: ...
+   ```
+
+### 📈 Connection タイムラインの読み方
+
+- **Queuing**: リクエスト待機時間
+- **DNS Lookup**: DNS解決時間
+- **Initial Connection**: TCP接続確立時間
+- **SSL**: TLS/SSLハンドシェイク時間
+- **Request sent**: リクエスト送信時間
+- **Waiting (TTFB)**: 最初のバイト受信待機時間
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 6. まとめと次のステップ
+
+### 🔑 重要なポイント
+
+1. **HTTP進化の理解**
+   - HTTP/1.0の1リクエスト・1接続モデル
+   - HTTP/1.1のKeep-Alive導入による効率化
+
+2. **WebSocketの設計思想**
+   - HTTPインフラの活用による実用性
+   - アップグレード機構による段階的移行
+
+3. **パフォーマンスへの影響**
+   - 接続確立コストの最小化
+   - リアルタイム通信の効率性
+
+### 🎓 学習の確認
+
+- [ ] HTTP/1.0とHTTP/1.1の接続管理の違いを説明できる
+- [ ] Keep-Alive接続のメリットを理解している
+- [ ] WebSocketがHTTPアップグレードを使う理由が分かる
+- [ ] ブラウザ開発者ツールでWebSocket接続を観察できる
+
+</div>
+</div>
+
+<ProgressTracker 
+	lessonId="phase1-network-tech-http-basics"
+	sectionTitle="ネットワーク技術基礎"
+/>
+
+<NextLesson 
+	nextLessonId="2.2"
+	nextLessonTitle="OSI参照モデルとWebSocketの位置" 
+	nextLessonPath="/phase1/network-tech/osi-model"
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 🔗 関連リソース
+
+- [RFC 2616 - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
+- [RFC 6455 - WebSocket Protocol](https://tools.ietf.org/html/rfc6455)
+- [MDN - HTTP Connection management](https://developer.mozilla.org/en-US/docs/Web/HTTP/Connection_management_in_HTTP_1.x)
+- [Chrome DevTools Network Reference](https://developers.google.com/web/tools/chrome-devtools/network)
+
+</div>
+</div>

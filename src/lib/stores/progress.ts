@@ -49,8 +49,8 @@ const defaultProgress: OverallProgress = {
 				{ id: 'phase1-network-tech-http-basics', completed: false },
 				{ id: 'phase1-network-tech-osi-model', completed: false },
 				{ id: 'phase1-network-tech-http-versions', completed: false },
-				{ id: 'phase1-network-tech-connection-process', completed: false },
-				{ id: 'phase1-network-tech-security', completed: false },
+				{ id: 'phase1-network-tech-tcp-websocket', completed: false },
+				{ id: 'phase1-network-tech-security-ports', completed: false },
 
 				// 3. API基本構造 (3レッスン)
 				{ id: 'phase1-api-structure-lifecycle', completed: false },
@@ -224,8 +224,8 @@ const legacyIdMapping: Record<string, string> = {
 	'2.1': 'phase1-network-tech-http-basics',
 	'2.2': 'phase1-network-tech-osi-model',
 	'2.3': 'phase1-network-tech-http-versions',
-	'2.4': 'phase1-network-tech-connection-process',
-	'2.5': 'phase1-network-tech-security',
+	'2.4': 'phase1-network-tech-tcp-websocket',
+	'2.5': 'phase1-network-tech-security-ports',
 	// Phase 1 - API Structure
 	'3.1': 'phase1-api-structure-lifecycle',
 	'3.2': 'phase1-api-structure-event-model',
