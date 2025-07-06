@@ -9,6 +9,7 @@ difficulty: "初級"
   import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
   import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
   import NextLesson from '$lib/components/learning/NextLesson.svelte';
+  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -23,7 +24,8 @@ difficulty: "初級"
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-## 🎯 このレッスンで学ぶこと
+<details>
+<summary><h2>🎯 このレッスンで学ぶこと</h2></summary>
 
 リアルタイム通信を実現する様々な技術を比較し、プロジェクトの要件に応じた最適な技術選択ができるようになります。
 
@@ -31,6 +33,8 @@ difficulty: "初級"
 - **技術選択の判断基準**と意思決定フレームワーク
 - **実際のプロジェクト**での技術選択事例
 - **将来性と発展性**を考慮した技術選択
+
+</details>
 
 ## 📊 リアルタイム通信技術の全体像
 
@@ -432,6 +436,8 @@ WebSocketは「リアルタイム双方向通信のデファクトスタンダ�
   lessonId="phase1-introduction-comparison"
   sectionTitle="WebSocket入門"
 />
+
+<CompletionMark lessonId="phase1-introduction-comparison" />
 
 <NextLesson 
   nextLessonId="phase1-network-tech"

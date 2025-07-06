@@ -69,6 +69,7 @@
 				{ href: '/', label: 'ホーム', icon: 'home' },
 				{ href: '/curriculum', label: 'カリキュラム概要', icon: 'book' },
 				{ href: '/phase1', label: 'Phase 1: WebSocket基礎理解', icon: 'lessons' },
+				{ href: '/phase2', label: 'Phase 2: 実装技術', icon: 'lessons' },
 				{ href: '/table-of-contents', label: '目次', icon: 'list' }
 			]
 		},

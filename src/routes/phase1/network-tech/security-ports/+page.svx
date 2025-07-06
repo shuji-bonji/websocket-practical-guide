@@ -1,5 +1,6 @@
 <script>
   import { LessonIntro, NextLesson, ProgressTracker } from '$lib/components/learning';
+  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -12,6 +13,18 @@
 />
 
 <div class="content-wrapper">
+
+<details>
+<summary><h2>📚 学習内容</h2></summary>
+
+このレッスンでは、WebSocketのセキュリティとポート管理について学習します。
+
+- **ws（ポート80）とwss（ポート443）**の違いと使い分け
+- **Originチェックとセキュリティ**メカニズム
+- **CORSとの違い**と実装上の注意点
+- **企業環境でのWebSocket運用**のベストプラクティス
+
+</details>
 
 ## 📚 学習内容
 
@@ -182,6 +195,8 @@ WebSocketのOriginチェックとHTTPのCORS（Cross-Origin Resource Sharing）�
   section="network-tech" 
   completed={["2.1", "2.2", "2.3", "2.4", "2.5"]} 
 />
+
+<CompletionMark lessonId="phase1-network-tech-security-ports" />
 
 <NextLesson 
   nextLessonId="phase1-websocket-states"

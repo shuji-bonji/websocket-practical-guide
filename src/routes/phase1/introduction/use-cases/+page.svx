@@ -8,6 +8,7 @@ description: 'WebSocketの11の主要利用例を視覚的な図表で理解し�
   import Mermaid from '$lib/components/Mermaid.svelte';
   import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
   import NextLesson from '$lib/components/learning/NextLesson.svelte';
+  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
 </script>
 
 <LessonIntro
@@ -25,18 +26,21 @@ description: 'WebSocketの11の主要利用例を視覚的な図表で理解し�
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-## 🎯 学習目標
+<details>
+<summary><h2>🎯 学習目標</h2></summary>
 
-このガイドを完了すると、以下のことができるようになります：
+このガイドを完了すると、以下のことができるようになります。
 
 - WebSocketの11の主要利用例を視覚的に理解できる
 - 各利用例のアーキテクチャパターンを説明できる
 - 適切な利用場面を判断できる
 - 実際のシステム設計に応用できる
 
+</details>
+
 ## 📊 WebSocket利用例カテゴリー概要
 
-WebSocketは以下の11の主要カテゴリーで活用されています：
+WebSocketは以下の11の主要カテゴリーで活用されています。
 
 </div>
 </div>
@@ -79,18 +83,10 @@ mindmap
 </div>
 
 <Mermaid chart={`
-graph TD
+graph LR
     A[👤 ユーザーA] -->|メッセージ送信| C[WebSocketサーバー]
     B[👤 ユーザーB] -->|メッセージ送信| C
     D[👤 ユーザーC] -->|メッセージ送信| C
-    
-    C -->|即座に配信| A
-    C -->|即座に配信| B
-    C -->|即座に配信| D
-    C -->|即座に配信| E[👤 ユーザーD]
-    
-    F[💾 メッセージDB] --> C
-    C --> F
     
     subgraph "チャットルーム"
         C
@@ -98,9 +94,17 @@ graph TD
         H[🛡️ 認証システム]
     end
     
+    C -->|即座に配信| A
+    C -->|即座に配信| B
+    C -->|即座に配信| D
+    C -->|即座に配信| E[👤 ユーザーD]
+        
     C --> G
     H --> C
+    F[💾 メッセージDB] --> C
+    C --> F
     
+        
     style A fill:#e3f2fd
     style B fill:#e3f2fd
     style D fill:#e3f2fd
@@ -511,7 +515,7 @@ graph TB
 
 ## 🎯 まとめ
 
-WebSocketの11の主要利用例から見えるアーキテクチャパターン：
+WebSocketの11の主要利用例から見えるアーキテクチャパターン。
 
 ### **共通の設計原則**
 
@@ -538,6 +542,8 @@ WebSocketの11の主要利用例から見えるアーキテクチャパターン
   lessonId="phase1-use-cases"
   sectionTitle="WebSocket基礎理解"
 />
+
+<CompletionMark lessonId="phase1-use-cases" />
 
 <NextLesson 
   nextLessonId="phase1-introduction-comparison"

@@ -13,6 +13,7 @@ lesson: "2.2"
 	import NextLesson from '$lib/components/learning/NextLesson.svelte';
 	import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
 	import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+	import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
 	import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -27,13 +28,16 @@ lesson: "2.2"
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-## 🎯 学習目標
+<details>
+<summary><h2>🎯 学習目標</h2></summary>
 
-このレッスンでは、ネットワーク通信の基礎となるOSI参照モデルを理解し、WebSocketの位置づけを明確にします：
+このレッスンでは、ネットワーク通信の基礎となるOSI参照モデルを理解し、WebSocketの位置づけを明確にします。
 
 - **OSI 7層モデルの各層の役割**を理解
 - **WebSocketが動作する層**を特定
 - **Socket（トランスポート層）との違い**を把握
+
+</details>
 
 ## 📚 OSI参照モデルとは？
 
@@ -117,7 +121,7 @@ WebSocket → TCP → IP パケット
 
 ### 🎯 WebSocketは主にセッション層（Layer 5）で動作
 
-WebSocketの特徴的な機能は**セッション層**で実現されています：
+WebSocketの特徴的な機能は**セッション層**で実現されています。
 
 1. **永続的接続の維持**
    ```javascript
@@ -181,7 +185,7 @@ graph TD
 
 ### 🔌 Socket（トランスポート層）
 
-**Socket**は**Layer 4（トランスポート層）**のインターフェースです：
+**Socket**は**Layer 4（トランスポート層）**のインターフェースです。
 
 ```c
 // C言語でのSocket例（Layer 4 直接アクセス）
@@ -193,7 +197,7 @@ recv(sockfd, buffer, 1024, 0);
 
 ### 🌐 WebSocket（セッション層）
 
-**WebSocket**は**Layer 5（セッション層）**のプロトコルです：
+**WebSocket**は**Layer 5（セッション層）**のプロトコルです。
 
 ```javascript
 // JavaScript での WebSocket（Layer 5 抽象化）
@@ -218,7 +222,7 @@ socket.onmessage = (event) => console.log(event.data);
 
 ### 🖥️ ブラウザAPIとしての抽象化
 
-ブラウザのWebSocket APIは、開発者が意識すべきレイヤーを制限しています：
+ブラウザのWebSocket APIは、開発者が意識すべきレイヤーを制限しています。
 
 ```javascript
 // 開発者が扱うのは Layer 5-7 のみ
@@ -323,6 +327,8 @@ WebSocket connection failed: getaddrinfo ENOTFOUND
 	lessonId="phase1-network-tech-osi-model"
 	sectionTitle="ネットワーク技術基礎"
 />
+
+<CompletionMark lessonId="phase1-network-tech-osi-model" />
 
 <NextLesson 
 	nextLessonId="2.3"
