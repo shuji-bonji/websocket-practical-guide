@@ -14,6 +14,7 @@ lesson: "2.1"
 	import NextLesson from '$lib/components/learning/NextLesson.svelte';
 	import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
 	import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+	import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
 	import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -28,17 +29,20 @@ lesson: "2.1"
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-## 🎯 学習目標
+<details>
+<summary><h2>🎯 学習目標</h2></summary>
 
-このレッスンでは、WebSocketを深く理解するために必要なHTTPの基礎知識を習得します：
+このレッスンでは、WebSocketを深く理解するために必要なHTTPの基礎知識を習得します。
 
 - **HTTP/1.0とHTTP/1.1の接続管理の違い**を理解
 - **Keep-Alive接続の仕組みとメリット**を把握
 - **WebSocketがHTTP/1.1を前提とする理由**を学習
 
+</details>
+
 ## 📖 なぜHTTPを学ぶのか？
 
-WebSocketは**HTTPの上に構築**されています。WebSocketの接続確立プロセスは、実際にはHTTPリクエストから始まります：
+WebSocketは**HTTPの上に構築**されています。WebSocketの接続確立プロセスは、実際にはHTTPリクエストから始まります。
 
 ```http
 GET /chat HTTP/1.1
@@ -59,7 +63,7 @@ Connection: Upgrade
 
 ### 🔄 シンプルだが非効率な設計
 
-HTTP/1.0では、**1つのリクエスト・レスポンスごとに TCP接続を確立・切断**していました：
+HTTP/1.0では、**1つのリクエスト・レスポンスごとに TCP接続を確立・切断**していました。
 
 </div>
 </div>
@@ -109,7 +113,7 @@ sequenceDiagram
 
 ### 🔗 Keep-Alive接続の導入
 
-HTTP/1.1では**持続的接続（Keep-Alive）**がデフォルトになりました：
+HTTP/1.1では**持続的接続（Keep-Alive）**がデフォルトになりました。
 
 </div>
 </div>
@@ -155,7 +159,7 @@ sequenceDiagram
 
 ### 🔧 Connection: Upgradeヘッダーの仕組み
 
-HTTP/1.1の重要な機能として、**プロトコルアップグレード機構**があります：
+HTTP/1.1の重要な機能として、**プロトコルアップグレード機構**があります。
 
 ```http
 GET /chat HTTP/1.1
@@ -176,7 +180,7 @@ Upgrade: websocket
 
 ### 🤝 なぜWebSocketはHTTPを使うのか？
 
-WebSocketがHTTPの上に構築される理由：
+WebSocketがHTTPの上に構築される理由。
 
 1. **既存インフラの活用**
    - HTTPプロキシとの互換性
@@ -201,9 +205,11 @@ WebSocketがHTTPの上に構築される理由：
 <div class="mt-8">
 <div class="prose max-w-none">
 
-## 4. 実践デモ：接続モデル比較
+## 🚀 実践デモ
 
-以下のデモで、実際に各プロトコルの接続パターンを体験してみましょう：
+### 体験してみよう
+
+各プロトコルの接続パターンを実際に体験し、パフォーマンスの違いを比較してみましょう。
 
 <HTTPConnectionDemo />
 
@@ -213,13 +219,21 @@ WebSocketがHTTPの上に構築される理由：
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
 <div class="prose max-w-none p-8">
 
-### 📊 パフォーマンス比較のポイント
+### デモで確認できること
 
-デモを実行して以下を観察してください：
+デモを実行して以下を観察してください。
 
 1. **HTTP/1.0**: 毎回の接続確立・切断によるオーバーヘッド
 2. **HTTP/1.1**: Keep-Aliveによる接続再利用の効果
 3. **WebSocket**: 一度の接続確立後の高速メッセージング
+
+### 実行手順
+
+1. **HTTP/1.0テスト**：「HTTP/1.0 Demo」ボタンをクリックして接続パターンを確認
+2. **HTTP/1.1テスト**：「HTTP/1.1 Demo」ボタンをクリックしてKeep-Alive効果を観察
+3. **WebSocketテスト**：「WebSocket Demo」ボタンをクリックして持続的接続を体験
+4. **タイムライン比較**：各プロトコルの接続確立時間を比較
+5. **効率性分析**：リクエスト数とレスポンス時間の関係を確認
 
 </div>
 </div>
@@ -231,7 +245,7 @@ WebSocketがHTTPの上に構築される理由：
 
 ### 🛠️ ブラウザ開発者ツールを使った観察
 
-実際のWebSocketアップグレードを観察してみましょう：
+実際のWebSocketアップグレードを観察してみましょう。
 
 1. **Networkタブを開く**
 2. **WebSocketページに接続**
@@ -295,6 +309,8 @@ WebSocketがHTTPの上に構築される理由：
 	lessonId="phase1-network-tech-http-basics"
 	sectionTitle="ネットワーク技術基礎"
 />
+
+<CompletionMark lessonId="phase1-network-tech-http-basics" />
 
 <NextLesson 
 	nextLessonId="2.2"

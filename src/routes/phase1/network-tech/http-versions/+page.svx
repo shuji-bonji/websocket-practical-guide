@@ -13,6 +13,7 @@ lesson: "2.3"
 	import NextLesson from '$lib/components/learning/NextLesson.svelte';
 	import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
 	import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+	import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
 	import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -27,14 +28,17 @@ lesson: "2.3"
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-## 🎯 学習目標
+<details>
+<summary><h2>🎯 学習目標</h2></summary>
 
-このレッスンでは、HTTPプロトコルの進化とWebSocket対応の変遷を理解します：
+このレッスンでは、HTTPプロトコルの進化とWebSocket対応の変遷を理解します。
 
 - **HTTP/1.1でのWebSocket標準実装**を理解
 - **HTTP/2でのWebSocket制限と回避策**を学習
 - **HTTP/3とWebTransportの関係**を把握
 - **各バージョンでの実装選択**の判断基準を習得
+
+</details>
 
 ## 📈 HTTPプロトコルの進化とWebSocket
 
@@ -78,7 +82,7 @@ timeline
 
 ### ✅ WebSocketの原点と現在の主流
 
-**HTTP/1.1（RFC 2616, 1999年）**は、WebSocketの設計基盤となったバージョンです：
+**HTTP/1.1（RFC 2616, 1999年）**は、WebSocketの設計基盤となったバージョンです。
 
 ```http
 GET /chat HTTP/1.1
@@ -133,11 +137,11 @@ socket.send(JSON.stringify({
 
 ### ⚠️ HTTP/2の課題とWebSocket
 
-**HTTP/2（RFC 7540, 2015年）**は多重化を実現しましたが、WebSocketとの統合には課題があります：
+**HTTP/2（RFC 7540, 2015年）**は多重化を実現しましたが、WebSocketとの統合には課題があります。
 
 #### 🚫 初期のHTTP/2ではWebSocket非対応
 
-HTTP/2の設計思想はWebSocketと対立する部分がありました：
+HTTP/2の設計思想はWebSocketと対立する部分がありました。
 
 ```
 HTTP/2の設計思想:
@@ -153,7 +157,7 @@ WebSocketの特徴:
 
 #### 🆕 RFC 8441による拡張（2018年）
 
-**WebSocket over HTTP/2**が標準化されました：
+**WebSocket over HTTP/2**が標準化されました。
 
 ```http
 :method = CONNECT
@@ -175,7 +179,7 @@ WebSocketの特徴:
 
 ### 🔄 フォールバック戦略
 
-実際の実装では、HTTP/2環境でもHTTP/1.1へのフォールバックが一般的：
+実際の実装では、HTTP/2環境でもHTTP/1.1へのフォールバックが一般的。
 
 ```javascript
 // 実際のWebSocket実装（自動フォールバック）
@@ -189,7 +193,7 @@ const socket = new WebSocket('wss://api.example.com/realtime');
 
 ### 🚀 HTTP/3とWebSocketの互換性問題
 
-**HTTP/3（RFC 9114, 2022年）**はQUITベースで根本的に異なる設計：
+**HTTP/3（RFC 9114, 2022年）**はQUITベースで根本的に異なる設計。
 
 #### ❌ WebSocketの非互換性
 
@@ -207,7 +211,7 @@ WebSocketの前提:
 
 #### 🆕 WebTransportによる代替
 
-**WebTransport**がHTTP/3時代のリアルタイム通信技術として登場：
+**WebTransport**がHTTP/3時代のリアルタイム通信技術として登場。
 
 ```javascript
 // WebTransport（HTTP/3上の双方向通信）
@@ -238,15 +242,27 @@ console.log(new TextDecoder().decode(value));
 
 ---
 
-## 4. 実践デモ：プロトコルバージョン比較
+## 🚀 実践デモ
+
+### 体験してみよう
+
+各HTTPプロトコルバージョンでのWebSocket対応状況を実際に確認してみましょう。
 
 <ProtocolVersionDemo />
 
-### 🧪 テスト項目の説明
+### デモで確認できること
 
 1. **WebSocket接続テスト**: 実際のWebSocket接続性能を測定
 2. **HTTP/2検出**: 現在の接続でHTTP/2が使用されているかを確認
 3. **WebTransportサポート**: ブラウザのWebTransport対応状況を確認
+
+### 実行手順
+
+1. **プロトコル検出**：「Protocol Detection」ボタンをクリックして現在のHTTPバージョンを確認
+2. **WebSocket接続テスト**：「WebSocket Test」ボタンをクリックして接続性能を測定
+3. **WebTransport確認**：「WebTransport Check」ボタンをクリックして対応状況を確認
+4. **結果分析**：各プロトコルの特徴とパフォーマンスを比較
+5. **互換性確認**：ブラウザとサーバーの対応状況を把握
 
 ---
 
@@ -341,6 +357,8 @@ if ('WebTransport' in window) {
 	lessonId="phase1-network-tech-http-versions"
 	sectionTitle="ネットワーク技術基礎"
 />
+
+<CompletionMark lessonId="phase1-network-tech-http-versions" />
 
 <NextLesson 
 	nextLessonId="2.4"
