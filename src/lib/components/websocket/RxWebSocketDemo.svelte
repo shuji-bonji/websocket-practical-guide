@@ -21,7 +21,7 @@
 	const wsStore = createWebSocketStore();
 
 	// Local state
-	let messageInput = '';
+	let messageInput = $state('');
 	let connectionConfig = {
 		url,
 		protocols,
@@ -34,17 +34,17 @@
 	let subscriptions: Subscription[] = [];
 
 	// Reactive values from store
-	let state = $derived(wsStore.state);
+	let wsState = $derived(wsStore.state);
 	let messages = $derived(wsStore.messages);
 	let isConnected = $derived(wsStore.isConnected);
 
 	// Connection statistics
-	let stats = {
+	let stats = $state({
 		totalMessages: 0,
 		messagesPerSecond: 0,
 		averageLatency: 0,
 		connectionUptime: 0
-	};
+	});
 
 	$effect(() => {
 		if (autoConnect) {
@@ -127,8 +127,8 @@
 	}
 
 	function updateStats(): void {
-		if (state.connectedAt) {
-			stats = { ...stats, connectionUptime: Date.now() - state.connectedAt };
+		if (wsState.connectedAt) {
+			stats = { ...stats, connectionUptime: Date.now() - wsState.connectedAt };
 		}
 
 		stats = { ...stats, totalMessages: messages.length };
@@ -203,19 +203,19 @@
 				<div class="status-grid">
 					<div class="status-item">
 						<span class="status-label">Connection:</span>
-						<span class="status-value" style="color: {getStatusColor(state.status)}">
-							{state.status}
+						<span class="status-value" style="color: {getStatusColor(wsState.status)}">
+							{wsState.status}
 						</span>
 					</div>
 					<div class="status-item">
 						<span class="status-label">Messages:</span>
-						<span class="status-value">{state.messageCount}</span>
+						<span class="status-value">{wsState.messageCount}</span>
 					</div>
 					<div class="status-item">
 						<span class="status-label">Reconnects:</span>
-						<span class="status-value">{state.reconnectAttempts}</span>
+						<span class="status-value">{wsState.reconnectAttempts}</span>
 					</div>
-					{#if state.connectedAt}
+					{#if wsState.connectedAt}
 						<div class="status-item">
 							<span class="status-label">Uptime:</span>
 							<span class="status-value">{formatUptime(stats.connectionUptime)}</span>
@@ -335,10 +335,10 @@
 		</div>
 	</div>
 
-	{#if state.errorMessage}
+	{#if wsState.errorMessage}
 		<div class="error-message">
 			<strong>Error:</strong>
-			{state.errorMessage}
+			{wsState.errorMessage}
 		</div>
 	{/if}
 </div>

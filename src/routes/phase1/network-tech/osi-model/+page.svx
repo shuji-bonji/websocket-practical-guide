@@ -1,0 +1,344 @@
+---
+title: "OSI参照モデルとWebSocketの位置"
+description: "OSI 7層モデルの各層の役割を理解し、WebSocketが動作する層を特定します"
+duration: 30
+difficulty: "beginner"
+phase: 1
+lesson: "2.2"
+---
+
+<script>
+	import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
+	import NetworkDiagram from '$lib/components/learning/NetworkDiagram.svelte';
+	import NextLesson from '$lib/components/learning/NextLesson.svelte';
+	import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
+	import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
+	import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<LessonIntro 
+	lessonId="phase1-network-tech-osi-model"
+	title="OSI参照モデルとWebSocketの位置"
+	duration="30分"
+	difficulty="beginner"
+	prerequisites={['基本的なネットワーク知識', 'HTTP基礎の理解']}
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 🎯 学習目標
+
+このレッスンでは、ネットワーク通信の基礎となるOSI参照モデルを理解し、WebSocketの位置づけを明確にします：
+
+- **OSI 7層モデルの各層の役割**を理解
+- **WebSocketが動作する層**を特定
+- **Socket（トランスポート層）との違い**を把握
+
+## 📚 OSI参照モデルとは？
+
+**OSI（Open Systems Interconnection）参照モデル**は、ネットワーク通信を7つの階層に分けて標準化したモデルです。各層が独立した責任を持ち、下位層のサービスを利用して上位層にサービスを提供します。
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 1. OSI 7層モデルの詳細
+
+<NetworkDiagram diagramType="osi-model" title="OSI 7層モデル" />
+
+### 📋 各層の役割と代表的プロトコル
+
+#### 🔴 Layer 7: アプリケーション層
+- **役割**: ユーザーアプリケーションとネットワークサービスの接点
+- **代表プロトコル**: HTTP, HTTPS, FTP, SMTP, DNS
+- **WebSocketでの位置**: アプリケーションレベルのメッセージ形式
+
+```javascript
+// アプリケーション層での WebSocket 使用例
+const socket = new WebSocket('wss://chat.example.com');
+socket.send(JSON.stringify({type: 'message', text: 'Hello!'}));
+```
+
+#### 🟠 Layer 6: プレゼンテーション層
+- **役割**: データの表現形式（暗号化、圧縮、エンコーディング）
+- **代表プロトコル**: TLS/SSL, ASCII, JPEG, GIF
+- **WebSocketでの位置**: WSS（WebSocket Secure）での暗号化
+
+```
+wss://example.com  ← TLS/SSL暗号化を使用
+ws://example.com   ← 平文通信
+```
+
+#### 🟡 Layer 5: セッション層
+- **役割**: アプリケーション間のセッション管理
+- **代表プロトコル**: NetBIOS, RPC, SQL sessions
+- **WebSocketでの位置**: **WebSocketのメイン動作層**
+
+```javascript
+// セッション層での WebSocket 管理
+socket.onopen = () => console.log('Session established');
+socket.onclose = () => console.log('Session terminated');
+```
+
+#### 🟢 Layer 4: トランスポート層
+- **役割**: エンドツーエンドの信頼性のあるデータ転送
+- **代表プロトコル**: TCP, UDP
+- **WebSocketでの位置**: TCPの信頼性を活用
+
+```
+WebSocket → TCP → IP パケット
+```
+
+#### 🔵 Layer 3: ネットワーク層
+- **役割**: パケットルーティングとアドレッシング
+- **代表プロトコル**: IP, ICMP, ARP
+- **WebSocketでの位置**: IPアドレスによる通信
+
+#### 🟣 Layer 2: データリンク層
+- **役割**: 隣接ノード間の信頼性のあるデータ転送
+- **代表プロトコル**: Ethernet, WiFi (802.11), PPP
+- **WebSocketでの位置**: 物理メディアでのフレーム転送
+
+#### 🟤 Layer 1: 物理層
+- **役割**: 物理的な信号の伝送
+- **代表技術**: ケーブル、光ファイバー、無線電波
+- **WebSocketでの位置**: 実際の電気信号・光信号
+
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 2. WebSocketの位置づけ詳細
+
+### 🎯 WebSocketは主にセッション層（Layer 5）で動作
+
+WebSocketの特徴的な機能は**セッション層**で実現されています：
+
+1. **永続的接続の維持**
+   ```javascript
+   // 接続の確立と維持
+   const socket = new WebSocket('ws://example.com');
+   // 接続は明示的に閉じるまで維持される
+   ```
+
+2. **双方向通信セッション**
+   ```javascript
+   // クライアントからサーバーへ
+   socket.send('Client to Server');
+   
+   // サーバーからクライアントへ
+   socket.onmessage = (event) => {
+       console.log('Server to Client:', event.data);
+   };
+   ```
+
+3. **セッション状態管理**
+   ```javascript
+   // WebSocket ReadyState (セッション状態)
+   console.log(socket.readyState);
+   // 0: CONNECTING, 1: OPEN, 2: CLOSING, 3: CLOSED
+   ```
+
+### 🔄 各層での WebSocket の動作
+
+</div>
+</div>
+
+<div class="my-8">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h4 class="text-lg font-semibold text-gray-900 mb-4 text-center">WebSocketの層別動作</h4>
+    <Mermaid chart={`
+graph TD
+    A[Layer 7: Application<br/>WebSocket API, JSON messages]
+    B[Layer 6: Presentation<br/>TLS encryption for WSS]
+    C[Layer 5: Session<br/>WebSocket protocol, frame management]
+    D[Layer 4: Transport<br/>TCP connection, reliability]
+    E[Layer 3: Network<br/>IP routing, addressing]
+    F[Layer 2: Data Link<br/>Ethernet frames, WiFi]
+    G[Layer 1: Physical<br/>Electrical signals, radio waves]
+    
+    A <--> B
+    B <--> C
+    C <--> D
+    D <--> E
+    E <--> F
+    F <--> G
+    
+    style C fill:#ffeb3b,stroke:#333,stroke-width:4px
+    `} />
+  </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="prose max-w-none p-8">
+
+## 3. SocketとWebSocketの違い
+
+### 🔌 Socket（トランスポート層）
+
+**Socket**は**Layer 4（トランスポート層）**のインターフェースです：
+
+```c
+// C言語でのSocket例（Layer 4 直接アクセス）
+int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+send(sockfd, buffer, strlen(buffer), 0);
+recv(sockfd, buffer, 1024, 0);
+```
+
+### 🌐 WebSocket（セッション層）
+
+**WebSocket**は**Layer 5（セッション層）**のプロトコルです：
+
+```javascript
+// JavaScript での WebSocket（Layer 5 抽象化）
+const socket = new WebSocket('ws://example.com');
+socket.send('Hello WebSocket');
+socket.onmessage = (event) => console.log(event.data);
+```
+
+### 📊 比較表
+
+| 特徴 | Socket (Layer 4) | WebSocket (Layer 5) |
+|------|------------------|---------------------|
+| **抽象化レベル** | 低レベル（TCP/UDP直接） | 高レベル（HTTP上） |
+| **メッセージ境界** | 開発者が管理 | プロトコルが自動管理 |
+| **ブラウザサポート** | 制限あり | 標準サポート |
+| **プロキシ透過性** | 困難 | 容易（HTTP互換） |
+| **セキュリティ** | 独自実装が必要 | TLS統合 |
+
+---
+
+## 4. ブラウザでの実装における意味
+
+### 🖥️ ブラウザAPIとしての抽象化
+
+ブラウザのWebSocket APIは、開発者が意識すべきレイヤーを制限しています：
+
+```javascript
+// 開発者が扱うのは Layer 5-7 のみ
+const socket = new WebSocket('wss://api.example.com/realtime');
+
+// Layer 7: アプリケーションロジック
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    updateUI(data);
+};
+
+// Layer 6: 暗号化は"wss://"で自動的に処理
+// Layer 5: WebSocketプロトコルは自動的に処理
+// Layer 4以下: ブラウザとOSが自動的に処理
+```
+
+### 🔒 セキュリティの層別実装
+
+```
+Layer 7: アプリケーションレベル認証
+         ↕
+Layer 6: TLS/SSL暗号化 (WSS)
+         ↕
+Layer 5: WebSocket framing
+         ↕
+Layer 4: TCP sequence numbers
+         ↕
+Layer 3以下: OS/ネットワークインフラが処理
+```
+
+---
+
+## 5. 実践：レイヤー別デバッグ
+
+### 🛠️ 各層での問題診断
+
+**Layer 7 (Application) 問題**:
+```javascript
+// メッセージ形式エラーのデバッグ
+socket.onerror = (error) => {
+    console.error('Application layer error:', error);
+};
+```
+
+**Layer 6 (Presentation) 問題**:
+```
+// TLS証明書エラー
+WebSocket connection failed: SSL certificate problem
+```
+
+**Layer 5 (Session) 問題**:
+```javascript
+// WebSocket protocol エラー
+socket.onclose = (event) => {
+    console.log('Session closed:', event.code, event.reason);
+};
+```
+
+**Layer 4 (Transport) 問題**:
+```
+// TCP接続エラー
+WebSocket connection failed: Connection refused
+```
+
+**Layer 3 (Network) 問題**:
+```
+// DNS/IP解決エラー
+WebSocket connection failed: getaddrinfo ENOTFOUND
+```
+
+---
+
+## 6. まとめ
+
+### 🔑 重要なポイント
+
+1. **OSI 7層モデルの理解**
+   - 各層が独立した責任を持つ
+   - 下位層が上位層にサービスを提供
+
+2. **WebSocketの主要動作層**
+   - **Layer 5（セッション層）**: メインの動作層
+   - **Layer 4（トランスポート層）**: TCPによる信頼性
+   - **Layer 6（プレゼンテーション層）**: TLS/SSL暗号化
+
+3. **開発者の責任範囲**
+   - **Layer 7**: アプリケーションロジック
+   - **Layer 6-5**: WebSocket API が抽象化
+   - **Layer 4以下**: ブラウザ・OS が自動処理
+
+### 🎓 学習の確認
+
+- [ ] OSI 7層モデルの各層の役割を説明できる
+- [ ] WebSocketが主にセッション層で動作することを理解している
+- [ ] Socket（Layer 4）とWebSocket（Layer 5）の違いが分かる
+- [ ] ブラウザでの抽象化レベルを理解している
+
+</div>
+</div>
+
+<ProgressTracker 
+	lessonId="phase1-network-tech-osi-model"
+	sectionTitle="ネットワーク技術基礎"
+/>
+
+<NextLesson 
+	nextLessonId="2.3"
+	nextLessonTitle="HTTP/1.1からHTTP/3までのWebSocket対応" 
+	nextLessonPath="/phase1/network-tech/http-versions"
+/>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
+<div class="prose max-w-none p-8">
+
+## 🔗 関連リソース
+
+- [OSI model - Wikipedia](https://en.wikipedia.org/wiki/OSI_model)
+- [RFC 1122 - Requirements for Internet Hosts](https://tools.ietf.org/html/rfc1122)
+- [WebSocket Protocol - RFC 6455](https://tools.ietf.org/html/rfc6455)
+- [TCP/IP Illustrated](https://www.pearson.com/us/higher-education/program/Stevens-TCP-IP-Illustrated-Volume-1-The-Protocols-2nd-Edition/PGM248845.html)
+
+</div>
+</div>

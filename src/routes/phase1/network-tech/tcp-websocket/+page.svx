@@ -1,0 +1,158 @@
+<script>
+  import { LessonIntro, NextLesson, ProgressTracker } from '$lib/components/learning';
+  import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<LessonIntro 
+  lessonId="phase1-network-tech-tcp-websocket"
+  title="WebSocket接続確立プロセス"
+  duration="1.5-2.5時間"
+  difficulty="beginner"
+  prerequisites={['HTTP基礎', 'OSI参照モデル', 'ネットワーク基礎知識']}
+/>
+
+<div class="content-wrapper">
+
+## 📚 学習内容
+
+<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+
+### End to End vs Hop by Hop通信の基礎
+
+WebSocket接続を理解する上で、まずネットワーク通信の2つの基本モデルを理解することが重要です。
+
+<div class="grid md:grid-cols-2 gap-6 my-6">
+  <div class="bg-blue-50 rounded-lg p-6">
+    <h4 class="text-lg font-semibold text-blue-900 mb-3">🔗 End to End通信</h4>
+    <ul class="space-y-2 text-blue-800">
+      <li>• クライアントとサーバー間の直接的な論理接続</li>
+      <li>• WebSocketの通信モデル</li>
+      <li>• 中間ノードは単なる転送役</li>
+      <li>• 接続状態の維持が必要</li>
+    </ul>
+  </div>
+  
+  <div class="bg-green-50 rounded-lg p-6">
+    <h4 class="text-lg font-semibold text-green-900 mb-3">🔀 Hop by Hop通信</h4>
+    <ul class="space-y-2 text-green-800">
+      <li>• 各ノード間での個別の接続</li>
+      <li>• 従来のHTTPリクエスト/レスポンス</li>
+      <li>• 各中間ノードで処理可能</li>
+      <li>• ステートレスな通信</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+
+### HTTP/1.1 Upgradeハンドシェイクの詳細
+
+WebSocket接続は、HTTP/1.1のUpgradeメカニズムを使用して確立されます。
+
+<div class="bg-gray-50 rounded-lg p-4 mb-6">
+
+#### 🤝 ハンドシェイクのステップ
+
+**1. クライアント → サーバー: Upgradeリクエスト**
+
+```http
+GET /websocket HTTP/1.1
+Host: example.com:8080
+Connection: Upgrade
+Upgrade: websocket
+Sec-WebSocket-Version: 13
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Origin: http://example.com
+```
+
+**2. サーバー → クライアント: Upgradeレスポンス**
+
+```http
+HTTP/1.1 101 Switching Protocols
+Connection: Upgrade
+Upgrade: websocket
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+```
+
+**3. 双方向通信の開始**
+- HTTPからWebSocketプロトコルへの切り替え完了
+- 以降はWebSocketフレームでの通信
+
+</div>
+
+</div>
+
+<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+
+### WebSocketキーの生成と検証
+
+セキュリティのため、WebSocketハンドシェイクではキーの交換と検証が行われます。
+
+<div class="grid md:grid-cols-2 gap-6 my-6">
+  <div>
+    <h4 class="font-semibold mb-3">🔑 Sec-WebSocket-Key</h4>
+    <div class="bg-yellow-50 rounded-lg p-4">
+      <p class="text-sm mb-2">クライアントが生成する16バイトのランダム値（Base64エンコード）</p>
+      <code class="text-xs bg-yellow-100 px-2 py-1 rounded">
+        dGhlIHNhbXBsZSBub25jZQ==
+      </code>
+    </div>
+  </div>
+  
+  <div>
+    <h4 class="font-semibold mb-3">✅ Sec-WebSocket-Accept</h4>
+    <div class="bg-green-50 rounded-lg p-4">
+      <p class="text-sm mb-2">サーバーが生成する応答キー</p>
+      <ol class="text-xs space-y-1">
+        <li>1. Keyに固定GUID追加</li>
+        <li>2. SHA-1ハッシュ計算</li>
+        <li>3. Base64エンコード</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+</div>
+
+## 📊 重要なポイント
+
+<div class="bg-indigo-50 rounded-lg p-6 mb-8">
+  <h3 class="text-xl font-bold text-indigo-900 mb-4">🎯 このレッスンで学んだこと</h3>
+  
+  <div class="grid md:grid-cols-2 gap-4">
+    <div>
+      <h4 class="font-semibold text-indigo-800 mb-2">技術的理解</h4>
+      <ul class="space-y-1 text-sm text-indigo-700">
+        <li>✓ End to End通信モデルの特徴</li>
+        <li>✓ HTTP Upgradeメカニズムの詳細</li>
+        <li>✓ セキュリティキーの生成と検証</li>
+        <li>✓ サブプロトコルネゴシエーション</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-semibold text-indigo-800 mb-2">実践的知識</h4>
+      <ul class="space-y-1 text-sm text-indigo-700">
+        <li>✓ プロキシ環境での接続方法</li>
+        <li>✓ ファイアウォール制限の回避</li>
+        <li>✓ デバッグとトラブルシューティング</li>
+        <li>✓ 企業環境でのベストプラクティス</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<ProgressTracker 
+  phase={1} 
+  section="network-tech" 
+  completed={["2.1", "2.2", "2.3", "2.4"]} 
+/>
+
+<NextLesson 
+  nextLessonId="phase1-network-tech-security-ports"
+  nextLessonTitle="セキュリティとポート管理"
+  nextLessonPath="/phase1/network-tech/security-ports"
+/>
