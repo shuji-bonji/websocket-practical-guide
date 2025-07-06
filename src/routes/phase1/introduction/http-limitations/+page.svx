@@ -11,6 +11,7 @@ difficulty: "初級"
   import InteractiveDemo from '$lib/components/learning/InteractiveDemo.svelte';
   import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
   import NextLesson from '$lib/components/learning/NextLesson.svelte';
+  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
@@ -25,7 +26,8 @@ difficulty: "初級"
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-## 🎯 このレッスンで学ぶこと
+<details>
+<summary><h2>🎯 このレッスンで学ぶこと</h2></summary>
 
 HTTPプロトコルの本質的な制限を理解し、WebSocketがそれらの課題をどのように解決するかを学習します。
 
@@ -34,11 +36,13 @@ HTTPプロトコルの本質的な制限を理解し、WebSocketがそれらの�
 - **WebSocketの技術的優位性**の詳細分析
 - **リアルタイム性要求**に対する両者の対応能力
 
+</details>
+
 ## 📡 HTTPの基本的な制限
 
 ### リクエスト・レスポンス型の本質的制約
 
-HTTPは**リクエスト・レスポンス型プロトコル**として設計されており、以下の制限があります：
+HTTPは**リクエスト・レスポンス型プロトコル**として設計されており、以下の制限があります。
 
 #### 1. **一方向通信の制約**
 - クライアントからの要求なしに、サーバーから情報を送信できない
@@ -47,14 +51,14 @@ HTTPは**リクエスト・レスポンス型プロトコル**として設計さ
 
 #### 2. **接続の都度確立**
 ```
-HTTP/1.1の典型的な通信フロー：
+HTTP/1.1の典型的な通信フロー。
 1. TCP接続確立 (3-way handshake)
 2. HTTPリクエスト送信
 3. HTTPレスポンス受信
 4. TCP接続終了 (4-way handshake)
 ```
 
-この過程には以下のオーバーヘッドが存在します：
+この過程には以下のオーバーヘッドが存在します。
 - **ネットワーク遅延**：毎回の接続確立に時間を要する
 - **リソース消費**：サーバー・クライアント双方でのコネクション管理コスト
 - **帯域幅の無駄**：HTTPヘッダーの重複送信
@@ -79,7 +83,7 @@ HTTP/1.1の典型的な通信フロー：
 
 ### 1. **ポーリング（Polling）**
 
-最も基本的なリアルタイム通信の模擬手法です：
+最も基本的なリアルタイム通信の模擬手法です。
 
 ```javascript
 // 典型的なポーリング実装
@@ -96,7 +100,7 @@ function startPolling() {
 }
 ```
 
-#### ポーリングの問題点：
+#### ポーリングの問題点。
 - **無駄なリクエスト**：データ更新がない場合でも定期的にリクエスト送信
 - **遅延の発生**：ポーリング間隔によりリアルタイム性が制限される
 - **サーバー負荷**：大量の不要なリクエストによるリソース消費
@@ -119,7 +123,7 @@ sequenceDiagram
 
 ### 2. **ロングポーリング（Long Polling）**
 
-ポーリングの改良版として考案された手法：
+ポーリングの改良版として考案された手法。
 
 ```javascript
 // ロングポーリング実装例
@@ -143,7 +147,7 @@ async function longPoll() {
 }
 ```
 
-#### ロングポーリングの制限：
+#### ロングポーリングの制限。
 - **タイムアウト管理の複雑さ**：プロキシやファイアウォールによる接続切断
 - **スケーラビリティの問題**：サーバーでの同時接続数制限
 - **エラーハンドリングの複雑化**：接続状態の管理が困難
@@ -166,7 +170,7 @@ sequenceDiagram
 
 ### 3. **Server-Sent Events (SSE)**
 
-HTTP上でのサーバープッシュ実現手法：
+HTTP上でのサーバープッシュ実現手法。
 
 ```javascript
 // SSE実装例
@@ -182,7 +186,7 @@ eventSource.onerror = function(event) {
 };
 ```
 
-#### SSEの制限：
+#### SSEの制限。
 - **単方向通信**：サーバーからクライアントへのみ
 - **テキストデータのみ**：バイナリデータの送信が困難
 - **ブラウザの接続数制限**：同一ドメインへの同時接続数に制約
@@ -210,7 +214,7 @@ sequenceDiagram
 
 ### 1. **双方向リアルタイム通信**
 
-WebSocketは接続確立後、以下の特徴を持ちます：
+WebSocketは接続確立後、以下の特徴を持ちます。
 
 ```javascript
 // WebSocket接続確立
@@ -225,7 +229,7 @@ ws.onmessage = function(event) {
 ws.send('Hello Server!');
 ```
 
-#### 優位性：
+#### 優位性。
 - **即座の双方向通信**：遅延なしでのデータ交換
 - **持続的接続**：一度確立すれば接続を維持
 - **オーバーヘッド最小化**：HTTPヘッダーが不要
@@ -256,6 +260,12 @@ ws.send('Hello Server!');
 </div>
 </div>
 
+## 🚀 実践デモ
+
+### 体験してみよう
+
+同じデータ更新をHTTPポーリングとWebSocketで実装し、パフォーマンスの違いを体験してみましょう。
+
 <InteractiveDemo 
   title="HTTP vs WebSocket パフォーマンス比較"
   description="同じデータ更新をHTTPポーリングとWebSocketで実装し、レスポンス時間とリクエスト数を比較してみましょう。"
@@ -266,12 +276,20 @@ ws.send('Hello Server!');
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
 
-### 🔍 デモで確認できること
+### デモで確認できること
 
 1. **レスポンス時間の違い**：WebSocketの即応性 vs HTTPポーリングの遅延
 2. **リクエスト数の差異**：WebSocketの効率性 vs HTTPの冗長性
 3. **帯域幅使用量**：ヘッダーオーバーヘッドの比較
 4. **リアルタイム性**：データ更新の反映速度
+
+### 実行手順
+
+1. **HTTPポーリングテスト**：まずHTTPポーリング方式でのデータ更新を開始
+2. **メトリクス観察**：リクエスト数、レスポンス時間、帯域幅使用量を確認
+3. **WebSocketテスト**：同じデータ更新をWebSocketで実行
+4. **比較分析**：両方式の違いを数値とグラフで比較
+5. **リアルタイム性確認**：データ更新の即時性の違いを体感
 
 ## 💡 適切な技術選択の指針
 
@@ -318,7 +336,7 @@ ws.send('Hello Server!');
 
 ## 🔍 次のレッスンへの準備
 
-このレッスンでHTTPの制限とWebSocketの優位性を理解しました。次のレッスンでは：
+このレッスンでHTTPの制限とWebSocketの優位性を理解しました。次のレッスンでは。
 
 - **WebSocketの具体的な利用例**の詳細分析
 - **適用場面の判断方法**の実践的アプローチ
@@ -346,6 +364,8 @@ ws.send('Hello Server!');
   lessonId="phase1-introduction-http-limitations"
   sectionTitle="WebSocket入門"
 />
+
+<CompletionMark lessonId="phase1-introduction-http-limitations" />
 
 <NextLesson 
   nextLessonId="phase1-introduction-use-cases"
