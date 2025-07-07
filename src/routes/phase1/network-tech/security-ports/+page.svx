@@ -1,8 +1,8 @@
 ---
 title: "セキュリティとポート管理"
 description: "WebSocketにおけるセキュリティとポート管理のベストプラクティスを学習します"
-duration: 60
-difficulty: "beginner"
+duration: "2-3時間"
+difficulty: "中級"
 phase: 1
 lesson: "2.5"
 ---
@@ -17,18 +17,19 @@ lesson: "2.5"
 <LessonLayout
 	lessonId="phase1-network-tech-security-ports"
 	title="セキュリティとポート管理"
-	duration="1時間"
-	difficulty="beginner"
+	duration="2-3時間"
+	difficulty="中級"
 	prerequisites={['HTTP基礎', 'WebSocket接続確立プロセス', 'ネットワークセキュリティ基礎']}
 	sectionTitle="ネットワーク技術基礎"
 	nextLessonId="phase1-websocket-states"
 	nextLessonTitle="WebSocket状態とライフサイクル"
 	nextLessonPath="/phase1/websocket-states"
 	learningObjectives={[
-		'ws://とwss://の違いと適切な使い分けを理解',
-		'Originチェックとセキュリティメカニズムを学習',
-		'WebSocketのOriginチェックとCORSの違いを把握',
-		'企業環境でのWebSocket運用のベストプラクティスを理解'
+		'WebSocket固有のセキュリティ脅威（CSWSH、インジェクション、DoS）の理解と対策',
+		'JWT、OAuth 2.0、カスタムプロトコルによる認証・認可システムの実装',
+		'CSRF、DDoS、レート制限、入力検証による多層防御の実装',
+		'企業環境でのセキュリティポリシー策定とコンプライアンス対応',
+		'セキュリティ監査システムとインシデント対応手順の構築'
 	]}
 >
 
@@ -75,112 +76,641 @@ lesson: "2.5"
 				</div>
 			</div>
 		</div>
-	</Card>
-</Section>
 
-<Section title="Originチェックとセキュリティ" icon="🔐">
-	<Card title="Originチェックの仕組み" icon="🔒" accentColor="blue">
-		<p>WebSocketのセキュリティ機構として、Origin（送信元）チェックが重要な役割を果たします。</p>
-		
-		<h5 class="font-medium text-blue-800 mt-4 mb-2">1. クライアント側でのOrigin送信</h5>
-		
-```http
-GET /websocket HTTP/1.1
-Host: api.example.com
-Origin: https://myapp.example.com
-Connection: Upgrade
-Upgrade: websocket
+#### プロトコル選択の戦略
+
+**開発環境**
+```javascript
+// ローカル開発では ws:// も許可
+const websocketUrl = process.env.NODE_ENV === 'development' 
+  ? 'ws://localhost:8080/websocket'
+  : 'wss://api.production.com/websocket';
 ```
 
-		<h5 class="font-medium text-blue-800 mt-4 mb-2">2. サーバー側でのOrigin検証</h5>
+**本番環境**
+```javascript
+// 本番環境では必ず wss:// を使用
+const websocketUrl = 'wss://api.production.com/websocket';
+
+// TLS設定の強化
+const tlsOptions = {
+  minVersion: 'TLSv1.2',
+  ciphers: [
+    'ECDHE-RSA-AES128-GCM-SHA256',
+    'ECDHE-RSA-AES256-GCM-SHA384',
+    'ECDHE-RSA-AES128-SHA256',
+    'ECDHE-RSA-AES256-SHA384'
+  ].join(':'),
+  honorCipherOrder: true
+};
+```
+
+	</Card>
+
+<Card title="TLS/SSL実装のベストプラクティス" icon="🛡️" accentColor="green">
+
+#### 証明書管理の高度な実装
+
+**1. 証明書の自動更新（Let's Encrypt）**
 
 ```javascript
-// Node.js WebSocketサーバーでのOrigin検証例
-const allowedOrigins = [
-  'https://myapp.example.com',
-  'https://admin.example.com'
-];
+const https = require('https');
+const WebSocket = require('ws');
+const fs = require('fs');
+const path = require('path');
 
-wss.on('connection', (ws, request) => {
-  const origin = request.headers.origin;
-  if (!allowedOrigins.includes(origin)) {
-    ws.close(1008, 'Origin not allowed');
-    return;
+class AutoRenewingWebSocketServer {
+  constructor() {
+    this.certPath = '/etc/letsencrypt/live/example.com';
+    this.server = null;
+    this.wss = null;
+    this.startServer();
+    
+    // 証明書の定期チェック（毎日）
+    setInterval(() => this.checkAndRenewCertificate(), 24 * 60 * 60 * 1000);
+  }
+
+  loadCertificates() {
+    try {
+      return {
+        key: fs.readFileSync(path.join(this.certPath, 'privkey.pem')),
+        cert: fs.readFileSync(path.join(this.certPath, 'fullchain.pem'))
+      };
+    } catch (error) {
+      console.error('Failed to load certificates:', error);
+      throw error;
+    }
+  }
+
+  startServer() {
+    const credentials = this.loadCertificates();
+    
+    this.server = https.createServer({
+      ...credentials,
+      // セキュリティ強化設定
+      secureProtocol: 'TLSv1_2_method',
+      honorCipherOrder: true,
+      ciphers: [
+        'ECDHE-RSA-AES128-GCM-SHA256',
+        'ECDHE-RSA-AES256-GCM-SHA384',
+        'ECDHE-RSA-AES128-SHA256',
+        'ECDHE-RSA-AES256-SHA384',
+        'ECDHE-RSA-AES256-SHA'
+      ].join(':')
+    });
+
+    this.wss = new WebSocket.Server({ 
+      server: this.server,
+      verifyClient: this.verifyClient.bind(this)
+    });
+
+    this.server.listen(443, () => {
+      console.log('Secure WebSocket server started on port 443');
+    });
+  }
+
+  async checkAndRenewCertificate() {
+    try {
+      const certInfo = await this.getCertificateInfo();
+      const daysUntilExpiry = Math.floor(
+        (certInfo.validTo - Date.now()) / (1000 * 60 * 60 * 24)
+      );
+
+      if (daysUntilExpiry <= 30) {
+        console.log(`Certificate expires in ${daysUntilExpiry} days. Renewing...`);
+        await this.renewCertificate();
+        this.restartServer();
+      }
+    } catch (error) {
+      console.error('Certificate check failed:', error);
+    }
+  }
+
+  verifyClient(info) {
+    // TLS証明書の追加検証
+    const cert = info.req.socket.getPeerCertificate();
+    
+    if (cert && cert.subject) {
+      console.log('Client certificate subject:', cert.subject);
+      // クライアント証明書ベースの認証も実装可能
+    }
+
+    return true; // 基本的な検証はTLS層で完了
+  }
+}
+```
+
+**2. Perfect Forward Secrecy (PFS) の実装**
+
+```javascript
+const tlsConfig = {
+  // PFSを提供する暗号スイートのみ使用
+  ciphers: [
+    'ECDHE-RSA-AES128-GCM-SHA256',
+    'ECDHE-RSA-AES256-GCM-SHA384',
+    'ECDHE-ECDSA-AES128-GCM-SHA256',
+    'ECDHE-ECDSA-AES256-GCM-SHA384',
+    'DHE-RSA-AES128-GCM-SHA256',
+    'DHE-RSA-AES256-GCM-SHA384'
+  ].join(':'),
+  
+  // 楕円曲線の指定
+  ecdhCurve: 'secp384r1:prime256v1',
+  
+  // DHパラメータファイル（2048bit以上）
+  dhparam: fs.readFileSync('/path/to/dhparam.pem'),
+  
+  // セッション再利用の制限
+  sessionTimeout: 300, // 5分
+  
+  // HSTSヘッダーの自動設定
+  requestCert: false,
+  rejectUnauthorized: false
+};
+```
+
+</Card>
+
+<Card title="CSRF（Cross-Site Request Forgery）対策" icon="🔐" accentColor="red">
+
+WebSocketはCSRFトークンを自動送信しないため、専用の対策が必要です。
+
+#### CSRF対策の実装
+
+**1. CSRFトークン検証**
+
+```javascript
+class CSRFProtectedWebSocket {
+  constructor() {
+    this.csrfTokens = new Map(); // セッションID → CSRFトークン
+  }
+
+  // CSRFトークン生成（HTTPエンドポイント）
+  generateCSRFToken(sessionId) {
+    const token = crypto.randomBytes(32).toString('hex');
+    this.csrfTokens.set(sessionId, {
+      token,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 30 * 60 * 1000 // 30分で期限切れ
+    });
+    return token;
+  }
+
+  // WebSocket接続時のCSRF検証
+  verifyCSRFToken(request) {
+    // URLからCSRFトークンを取得
+    const url = new URL(request.url, 'ws://localhost');
+    const providedToken = url.searchParams.get('csrf_token');
+    const sessionId = this.extractSessionId(request);
+
+    if (!providedToken || !sessionId) {
+      throw new Error('CSRF token or session ID missing');
+    }
+
+    const storedTokenData = this.csrfTokens.get(sessionId);
+    
+    if (!storedTokenData) {
+      throw new Error('Invalid session');
+    }
+
+    if (storedTokenData.expiresAt < Date.now()) {
+      this.csrfTokens.delete(sessionId);
+      throw new Error('CSRF token expired');
+    }
+
+    if (storedTokenData.token !== providedToken) {
+      throw new Error('Invalid CSRF token');
+    }
+
+    // 使用済みトークンは削除（再利用防止）
+    this.csrfTokens.delete(sessionId);
+    return true;
+  }
+
+  extractSessionId(request) {
+    // Cookieからセッション IDを抽出
+    const cookies = request.headers.cookie;
+    if (!cookies) return null;
+    
+    const sessionMatch = cookies.match(/sessionId=([^;]+)/);
+    return sessionMatch ? sessionMatch[1] : null;
+  }
+}
+
+// 使用例
+const csrfProtection = new CSRFProtectedWebSocket();
+
+const wss = new WebSocket.Server({
+  port: 8080,
+  verifyClient: (info) => {
+    try {
+      csrfProtection.verifyCSRFToken(info.req);
+      return true;
+    } catch (error) {
+      console.log('CSRF verification failed:', error.message);
+      return false;
+    }
   }
 });
 ```
-	</Card>
+
+**2. Originチェックの強化**
+
+```javascript
+class EnhancedOriginChecker {
+  constructor() {
+    this.allowedOrigins = new Set([
+      'https://myapp.example.com',
+      'https://admin.example.com'
+    ]);
+    
+    this.blockedIPs = new Set();
+    this.suspiciousActivity = new Map();
+  }
+
+  verifyOriginWithThreatDetection(request) {
+    const origin = request.headers.origin;
+    const clientIP = this.getClientIP(request);
+    
+    // ブロックされたIPのチェック
+    if (this.blockedIPs.has(clientIP)) {
+      throw new Error('IP address is blocked');
+    }
+    
+    // Originの基本検証
+    if (!origin) {
+      this.recordSuspiciousActivity(clientIP, 'missing_origin');
+      throw new Error('Origin header is required');
+    }
+    
+    if (!this.allowedOrigins.has(origin)) {
+      this.recordSuspiciousActivity(clientIP, 'invalid_origin', { origin });
+      throw new Error(`Origin not allowed: ${origin}`);
+    }
+    
+    // 追加のセキュリティチェック
+    this.validateOriginSyntax(origin);
+    this.checkForSuspiciousPatterns(origin, clientIP);
+    
+    return true;
+  }
+
+  recordSuspiciousActivity(ip, type, details = {}) {
+    const key = `${ip}:${type}`;
+    const activity = this.suspiciousActivity.get(key) || {
+      count: 0,
+      firstSeen: Date.now(),
+      lastSeen: Date.now()
+    };
+    
+    activity.count++;
+    activity.lastSeen = Date.now();
+    activity.details = details;
+    
+    this.suspiciousActivity.set(key, activity);
+    
+    // 閾値を超えた場合はIPをブロック
+    if (activity.count >= 5) {
+      this.blockedIPs.add(ip);
+      console.log(`IP ${ip} blocked due to repeated ${type} violations`);
+    }
+  }
+
+  validateOriginSyntax(origin) {
+    try {
+      const url = new URL(origin);
+      
+      // HTTPSの強制
+      if (url.protocol !== 'https:') {
+        throw new Error('Only HTTPS origins are allowed');
+      }
+      
+      // 不正な文字の検出
+      if (!/^[a-zA-Z0-9.-]+$/.test(url.hostname)) {
+        throw new Error('Invalid characters in origin hostname');
+      }
+      
+    } catch (error) {
+      throw new Error(`Invalid origin format: ${error.message}`);
+    }
+  }
+
+  getClientIP(request) {
+    return request.headers['x-forwarded-for'] ||
+           request.headers['x-real-ip'] ||
+           request.connection.remoteAddress ||
+           request.socket.remoteAddress ||
+           '127.0.0.1';
+  }
+}
+```
+
+</Card>
+
+<Card title="レート制限とDDoS対策" icon="⚡" accentColor="orange">
+
+WebSocketの持続接続特性を悪用したDDoS攻撃への対策が重要です。
+
+#### 包括的なレート制限システム
+
+```javascript
+class WebSocketRateLimiter {
+  constructor(options = {}) {
+    this.maxConnections = options.maxConnections || 1000;
+    this.maxConnectionsPerIP = options.maxConnectionsPerIP || 10;
+    this.maxMessagesPerSecond = options.maxMessagesPerSecond || 10;
+    this.maxMessageSize = options.maxMessageSize || 1024 * 16; // 16KB
+    
+    this.connections = new Map(); // IP → 接続数
+    this.messageRates = new Map(); // 接続ID → メッセージレート情報
+    this.totalConnections = 0;
+    
+    // 統計情報のクリーンアップ（1分ごと）
+    setInterval(() => this.cleanupStats(), 60000);
+  }
+
+  canAcceptConnection(request) {
+    const clientIP = this.getClientIP(request);
+    
+    // 全体の接続数制限
+    if (this.totalConnections >= this.maxConnections) {
+      throw new Error('Server connection limit exceeded');
+    }
+
+    // IP別接続数制限
+    const ipConnections = this.connections.get(clientIP) || 0;
+    if (ipConnections >= this.maxConnectionsPerIP) {
+      throw new Error('IP connection limit exceeded');
+    }
+
+    return true;
+  }
+
+  registerConnection(ws, request) {
+    const clientIP = this.getClientIP(request);
+    const connectionId = this.generateConnectionId();
+    
+    // 接続数更新
+    this.connections.set(clientIP, (this.connections.get(clientIP) || 0) + 1);
+    this.totalConnections++;
+    
+    // メッセージレート制限の初期化
+    this.messageRates.set(connectionId, {
+      count: 0,
+      windowStart: Date.now(),
+      violations: 0
+    });
+
+    ws.connectionId = connectionId;
+    ws.clientIP = clientIP;
+
+    ws.on('close', () => {
+      this.unregisterConnection(ws);
+    });
+
+    return connectionId;
+  }
+
+  canAcceptMessage(ws, messageSize) {
+    // メッセージサイズ制限
+    if (messageSize > this.maxMessageSize) {
+      throw new Error('Message size limit exceeded');
+    }
+
+    const rateInfo = this.messageRates.get(ws.connectionId);
+    if (!rateInfo) {
+      throw new Error('Connection not registered');
+    }
+
+    const now = Date.now();
+    const windowDuration = 1000; // 1秒
+
+    // 新しいウィンドウの開始
+    if (now - rateInfo.windowStart >= windowDuration) {
+      rateInfo.count = 0;
+      rateInfo.windowStart = now;
+    }
+
+    // レート制限チェック
+    if (rateInfo.count >= this.maxMessagesPerSecond) {
+      rateInfo.violations++;
+      
+      // 連続違反時は接続を切断
+      if (rateInfo.violations >= 3) {
+        throw new Error('Repeated rate limit violations');
+      }
+      
+      throw new Error('Message rate limit exceeded');
+    }
+
+    rateInfo.count++;
+    return true;
+  }
+}
+```
+
+</Card>
+
 </Section>
 
-<Section title="CORSとの違い" icon="🔄">
-	<Card title="WebSocket Origin vs HTTP CORS" icon="📊" accentColor="purple">
-		<p>WebSocketのOriginチェックとHTTPのCORS（Cross-Origin Resource Sharing）には重要な違いがあります。</p>
-		
-		<div class="overflow-x-auto">
-			<table class="min-w-full divide-y divide-gray-200">
-				<thead class="bg-gray-50">
-					<tr>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">特徴</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WebSocket Origin</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">HTTP CORS</th>
-					</tr>
-				</thead>
-				<tbody class="bg-white divide-y divide-gray-200">
-					<tr>
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">チェック方法</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">サーバー側で任意実装</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ブラウザが自動実行</td>
-					</tr>
-					<tr class="bg-gray-50">
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">プリフライト</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">なし</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">あり（OPTIONS）</td>
-					</tr>
-					<tr>
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">エラー処理</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">接続拒否・クローズ</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">リクエストブロック</td>
-					</tr>
-					<tr class="bg-gray-50">
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">設定場所</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">WebSocketサーバー</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">HTTPサーバー</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</Card>
-	
-	<Card title="重要なポイント" icon="💡" accentColor="yellow">
-		<p>WebSocketのOriginチェックは<strong>サーバー側でのオプション機能</strong>です。
-		実装しなければ任意のOriginからの接続を許可してしまうため、
-		セキュリティ要件に応じて適切に実装する必要があります。</p>
-	</Card>
+<Section title="企業環境でのセキュリティポリシー" icon="🏢">
+
+<Card title="セキュリティポリシーテンプレート" icon="📋" accentColor="indigo">
+
+企業環境でのWebSocket運用では、包括的なセキュリティポリシーが必要です。
+
+#### WebSocketセキュリティポリシー文書テンプレート
+
+```markdown
+# WebSocketセキュリティポリシー v1.0
+
+## 1. 適用範囲
+- 本ポリシーは、当社が運用するすべてのWebSocketサービスに適用される
+- 開発、ステージング、本番環境すべてを対象とする
+- サードパーティサービスとの統合時も準拠する
+
+## 2. 暗号化要件
+### 2.1 必須要件
+- 本番環境では必ずwss://（TLS暗号化）を使用
+- TLS 1.2以上を使用（TLS 1.3推奨）
+- Perfect Forward Secrecy (PFS)対応暗号スイートを使用
+
+### 2.2 証明書管理
+- 証明書は信頼できるCA（Certificate Authority）から取得
+- 証明書の有効期限は90日前に更新アラート
+- 自動更新システムの導入を推奨
+
+## 3. 認証・認可
+### 3.1 認証要件
+- すべてのWebSocket接続で認証を実装
+- JWT、OAuth 2.0、またはSAML認証を使用
+- 認証トークンの有効期限は最大24時間
+
+### 3.2 認可制御
+- ロールベースアクセス制御（RBAC）を実装
+- 最小権限の原則を適用
+- 管理者権限の分離
+
+## 4. 入力検証
+### 4.1 検証要件
+- すべての入力データを検証・サニタイゼーション
+- SQLインジェクション対策を実装
+- XSS攻撃対策を実装
+
+### 4.2 制限値
+- メッセージサイズ上限: 16KB
+- 接続あたりメッセージレート: 10msg/秒
+- IP当たり同時接続数: 5接続
+
+## 5. 監視・ログ
+### 5.1 ログ要件
+- すべての接続・切断をログ
+- セキュリティ関連イベントの詳細ログ
+- ログの改ざん防止措置
+
+### 5.2 監視項目
+- 異常な接続パターンの検知
+- レート制限違反の監視
+- 認証失敗の監視
+
+## 6. インシデント対応
+### 6.1 対応手順
+- セキュリティインシデント発生時の連絡体制
+- 緊急時の接続遮断手順
+- 事後調査・改善手順
+
+## 7. コンプライアンス
+### 7.1 規制要件
+- GDPR、CCPA等のデータ保護規制への準拠
+- SOC 2、ISO 27001等のセキュリティ基準への準拠
+- 業界固有の規制要件への対応
+```
+
+</Card>
+
+<Card title="セキュリティチェックリスト" icon="✅" accentColor="green">
+
+企業環境でのWebSocket実装時に確認すべきセキュリティ項目の包括的なチェックリストです。
+
+#### 設計・実装段階
+
+**認証・認可**
+- [ ] 強力な認証メカニズム（JWT、OAuth 2.0等）の実装
+- [ ] ロールベースアクセス制御（RBAC）の設計
+- [ ] 認証トークンの適切な有効期限設定
+- [ ] 多要素認証（MFA）の検討・実装
+- [ ] 認証状態の定期的な再確認メカニズム
+
+**暗号化・通信セキュリティ**
+- [ ] 本番環境でのwss://（TLS暗号化）の強制
+- [ ] TLS 1.2以上の使用（TLS 1.3推奨）
+- [ ] Perfect Forward Secrecy対応暗号スイートの選択
+- [ ] 証明書の自動更新システムの構築
+- [ ] HSTS（HTTP Strict Transport Security）の実装
+
+**入力検証・データ保護**
+- [ ] 包括的な入力検証・サニタイゼーション
+- [ ] SQLインジェクション対策の実装
+- [ ] XSS（Cross-Site Scripting）対策の実装
+- [ ] CSRF（Cross-Site Request Forgery）対策の実装
+- [ ] 機密データの暗号化保存
+
+#### 運用・監視段階
+
+**レート制限・DDoS対策**
+- [ ] 接続数制限の実装（全体・IP別）
+- [ ] メッセージレート制限の実装
+- [ ] メッセージサイズ制限の設定
+- [ ] 異常パターンの検知・自動ブロック
+- [ ] 負荷分散とスケーリング戦略
+
+**監視・ログ・監査**
+- [ ] 包括的なセキュリティログの実装
+- [ ] リアルタイム異常検知システム
+- [ ] 定期的なセキュリティ監査の実施
+- [ ] インシデント対応手順の策定
+- [ ] ログの改ざん防止措置
+
+#### コンプライアンス・ガバナンス
+
+**規制対応**
+- [ ] GDPR、CCPA等のデータ保護規制への準拠
+- [ ] SOC 2、ISO 27001等のセキュリティ基準への対応
+- [ ] 業界固有の規制要件の確認・対応
+- [ ] データ主体の権利（削除、訂正等）への対応
+- [ ] 国境を越えるデータ転送の規制確認
+
+**開発・運用プロセス**
+- [ ] セキュアコーディングガイドラインの策定
+- [ ] 定期的なセキュリティコードレビュー
+- [ ] 侵入テスト・脆弱性診断の実施
+- [ ] セキュリティインシデント対応計画の策定
+- [ ] スタッフへのセキュリティ教育・訓練
+
+</Card>
+
 </Section>
 
-<Section title="重要なポイント" icon="📊">
-	<Card title="このレッスンで学んだこと" icon="🎯" accentColor="indigo">
-		<div class="grid md:grid-cols-2 gap-4">
-			<div>
-				<h4 class="font-semibold text-indigo-800 mb-2">セキュリティ理解</h4>
-				<ul class="space-y-1 text-sm text-indigo-700">
-					<li>✓ ws://とwss://の適切な使い分け</li>
-					<li>✓ Originチェックの実装方法</li>
-					<li>✓ CORSとWebSocketの違い</li>
-					<li>✓ 証明書管理のベストプラクティス</li>
-				</ul>
-			</div>
-			<div>
-				<h4 class="font-semibold text-indigo-800 mb-2">環境対応</h4>
-				<ul class="space-y-1 text-sm text-indigo-700">
-					<li>✓ ファイアウォール制限の理解</li>
-					<li>✓ プロキシ環境での回避策</li>
-					<li>✓ 企業環境でのWebSocket運用</li>
-					<li>✓ ポート選択の戦略</li>
-				</ul>
-			</div>
-		</div>
-	</Card>
+<Section title="学習成果の確認" icon="📊">
+
+<Card title="このレッスンで習得した知識" icon="🎯" accentColor="indigo">
+
+<div class="grid md:grid-cols-3 gap-6">
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🔒 セキュリティ脅威への理解</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ CSWSH攻撃の仕組みと対策</li>
+<li>✓ WebSocketインジェクション攻撃</li>
+<li>✓ DDoS攻撃の特性と防御手法</li>
+<li>✓ MitM攻撃とTLS暗号化の重要性</li>
+<li>✓ 入力検証によるインジェクション防止</li>
+</ul>
+</div>
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🔑 認証・認可システム</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ JWT認証の実装パターン</li>
+<li>✓ OAuth 2.0統合による認証</li>
+<li>✓ カスタム認証プロトコル設計</li>
+<li>✓ ロールベースアクセス制御</li>
+<li>✓ 認証状態の継続的検証</li>
+</ul>
+</div>
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🛡️ 企業レベルのセキュリティ</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ セキュリティポリシーの策定</li>
+<li>✓ コンプライアンス要件への対応</li>
+<li>✓ セキュリティ監査システム</li>
+<li>✓ インシデント対応手順</li>
+<li>✓ セキュリティベストプラクティス</li>
+</ul>
+</div>
+
+</div>
+
+#### 実践的な応用力
+
+**技術実装能力**
+- 包括的なWebSocketセキュリティシステムの設計・実装
+- 多層防御アプローチによるセキュリティ強化
+- エンタープライズグレードの認証・認可システム構築
+
+**運用・管理能力**
+- セキュリティポリシーの策定と運用
+- リアルタイム監視・アラートシステムの構築
+- インシデント対応とフォレンジック調査の実施
+
+**コンプライアンス対応**
+- 各種規制要件への対応システム設計
+- 継続的なセキュリティ監査の実施
+- ステークホルダーへの適切な報告・コミュニケーション
+
+</Card>
+
 </Section>
 
 </LessonLayout>
