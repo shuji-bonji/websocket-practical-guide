@@ -366,10 +366,34 @@
 </div>
 
 {#if showCreateModal}
-	<div class="modal-overlay" onclick={() => (showCreateModal = false)}>
-		<div class="modal-content" onclick={(e: MouseEvent) => e.stopPropagation()}>
+	<div
+		class="modal-overlay"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="modal-title"
+		tabindex="-1"
+		onclick={() => (showCreateModal = false)}
+		onkeydown={(e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				showCreateModal = false;
+			}
+		}}
+	>
+		<div
+			class="modal-content"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="modal-title"
+			tabindex="-1"
+			onkeydown={(e: KeyboardEvent) => {
+				if (e.key === 'Escape') {
+					showCreateModal = false;
+				}
+			}}
+			onclick={(e: MouseEvent) => e.stopPropagation()}
+		>
 			<div class="modal-header">
-				<h2>Create Mock Server</h2>
+				<h2 id="modal-title">Create Mock Server</h2>
 				<button class="modal-close" onclick={() => (showCreateModal = false)}>×</button>
 			</div>
 

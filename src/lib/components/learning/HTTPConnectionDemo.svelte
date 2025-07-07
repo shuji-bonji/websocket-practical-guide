@@ -220,7 +220,7 @@
 
 	<!-- Version Selection -->
 	<div class="mb-6">
-		<label class="block text-sm font-medium text-gray-700 mb-2">プロトコルを選択:</label>
+		<span class="block text-sm font-medium text-gray-700 mb-2">プロトコルを選択:</span>
 		<div class="flex gap-3">
 			<label class="flex items-center">
 				<input type="radio" bind:group={selectedVersion} value="http1.0" class="mr-2" />

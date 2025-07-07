@@ -3,16 +3,17 @@
 
 	interface Props {
 		lessonId: string;
-		title?: string;
 	}
 
-	let { lessonId, title = 'このレッスンを完了にする' }: Props = $props();
+	let { lessonId }: Props = $props();
 
 	let progress = $derived($progressStore);
 
 	// レッスンの完了状態を取得
 	let isCompleted = $derived(
-		progress.phases.some((phase) => phase.lessons.some((lesson) => lesson.id === lessonId && lesson.completed))
+		progress.phases.some((phase) =>
+			phase.lessons.some((lesson) => lesson.id === lessonId && lesson.completed)
+		)
 	);
 
 	function toggleCompletion() {
@@ -24,30 +25,38 @@
 	}
 </script>
 
-<div class="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg {isCompleted ? 'border-green-400 bg-gradient-to-r from-green-100 to-green-50' : ''}">
+<div
+	class="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg {isCompleted
+		? 'border-green-400 bg-gradient-to-r from-green-100 to-green-50'
+		: ''}"
+>
 	<div class="flex items-center justify-between">
 		<div>
 			<h3 class="text-lg font-semibold text-gray-900 mb-2">
 				{isCompleted ? '✅ レッスン完了済み' : '🎉 レッスン完了'}
 			</h3>
 			<p class="text-sm text-gray-600">
-				{isCompleted 
+				{isCompleted
 					? 'このレッスンは完了済みです。未完了に戻す場合は右のボタンをクリックしてください。'
-					: 'このレッスンの内容を理解できましたら、完了マークをつけて次のレッスンに進みましょう。'
-				}
+					: 'このレッスンの内容を理解できましたら、完了マークをつけて次のレッスンに進みましょう。'}
 			</p>
 		</div>
 		<button
 			type="button"
 			onclick={toggleCompletion}
-			class="px-6 py-3 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {isCompleted 
-				? 'bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500' 
+			class="px-6 py-3 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {isCompleted
+				? 'bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500'
 				: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500'}"
 		>
 			<div class="flex items-center space-x-2">
 				{#if isCompleted}
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
 					</svg>
 					<span>完了を取り消す</span>
 				{:else}

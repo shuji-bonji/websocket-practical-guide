@@ -1,0 +1,369 @@
+---
+title: "OSI参照モデルとWebSocketの位置"
+description: "OSI 7層モデルの各層の役割を理解し、WebSocketが動作する層を特定します"
+duration: 30
+difficulty: "beginner"
+phase: 1
+lesson: "2.2"
+---
+
+<script>
+	import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+	import Section from '$lib/components/common/Section.svelte';
+	import Card from '$lib/components/common/Card.svelte';
+	import NetworkDiagram from '$lib/components/learning/NetworkDiagram.svelte';
+	import Mermaid from '$lib/components/Mermaid.svelte';
+</script>
+
+<LessonLayout
+	lessonId="phase1-network-tech-osi-model"
+	title="OSI参照モデルとWebSocketの位置"
+	duration="30分"
+	difficulty="beginner"
+	prerequisites={['基本的なネットワーク知識', 'HTTP基礎の理解']}
+	sectionTitle="ネットワーク技術基礎"
+	nextLessonId="phase1-network-tech-http-versions"
+	nextLessonTitle="HTTP/1.1からHTTP/3までのWebSocket対応"
+	nextLessonPath="/phase1/network-tech/http-versions"
+	learningObjectives={[
+		'OSI 7層モデルの各層の役割を理解',
+		'WebSocketが動作する層を特定',
+		'Socket（トランスポート層）との違いを把握'
+	]}
+>
+
+<Section title="学習目標" icon="🎯">
+	<Card title="このレッスンの目的" icon="📋" accentColor="blue">
+		<p>ネットワーク通信の基礎となるOSI参照モデルを理解し、WebSocketの位置づけを明確にします。</p>
+		<ul>
+			<li><strong>OSI 7層モデルの各層の役割</strong>を理解</li>
+			<li><strong>WebSocketが動作する層</strong>を特定</li>
+			<li><strong>Socket（トランスポート層）との違い</strong>を把握</li>
+		</ul>
+	</Card>
+	
+	<Card title="OSI参照モデルとは？" icon="📚" accentColor="purple">
+		<p><strong>OSI（Open Systems Interconnection）参照モデル</strong>は、ネットワーク通信を7つの階層に分けて標準化したモデルです。各層が独立した責任を持ち、下位層のサービスを利用して上位層にサービスを提供します。</p>
+	</Card>
+</Section>
+
+<Section title="OSI 7層モデルの詳細" icon="🏗️">
+	<Card title="OSI 7層モデル" icon="📊" accentColor="green">
+		<NetworkDiagram diagramType="osi-model" title="OSI 7層モデル" />
+	</Card>
+	
+	<Card title="各層の役割と代表的プロトコル" icon="📋" accentColor="blue">
+
+#### 🔴 Layer 7: アプリケーション層
+- **役割**: ユーザーアプリケーションとネットワークサービスの接点
+- **代表プロトコル**: HTTP, HTTPS, FTP, SMTP, DNS
+- **WebSocketでの位置**: アプリケーションレベルのメッセージ形式
+
+```javascript
+// アプリケーション層での WebSocket 使用例
+const socket = new WebSocket('wss://chat.example.com');
+socket.send(JSON.stringify({type: 'message', text: 'Hello!'}));
+```
+
+#### 🟠 Layer 6: プレゼンテーション層
+- **役割**: データの表現形式（暗号化、圧縮、エンコーディング）
+- **代表プロトコル**: TLS/SSL, ASCII, JPEG, GIF
+- **WebSocketでの位置**: WSS（WebSocket Secure）での暗号化
+
+```
+wss://example.com  ← TLS/SSL暗号化を使用
+ws://example.com   ← 平文通信
+```
+
+#### 🟡 Layer 5: セッション層
+- **役割**: アプリケーション間のセッション管理
+- **代表プロトコル**: NetBIOS, RPC, SQL sessions
+- **WebSocketでの位置**: **WebSocketのメイン動作層**
+
+```javascript
+// セッション層での WebSocket 管理
+socket.onopen = () => console.log('Session established');
+socket.onclose = () => console.log('Session terminated');
+```
+
+#### 🟢 Layer 4: トランスポート層
+- **役割**: エンドツーエンドの信頼性のあるデータ転送
+- **代表プロトコル**: TCP, UDP
+- **WebSocketでの位置**: TCPの信頼性を活用
+
+```
+WebSocket → TCP → IP パケット
+```
+
+#### 🔵 Layer 3: ネットワーク層
+- **役割**: パケットルーティングとアドレッシング
+- **代表プロトコル**: IP, ICMP, ARP
+- **WebSocketでの位置**: IPアドレスによる通信
+
+#### 🟣 Layer 2: データリンク層
+- **役割**: 隣接ノード間の信頼性のあるデータ転送
+- **代表プロトコル**: Ethernet, WiFi (802.11), PPP
+- **WebSocketでの位置**: 物理メディアでのフレーム転送
+
+#### 🟤 Layer 1: 物理層
+- **役割**: 物理的な信号の伝送
+- **代表技術**: ケーブル、光ファイバー、無線電波
+- **WebSocketでの位置**: 実際の電気信号・光信号
+
+	</Card>
+</Section>
+
+<Section title="WebSocketの位置づけ詳細" icon="🎯">
+	<Card title="WebSocketは主にセッション層（Layer 5）で動作" icon="🔌" accentColor="yellow">
+
+### 🎯 WebSocketは主にセッション層（Layer 5）で動作
+
+WebSocketの特徴的な機能は**セッション層**で実現されています。
+
+1. **永続的接続の維持**
+   ```javascript
+   // 接続の確立と維持
+   const socket = new WebSocket('ws://example.com');
+   // 接続は明示的に閉じるまで維持される
+   ```
+
+2. **双方向通信セッション**
+   ```javascript
+   // クライアントからサーバーへ
+   socket.send('Client to Server');
+   
+   // サーバーからクライアントへ
+   socket.onmessage = (event) => {
+       console.log('Server to Client:', event.data);
+   };
+   ```
+
+3. **セッション状態管理**
+   ```javascript
+   // WebSocket ReadyState (セッション状態)
+   console.log(socket.readyState);
+   // 0: CONNECTING, 1: OPEN, 2: CLOSING, 3: CLOSED
+   ```
+
+	</Card>
+	
+	<Card title="各層での WebSocket の動作" icon="🔄" accentColor="indigo">
+		<Mermaid chart={`
+graph TD
+    A[Layer 7: Application<br/>WebSocket API, JSON messages]
+    B[Layer 6: Presentation<br/>TLS encryption for WSS]
+    C[Layer 5: Session<br/>WebSocket protocol, frame management]
+    D[Layer 4: Transport<br/>TCP connection, reliability]
+    E[Layer 3: Network<br/>IP routing, addressing]
+    F[Layer 2: Data Link<br/>Ethernet frames, WiFi]
+    G[Layer 1: Physical<br/>Electrical signals, radio waves]
+    
+    A <--> B
+    B <--> C
+    C <--> D
+    D <--> E
+    E <--> F
+    F <--> G
+    
+    style C fill:#ffeb3b,stroke:#333,stroke-width:4px
+    `} />
+	</Card>
+</Section>
+
+<Section title="SocketとWebSocketの違い" icon="🔌">
+	<Card title="Socket（トランスポート層）" icon="🔧" accentColor="orange">
+
+		<p><strong>Socket</strong>は<strong>Layer 4（トランスポート層）</strong>のインターフェースです。</p>
+		<pre><code class="language-c">// C言語でのSocket例（Layer 4 直接アクセス）
+int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+send(sockfd, buffer, strlen(buffer), 0);
+recv(sockfd, buffer, 1024, 0);</code></pre>
+	</Card>
+	
+	<Card title="WebSocket（セッション層）" icon="🌐" accentColor="green">
+		<p><strong>WebSocket</strong>は<strong>Layer 5（セッション層）</strong>のプロトコルです。</p>
+		
+```javascript
+// JavaScript での WebSocket（Layer 5 抽象化）
+const socket = new WebSocket('ws://example.com');
+socket.send('Hello WebSocket');
+socket.onmessage = (event) => console.log(event.data);
+```
+	</Card>
+	
+	<Card title="比較表" icon="📊" accentColor="purple">
+
+		<table>
+			<thead>
+				<tr>
+					<th>特徴</th>
+					<th>Socket (Layer 4)</th>
+					<th>WebSocket (Layer 5)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><strong>抽象化レベル</strong></td>
+					<td>低レベル（TCP/UDP直接）</td>
+					<td>高レベル（HTTP上）</td>
+				</tr>
+				<tr>
+					<td><strong>メッセージ境界</strong></td>
+					<td>開発者が管理</td>
+					<td>プロトコルが自動管理</td>
+				</tr>
+				<tr>
+					<td><strong>ブラウザサポート</strong></td>
+					<td>制限あり</td>
+					<td>標準サポート</td>
+				</tr>
+				<tr>
+					<td><strong>プロキシ透過性</strong></td>
+					<td>困難</td>
+					<td>容易（HTTP互換）</td>
+				</tr>
+				<tr>
+					<td><strong>セキュリティ</strong></td>
+					<td>独自実装が必要</td>
+					<td>TLS統合</td>
+				</tr>
+			</tbody>
+		</table>
+	</Card>
+</Section>
+
+<Section title="ブラウザでの実装における意味" icon="🖥️">
+	<Card title="ブラウザAPIとしての抽象化" icon="💻" accentColor="blue">
+
+		<p>ブラウザのWebSocket APIは、開発者が意識すべきレイヤーを制限しています。</p>
+		
+```javascript
+// 開発者が扱うのは Layer 5-7 のみ
+const socket = new WebSocket('wss://api.example.com/realtime');
+
+// Layer 7: アプリケーションロジック
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    updateUI(data);
+};
+
+// Layer 6: 暗号化は"wss://"で自動的に処理
+// Layer 5: WebSocketプロトコルは自動的に処理
+// Layer 4以下: ブラウザとOSが自動的に処理
+```
+	</Card>
+	
+	<Card title="セキュリティの層別実装" icon="🔒" accentColor="red">
+		<pre><code>Layer 7: アプリケーションレベル認証
+         ↕
+Layer 6: TLS/SSL暗号化 (WSS)
+         ↕
+Layer 5: WebSocket framing
+         ↕
+Layer 4: TCP sequence numbers
+         ↕
+Layer 3以下: OS/ネットワークインフラが処理</code></pre>
+	</Card>
+</Section>
+
+<Section title="実践：レイヤー別デバッグ" icon="🛠️">
+	<Card title="各層での問題診断" icon="🔍" accentColor="orange">
+
+		<div class="space-y-4">
+			<div>
+				<h4 class="font-semibold">Layer 7 (Application) 問題:</h4>
+				
+```javascript
+// メッセージ形式エラーのデバッグ
+socket.onerror = (error) => {
+    console.error('Application layer error:', error);
+};
+```
+			</div>
+			
+			<div>
+				<h4 class="font-semibold">Layer 6 (Presentation) 問題:</h4>
+				<pre><code>// TLS証明書エラー
+WebSocket connection failed: SSL certificate problem</code></pre>
+			</div>
+			
+			<div>
+				<h4 class="font-semibold">Layer 5 (Session) 問題:</h4>
+				
+```javascript
+// WebSocket protocol エラー
+socket.onclose = (event) => {
+    console.log('Session closed:', event.code, event.reason);
+};
+```
+			</div>
+			
+			<div>
+				<h4 class="font-semibold">Layer 4 (Transport) 問題:</h4>
+				<pre><code>// TCP接続エラー
+WebSocket connection failed: Connection refused</code></pre>
+			</div>
+			
+			<div>
+				<h4 class="font-semibold">Layer 3 (Network) 問題:</h4>
+				<pre><code>// DNS/IP解決エラー
+WebSocket connection failed: getaddrinfo ENOTFOUND</code></pre>
+			</div>
+		</div>
+	</Card>
+</Section>
+
+<Section title="まとめ" icon="📝">
+	<Card title="重要なポイント" icon="🔑" accentColor="indigo">
+
+		<ol>
+			<li>
+				<strong>OSI 7層モデルの理解</strong>
+				<ul>
+					<li>各層が独立した責任を持つ</li>
+					<li>下位層が上位層にサービスを提供</li>
+				</ul>
+			</li>
+			<li>
+				<strong>WebSocketの主要動作層</strong>
+				<ul>
+					<li><strong>Layer 5（セッション層）</strong>: メインの動作層</li>
+					<li><strong>Layer 4（トランスポート層）</strong>: TCPによる信頼性</li>
+					<li><strong>Layer 6（プレゼンテーション層）</strong>: TLS/SSL暗号化</li>
+				</ul>
+			</li>
+			<li>
+				<strong>開発者の責任範囲</strong>
+				<ul>
+					<li><strong>Layer 7</strong>: アプリケーションロジック</li>
+					<li><strong>Layer 6-5</strong>: WebSocket API が抽象化</li>
+					<li><strong>Layer 4以下</strong>: ブラウザ・OS が自動処理</li>
+				</ul>
+			</li>
+		</ol>
+	</Card>
+	
+	<Card title="学習の確認" icon="🎓" accentColor="green">
+		<ul>
+			<li>OSI 7層モデルの各層の役割を説明できる</li>
+			<li>WebSocketが主にセッション層で動作することを理解している</li>
+			<li>Socket（Layer 4）とWebSocket（Layer 5）の違いが分かる</li>
+			<li>ブラウザでの抽象化レベルを理解している</li>
+		</ul>
+	</Card>
+</Section>
+
+<Section title="関連リソース" icon="🔗">
+	<Card title="参考資料" icon="📚" accentColor="purple">
+
+		<ul>
+			<li><a href="https://en.wikipedia.org/wiki/OSI_model" target="_blank" rel="noopener noreferrer">OSI model - Wikipedia</a></li>
+			<li><a href="https://tools.ietf.org/html/rfc1122" target="_blank" rel="noopener noreferrer">RFC 1122 - Requirements for Internet Hosts</a></li>
+			<li><a href="https://tools.ietf.org/html/rfc6455" target="_blank" rel="noopener noreferrer">WebSocket Protocol - RFC 6455</a></li>
+			<li><a href="https://www.pearson.com/us/higher-education/program/Stevens-TCP-IP-Illustrated-Volume-1-The-Protocols-2nd-Edition/PGM248845.html" target="_blank" rel="noopener noreferrer">TCP/IP Illustrated</a></li>
+		</ul>
+	</Card>
+</Section>
+
+</LessonLayout>

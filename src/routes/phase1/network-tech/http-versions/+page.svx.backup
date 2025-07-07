@@ -11,6 +11,7 @@ lesson: "2.3"
 	import LessonLayout from '$lib/components/common/LessonLayout.svelte';
 	import Section from '$lib/components/common/Section.svelte';
 	import Card from '$lib/components/common/Card.svelte';
+	import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
 <LessonLayout
@@ -50,21 +51,25 @@ lesson: "2.3"
 		<h4 class="font-semibold mt-4 mb-2">WebSocketハンドシェイク（HTTP/1.1）</h4>
 		
 		<div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
-			<div>GET /websocket HTTP/1.1</div>
-			<div>Host: example.com</div>
-			<div>Upgrade: websocket</div>
-			<div>Connection: Upgrade</div>
-			<div>Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==</div>
-			<div>Sec-WebSocket-Version: 13</div>
+```http
+GET /websocket HTTP/1.1
+Host: example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Version: 13
+```
 		</div>
 		
 		<h4 class="font-semibold mt-4 mb-2">サーバーレスポンス</h4>
 		
 		<div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
-			<div>HTTP/1.1 101 Switching Protocols</div>
-			<div>Upgrade: websocket</div>
-			<div>Connection: Upgrade</div>
-			<div>Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</div>
+```http
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+```
 		</div>
 		
 		<div class="mt-4 p-4 bg-green-50 rounded-lg">
@@ -148,6 +153,74 @@ lesson: "2.3"
 				<li>• <strong>WebSocket over HTTP/3</strong>: 一部ブラウザで実装中</li>
 				<li>• <strong>WebTransport</strong>: Chrome/Edgeで実験的サポート</li>
 				<li>• <strong>サーバーサポート</strong>: 主要Webサーバーで対応進行中</li>
+			</ul>
+		</div>
+	</Card>
+</Section>
+
+<Section title="各バージョンでの最適戦略" icon="🎯">
+	<Card title="現在（2024年）の推奨実装" icon="✅" accentColor="green">
+		<h4 class="font-semibold mb-4">主流な選択</h4>
+		
+<div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
+<pre><code class="language-javascript">// 1. WebSocket（HTTP/1.1ベース）- 最も安定
+const socket = new WebSocket('wss://api.example.com/ws');
+
+// 2. フォールバック戦略の実装
+class RobustWebSocket {
+    constructor(url) {
+        this.url = url;
+        this.connect();
+    }
+    
+    connect() {
+        try {
+            this.socket = new WebSocket(this.url);
+            this.socket.onopen = () => console.log('Connected via WebSocket');
+        } catch (error) {
+            console.log('WebSocket failed, considering alternatives...');
+            this.fallbackToHTTP2();
+        }
+    }
+    
+    fallbackToHTTP2() {
+        // HTTP/2 Server-Sent Events での代替実装
+        const eventSource = new EventSource('/api/events');
+        eventSource.onmessage = (event) => {
+            console.log('Received via SSE:', event.data);
+        };
+    }
+}
+</code></pre>
+</div>
+	</Card>
+	
+	<Card title="将来への準備" icon="🔮" accentColor="blue">
+		<h4 class="font-semibold mb-4">次世代対応の準備</h4>
+		
+<div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
+<pre><code class="language-javascript">// WebTransport対応の準備（実験的）
+if ('WebTransport' in window) {
+    const transport = new WebTransport('https://example.com/webtransport');
+    await transport.ready;
+    
+    // Datagram API使用例
+    const writer = transport.datagrams.writable.getWriter();
+    await writer.write(new Uint8Array([1, 2, 3, 4]));
+} else {
+    // WebSocketフォールバック
+    const socket = new WebSocket('wss://example.com/websocket');
+}
+</code></pre>
+</div>
+		
+		<div class="mt-4 p-4 bg-blue-50 rounded-lg">
+			<h5 class="font-medium text-blue-800">🔮 将来の展望</h5>
+			<ul class="text-sm text-blue-700 mt-2 space-y-1">
+				<li>• WebTransportの標準化と普及</li>
+				<li>• HTTP/3でのWebSocket性能向上</li>
+				<li>• モバイルネットワークでの最適化</li>
+				<li>• Edge ComputingでのWebSocket活用</li>
 			</ul>
 		</div>
 	</Card>

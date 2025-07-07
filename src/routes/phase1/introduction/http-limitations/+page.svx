@@ -6,41 +6,35 @@ difficulty: "初級"
 ---
 
 <script>
-  import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import Card from '$lib/components/common/Card.svelte';
   import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
   import InteractiveDemo from '$lib/components/learning/InteractiveDemo.svelte';
-  import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
-  import NextLesson from '$lib/components/learning/NextLesson.svelte';
-  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
-<LessonIntro 
+<LessonLayout
   lessonId="phase1-introduction-http-limitations"
   title="HTTPの限界とWebSocketの優位性"
   duration="1時間"
   difficulty="初級"
   prerequisites={['HTTP基本理解', 'WebSocket基本概念', 'ブラウザ開発者ツール使用経験']}
-/>
+  sectionTitle="WebSocket基礎理解"
+  nextLessonId="phase1-introduction-use-cases"
+  nextLessonTitle="WebSocketの実用例"
+  nextLessonPath="/phase1/introduction/use-cases"
+  learningObjectives={[
+    'HTTPの基本的な制限とその技術的背景',
+    'ポーリング手法の問題点とパフォーマンスへの影響',
+    'WebSocketの技術的優位性の詳細分析',
+    'リアルタイム性要求に対する両者の対応能力'
+  ]}
+>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Section title="HTTPの基本的な制限" icon="concept">
 
-<details>
-<summary><h2>🎯 このレッスンで学ぶこと</h2></summary>
-
-HTTPプロトコルの本質的な制限を理解し、WebSocketがそれらの課題をどのように解決するかを学習します。
-
-- **HTTPの基本的な制限**とその技術的背景
-- **ポーリング手法の問題点**とパフォーマンスへの影響
-- **WebSocketの技術的優位性**の詳細分析
-- **リアルタイム性要求**に対する両者の対応能力
-
-</details>
-
-## 📡 HTTPの基本的な制限
-
-### リクエスト・レスポンス型の本質的制約
+<Card title="リクエスト・レスポンス型の本質的制約" icon="info" accentColor="blue">
 
 HTTPは**リクエスト・レスポンス型プロトコル**として設計されており、以下の制限があります。
 
@@ -68,20 +62,22 @@ HTTP/1.1の典型的な通信フロー。
 - セッション管理にCookieやトークンが必要
 - リアルタイム性が要求される場面での情報保持に限界
 
-</div>
-</div>
+</Card>
+
+</Section>
+
+<Section title="通信パターン比較" icon="demo">
 
 <ConceptDiagram 
   title="HTTP vs WebSocket 通信パターン比較"
   type="timeline"
 />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 🔄 従来の解決手法とその問題点
+<Section title="従来の解決手法とその問題点" icon="implementation">
 
-### 1. **ポーリング（Polling）**
+<Card title="ポーリング（Polling）" icon="warning" accentColor="orange">
 
 最も基本的なリアルタイム通信の模擬手法です。
 
@@ -121,7 +117,9 @@ sequenceDiagram
     Note over C,S: 最大5秒の遅延でユーザーに反映
 `} />
 
-### 2. **ロングポーリング（Long Polling）**
+</Card>
+
+<Card title="ロングポーリング（Long Polling）" icon="warning" accentColor="red">
 
 ポーリングの改良版として考案された手法。
 
@@ -168,7 +166,9 @@ sequenceDiagram
     Note over S: 再び待機状態
 `} />
 
-### 3. **Server-Sent Events (SSE)**
+</Card>
+
+<Card title="Server-Sent Events (SSE)" icon="warning" accentColor="purple">
 
 HTTP上でのサーバープッシュ実現手法。
 
@@ -210,9 +210,13 @@ sequenceDiagram
     S-->>C: 200 OK
 `} />
 
-## ⚡ WebSocketの技術的優位性
+</Card>
 
-### 1. **双方向リアルタイム通信**
+</Section>
+
+<Section title="WebSocketの技術的優位性" icon="theory">
+
+<Card title="双方向リアルタイム通信" icon="lightning" accentColor="green">
 
 WebSocketは接続確立後、以下の特徴を持ちます。
 
@@ -234,7 +238,9 @@ ws.send('Hello Server!');
 - **持続的接続**：一度確立すれば接続を維持
 - **オーバーヘッド最小化**：HTTPヘッダーが不要
 
-### 2. **パフォーマンス比較**
+</Card>
+
+<Card title="パフォーマンス比較" icon="check" accentColor="blue">
 
 | 方式 | レイテンシ | 帯域幅効率 | サーバー負荷 | 実装複雑度 |
 |------|------------|------------|--------------|------------|
@@ -243,7 +249,9 @@ ws.send('Hello Server!');
 | SSE | 低 | 高 | 低 | 中 |
 | WebSocket | 最低 | 最高 | 最低 | 中〜高 |
 
-### 3. **具体的な利用場面での優位性**
+</Card>
+
+<Card title="具体的な利用場面での優位性" icon="star" accentColor="purple">
 
 #### **チャットアプリケーション**
 - **HTTP/ポーリング**：メッセージ送信に遅延、大量の無駄なリクエスト
@@ -257,10 +265,11 @@ ws.send('Hello Server!');
 - **HTTP/ポーリング**：レスポンス性能が不十分、ゲーム体験に支障
 - **WebSocket**：低遅延での状態同期、滑らかなゲーム体験
 
-</div>
-</div>
+</Card>
 
-## 🚀 実践デモ
+</Section>
+
+<Section title="実践デモ" icon="practice">
 
 ### 体験してみよう
 
@@ -273,10 +282,7 @@ ws.send('Hello Server!');
   wsUrl="wss://echo.websocket.org"
 />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
-
-### デモで確認できること
+<Card title="デモで確認できること" icon="check" accentColor="green">
 
 1. **レスポンス時間の違い**：WebSocketの即応性 vs HTTPポーリングの遅延
 2. **リクエスト数の差異**：WebSocketの効率性 vs HTTPの冗長性
@@ -291,21 +297,29 @@ ws.send('Hello Server!');
 4. **比較分析**：両方式の違いを数値とグラフで比較
 5. **リアルタイム性確認**：データ更新の即時性の違いを体感
 
-## 💡 適切な技術選択の指針
+</Card>
 
-### WebSocketが適している場面
+</Section>
+
+<Section title="適切な技術選択の指針" icon="implementation">
+
+<Card title="WebSocketが適している場面" icon="lightning" accentColor="green">
 
 - **低遅延が要求される**：ゲーム、トレーディング、リアルタイム協調作業
 - **頻繁な双方向通信**：チャット、ライブコメント、インタラクティブアプリ
 - **持続的なデータストリーム**：ライブフィード、センサーデータ、監視システム
 
-### HTTPが適している場面
+</Card>
+
+<Card title="HTTPが適している場面" icon="info" accentColor="blue">
 
 - **リクエスト・レスポンス型の操作**：CRUD操作、ファイルダウンロード
 - **キャッシュが有効**：静的コンテンツ、API応答の再利用
 - **間欠的な通信**：ユーザーアクション起点の処理
 
-### 技術選択の判断基準
+</Card>
+
+<Card title="技術選択の判断基準" icon="check" accentColor="purple">
 
 ```
 リアルタイム要求度 × 通信頻度 = 適用技術
@@ -316,9 +330,13 @@ ws.send('Hello Server!');
 低 × 低 → 通常のHTTP
 ```
 
-## 📊 実際の導入効果
+</Card>
 
-### 大規模サービスでの事例
+</Section>
+
+<Section title="実際の導入効果" icon="implementation">
+
+<Card title="大規模サービスでの事例" icon="star" accentColor="orange">
 
 #### **Discord**
 - **導入前**：ポーリングベースで高いサーバー負荷
@@ -328,49 +346,17 @@ ws.send('Hello Server!');
 - **導入前**：ロングポーリングによる複雑な接続管理
 - **導入後**：WebSocketで単純化されたアーキテクチャ、ユーザー体験向上
 
-### パフォーマンス指標の改善
+</Card>
+
+<Card title="パフォーマンス指標の改善" icon="check" accentColor="green">
 
 - **レスポンス時間**：平均500ms → 50ms（90%改善）
 - **サーバーリクエスト数**：毎秒10,000 → 100（99%削減）
 - **帯域幅使用量**：HTTPヘッダー分の削減により約40%効率化
 
-## 🔍 次のレッスンへの準備
+</Card>
 
-このレッスンでHTTPの制限とWebSocketの優位性を理解しました。次のレッスンでは。
+</Section>
 
-- **WebSocketの具体的な利用例**の詳細分析
-- **適用場面の判断方法**の実践的アプローチ
-- **実装前の技術選択**における考慮事項
 
-を学習していきます。
-
-## 📖 参考資料
-
-### パフォーマンス比較
-- [WebSocket vs HTTP Performance](https://blog.teamtreehouse.com/an-introduction-to-websockets)
-- [Real-time Web Technologies Guide](https://ably.com/topic/websockets)
-
-### 技術的背景
-- [HTTP/1.1 Specification](https://tools.ietf.org/html/rfc2616)
-- [WebSocket Performance Analysis](https://www.websocket.org/performance.html)
-
-### 実装パターン
-- [Polling vs WebSocket patterns](https://stackoverflow.com/questions/11077857/what-are-long-polling-websockets-server-sent-events-sse-and-comet)
-
-</div>
-</div>
-
-<ProgressTracker 
-  lessonId="phase1-introduction-http-limitations"
-  sectionTitle="WebSocket入門"
-/>
-
-<CompletionMark lessonId="phase1-introduction-http-limitations" />
-
-<NextLesson 
-  nextLessonId="phase1-introduction-use-cases"
-  nextLessonTitle="WebSocketの利用例と適用場面"
-  nextLessonPath="/phase1/introduction/use-cases"
-  completionMessage="HTTPの制限とWebSocketの優位性を理解しました！"
-  showCompletion={false}
-/>
+</LessonLayout>

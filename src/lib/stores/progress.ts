@@ -218,7 +218,7 @@ const legacyIdMapping: Record<string, string> = {
 	// Phase 1 - Introduction
 	'1.1': 'phase1-introduction-what-is-websocket',
 	'1.2': 'phase1-introduction-http-limitations',
-	'1.3': 'phase1-use-cases',
+	'1.3': 'phase1-introduction-use-cases',
 	'1.4': 'phase1-introduction-comparison',
 	// Phase 1 - Network Tech
 	'2.1': 'phase1-network-tech-http-basics',
