@@ -4,15 +4,14 @@ description: 'WebSocketの11の主要利用例を視覚的な図表で理解し�
 ---
 
 <script>
-  import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import Card from '$lib/components/common/Card.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
-  import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
-  import NextLesson from '$lib/components/learning/NextLesson.svelte';
-  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
 </script>
 
-<LessonIntro
-  lessonId="phase1-use-cases"
+<LessonLayout
+  lessonId="phase1-introduction-use-cases"
   title="WebSocket利用例アーキテクチャガイド"
   duration="90-120分"
   difficulty="初級"
@@ -21,29 +20,23 @@ description: 'WebSocketの11の主要利用例を視覚的な図表で理解し�
     "HTTP通信の理解",
     "システムアーキテクチャの基礎"
   ]}
-/>
+  sectionTitle="WebSocket基礎理解"
+  nextLessonId="phase1-introduction-comparison"
+  nextLessonTitle="WebSocket vs 他技術の比較理解"
+  nextLessonPath="/phase1/introduction/comparison"
+  learningObjectives={[
+    'WebSocketの11の主要利用例を視覚的に理解',
+    '各利用例のアーキテクチャパターンの説明',
+    '適切な利用場面の判断',
+    '実際のシステム設計への応用'
+  ]}
+>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Section title="WebSocket利用例カテゴリー概要" icon="concept">
 
-<details>
-<summary><h2>🎯 学習目標</h2></summary>
-
-このガイドを完了すると、以下のことができるようになります。
-
-- WebSocketの11の主要利用例を視覚的に理解できる
-- 各利用例のアーキテクチャパターンを説明できる
-- 適切な利用場面を判断できる
-- 実際のシステム設計に応用できる
-
-</details>
-
-## 📊 WebSocket利用例カテゴリー概要
+<Card title="11の主要カテゴリー" icon="info" accentColor="blue">
 
 WebSocketは以下の11の主要カテゴリーで活用されています。
-
-</div>
-</div>
 
 <Mermaid chart={`
 mindmap
@@ -70,17 +63,15 @@ mindmap
       インタラクティブ体験
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 1. 📱 リアルタイム通信システム
+</Section>
 
-### チャット・メッセージングアプリケーション
+<Section title="リアルタイム通信システム" icon="implementation">
+
+<Card title="チャット・メッセージングアプリケーション" icon="chat" accentColor="green">
 
 **代表例:** Discord, Slack, Teams, LINE
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph LR
@@ -114,21 +105,20 @@ graph LR
     style G fill:#fff3e0
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-**アーキテクチャの特徴:**
+<Card title="アーキテクチャの特徴" icon="info" accentColor="blue">
+
 - **双方向リアルタイム通信**: ユーザー間の即時メッセージ交換
 - **マルチキャスト配信**: 1つのメッセージを複数の受信者に同時配信
 - **永続化**: メッセージの保存と履歴管理
 - **通知連携**: オフラインユーザーへのプッシュ通知
 
-### 音声・ビデオ通話システム
+</Card>
+
+<Card title="音声・ビデオ通話システム" icon="video" accentColor="purple">
 
 **代表例:** Zoom, Google Meet, WebRTC アプリケーション
-
-</div>
-</div>
 
 <Mermaid chart={`
 sequenceDiagram
@@ -154,17 +144,15 @@ sequenceDiagram
     S->>B: 切断通知
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 2. 🤝 共同編集システム
+</Section>
 
-### リアルタイムドキュメント編集
+<Section title="共同編集システム" icon="implementation">
+
+<Card title="リアルタイムドキュメント編集" icon="edit" accentColor="orange">
 
 **代表例:** Google Docs, Notion, Figma, VS Code Live Share
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TB
@@ -200,23 +188,24 @@ graph TB
     style F fill:#e8f5e8
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-**技術的特徴:**
+<Card title="技術的特徴" icon="gear" accentColor="blue">
+
 - **操作変換 (Operational Transformation)**: 同時編集時の競合解決
 - **カーソル同期**: 他ユーザーの編集位置をリアルタイム表示
 - **バージョン管理**: 変更履歴の追跡と復元機能
 - **権限管理**: 編集・閲覧権限の動的制御
 
-## 3. 📊 データ配信・ストリーミングシステム
+</Card>
 
-### 金融データ配信プラットフォーム
+</Section>
+
+<Section title="データ配信・ストリーミングシステム" icon="implementation">
+
+<Card title="金融データ配信プラットフォーム" icon="chart" accentColor="green">
 
 **代表例:** Bloomberg Terminal, Yahoo Finance, 証券取引アプリ
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph LR
@@ -250,15 +239,11 @@ graph LR
     style F fill:#f1f8e9
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-### IoTデータ収集・監視システム
+<Card title="IoTデータ収集・監視システム" icon="sensor" accentColor="purple">
 
 **代表例:** スマートホーム, 産業IoT, 環境監視システム
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TB
@@ -299,17 +284,15 @@ graph TB
     style F fill:#e1f5fe
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 4. 🔔 通知・アラートシステム
+</Section>
 
-### プッシュ通知配信システム
+<Section title="通知・アラートシステム" icon="implementation">
+
+<Card title="プッシュ通知配信システム" icon="bell" accentColor="orange">
 
 **代表例:** Firebase Cloud Messaging, AWS SNS, カスタム通知システム
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TD
@@ -344,17 +327,15 @@ graph TD
     style G fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 5. 🎮 エンターテイメント・ゲーミング
+</Section>
 
-### マルチプレイヤーオンラインゲーム
+<Section title="エンターテイメント・ゲーミング" icon="implementation">
+
+<Card title="マルチプレイヤーオンラインゲーム" icon="game" accentColor="blue">
 
 **代表例:** .io系ゲーム, MMORPGブラウザ版, リアルタイム対戦ゲーム
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TB
@@ -391,15 +372,11 @@ graph TB
     style F fill:#e1f5fe
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-### VR・メタバースプラットフォーム
+<Card title="VR・メタバースプラットフォーム" icon="vr" accentColor="purple">
 
 **代表例:** VRChat, Horizon Worlds, Mozilla Hubs
-
-</div>
-</div>
 
 <Mermaid chart={`
 sequenceDiagram
@@ -423,17 +400,15 @@ sequenceDiagram
     Note over S,M: 永続的仮想世界
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 6. 🔧 PWA統合アーキテクチャ
+</Section>
 
-### Progressive Web Appとの連携
+<Section title="PWA統合アーキテクチャ" icon="implementation">
+
+<Card title="Progressive Web Appとの連携" icon="pwa" accentColor="green">
 
 **特徴:** オフライン対応, プッシュ通知, バックグラウンド同期
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TD
@@ -466,12 +441,13 @@ graph TD
     style E fill:#fce4ec
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 🛠️ アーキテクチャパターンの選択指針
+</Section>
 
-### システム要件による分類
+<Section title="アーキテクチャパターンの選択指針" icon="theory">
+
+<Card title="システム要件による分類" icon="check" accentColor="blue">
 
 | 要件 | 推奨パターン | 特徴 |
 |------|--------------|------|
@@ -481,13 +457,12 @@ graph TD
 | **イベント駆動** | Pub/Sub + WebSocket | 通知、アラート |
 | **ステート管理** | State Machine + WebSocket | 複雑なワークフロー |
 
-### スケーラビリティ考慮事項
+</Card>
 
-</div>
-</div>
+<Card title="スケーラビリティ考慮事項" icon="scale" accentColor="orange">
 
 <Mermaid chart={`
-graph TB
+graph BT
     subgraph "小規模 (~1,000接続)"
         A[シングルサーバー] --> A1[インメモリ状態管理]
     end
@@ -510,14 +485,15 @@ graph TB
     style C fill:#f3e5f5
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 🎯 まとめ
+</Section>
+
+<Section title="まとめ" icon="summary">
+
+<Card title="共通の設計原則" icon="star" accentColor="green">
 
 WebSocketの11の主要利用例から見えるアーキテクチャパターン。
-
-### **共通の設計原則**
 
 1. **リアルタイム性**: 低遅延でのデータ配信
 2. **双方向性**: クライアント・サーバー間の相互通信
@@ -525,7 +501,9 @@ WebSocketの11の主要利用例から見えるアーキテクチャパターン
 4. **スケーラビリティ**: 接続数増加への対応
 5. **耐障害性**: 接続断・復旧への適切な対処
 
-### **技術選択のポイント**
+</Card>
+
+<Card title="技術選択のポイント" icon="check" accentColor="purple">
 
 - **データ量**: 小さなメッセージ vs 大量ストリーミング
 - **更新頻度**: リアルタイム vs バッチ処理
@@ -535,18 +513,8 @@ WebSocketの11の主要利用例から見えるアーキテクチャパターン
 
 次のフェーズでは、これらのパターンを実際に実装していきます！
 
-</div>
-</div>
+</Card>
 
-<ProgressTracker 
-  lessonId="phase1-use-cases"
-  sectionTitle="WebSocket基礎理解"
-/>
+</Section>
 
-<CompletionMark lessonId="phase1-use-cases" />
-
-<NextLesson 
-  nextLessonId="phase1-introduction-comparison"
-  nextLessonTitle="WebSocket vs 他技術の比較理解"
-  nextLessonPath="/phase1/introduction/comparison"
-/>
+</LessonLayout>

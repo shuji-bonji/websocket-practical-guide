@@ -8,39 +8,34 @@ lesson: "2.1"
 ---
 
 <script>
-	import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
-	import NetworkDiagram from '$lib/components/learning/NetworkDiagram.svelte';
-	import HTTPConnectionDemo from '$lib/components/learning/HTTPConnectionDemo.svelte';
-	import NextLesson from '$lib/components/learning/NextLesson.svelte';
-	import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
-	import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
-	import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
-	import Mermaid from '$lib/components/Mermaid.svelte';
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import NetworkDiagram from '$lib/components/learning/NetworkDiagram.svelte';
+  import HTTPConnectionDemo from '$lib/components/learning/HTTPConnectionDemo.svelte';
+  import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
-<LessonIntro 
-	lessonId="phase1-network-tech-http-basics"
-	title="WebSocketを理解するためのHTTP基礎"
-	duration="45分"
-	difficulty="beginner"
-	prerequisites={['基本的なWeb知識', 'HTTP通信の概念理解']}
-/>
+<LessonLayout
+  lessonId="phase1-network-tech-http-basics"
+  title="WebSocketを理解するためのHTTP基礎"
+  duration="45分"
+  difficulty="beginner"
+  prerequisites={['基本的なWeb知識', 'HTTP通信の概念理解']}
+  sectionTitle="ネットワーク技術基礎"
+  nextLessonId="phase1-network-tech-osi-model"
+  nextLessonTitle="OSI参照モデルとWebSocketの位置"
+  nextLessonPath="/phase1/network-tech/osi-model"
+  learningObjectives={[
+    'HTTP/1.0とHTTP/1.1の接続管理の違いを理解',
+    'Keep-Alive接続の仕組みとメリットを把握',
+    'WebSocketがHTTP/1.1を前提とする理由を学習'
+  ]}
+>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Section title="なぜHTTPを学ぶのか？" icon="concept">
 
-<details>
-<summary><h2>🎯 学習目標</h2></summary>
-
-このレッスンでは、WebSocketを深く理解するために必要なHTTPの基礎知識を習得します。
-
-- **HTTP/1.0とHTTP/1.1の接続管理の違い**を理解
-- **Keep-Alive接続の仕組みとメリット**を把握
-- **WebSocketがHTTP/1.1を前提とする理由**を学習
-
-</details>
-
-## 📖 なぜHTTPを学ぶのか？
+<Card title="WebSocketとHTTPの関係" icon="info" accentColor="blue">
 
 WebSocketは**HTTPの上に構築**されています。WebSocketの接続確立プロセスは、実際にはHTTPリクエストから始まります。
 
@@ -53,25 +48,17 @@ Connection: Upgrade
 
 この仕組みを理解するために、まずHTTPの進化を見ていきましょう。
 
-</div>
-</div>
+</Card>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 1. HTTP/1.0の接続モデル
+<Section title="HTTP/1.0の接続モデル" icon="implementation">
 
-### 🔄 シンプルだが非効率な設計
+<Card title="シンプルだが非効率な設計" icon="clock" accentColor="orange">
 
 HTTP/1.0では、**1つのリクエスト・レスポンスごとに TCP接続を確立・切断**していました。
 
-</div>
-</div>
-
-<div class="my-8">
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <h4 class="text-lg font-semibold text-gray-900 mb-4 text-center">HTTP/1.0の接続パターン</h4>
-    <Mermaid chart={`
+<Mermaid chart={`
 sequenceDiagram
     participant C as Client
     participant S as Server
@@ -89,39 +76,28 @@ sequenceDiagram
     S-->>C: HTTP Response
     C->>S: TCP Disconnect
     Note over C,S: 接続終了
-    `} />
-  </div>
-</div>
+`} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-### ⚠️ HTTP/1.0の問題点
+<Card title="HTTP/1.0の問題点" icon="warning" accentColor="red">
 
 1. **接続オーバーヘッド**: 毎回のTCP 3-wayハンドシェイク
 2. **サーバーリソース浪費**: 頻繁な接続確立・切断
 3. **レイテンシの増加**: 接続時間が総通信時間に加算
 4. **スケーラビリティの制約**: 同時接続数の限界
 
-</div>
-</div>
+</Card>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 2. HTTP/1.1の持続的接続
+<Section title="HTTP/1.1の持続的接続" icon="implementation">
 
-### 🔗 Keep-Alive接続の導入
+<Card title="Keep-Alive接続の導入" icon="link" accentColor="green">
 
 HTTP/1.1では**持続的接続（Keep-Alive）**がデフォルトになりました。
 
-</div>
-</div>
-
-<div class="my-8">
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <h4 class="text-lg font-semibold text-gray-900 mb-4 text-center">HTTP/1.1 Keep-Alive接続パターン</h4>
-    <Mermaid chart={`
+<Mermaid chart={`
 sequenceDiagram
     participant C as Client
     participant S as Server
@@ -143,21 +119,20 @@ sequenceDiagram
     
     C->>S: TCP Disconnect
     Note over C,S: 明示的に切断
-    `} />
-  </div>
-</div>
+`} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-### ✅ HTTP/1.1の改善点
+<Card title="HTTP/1.1の改善点" icon="check" accentColor="blue">
 
 1. **接続再利用**: 複数のリクエスト・レスポンスで同じTCP接続を使用
 2. **パフォーマンス向上**: 接続確立コストを分散
 3. **サーバー効率**: 接続管理オーバーヘッドの削減
 4. **パイプライニング**: 複数リクエストの並列送信（理論上）
 
-### 🔧 Connection: Upgradeヘッダーの仕組み
+</Card>
+
+<Card title="Connection: Upgradeヘッダーの仕組み" icon="gear" accentColor="purple">
 
 HTTP/1.1の重要な機能として、**プロトコルアップグレード機構**があります。
 
@@ -170,15 +145,13 @@ Upgrade: websocket
 
 これにより、既存のHTTP接続を**他のプロトコルに切り替える**ことが可能になりました。
 
-</div>
-</div>
+</Card>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 3. WebSocketとHTTPの関係
+<Section title="WebSocketとHTTPの関係" icon="theory">
 
-### 🤝 なぜWebSocketはHTTPを使うのか？
+<Card title="なぜWebSocketはHTTPを使うのか？" icon="question" accentColor="blue">
 
 WebSocketがHTTPの上に構築される理由。
 
@@ -195,31 +168,27 @@ WebSocketがHTTPの上に構築される理由。
    - ブラウザの標準サポート
    - 開発者の学習コストの削減
 
-### 🔄 WebSocketアップグレードプロセス
+</Card>
+
+<Card title="WebSocketアップグレードプロセス" icon="flow" accentColor="green">
 
 <NetworkDiagram diagramType="websocket-upgrade" title="WebSocketアップグレードプロセス" />
 
-</div>
-</div>
+</Card>
 
-<div class="mt-8">
-<div class="prose max-w-none">
+</Section>
 
-## 🚀 実践デモ
+<Section title="実践デモ" icon="practice">
 
-### 体験してみよう
+<Card title="体験してみよう" icon="play" accentColor="purple">
 
 各プロトコルの接続パターンを実際に体験し、パフォーマンスの違いを比較してみましょう。
 
 <HTTPConnectionDemo />
 
-</div>
-</div>
+</Card>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
-
-### デモで確認できること
+<Card title="デモで確認できること" icon="check" accentColor="green">
 
 デモを実行して以下を観察してください。
 
@@ -235,15 +204,13 @@ WebSocketがHTTPの上に構築される理由。
 4. **タイムライン比較**：各プロトコルの接続確立時間を比較
 5. **効率性分析**：リクエスト数とレスポンス時間の関係を確認
 
-</div>
-</div>
+</Card>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 5. 開発者ツールでの確認
+<Section title="開発者ツールでの確認" icon="tools">
 
-### 🛠️ ブラウザ開発者ツールを使った観察
+<Card title="ブラウザ開発者ツールを使った観察" icon="monitor" accentColor="blue">
 
 実際のWebSocketアップグレードを観察してみましょう。
 
@@ -264,7 +231,9 @@ WebSocketがHTTPの上に構築される理由。
    Sec-WebSocket-Accept: ...
    ```
 
-### 📈 Connection タイムラインの読み方
+</Card>
+
+<Card title="Connection タイムラインの読み方" icon="chart" accentColor="orange">
 
 - **Queuing**: リクエスト待機時間
 - **DNS Lookup**: DNS解決時間
@@ -273,15 +242,13 @@ WebSocketがHTTPの上に構築される理由。
 - **Request sent**: リクエスト送信時間
 - **Waiting (TTFB)**: 最初のバイト受信待機時間
 
-</div>
-</div>
+</Card>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 6. まとめと次のステップ
+<Section title="まとめと次のステップ" icon="summary">
 
-### 🔑 重要なポイント
+<Card title="重要なポイント" icon="star" accentColor="green">
 
 1. **HTTP進化の理解**
    - HTTP/1.0の1リクエスト・1接続モデル
@@ -295,38 +262,26 @@ WebSocketがHTTPの上に構築される理由。
    - 接続確立コストの最小化
    - リアルタイム通信の効率性
 
-### 🎓 学習の確認
+</Card>
+
+<Card title="学習の確認" icon="check" accentColor="blue">
 
 - [ ] HTTP/1.0とHTTP/1.1の接続管理の違いを説明できる
 - [ ] Keep-Alive接続のメリットを理解している
 - [ ] WebSocketがHTTPアップグレードを使う理由が分かる
 - [ ] ブラウザ開発者ツールでWebSocket接続を観察できる
 
-</div>
-</div>
+</Card>
 
-<ProgressTracker 
-	lessonId="phase1-network-tech-http-basics"
-	sectionTitle="ネットワーク技術基礎"
-/>
-
-<CompletionMark lessonId="phase1-network-tech-http-basics" />
-
-<NextLesson 
-	nextLessonId="2.2"
-	nextLessonTitle="OSI参照モデルとWebSocketの位置" 
-	nextLessonPath="/phase1/network-tech/osi-model"
-/>
-
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-8">
-<div class="prose max-w-none p-8">
-
-## 🔗 関連リソース
+<Card title="関連リソース" icon="book" accentColor="purple">
 
 - [RFC 2616 - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
 - [RFC 6455 - WebSocket Protocol](https://tools.ietf.org/html/rfc6455)
 - [MDN - HTTP Connection management](https://developer.mozilla.org/en-US/docs/Web/HTTP/Connection_management_in_HTTP_1.x)
 - [Chrome DevTools Network Reference](https://developers.google.com/web/tools/chrome-devtools/network)
 
-</div>
-</div>
+</Card>
+
+</Section>
+
+</LessonLayout>

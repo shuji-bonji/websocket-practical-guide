@@ -1,205 +1,186 @@
+---
+title: "セキュリティとポート管理"
+description: "WebSocketにおけるセキュリティとポート管理のベストプラクティスを学習します"
+duration: 60
+difficulty: "beginner"
+phase: 1
+lesson: "2.5"
+---
+
 <script>
-  import { LessonIntro, NextLesson, ProgressTracker } from '$lib/components/learning';
-  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+	import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+	import Section from '$lib/components/common/Section.svelte';
+	import Card from '$lib/components/common/Card.svelte';
+	import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
-<LessonIntro 
-  lessonId="phase1-network-tech-security-ports"
-  title="セキュリティとポート管理"
-  duration="1時間"
-  difficulty="beginner"
-  prerequisites={['HTTP基礎', 'WebSocket接続確立プロセス', 'ネットワークセキュリティ基礎']}
-/>
+<LessonLayout
+	lessonId="phase1-network-tech-security-ports"
+	title="セキュリティとポート管理"
+	duration="1時間"
+	difficulty="beginner"
+	prerequisites={['HTTP基礎', 'WebSocket接続確立プロセス', 'ネットワークセキュリティ基礎']}
+	sectionTitle="ネットワーク技術基礎"
+	nextLessonId="phase1-websocket-states"
+	nextLessonTitle="WebSocket状態とライフサイクル"
+	nextLessonPath="/phase1/websocket-states"
+	learningObjectives={[
+		'ws://とwss://の違いと適切な使い分けを理解',
+		'Originチェックとセキュリティメカニズムを学習',
+		'WebSocketのOriginチェックとCORSの違いを把握',
+		'企業環境でのWebSocket運用のベストプラクティスを理解'
+	]}
+>
 
-<div class="content-wrapper">
+<Section title="学習内容" icon="📚">
+	<Card title="このレッスンで学ぶこと" icon="📋" accentColor="blue">
+		<p>このレッスンでは、WebSocketのセキュリティとポート管理について学習します。</p>
+		<ul>
+			<li><strong>ws（ポート80）とwss（ポート443）</strong>の違いと使い分け</li>
+			<li><strong>Originチェックとセキュリティ</strong>メカニズム</li>
+			<li><strong>CORSとの違い</strong>と実装上の注意点</li>
+			<li><strong>企業環境でのWebSocket運用</strong>のベストプラクティス</li>
+		</ul>
+	</Card>
+</Section>
 
-<details>
-<summary><h2>📚 学習内容</h2></summary>
+<Section title="wsとwssの違い" icon="🔒">
+	<Card title="WebSocketプロトコルスキーム" icon="🌐" accentColor="green">
+		<p>WebSocketには暗号化されていない<code>ws://</code>と、TLS暗号化された<code>wss://</code>の2つのスキームがあります。</p>
+		
+		<div class="grid md:grid-cols-2 gap-6 my-6">
+			<div class="bg-yellow-50 rounded-lg p-6 border-l-4 border-yellow-400">
+				<h4 class="text-lg font-semibold text-yellow-900 mb-3">⚠️ ws:// (非暗号化)</h4>
+				<ul class="space-y-2 text-yellow-800">
+					<li>• <strong>ポート:</strong> 80 (HTTPと同じ)</li>
+					<li>• <strong>セキュリティ:</strong> 平文通信</li>
+					<li>• <strong>用途:</strong> 開発環境・内部ネットワーク</li>
+					<li>• <strong>プロキシ:</strong> 一般的にブロックされる</li>
+				</ul>
+				<div class="mt-4 p-3 bg-yellow-100 rounded">
+					<code class="text-sm">ws://localhost:8080/websocket</code>
+				</div>
+			</div>
+			
+			<div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-400">
+				<h4 class="text-lg font-semibold text-green-900 mb-3">✅ wss:// (TLS暗号化)</h4>
+				<ul class="space-y-2 text-green-800">
+					<li>• <strong>ポート:</strong> 443 (HTTPSと同じ)</li>
+					<li>• <strong>セキュリティ:</strong> TLS/SSL暗号化</li>
+					<li>• <strong>用途:</strong> 本番環境・インターネット通信</li>
+					<li>• <strong>プロキシ:</strong> 一般的に許可される</li>
+				</ul>
+				<div class="mt-4 p-3 bg-green-100 rounded">
+					<code class="text-sm">wss://api.example.com/websocket</code>
+				</div>
+			</div>
+		</div>
+	</Card>
+</Section>
 
-このレッスンでは、WebSocketのセキュリティとポート管理について学習します。
+<Section title="Originチェックとセキュリティ" icon="🔐">
+	<Card title="Originチェックの仕組み" icon="🔒" accentColor="blue">
+		<p>WebSocketのセキュリティ機構として、Origin（送信元）チェックが重要な役割を果たします。</p>
+		
+		<h5 class="font-medium text-blue-800 mt-4 mb-2">1. クライアント側でのOrigin送信</h5>
+		
+```http
+GET /websocket HTTP/1.1
+Host: api.example.com
+Origin: https://myapp.example.com
+Connection: Upgrade
+Upgrade: websocket
+```
 
-- **ws（ポート80）とwss（ポート443）**の違いと使い分け
-- **Originチェックとセキュリティ**メカニズム
-- **CORSとの違い**と実装上の注意点
-- **企業環境でのWebSocket運用**のベストプラクティス
+		<h5 class="font-medium text-blue-800 mt-4 mb-2">2. サーバー側でのOrigin検証</h5>
 
-</details>
+```javascript
+// Node.js WebSocketサーバーでのOrigin検証例
+const allowedOrigins = [
+  'https://myapp.example.com',
+  'https://admin.example.com'
+];
 
-## 📚 学習内容
+wss.on('connection', (ws, request) => {
+  const origin = request.headers.origin;
+  if (!allowedOrigins.includes(origin)) {
+    ws.close(1008, 'Origin not allowed');
+    return;
+  }
+});
+```
+	</Card>
+</Section>
 
-<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+<Section title="CORSとの違い" icon="🔄">
+	<Card title="WebSocket Origin vs HTTP CORS" icon="📊" accentColor="purple">
+		<p>WebSocketのOriginチェックとHTTPのCORS（Cross-Origin Resource Sharing）には重要な違いがあります。</p>
+		
+		<div class="overflow-x-auto">
+			<table class="min-w-full divide-y divide-gray-200">
+				<thead class="bg-gray-50">
+					<tr>
+						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">特徴</th>
+						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WebSocket Origin</th>
+						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">HTTP CORS</th>
+					</tr>
+				</thead>
+				<tbody class="bg-white divide-y divide-gray-200">
+					<tr>
+						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">チェック方法</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">サーバー側で任意実装</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ブラウザが自動実行</td>
+					</tr>
+					<tr class="bg-gray-50">
+						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">プリフライト</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">なし</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">あり（OPTIONS）</td>
+					</tr>
+					<tr>
+						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">エラー処理</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">接続拒否・クローズ</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">リクエストブロック</td>
+					</tr>
+					<tr class="bg-gray-50">
+						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">設定場所</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">WebSocketサーバー</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">HTTPサーバー</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</Card>
+	
+	<Card title="重要なポイント" icon="💡" accentColor="yellow">
+		<p>WebSocketのOriginチェックは<strong>サーバー側でのオプション機能</strong>です。
+		実装しなければ任意のOriginからの接続を許可してしまうため、
+		セキュリティ要件に応じて適切に実装する必要があります。</p>
+	</Card>
+</Section>
 
-### ws（ポート80）とwss（ポート443）の違い
+<Section title="重要なポイント" icon="📊">
+	<Card title="このレッスンで学んだこと" icon="🎯" accentColor="indigo">
+		<div class="grid md:grid-cols-2 gap-4">
+			<div>
+				<h4 class="font-semibold text-indigo-800 mb-2">セキュリティ理解</h4>
+				<ul class="space-y-1 text-sm text-indigo-700">
+					<li>✓ ws://とwss://の適切な使い分け</li>
+					<li>✓ Originチェックの実装方法</li>
+					<li>✓ CORSとWebSocketの違い</li>
+					<li>✓ 証明書管理のベストプラクティス</li>
+				</ul>
+			</div>
+			<div>
+				<h4 class="font-semibold text-indigo-800 mb-2">環境対応</h4>
+				<ul class="space-y-1 text-sm text-indigo-700">
+					<li>✓ ファイアウォール制限の理解</li>
+					<li>✓ プロキシ環境での回避策</li>
+					<li>✓ 企業環境でのWebSocket運用</li>
+					<li>✓ ポート選択の戦略</li>
+				</ul>
+			</div>
+		</div>
+	</Card>
+</Section>
 
-WebSocketには暗号化されていない`ws://`と、TLS暗号化された`wss://`の2つのスキームがあります。
-
-<div class="grid md:grid-cols-2 gap-6 my-6">
-  <div class="bg-yellow-50 rounded-lg p-6 border-l-4 border-yellow-400">
-    <h4 class="text-lg font-semibold text-yellow-900 mb-3">⚠️ ws:// (非暗号化)</h4>
-    <ul class="space-y-2 text-yellow-800">
-      <li>• <strong>ポート:</strong> 80 (HTTPと同じ)</li>
-      <li>• <strong>セキュリティ:</strong> 平文通信</li>
-      <li>• <strong>用途:</strong> 開発環境・内部ネットワーク</li>
-      <li>• <strong>プロキシ:</strong> 一般的にブロックされる</li>
-    </ul>
-    <div class="mt-4 p-3 bg-yellow-100 rounded">
-      <code class="text-sm">ws://localhost:8080/websocket</code>
-    </div>
-  </div>
-  
-  <div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-400">
-    <h4 class="text-lg font-semibold text-green-900 mb-3">✅ wss:// (TLS暗号化)</h4>
-    <ul class="space-y-2 text-green-800">
-      <li>• <strong>ポート:</strong> 443 (HTTPSと同じ)</li>
-      <li>• <strong>セキュリティ:</strong> TLS/SSL暗号化</li>
-      <li>• <strong>用途:</strong> 本番環境・インターネット通信</li>
-      <li>• <strong>プロキシ:</strong> 一般的に許可される</li>
-    </ul>
-    <div class="mt-4 p-3 bg-green-100 rounded">
-      <code class="text-sm">wss://api.example.com/websocket</code>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
-
-### Originチェックとセキュリティ
-
-WebSocketのセキュリティ機構として、Origin（送信元）チェックが重要な役割を果たします。
-
-<div class="bg-blue-50 rounded-lg p-6 mb-4">
-  <h4 class="font-semibold text-blue-900 mb-3">🔒 Originチェックの仕組み</h4>
-  
-  <div class="space-y-4">
-    <div>
-      <h5 class="font-medium text-blue-800">1. クライアント側でのOrigin送信</h5>
-      <div class="bg-blue-100 p-3 rounded text-sm font-mono">
-        <div>GET /websocket HTTP/1.1</div>
-        <div>Host: api.example.com</div>
-        <div>Origin: https://myapp.example.com</div>
-        <div>Connection: Upgrade</div>
-        <div>Upgrade: websocket</div>
-      </div>
-    </div>
-    
-    <div>
-      <h5 class="font-medium text-blue-800">2. サーバー側でのOrigin検証</h5>
-      <div class="bg-blue-100 p-3 rounded text-sm">
-        <div class="font-mono">
-          <div>// Node.js WebSocketサーバーでのOrigin検証例</div>
-          <div>const allowedOrigins = [</div>
-          <div>&nbsp;&nbsp;'https://myapp.example.com',</div>
-          <div>&nbsp;&nbsp;'https://admin.example.com'</div>
-          <div>];</div>
-          <div><br/></div>
-          <div>wss.on('connection', (ws, request) => {`{`}</div>
-          <div>&nbsp;&nbsp;const origin = request.headers.origin;</div>
-          <div>&nbsp;&nbsp;if (!allowedOrigins.includes(origin)) {`{`}</div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;ws.close(1008, 'Origin not allowed');</div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;return;</div>
-          <div>&nbsp;&nbsp;{`}`}</div>
-          <div>{`}`});</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
-
-### CORSとの違い
-
-WebSocketのOriginチェックとHTTPのCORS（Cross-Origin Resource Sharing）には重要な違いがあります。
-
-<div class="overflow-x-auto">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">特徴</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WebSocket Origin</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">HTTP CORS</th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-      <tr>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">チェック方法</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">サーバー側で任意実装</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ブラウザが自動実行</td>
-      </tr>
-      <tr class="bg-gray-50">
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">プリフライト</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">なし</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">あり（OPTIONS）</td>
-      </tr>
-      <tr>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">エラー処理</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">接続拒否・クローズ</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">リクエストブロック</td>
-      </tr>
-      <tr class="bg-gray-50">
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">設定場所</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">WebSocketサーバー</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">HTTPサーバー</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="mt-6 bg-purple-50 rounded-lg p-4">
-  <h5 class="font-semibold text-purple-900 mb-2">💡 重要なポイント</h5>
-  <p class="text-sm text-purple-800">
-    WebSocketのOriginチェックは<strong>サーバー側でのオプション機能</strong>です。
-    実装しなければ任意のOriginからの接続を許可してしまうため、
-    セキュリティ要件に応じて適切に実装する必要があります。
-  </p>
-</div>
-
-</div>
-
-## 📊 重要なポイント
-
-<div class="bg-indigo-50 rounded-lg p-6 mb-8">
-  <h3 class="text-xl font-bold text-indigo-900 mb-4">🎯 このレッスンで学んだこと</h3>
-  
-  <div class="grid md:grid-cols-2 gap-4">
-    <div>
-      <h4 class="font-semibold text-indigo-800 mb-2">セキュリティ理解</h4>
-      <ul class="space-y-1 text-sm text-indigo-700">
-        <li>✓ ws://とwss://の適切な使い分け</li>
-        <li>✓ Originチェックの実装方法</li>
-        <li>✓ CORSとWebSocketの違い</li>
-        <li>✓ 証明書管理のベストプラクティス</li>
-      </ul>
-    </div>
-    <div>
-      <h4 class="font-semibold text-indigo-800 mb-2">環境対応</h4>
-      <ul class="space-y-1 text-sm text-indigo-700">
-        <li>✓ ファイアウォール制限の理解</li>
-        <li>✓ プロキシ環境での回避策</li>
-        <li>✓ 企業環境でのWebSocket運用</li>
-        <li>✓ ポート選択の戦略</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<ProgressTracker 
-  phase={1} 
-  section="network-tech" 
-  completed={["2.1", "2.2", "2.3", "2.4", "2.5"]} 
-/>
-
-<CompletionMark lessonId="phase1-network-tech-security-ports" />
-
-<NextLesson 
-  nextLessonId="phase1-websocket-states"
-  nextLessonTitle="WebSocket状態とライフサイクル"
-  nextLessonPath="/phase1/websocket-states"
-/>
+</LessonLayout>

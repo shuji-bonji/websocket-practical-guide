@@ -167,7 +167,7 @@ test.describe('Cross-Browser WebSocket Compatibility Matrix', () => {
 						blobType: blob.type === 'application/octet-stream'
 					};
 				} catch (error) {
-					return { error: error.message };
+					return { error: error instanceof Error ? error.message : String(error) };
 				}
 			});
 

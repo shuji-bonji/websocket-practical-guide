@@ -60,19 +60,20 @@
 	}
 
 	details summary h2 {
-		@apply relative inline-block;
+		@apply relative inline-flex items-center gap-3;
 	}
 
-	details summary h2::before {
+	details summary h2::after {
 		content: '▶';
-		@apply absolute -left-6 top-0 text-gray-500 transition-transform duration-200;
+		@apply text-blue-600 transition-transform duration-200 text-lg;
+		transform-origin: center;
 	}
 
-	details[open] summary h2::before {
+	details[open] summary h2::after {
 		@apply rotate-90;
 	}
 
-	details summary:hover h2::before {
-		@apply text-gray-700;
+	details summary:hover h2::after {
+		@apply text-blue-700;
 	}
 }

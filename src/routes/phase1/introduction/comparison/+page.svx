@@ -6,42 +6,35 @@ difficulty: "初級"
 ---
 
 <script>
-  import LessonIntro from '$lib/components/learning/LessonIntro.svelte';
-  import ProgressTracker from '$lib/components/learning/ProgressTracker.svelte';
-  import NextLesson from '$lib/components/learning/NextLesson.svelte';
-  import CompletionMark from '$lib/components/learning/CompletionMark.svelte';
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import Card from '$lib/components/common/Card.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
-<LessonIntro 
+<LessonLayout
   lessonId="phase1-introduction-comparison"
   title="WebSocket vs 他技術の比較理解"
   duration="60分"
   difficulty="初級"
   prerequisites={['WebSocket基本概念', 'HTTP通信の理解', '前3レッスンの完了']}
-/>
+  sectionTitle="WebSocket基礎理解"
+  nextLessonId="phase1-network-tech"
+  nextLessonTitle="ネットワーク技術基礎"
+  nextLessonPath="/phase1/network-tech"
+  learningObjectives={[
+    '主要なリアルタイム通信技術の特徴と制限',
+    '技術選択の判断基準と意思決定フレームワーク',
+    '実際のプロジェクトでの技術選択事例',
+    '将来性と発展性を考慮した技術選択'
+  ]}
+>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Section title="リアルタイム通信技術の全体像" icon="concept">
 
-<details>
-<summary><h2>🎯 このレッスンで学ぶこと</h2></summary>
+<Card title="技術分類マップ" icon="info" accentColor="blue">
 
-リアルタイム通信を実現する様々な技術を比較し、プロジェクトの要件に応じた最適な技術選択ができるようになります。
-
-- **主要なリアルタイム通信技術**の特徴と制限
-- **技術選択の判断基準**と意思決定フレームワーク
-- **実際のプロジェクト**での技術選択事例
-- **将来性と発展性**を考慮した技術選択
-
-</details>
-
-## 📊 リアルタイム通信技術の全体像
-
-### 技術分類マップ
-
-</div>
-</div>
+リアルタイム通信を実現する様々な技術の分類と特徴を理解しましょう。
 
 <Mermaid chart={`
 graph TB
@@ -70,12 +63,13 @@ graph TB
     style D fill:#f3e5f5
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-## 🔍 技術別詳細比較
+</Section>
 
-### 1. **HTTP/AJAX ポーリング**
+<Section title="技術別詳細比較" icon="implementation">
+
+<Card title="HTTP/AJAX ポーリング" icon="clock" accentColor="orange">
 
 #### 特徴
 - **方式**: 定期的なHTTPリクエスト
@@ -102,7 +96,9 @@ setInterval(async () => {
 - バッテリー消費 (モバイル)
 - スケーラビリティの問題
 
-### 2. **Server-Sent Events (SSE)**
+</Card>
+
+<Card title="Server-Sent Events (SSE)" icon="arrow" accentColor="yellow">
 
 #### 特徴
 - **方式**: HTTP上でのサーバープッシュ
@@ -142,7 +138,9 @@ app.get('/api/stream', (req, res) => {
 - ブラウザの同時接続数制限
 - バイナリデータに不向き
 
-### 3. **WebSocket**
+</Card>
+
+<Card title="WebSocket" icon="lightning" accentColor="green">
 
 #### 特徴
 - **方式**: 双方向の持続的接続
@@ -187,7 +185,9 @@ wss.on('connection', (ws) => {
 - 接続状態の管理
 - スケーリングの課題
 
-### 4. **WebRTC**
+</Card>
+
+<Card title="WebRTC" icon="video" accentColor="purple">
 
 #### 特徴
 - **方式**: P2P直接通信
@@ -219,9 +219,13 @@ dataChannel.onmessage = (event) => {
 - 実装の複雑さ
 - ブラウザ間の互換性
 
-## 📋 技術選択マトリックス
+</Card>
 
-### パフォーマンス比較
+</Section>
+
+<Section title="技術選択マトリックス" icon="analysis">
+
+<Card title="パフォーマンス比較" icon="chart" accentColor="blue">
 
 | 技術 | 遅延 | スループット | サーバー負荷 | 実装コスト | スケーラビリティ |
 |------|------|-------------|-------------|------------|----------------|
@@ -231,7 +235,9 @@ dataChannel.onmessage = (event) => {
 | **WebSocket** | **最低** | **最高** | **最低** | **中** | **高** |
 | WebRTC | 最低 | 最高 | なし | 高 | 高 |
 
-### 機能比較
+</Card>
+
+<Card title="機能比較" icon="check" accentColor="green">
 
 | 技術 | 双方向通信 | バイナリ対応 | 自動再接続 | ブラウザ対応 | プロキシ通過 |
 |------|-----------|-------------|-----------|-------------|-------------|
@@ -240,12 +246,15 @@ dataChannel.onmessage = (event) => {
 | **WebSocket** | **○** | **○** | **△** | **○** | **○** |
 | WebRTC | ○ | ○ | △ | ○ | △ |
 
-## 🎯 技術選択の決定フレームワーク
+</Card>
 
-### Step 1: 要件の分析
+</Section>
 
-</div>
-</div>
+<Section title="技術選択の決定フレームワーク" icon="theory">
+
+<Card title="要件分析フローチャート" icon="flow" accentColor="blue">
+
+プロジェクト要件に基づく技術選択の決定フローです。
 
 <Mermaid chart={`
 flowchart TD
@@ -272,12 +281,14 @@ flowchart TD
     style J fill:#f3e5f5
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Card>
 
-### Step 2: 非機能要件の考慮
+</Section>
 
-#### **スケーラビリティ要件**
+<Section title="非機能要件の考慮" icon="analysis">
+
+<Card title="スケーラビリティ要件" icon="scale" accentColor="green">
+
 ```
 同時接続数による技術選択:
 - < 100接続: どの技術でも問題なし
@@ -285,6 +296,10 @@ flowchart TD
 - 1,000-10,000: WebSocket + 負荷分散
 - 10,000+: WebSocket + マイクロサービス + クラスタリング
 ```
+
+</Card>
+
+<Card title="セキュリティ・運用要件" icon="shield" accentColor="red">
 
 #### **セキュリティ要件**
 - **認証・認可**: WebSocketはカスタム実装が必要
@@ -296,9 +311,13 @@ flowchart TD
 - **デバッグ**: HTTP系が容易
 - **障害対応**: WebSocketは専門知識が必要
 
-## 💼 実際の選択事例
+</Card>
 
-### 事例1: チャットアプリケーション
+</Section>
+
+<Section title="実際の選択事例" icon="case-study">
+
+<Card title="事例1: チャットアプリケーション" icon="chat" accentColor="green">
 
 **要件:**
 - 即座のメッセージ配信
@@ -313,7 +332,9 @@ flowchart TD
 // 3. モバイルでのバッテリー効率
 ```
 
-### 事例2: 株価ダッシュボード
+</Card>
+
+<Card title="事例2: 株価ダッシュボード" icon="chart" accentColor="blue">
 
 **要件:**
 - 1秒間隔のデータ更新
@@ -328,7 +349,9 @@ flowchart TD
 // 3. 実装・運用が簡単
 ```
 
-### 事例3: ビデオ会議システム
+</Card>
+
+<Card title="事例3: ビデオ会議システム" icon="video" accentColor="purple">
 
 **要件:**
 - 超低遅延の音声・映像
@@ -343,9 +366,13 @@ flowchart TD
 // 3. 組み合わせによる最適化
 ```
 
-## 🔮 将来性と技術動向
+</Card>
 
-### 新興技術の台頭
+</Section>
+
+<Section title="将来性と技術動向" icon="future">
+
+<Card title="新興技術の台頭" icon="trend" accentColor="orange">
 
 #### **HTTP/3 & QUIC**
 - UDP基盤による超低遅延
@@ -371,7 +398,9 @@ ws.onmessage = (event) => {
 - CDNエッジでのWebSocket処理
 - 地理的分散による遅延削減
 
-### 技術選択の将来指針
+</Card>
+
+<Card title="技術選択の将来指針" icon="compass" accentColor="blue">
 
 #### **2024年以降の推奨戦略**
 1. **WebSocketを基本選択肢**として考慮
@@ -379,9 +408,13 @@ ws.onmessage = (event) => {
 3. **HTTP/3**普及に備えた設計
 4. **マイクロサービス**との親和性重視
 
-## 📝 技術選択チェックリスト
+</Card>
 
-### プロジェクト開始前の確認項目
+</Section>
+
+<Section title="技術選択チェックリスト" icon="checklist">
+
+<Card title="プロジェクト開始前の確認項目" icon="check" accentColor="green">
 
 #### **機能要件**
 - [ ] リアルタイム性の要求レベル
@@ -404,22 +437,30 @@ ws.onmessage = (event) => {
 - [ ] ライブラリ・フレームワーク
 - [ ] 長期保守性
 
-## 💡 まとめ
+</Card>
 
-### WebSocketを選ぶべき場面
+</Section>
+
+<Section title="まとめ" icon="summary">
+
+<Card title="WebSocketを選ぶべき場面" icon="star" accentColor="green">
 
 1. **低遅延の双方向通信**が必要
 2. **高頻度のデータ交換**がある
 3. **スケーラビリティ**が重要
 4. **効率的なリソース使用**を求める
 
-### 他技術を選ぶべき場面
+</Card>
+
+<Card title="他技術を選ぶべき場面" icon="lightbulb" accentColor="orange">
 
 1. **SSE**: サーバーからの一方向配信のみ
 2. **ポーリング**: シンプルな要件、既存システム改修
 3. **WebRTC**: P2P通信、音声・ビデオ
 
-### 技術選択の最終判断
+</Card>
+
+<Card title="技術選択の最終判断" icon="check" accentColor="blue">
 
 ```
 WebSocketは「リアルタイム双方向通信のデファクトスタンダード」
@@ -429,20 +470,8 @@ WebSocketは「リアルタイム双方向通信のデファクトスタンダ�
 次のPhaseでは、実際にWebSocketを実装する際の具体的な技術と
 ベストプラクティスを学習していきます！
 
-</div>
-</div>
+</Card>
 
-<ProgressTracker 
-  lessonId="phase1-introduction-comparison"
-  sectionTitle="WebSocket入門"
-/>
+</Section>
 
-<CompletionMark lessonId="phase1-introduction-comparison" />
-
-<NextLesson 
-  nextLessonId="phase1-network-tech"
-  nextLessonTitle="ネットワーク技術基礎"
-  nextLessonPath="/phase1/network-tech"
-  completionMessage="WebSocket入門の基本概念を学習しました！"
-  showCompletion={true}
-/>
+</LessonLayout>

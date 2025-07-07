@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { progressStore, progressActions } from '$lib/stores/progress';
 
 	interface Props {
@@ -9,44 +10,8 @@
 
 	let progress = $derived($progressStore);
 
-	// 現在のパスを取得・監視
-	let currentPath = $state('');
-
-	$effect(() => {
-		// ブラウザ環境でのみ実行
-		if (typeof window !== 'undefined') {
-			// 初期パス設定
-			currentPath = window.location.pathname;
-
-			// ページ遷移の監視
-			const updatePath = () => {
-				currentPath = window.location.pathname;
-			};
-
-			// SvelteKitの履歴変更を監視
-			window.addEventListener('popstate', updatePath);
-
-			// プログラム的なナビゲーションを監視
-			const originalPushState = history.pushState;
-			const originalReplaceState = history.replaceState;
-
-			history.pushState = function (...args) {
-				originalPushState.apply(history, args);
-				updatePath();
-			};
-
-			history.replaceState = function (...args) {
-				originalReplaceState.apply(history, args);
-				updatePath();
-			};
-
-			return () => {
-				window.removeEventListener('popstate', updatePath);
-				history.pushState = originalPushState;
-				history.replaceState = originalReplaceState;
-			};
-		}
-	});
+	// 現在のパスをSvelteKitのpageストアから取得
+	let currentPath = $derived($page.url.pathname);
 
 	// ナビゲーションアイテムの型定義
 	interface NavigationItem {
@@ -54,6 +19,7 @@
 		label: string;
 		icon?: string;
 		lessonId?: string;
+		status?: 'available' | 'coming-soon';
 	}
 
 	interface NavigationSection {
@@ -90,7 +56,7 @@
 				{
 					href: '/phase1/introduction/use-cases',
 					label: '1.3 WebSocketの利用例と適用場面',
-					lessonId: 'phase1-use-cases'
+					lessonId: 'phase1-introduction-use-cases'
 				},
 				{
 					href: '/phase1/introduction/comparison',
@@ -133,63 +99,87 @@
 		{
 			title: 'Phase 1: API基本構造 (3. API構造)',
 			items: [
-				{ href: '/phase1/api-structure', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase1/api-structure',
+					label: 'セクション概要',
+					icon: 'book',
+					status: 'coming-soon'
+				},
 				{
 					href: '/phase1/api-structure/lifecycle',
 					label: '3.1 WebSocket接続ライフサイクル',
-					lessonId: 'phase1-api-structure-lifecycle'
+					lessonId: 'phase1-api-structure-lifecycle',
+					status: 'coming-soon'
 				},
 				{
 					href: '/phase1/api-structure/event-model',
 					label: '3.2 イベントベース通信モデル',
-					lessonId: 'phase1-api-structure-event-model'
+					lessonId: 'phase1-api-structure-event-model',
+					status: 'coming-soon'
 				},
 				{
 					href: '/phase1/api-structure/roles',
 					label: '3.3 クライアント・サーバー役割分担',
-					lessonId: 'phase1-api-structure-roles'
+					lessonId: 'phase1-api-structure-roles',
+					status: 'coming-soon'
 				}
 			]
 		},
 		{
 			title: 'Phase 1: 基本操作 (4. 基本操作)',
 			items: [
-				{ href: '/phase1/basic-operations', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase1/basic-operations',
+					label: 'セクション概要',
+					icon: 'book',
+					status: 'coming-soon'
+				},
 				{
 					href: '/phase1/basic-operations/url-connection',
 					label: '4.1 WebSocket URL と接続確立',
-					lessonId: 'phase1-basic-operations-url-connection'
+					lessonId: 'phase1-basic-operations-url-connection',
+					status: 'coming-soon'
 				},
 				{
 					href: '/phase1/basic-operations/api-implementation',
 					label: '4.2 ブラウザ標準WebSocket API実装',
-					lessonId: 'phase1-basic-operations-api-implementation'
+					lessonId: 'phase1-basic-operations-api-implementation',
+					status: 'coming-soon'
 				},
 				{
 					href: '/phase1/basic-operations/reconnection',
 					label: '4.3 接続失敗と再接続処理',
-					lessonId: 'phase1-basic-operations-reconnection'
+					lessonId: 'phase1-basic-operations-reconnection',
+					status: 'coming-soon'
 				}
 			]
 		},
 		{
 			title: 'Phase 2: データ通信 (5. データ通信)',
 			items: [
-				{ href: '/phase2/data-communication', label: 'セクション概要', icon: 'book' },
+				{
+					href: '/phase2/data-communication',
+					label: 'セクション概要',
+					icon: 'book',
+					status: 'coming-soon'
+				},
 				{
 					href: '/phase2/data-communication/svelte-stores',
 					label: '5.1 WebSocketオブジェクトとSvelteストア',
-					lessonId: 'phase2-data-communication-svelte-stores'
+					lessonId: 'phase2-data-communication-svelte-stores',
+					status: 'coming-soon'
 				},
 				{
 					href: '/phase2/data-communication/send-receive',
 					label: '5.2 データ送受信パターン',
-					lessonId: 'phase2-data-communication-send-receive'
+					lessonId: 'phase2-data-communication-send-receive',
+					status: 'coming-soon'
 				},
 				{
 					href: '/phase2/data-communication/error-handling',
 					label: '5.3 高度なエラーハンドリング',
-					lessonId: 'phase2-data-communication-error-handling'
+					lessonId: 'phase2-data-communication-error-handling',
+					status: 'coming-soon'
 				}
 			]
 		},
@@ -379,32 +369,28 @@
 					<div class="mt-2 space-y-1">
 						{#each section.items as item (item.href)}
 							<div class="flex items-center group">
-								<a
-									href={item.href}
-									class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
-									item.href
-										? 'bg-blue-100 text-blue-700 border-r-2 border-blue-500'
-										: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
-								>
-									{#if item.icon}
-										<svg
-											class="mr-3 h-5 w-5 flex-shrink-0"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d={getIcon(item.icon)}
-											/>
-										</svg>
-									{:else if item.lessonId}
-										<!-- レッスン完了チェックボックス -->
-										<div class="mr-3 flex-shrink-0">
-											{#key lessonCompletionMap.get(item.lessonId)}
-												{#if item.lessonId && isLessonCompleted(item.lessonId)}
+								{#if item.status === 'coming-soon'}
+									<div
+										class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-not-allowed text-gray-400"
+									>
+										{#if item.icon}
+											<svg
+												class="mr-3 h-5 w-5 flex-shrink-0"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d={getIcon(item.icon)}
+												/>
+											</svg>
+										{:else if item.lessonId}
+											<!-- レッスン完了チェックボックス -->
+											<div class="mr-3 flex-shrink-0">
+												{#if item.lessonId && lessonCompletionMap.get(item.lessonId)}
 													<div
 														class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
 													>
@@ -419,12 +405,63 @@
 												{:else}
 													<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
 												{/if}
-											{/key}
-										</div>
-									{/if}
+											</div>
+										{/if}
 
-									<span class="truncate">{item.label}</span>
-								</a>
+										<span class="truncate">{item.label}</span>
+										{#if item.status === 'coming-soon'}
+											<span class="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded-full"
+												>準備中</span
+											>
+										{/if}
+									</div>
+								{:else}
+									<a
+										href={item.href}
+										class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
+										item.href
+											? 'bg-blue-100 text-blue-700 border-r-2 border-blue-500'
+											: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
+									>
+										{#if item.icon}
+											<svg
+												class="mr-3 h-5 w-5 flex-shrink-0"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+												/>
+											</svg>
+										{/if}
+
+										{#if item.lessonId}
+											<div class="mr-3 flex items-center">
+												{#if lessonCompletionMap.get(item.lessonId)}
+													<div
+														class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+													>
+														<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+															<path
+																fill-rule="evenodd"
+																d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																clip-rule="evenodd"
+															/>
+														</svg>
+													</div>
+												{:else}
+													<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+												{/if}
+											</div>
+										{/if}
+
+										<span class="truncate">{item.label}</span>
+									</a>
+								{/if}
 
 								<!-- レッスン完了ボタン -->
 								{#if item.lessonId}
@@ -432,10 +469,10 @@
 										type="button"
 										class="ml-2 p-1 rounded-md text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
 										onclick={() => item.lessonId && toggleLessonCompletion(item.lessonId)}
-										title={item.lessonId && isLessonCompleted(item.lessonId)
+										title={item.lessonId && lessonCompletionMap.get(item.lessonId)
 											? '未完了にする'
 											: '完了にする'}
-										aria-label={item.lessonId && isLessonCompleted(item.lessonId)
+										aria-label={item.lessonId && lessonCompletionMap.get(item.lessonId)
 											? 'レッスンを未完了にする'
 											: 'レッスンを完了にする'}
 									>
@@ -529,50 +566,107 @@
 							</h3>
 							<div class="mt-2 space-y-1">
 								{#each section.items as item (item.href)}
-									<a
-										href={item.href}
-										class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
-										item.href
-											? 'bg-blue-100 text-blue-700'
-											: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
-										onclick={() => (open = false)}
-									>
-										{#if item.icon}
-											<svg
-												class="mr-3 h-5 w-5 flex-shrink-0"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d={getIcon(item.icon)}
-												/>
-											</svg>
-										{:else if item.lessonId}
-											<div class="mr-3 flex-shrink-0">
-												{#if item.lessonId && isLessonCompleted(item.lessonId)}
-													<div
-														class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
-													>
-														<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-															<path
-																fill-rule="evenodd"
-																d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-																clip-rule="evenodd"
-															/>
-														</svg>
-													</div>
-												{:else}
-													<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
-												{/if}
-											</div>
-										{/if}
+									{#if item.status === 'coming-soon'}
+										<div
+											class="flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-not-allowed text-gray-400"
+										>
+											{#if item.icon}
+												<svg
+													class="mr-3 h-5 w-5 flex-shrink-0"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d={getIcon(item.icon)}
+													/>
+												</svg>
+											{:else if item.lessonId}
+												<div class="mr-3 flex-shrink-0">
+													{#if item.lessonId && lessonCompletionMap.get(item.lessonId)}
+														<div
+															class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+														>
+															<svg
+																class="w-3 h-3 text-white"
+																fill="currentColor"
+																viewBox="0 0 20 20"
+															>
+																<path
+																	fill-rule="evenodd"
+																	d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																	clip-rule="evenodd"
+																/>
+															</svg>
+														</div>
+													{:else}
+														<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+													{/if}
+												</div>
+											{/if}
 
-										<span class="truncate">{item.label}</span>
-									</a>
+											<span class="truncate">{item.label}</span>
+											{#if item.status === 'coming-soon'}
+												<span class="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded-full"
+													>準備中</span
+												>
+											{/if}
+										</div>
+									{:else}
+										<a
+											href={item.href}
+											class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
+											item.href
+												? 'bg-blue-100 text-blue-700'
+												: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
+											onclick={() => (open = false)}
+										>
+											{#if item.icon}
+												<svg
+													class="mr-3 h-5 w-5 flex-shrink-0"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+													/>
+												</svg>
+											{/if}
+
+											{#if item.lessonId}
+												<div class="mr-3 flex items-center">
+													{#if lessonCompletionMap.get(item.lessonId)}
+														<div
+															class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+														>
+															<svg
+																class="w-3 h-3 text-white"
+																fill="currentColor"
+																viewBox="0 0 20 20"
+															>
+																<path
+																	fill-rule="evenodd"
+																	d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																	clip-rule="evenodd"
+																/>
+															</svg>
+														</div>
+													{:else}
+														<div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+													{/if}
+												</div>
+											{/if}
+
+											<span class="truncate">{item.label}</span>
+										</a>
+									{/if}
 								{/each}
 							</div>
 						</div>

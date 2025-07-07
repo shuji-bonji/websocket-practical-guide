@@ -229,7 +229,7 @@
 
 	<!-- HTTP Version Selection -->
 	<div class="mb-6">
-		<label class="block text-sm font-medium text-gray-700 mb-3">HTTPバージョンを選択:</label>
+		<span class="block text-sm font-medium text-gray-700 mb-3">HTTPバージョンを選択:</span>
 		<div class="grid md:grid-cols-3 gap-4">
 			{#each Object.entries(httpVersions) as [version, info] (version)}
 				<label class="cursor-pointer">
