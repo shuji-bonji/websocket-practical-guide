@@ -43,24 +43,94 @@ HTTPは**リクエスト・レスポンス型プロトコル**として設計さ
 - 常にクライアントが通信の起点となる必要がある
 - サーバーサイドでデータが更新されても、クライアントに即座に通知できない
 
-#### 2. **接続の都度確立**
-```
-HTTP/1.1の典型的な通信フロー。
-1. TCP接続確立 (3-way handshake)
-2. HTTPリクエスト送信
-3. HTTPレスポンス受信
-4. TCP接続終了 (4-way handshake)
-```
-
-この過程には以下のオーバーヘッドが存在します。
-- **ネットワーク遅延**：毎回の接続確立に時間を要する
-- **リソース消費**：サーバー・クライアント双方でのコネクション管理コスト
-- **帯域幅の無駄**：HTTPヘッダーの重複送信
-
 #### 3. **ステートレス特性の制約**
 - 前回のリクエストの状態を保持しない
 - セッション管理にCookieやトークンが必要
 - リアルタイム性が要求される場面での情報保持に限界
+
+</Card>
+
+<Card title="HTTP一方向通信の制約の可視化" icon="warning" accentColor="orange">
+
+HTTPでは、サーバーからクライアントへの能動的な通信ができません。この制約を図で確認してみましょう。
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバー
+    participant DB as データベース
+    
+    Note over S: 新しいデータが到着
+    DB->>S: データ更新通知
+    
+    Note over S,C: サーバーはクライアントに<br/>直接通知できない
+    
+    Note over C: ユーザーがページを更新するまで<br/>新しいデータに気づかない
+    
+    C->>S: GET /api/data
+    S->>DB: データ取得
+    DB-->>S: 最新データ
+    S-->>C: 200 OK (最新データ)
+    
+    Note over C: ようやく新しいデータを受信
+`} />
+
+**問題点：**
+- サーバーでデータが更新されても、クライアントに即座に伝えられない
+- ユーザーのアクション（ページ更新、リロード）を待つ必要がある
+- リアルタイム性が求められるアプリケーションには不適切
+
+</Card>
+
+<Card title="HTTPの接続の都度確立によるオーバーヘッド" icon="warning" accentColor="red">
+
+HTTP/1.1では、各リクエストで接続確立と切断が繰り返されます。このオーバーヘッドを可視化してみましょう。
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバー
+    
+    Note over C,S: リクエスト1
+    C->>S: TCP SYN
+    S->>C: TCP SYN-ACK
+    C->>S: TCP ACK
+    Note over C,S: 3-way handshake完了
+    
+    C->>S: GET /api/data HTTP/1.1
+    S-->>C: 200 OK + データ
+    
+    C->>S: TCP FIN
+    S->>C: TCP ACK
+    S->>C: TCP FIN
+    C->>S: TCP ACK
+    Note over C,S: 4-way handshake完了
+    
+    Note over C,S: リクエスト2（同じプロセスを繰り返し）
+    C->>S: TCP SYN
+    S->>C: TCP SYN-ACK
+    C->>S: TCP ACK
+    
+    C->>S: GET /api/messages HTTP/1.1
+    S-->>C: 200 OK + データ
+    
+    C->>S: TCP FIN
+    S->>C: TCP ACK
+    S->>C: TCP FIN
+    C->>S: TCP ACK
+`} />
+
+**オーバーヘッドの内訳：**
+- **接続確立**：3-way handshake（3往復）
+- **データ転送**：リクエスト＋レスポンス（1往復）
+- **接続終了**：4-way handshake（4往復）
+- **合計**：実質的なデータ転送は1往復、オーバーヘッドが7往復
+
+#### このオーバーヘッドが引き起こす問題
+- **ネットワーク遅延**：毎回の接続確立に時間を要する
+- **リソース消費**：サーバー・クライアント双方でのコネクション管理コスト
+- **帯域幅の無駄**：HTTPヘッダーの重複送信
+- **スケーラビリティの制限**：大量のコネクション処理によるサーバー負荷
 
 </Card>
 

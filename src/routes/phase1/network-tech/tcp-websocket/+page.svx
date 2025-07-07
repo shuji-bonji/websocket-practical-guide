@@ -1,3 +1,10 @@
+---
+title: "TCP/WebSocket接続確立の詳細"
+description: "TCP/WebSocketの接続確立プロセスの技術的詳細を完全理解する"
+duration: "2-3時間"
+difficulty: "中級"
+---
+
 <script>
   import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -7,154 +14,1175 @@
 
 <LessonLayout
   lessonId="phase1-network-tech-tcp-websocket"
-  title="WebSocket接続確立プロセス"
-  duration="1.5-2.5時間"
-  difficulty="beginner"
-  prerequisites={['HTTP基礎', 'OSI参照モデル', 'ネットワーク基礎知識']}
+  title="TCP/WebSocket接続確立の詳細"
+  duration="2-3時間"
+  difficulty="中級"
+  prerequisites={['HTTP基礎', 'OSI参照モデル', 'TCP/IP基礎知識', 'ネットワーク構成理解']}
   sectionTitle="ネットワーク技術基礎"
   nextLessonId="phase1-network-tech-security-ports"
   nextLessonTitle="セキュリティとポート管理"
   nextLessonPath="/phase1/network-tech/security-ports"
   learningObjectives={[
-    'End to End通信とHop by Hop通信の違いを理解',
-    'HTTP/1.1 Upgradeハンドシェイクの詳細を把握',
-    'WebSocketキーの生成と検証メカニズムを学習',
-    'プロキシ・ファイアウォール環境での動作を理解'
+    'TCP接続確立の3-wayハンドシェイクからWebSocketハンドシェイクまでの完全な流れを理解',
+    'End-to-End通信とHop-by-Hop通信の技術的違いとWebSocketでの実装詳細',
+    'HTTP/1.1 Upgradeメカニズムの詳細仕様とセキュリティ実装',
+    'プロキシ・ファイアウォール・NAT環境でのWebSocket接続確立手法',
+    'WebSocketハンドシェイクの実装例とデバッグ手法の習得'
   ]}
 >
 
-<Section title="学習内容" icon="📚">
-  <Card title="このレッスンで学ぶこと" icon="📋" accentColor="blue">
-    <p>このレッスンでは、WebSocket接続確立プロセスの技術的詳細を学習します。</p>
-    <ul>
-      <li><strong>End to End vs Hop by Hop通信</strong>の基礎</li>
-      <li><strong>HTTP/1.1 Upgradeハンドシェイク</strong>の詳細</li>
-      <li><strong>WebSocketキーの生成と検証</strong>メカニズム</li>
-      <li><strong>プロキシ・ファイアウォール環境</strong>での動作</li>
-    </ul>
-  </Card>
+<Section title="TCP接続確立の基礎" icon="concept">
+
+<Card title="TCPの3-wayハンドシェイク詳細" icon="info" accentColor="blue">
+
+WebSocket接続を理解するには、まずその基盤となるTCP接続確立の詳細を理解する必要があります。
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバー
+    
+    Note over C,S: TCP接続確立（3-wayハンドシェイク）
+    
+    C->>S: SYN (seq=100)
+    Note right of C: 接続要求<br/>初期シーケンス番号:100
+    
+    S->>C: SYN-ACK (seq=200, ack=101)
+    Note left of S: 接続承認<br/>初期シーケンス番号:200<br/>確認応答番号:101
+    
+    C->>S: ACK (seq=101, ack=201)
+    Note right of C: 確認応答<br/>接続確立完了
+    
+    Note over C,S: TCP接続確立完了<br/>この上でHTTP通信開始
+`} />
+
+#### TCP接続確立の重要なポイント
+
+- **SYN（Synchronize）**：接続確立要求。クライアントの初期シーケンス番号を通知
+- **SYN-ACK**：接続承認。サーバーの初期シーケンス番号と、クライアントのシーケンス番号への確認応答
+- **ACK（Acknowledgment）**：最終確認。双方向の接続確立完了
+
+**WebSocketへの影響**：WebSocketハンドシェイクは、この確立済みTCP接続上で実行されます。
+
+</Card>
+
+<Card title="WebSocket接続確立の全体フロー" icon="lightning" accentColor="green">
+
+WebSocket接続確立は、TCP接続の上で行われる多段階プロセスです。
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant P as プロキシ
+    participant S as サーバー
+    
+    Note over C,S: Phase 1: TCP接続確立
+    C->>S: TCP 3-way handshake
+    Note over C,S: TCP接続確立完了
+    
+    Note over C,S: Phase 2: HTTPハンドシェイク
+    C->>P: GET /ws HTTP/1.1<br/>Connection: Upgrade<br/>Upgrade: websocket<br/>Sec-WebSocket-Key: xxx
+    P->>S: 同じリクエストを転送
+    
+    S->>P: HTTP/1.1 101 Switching Protocols<br/>Sec-WebSocket-Accept: yyy
+    P->>C: 同じレスポンスを転送
+    
+    Note over C,S: Phase 3: WebSocket通信開始
+    C->>S: WebSocketフレーム通信
+    S->>C: WebSocketフレーム通信
+`} />
+
+#### 接続確立の各段階の詳細
+
+1. **TCP接続確立**：基盤となる信頼性のある双方向通信路を確立
+2. **HTTPハンドシェイク**：WebSocketプロトコルへのアップグレード交渉
+3. **WebSocket通信**：フレームベースの双方向リアルタイム通信開始
+
+</Card>
+
 </Section>
 
-<Section title="End to End vs Hop by Hop通信" icon="🌐">
-  <Card title="通信モデルの基礎" icon="🔗" accentColor="green">
+<Section title="End-to-End vs Hop-by-Hop通信の詳細" icon="demo">
 
-    <p>WebSocket接続を理解する上で、まずネットワーク通信の2つの基本モデルを理解することが重要です。</p>
-    <div class="grid md:grid-cols-2 gap-6 my-6">
-      <div class="bg-blue-50 rounded-lg p-6">
-        <h4 class="text-lg font-semibold text-blue-900 mb-3">🔗 End to End通信</h4>
-        <ul class="space-y-2 text-blue-800">
-          <li>• クライアントとサーバー間の直接的な論理接続</li>
-          <li>• WebSocketの通信モデル</li>
-          <li>• 中間ノードは単なる転送役</li>
-          <li>• 接続状態の維持が必要</li>
-        </ul>
-      </div>
-      
-      <div class="bg-green-50 rounded-lg p-6">
-        <h4 class="text-lg font-semibold text-green-900 mb-3">🔀 Hop by Hop通信</h4>
-        <ul class="space-y-2 text-green-800">
-          <li>• 各ノード間での個別の接続</li>
-          <li>• 従来のHTTPリクエスト/レスポンス</li>
-          <li>• 各中間ノードで処理可能</li>
-          <li>• ステートレスな通信</li>
-        </ul>
-      </div>
-    </div>
-  </Card>
-</Section>
+<Card title="通信モデルの技術的違い" icon="check" accentColor="blue">
 
-<Section title="HTTP/1.1 Upgradeハンドシェイク" icon="🤝">
-  <Card title="ハンドシェイクの詳細" icon="🔄" accentColor="blue">
+ネットワーク通信には2つの基本的なモデルがあり、WebSocketとHTTPではそれぞれ異なるアプローチを採用しています。
 
-    <p>WebSocket接続は、HTTP/1.1のUpgradeメカニズムを使用して確立されます。</p>
-    <div class="bg-gray-50 rounded-lg p-4 mb-6">
-      <h4 class="font-semibold mb-3">🤝 ハンドシェイクのステップ</h4>
-      
-      <div class="space-y-4">
-        <div>
-          <h5 class="font-medium">1. クライアント → サーバー: Upgradeリクエスト</h5>
-          <pre><code class="language-http">GET /websocket HTTP/1.1
-Host: example.com:8080
-Connection: Upgrade
-Upgrade: websocket
-Sec-WebSocket-Version: 13
-Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
-Origin: http://example.com</code></pre>
-        </div>
+<Mermaid chart={`
+flowchart TD
+    subgraph "Hop-by-Hop通信（従来のHTTP）"
+        C1[クライアント] -->|個別接続| P1[プロキシ]
+        P1 -->|個別接続| R1[ルーター]
+        R1 -->|個別接続| S1[サーバー]
         
-        <div>
-          <h5 class="font-medium">2. サーバー → クライアント: Upgradeレスポンス</h5>
-          <pre><code class="language-http">HTTP/1.1 101 Switching Protocols
-Connection: Upgrade
-Upgrade: websocket
-Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</code></pre>
-        </div>
-        
-        <div>
-          <h5 class="font-medium">3. 双方向通信の開始</h5>
-          <ul>
-            <li>HTTPからWebSocketプロトコルへの切り替え完了</li>
-            <li>以降はWebSocketフレームでの通信</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </Card>
+        C1 -.->|リクエスト処理| P1
+        P1 -.->|キャッシュ・変換| R1
+        R1 -.->|ロードバランス| S1
+    end
+    
+    subgraph "End-to-End通信（WebSocket）"
+        C2[クライアント] ==>|論理的な直接接続| S2[サーバー]
+        P2[プロキシ] -.->|透過的転送| Transparent[透過的転送のみ]
+        R2[ルーター] -.->|透過的転送| Transparent
+    end
+`} />
+
+</Card>
+
+<Card title="Hop-by-Hop通信の詳細実装" icon="warning" accentColor="orange">
+
+従来のHTTP通信では、各中間ノードが独立してリクエストを処理します。
+
+```javascript
+// プロキシサーバーでのHTTPリクエスト処理例
+class HTTPProxy {
+  async handleRequest(request) {
+    // 1. リクエストの解析と変更
+    const modifiedRequest = this.modifyHeaders(request);
+    
+    // 2. キャッシュチェック
+    const cachedResponse = await this.checkCache(request.url);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // 3. 上流サーバーへの新しい接続
+    const upstreamConnection = await this.createConnection(targetServer);
+    const response = await upstreamConnection.send(modifiedRequest);
+    
+    // 4. レスポンスの変更とキャッシュ
+    const modifiedResponse = this.modifyResponse(response);
+    await this.cacheResponse(request.url, modifiedResponse);
+    
+    return modifiedResponse;
+  }
+  
+  modifyHeaders(request) {
+    // プロキシが独自にヘッダーを追加・変更
+    request.headers['X-Forwarded-For'] = getClientIP();
+    request.headers['X-Proxy-Authorization'] = getProxyAuth();
+    return request;
+  }
+}
+```
+
+#### Hop-by-Hop通信の特徴
+
+- **独立した処理**：各中間ノードがリクエストを独立して処理
+- **状態管理不要**：各リクエストは独立しており、前回の状態を保持しない
+- **柔軟な変更**：プロキシでヘッダー追加、キャッシュ、認証処理が可能
+- **接続の独立性**：クライアント-プロキシ間とプロキシ-サーバー間は別々の接続
+
+</Card>
+
+<Card title="End-to-End通信の詳細実装" icon="lightning" accentColor="green">
+
+WebSocketでは、クライアントとサーバー間に論理的な直接接続を確立します。
+
+```javascript
+// WebSocket接続でのEnd-to-End通信実装
+class WebSocketEndToEnd {
+  constructor(url) {
+    this.url = url;
+    this.connectionState = 'disconnected';
+  }
+  
+  async establishConnection() {
+    // 1. TCPレベルでの接続確立（プロキシ経由でも論理的には直接）
+    const tcpConnection = await this.establishTCP();
+    
+    // 2. HTTP Upgradeハンドシェイク
+    const upgradeSuccess = await this.performUpgrade(tcpConnection);
+    
+    if (upgradeSuccess) {
+      // 3. End-to-End接続確立完了
+      this.connectionState = 'connected';
+      this.setupFrameHandling(tcpConnection);
+    }
+  }
+  
+  async performUpgrade(connection) {
+    // WebSocketキーの生成（クライアント側認証）
+    const wsKey = this.generateWebSocketKey();
+    
+    const upgradeRequest = {
+      method: 'GET',
+      headers: {
+        'Connection': 'Upgrade',
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Version': '13',
+        'Sec-WebSocket-Key': wsKey
+      }
+    };
+    
+    const response = await connection.send(upgradeRequest);
+    
+    // サーバーからの応答キー検証
+    const expectedAccept = this.calculateExpectedAccept(wsKey);
+    return response.headers['Sec-WebSocket-Accept'] === expectedAccept;
+  }
+  
+  setupFrameHandling(connection) {
+    // フレームレベルでの直接通信開始
+    connection.onMessage = (frame) => {
+      // プロキシによる変更なし、サーバーからのデータをそのまま受信
+      this.handleWebSocketFrame(frame);
+    };
+  }
+  
+  sendMessage(data) {
+    // フレームを直接サーバーに送信（中間ノードは透過的転送のみ）
+    const frame = this.createWebSocketFrame(data);
+    this.connection.send(frame);
+  }
+}
+```
+
+#### End-to-End通信の特徴
+
+- **論理的直接接続**：中間ノードは透過的な転送のみ実行
+- **状態保持**：接続確立後、その状態を継続的に維持
+- **フレーム整合性**：送信されたフレームがそのまま宛先に到達
+- **低遅延**：中間ノードでの処理オーバーヘッドが最小限
+
+</Card>
+
+<Card title="実際のプロキシ環境での動作比較" icon="star" accentColor="purple">
+
+企業環境などで一般的なプロキシサーバーを通した通信の違いを見てみましょう。
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant P as プロキシサーバー
+    participant S as サーバー
+    
+    Note over C,S: HTTP通信（Hop-by-Hop）
+    C->>P: GET /api/data HTTP/1.1<br/>Host: server.com
+    Note over P: プロキシでの処理<br/>・認証チェック<br/>・キャッシュ確認<br/>・ヘッダー変更
+    P->>S: GET /api/data HTTP/1.1<br/>Host: server.com<br/>X-Forwarded-For: client_ip<br/>Proxy-Authorization: xxx
+    S-->>P: 200 OK + データ
+    Note over P: レスポンス処理<br/>・キャッシュ保存<br/>・セキュリティフィルタ
+    P-->>C: 200 OK + 変更されたデータ
+    
+    Note over C,S: WebSocket通信（End-to-End）
+    C->>P: GET /ws HTTP/1.1<br/>Connection: Upgrade<br/>Upgrade: websocket
+    P->>S: 同じリクエストを透過的転送
+    S-->>P: 101 Switching Protocols
+    P-->>C: 透過的転送（変更なし）
+    
+    Note over C,S: WebSocketフレーム通信開始
+    C->>S: WebSocketフレーム（透過的転送）
+    S->>C: WebSocketフレーム（透過的転送）
+`} />
+
+#### プロキシ環境での重要な違い
+
+**HTTP（Hop-by-Hop）**：
+- プロキシが各リクエストを解釈・変更可能
+- キャッシュ、認証、セキュリティフィルタリングが適用される
+- リクエストとレスポンスが変更される可能性がある
+
+**WebSocket（End-to-End）**：
+- プロキシはフレームを解釈せず、バイト列として透過的に転送
+- ハンドシェイク後はプロキシによる変更が不可能
+- クライアントとサーバー間の直接的なデータ交換
+
+</Card>
+
 </Section>
 
-<Section title="WebSocketキーの生成と検証" icon="🔐">
-  <Card title="セキュリティメカニズム" icon="🔒" accentColor="yellow">
+<Section title="HTTP/1.1 Upgradeハンドシェイクの詳細実装" icon="implementation">
 
-    <p>セキュリティのため、WebSocketハンドシェイクではキーの交換と検証が行われます。</p>
-    <div class="grid md:grid-cols-2 gap-6 my-6">
-      <div>
-        <h4 class="font-semibold mb-3">🔑 Sec-WebSocket-Key</h4>
-        <div class="bg-yellow-50 rounded-lg p-4">
-          <p class="text-sm mb-2">クライアントが生成する16バイトのランダム値（Base64エンコード）</p>
-          <code class="text-xs bg-yellow-100 px-2 py-1 rounded">
-            dGhlIHNhbXBsZSBub25jZQ==
-          </code>
-        </div>
-      </div>
+<Card title="ハンドシェイクの完全な仕様" icon="warning" accentColor="blue">
+
+WebSocketハンドシェイクは、RFC 6455で定義された厳密な仕様に従って実行されます。
+
+#### 1. クライアント側ハンドシェイク実装
+
+```javascript
+class WebSocketClient {
+  async initiateHandshake(url) {
+    // WebSocketキーの生成
+    const wsKey = this.generateSecWebSocketKey();
+    
+    // ハンドシェイクリクエストの構築
+    const request = this.buildHandshakeRequest(url, wsKey);
+    
+    // TCPソケット経由でリクエスト送信
+    const response = await this.sendHandshakeRequest(request);
+    
+    // レスポンス検証
+    if (this.validateHandshakeResponse(response, wsKey)) {
+      return this.establishWebSocketConnection();
+    } else {
+      throw new Error('WebSocket handshake failed');
+    }
+  }
+  
+  generateSecWebSocketKey() {
+    // 16バイトのランダム値を生成してBase64エンコード
+    const randomBytes = new Uint8Array(16);
+    crypto.getRandomValues(randomBytes);
+    return btoa(String.fromCharCode(...randomBytes));
+  }
+  
+  buildHandshakeRequest(url, wsKey) {
+    const urlObj = new URL(url);
+    
+    return [
+      `GET ${urlObj.pathname} HTTP/1.1`,
+      `Host: ${urlObj.host}`,
+      `Upgrade: websocket`,
+      `Connection: Upgrade`,
+      `Sec-WebSocket-Key: ${wsKey}`,
+      `Sec-WebSocket-Version: 13`,
+      `Origin: ${window.location.origin}`,
+      '', // 空行でヘッダー終了
+      ''
+    ].join('\r\n');
+  }
+  
+  validateHandshakeResponse(response, originalKey) {
+    // ステータスコード確認
+    if (!response.startsWith('HTTP/1.1 101 Switching Protocols')) {
+      return false;
+    }
+    
+    // 必須ヘッダーの確認
+    const headers = this.parseHeaders(response);
+    
+    if (headers['upgrade'] !== 'websocket' || 
+        headers['connection'].toLowerCase() !== 'upgrade') {
+      return false;
+    }
+    
+    // Sec-WebSocket-Acceptの検証
+    const expectedAccept = this.calculateAcceptKey(originalKey);
+    return headers['sec-websocket-accept'] === expectedAccept;
+  }
+  
+  calculateAcceptKey(wsKey) {
+    // RFC 6455で定義されたWebSocket magic string
+    const magicString = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    const concatenated = wsKey + magicString;
+    
+    // SHA-1ハッシュを計算してBase64エンコード
+    const hash = this.sha1(concatenated);
+    return btoa(hash);
+  }
+}
+```
+
+</Card>
+
+<Card title="サーバー側ハンドシェイク実装" icon="check" accentColor="green">
+
+```javascript
+class WebSocketServer {
+  handleHandshakeRequest(request, socket) {
+    try {
+      // リクエストの解析
+      const headers = this.parseHandshakeRequest(request);
       
-      <div>
-        <h4 class="font-semibold mb-3">✅ Sec-WebSocket-Accept</h4>
-        <div class="bg-green-50 rounded-lg p-4">
-          <p class="text-sm mb-2">サーバーが生成する応答キー</p>
-          <ol class="text-xs space-y-1">
-            <li>1. Keyに固定GUID追加</li>
-            <li>2. SHA-1ハッシュ計算</li>
-            <li>3. Base64エンコード</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </Card>
+      // ハンドシェイクの検証
+      if (!this.validateHandshakeRequest(headers)) {
+        this.sendHandshakeError(socket, 400, 'Bad Request');
+        return false;
+      }
+      
+      // Sec-WebSocket-Acceptの計算
+      const wsKey = headers['sec-websocket-key'];
+      const acceptKey = this.calculateAcceptKey(wsKey);
+      
+      // 成功レスポンスの送信
+      const response = this.buildHandshakeResponse(acceptKey, headers);
+      socket.write(response);
+      
+      // WebSocket接続状態に移行
+      this.upgradeToWebSocket(socket);
+      return true;
+      
+    } catch (error) {
+      this.sendHandshakeError(socket, 500, 'Internal Server Error');
+      return false;
+    }
+  }
+  
+  validateHandshakeRequest(headers) {
+    // 必須ヘッダーの確認
+    const requiredHeaders = [
+      'host',
+      'upgrade',
+      'connection',
+      'sec-websocket-key',
+      'sec-websocket-version'
+    ];
+    
+    for (const header of requiredHeaders) {
+      if (!headers[header]) {
+        return false;
+      }
+    }
+    
+    // ヘッダー値の検証
+    if (headers['upgrade'] !== 'websocket' ||
+        !headers['connection'].toLowerCase().includes('upgrade') ||
+        headers['sec-websocket-version'] !== '13') {
+      return false;
+    }
+    
+    // WebSocketキーの形式確認
+    if (!this.isValidWebSocketKey(headers['sec-websocket-key'])) {
+      return false;
+    }
+    
+    return true;
+  }
+  
+  isValidWebSocketKey(key) {
+    // Base64エンコードされた16バイトのデータかチェック
+    try {
+      const decoded = atob(key);
+      return decoded.length === 16;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  buildHandshakeResponse(acceptKey, requestHeaders) {
+    let response = [
+      'HTTP/1.1 101 Switching Protocols',
+      'Upgrade: websocket',
+      'Connection: Upgrade',
+      `Sec-WebSocket-Accept: ${acceptKey}`
+    ];
+    
+    // サブプロトコルの処理
+    if (requestHeaders['sec-websocket-protocol']) {
+      const supportedProtocol = this.selectSubprotocol(
+        requestHeaders['sec-websocket-protocol']
+      );
+      if (supportedProtocol) {
+        response.push(`Sec-WebSocket-Protocol: ${supportedProtocol}`);
+      }
+    }
+    
+    // 拡張の処理
+    if (requestHeaders['sec-websocket-extensions']) {
+      const supportedExtensions = this.selectExtensions(
+        requestHeaders['sec-websocket-extensions']
+      );
+      if (supportedExtensions) {
+        response.push(`Sec-WebSocket-Extensions: ${supportedExtensions}`);
+      }
+    }
+    
+    response.push('', ''); // 空行でヘッダー終了
+    return response.join('\r\n');
+  }
+}
+```
+
+</Card>
+
+<Card title="ハンドシェイクのセキュリティ検証" icon="star" accentColor="yellow">
+
+WebSocketハンドシェイクには、意図しない接続を防ぐためのセキュリティメカニズムが組み込まれています。
+
+#### Sec-WebSocket-Keyによる検証メカニズム
+
+```javascript
+class HandshakeSecurity {
+  // セキュリティキーの生成と検証の詳細
+  static demonstrateKeyGeneration() {
+    // 1. クライアントがランダムキーを生成
+    const clientKey = 'dGhlIHNhbXBsZSBub25jZQ==';
+    console.log('Client Key:', clientKey);
+    
+    // 2. サーバーがAcceptキーを計算
+    const magicString = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    const concatenated = clientKey + magicString;
+    console.log('Concatenated:', concatenated);
+    
+    // 3. SHA-1ハッシュ計算
+    const sha1Hash = this.sha1(concatenated);
+    console.log('SHA-1 Hash:', sha1Hash);
+    
+    // 4. Base64エンコード
+    const acceptKey = btoa(sha1Hash);
+    console.log('Accept Key:', acceptKey);
+    
+    return acceptKey;
+  }
+  
+  // オリジンベースのセキュリティチェック
+  static validateOrigin(origin, allowedOrigins) {
+    if (!allowedOrigins || allowedOrigins.length === 0) {
+      return true; // オリジン制限なし
+    }
+    
+    // 厳密なオリジン照合
+    if (allowedOrigins.includes(origin)) {
+      return true;
+    }
+    
+    // ワイルドカードサブドメイン照合
+    for (const allowed of allowedOrigins) {
+      if (allowed.startsWith('*.')) {
+        const domain = allowed.substring(2);
+        if (origin.endsWith('.' + domain) || origin === domain) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+  
+  // CSRFトークンによる追加保護
+  static validateCSRFToken(headers, expectedToken) {
+    const token = headers['x-csrf-token'] || headers['x-requested-with'];
+    return token === expectedToken;
+  }
+}
+```
+
+#### セキュリティ検証の重要性
+
+- **意図しない接続の防止**：ランダムキー検証により、意図的なWebSocket接続のみを許可
+- **オリジン制限**：信頼できるドメインからの接続のみを受け入れ
+- **CSRF攻撃の防止**：追加的なトークン検証でクロスサイトリクエストフォージェリを防ぐ
+
+</Card>
+
 </Section>
 
-<Section title="重要なポイント" icon="📊">
-  <Card title="このレッスンで学んだこと" icon="🎯" accentColor="indigo">
-    <div class="grid md:grid-cols-2 gap-4">
-      <div>
-        <h4 class="font-semibold text-indigo-800 mb-2">技術的理解</h4>
-        <ul class="space-y-1 text-sm text-indigo-700">
-          <li>✓ End to End通信モデルの特徴</li>
-          <li>✓ HTTP Upgradeメカニズムの詳細</li>
-          <li>✓ セキュリティキーの生成と検証</li>
-          <li>✓ サブプロトコルネゴシエーション</li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="font-semibold text-indigo-800 mb-2">実践的知譗</h4>
-        <ul class="space-y-1 text-sm text-indigo-700">
-          <li>✓ プロキシ環境での接続方法</li>
-          <li>✓ ファイアウォール制限の回避</li>
-          <li>✓ デバッグとトラブルシューティング</li>
-          <li>✓ 企業環境でのベストプラクティス</li>
-        </ul>
-      </div>
-    </div>
-  </Card>
+<Section title="プロキシ・ファイアウォール環境での接続確立" icon="theory">
+
+<Card title="企業環境でのWebSocket接続課題" icon="warning" accentColor="orange">
+
+企業ネットワークでは、プロキシサーバーやファイアウォールがWebSocket接続に影響を与える場合があります。
+
+#### 一般的な企業ネットワーク構成
+
+```mermaid
+flowchart TD
+    subgraph "企業内ネットワーク"
+        Client[クライアント] --> ProxyCluster["プロキシサーバー"]
+        
+        subgraph ProxyCluster ["プロキシサーバー"]
+            HTTP_Proxy[HTTP Proxy<br/>（CONNECT対応）]
+            SOCKS_Proxy[SOCKS Proxy<br/>（透過的転送）]
+            App_Proxy[アプリケーション<br/>レベルプロキシ]
+        end
+
+        ProxyCluster --> Firewall[ファイアウォール]
+        Firewall --> NAT[NAT/Router]
+    end
+    
+    subgraph "インターネット"
+        NAT --> Internet[インターネット]
+        Internet --> Target[WebSocketサーバー]
+    end
+```
+
+</Card>
+
+<Card title="HTTPプロキシ経由のWebSocket接続" icon="check" accentColor="blue">
+
+HTTPプロキシ環境では、HTTP CONNECTメソッドを使用してトンネル接続を確立します。
+
+```javascript
+class ProxyWebSocketConnection {
+  async connectThroughHTTPProxy(wsUrl, proxyConfig) {
+    const wsTarget = new URL(wsUrl);
+    
+    // 1. プロキシサーバーへのTCP接続
+    const proxySocket = await this.connectToProxy(proxyConfig);
+    
+    // 2. HTTP CONNECTリクエストでトンネル確立
+    const tunnelEstablished = await this.establishTunnel(
+      proxySocket, 
+      wsTarget.host
+    );
+    
+    if (!tunnelEstablished) {
+      throw new Error('Failed to establish proxy tunnel');
+    }
+    
+    // 3. トンネル経由でWebSocketハンドシェイク
+    return this.performWebSocketHandshake(proxySocket, wsUrl);
+  }
+  
+  async establishTunnel(socket, targetHost) {
+    // HTTP CONNECT リクエスト送信
+    const connectRequest = [
+      `CONNECT ${targetHost} HTTP/1.1`,
+      `Host: ${targetHost}`,
+      `Proxy-Connection: keep-alive`,
+      '',
+      ''
+    ].join('\r\n');
+    
+    socket.write(connectRequest);
+    
+    // プロキシからのレスポンス待機
+    const response = await this.readResponse(socket);
+    
+    // 接続成功確認
+    if (response.startsWith('HTTP/1.1 200')) {
+      console.log('Proxy tunnel established successfully');
+      return true;
+    } else {
+      console.error('Proxy tunnel failed:', response);
+      return false;
+    }
+  }
+  
+  async performWebSocketHandshake(socket, wsUrl) {
+    // 確立されたトンネル経由でWebSocketハンドシェイク実行
+    const wsKey = this.generateWebSocketKey();
+    const url = new URL(wsUrl);
+    
+    const handshakeRequest = [
+      `GET ${url.pathname} HTTP/1.1`,
+      `Host: ${url.host}`,
+      `Upgrade: websocket`,
+      `Connection: Upgrade`,
+      `Sec-WebSocket-Key: ${wsKey}`,
+      `Sec-WebSocket-Version: 13`,
+      '',
+      ''
+    ].join('\r\n');
+    
+    socket.write(handshakeRequest);
+    
+    const response = await this.readResponse(socket);
+    return this.validateWebSocketUpgrade(response, wsKey);
+  }
+}
+```
+
+#### HTTP CONNECTメソッドの詳細
+
+- **目的**：プロキシサーバーを通じてターゲットサーバーへの透過的なトンネルを確立
+- **動作**：プロキシがクライアントとサーバー間のバイト列を単純転送
+- **利点**：WebSocketフレームがプロキシで解釈されることなく、そのまま転送される
+
+</Card>
+
+<Card title="SOCKSプロキシ経由の接続" icon="lightning" accentColor="green">
+
+SOCKSプロキシは、より低レベルでの透過的な接続を提供します。
+
+```javascript
+class SOCKSWebSocketConnection {
+  async connectThroughSOCKS5(wsUrl, socksConfig) {
+    const wsTarget = new URL(wsUrl);
+    
+    // 1. SOCKSプロキシへの接続
+    const socksSocket = await this.connectToSOCKS(socksConfig);
+    
+    // 2. SOCKS5認証
+    await this.authenticateSOCKS5(socksSocket, socksConfig);
+    
+    // 3. ターゲットサーバーへの接続要求
+    await this.requestSOCKSConnection(socksSocket, wsTarget);
+    
+    // 4. 透過的接続確立後、直接WebSocketハンドシェイク
+    return this.performDirectWebSocketHandshake(socksSocket, wsUrl);
+  }
+  
+  async authenticateSOCKS5(socket, config) {
+    // SOCKS5認証ネゴシエーション
+    const authRequest = new Uint8Array([
+      0x05, // SOCKS version 5
+      0x01, // Number of authentication methods
+      0x02  // Username/Password authentication
+    ]);
+    
+    socket.write(authRequest);
+    
+    const authResponse = await this.readBytes(socket, 2);
+    if (authResponse[1] !== 0x02) {
+      throw new Error('SOCKS5 authentication method not supported');
+    }
+    
+    // ユーザー名/パスワード認証
+    const credentials = this.buildCredentials(config.username, config.password);
+    socket.write(credentials);
+    
+    const authResult = await this.readBytes(socket, 2);
+    if (authResult[1] !== 0x00) {
+      throw new Error('SOCKS5 authentication failed');
+    }
+  }
+  
+  async requestSOCKSConnection(socket, target) {
+    // SOCKS5接続要求
+    const hostname = target.hostname;
+    const port = parseInt(target.port) || (target.protocol === 'wss:' ? 443 : 80);
+    
+    const connectRequest = new Uint8Array([
+      0x05, // SOCKS version
+      0x01, // Connect command
+      0x00, // Reserved
+      0x03, // Domain name address type
+      hostname.length, // Domain name length
+      ...new TextEncoder().encode(hostname), // Domain name
+      (port >> 8) & 0xFF, // Port high byte
+      port & 0xFF         // Port low byte
+    ]);
+    
+    socket.write(connectRequest);
+    
+    const connectResponse = await this.readBytes(socket, 10);
+    if (connectResponse[1] !== 0x00) {
+      throw new Error('SOCKS5 connection failed');
+    }
+    
+    console.log('SOCKS5 connection established');
+  }
+}
+```
+
+#### SOCKSプロキシの利点
+
+- **透過性**：アプリケーションレベルでの変更が不要
+- **プロトコル非依存**：HTTP以外のプロトコルでも使用可能
+- **低オーバーヘッド**：最小限のプロトコル処理
+
+</Card>
+
+<Card title="ファイアウォール・NAT環境での考慮事項" icon="star" accentColor="purple">
+
+```javascript
+class FirewallAwareWebSocket {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.options = {
+      // ファイアウォール対応設定
+      keepaliveInterval: options.keepaliveInterval || 30000,
+      maxReconnectAttempts: options.maxReconnectAttempts || 5,
+      reconnectDelay: options.reconnectDelay || 1000,
+      useSecureConnection: options.useSecureConnection !== false,
+      
+      // NAT環境対応
+      enableHeartbeat: options.enableHeartbeat !== false,
+      heartbeatInterval: options.heartbeatInterval || 25000,
+      
+      ...options
+    };
+  }
+  
+  async connect() {
+    // セキュア接続の強制（ファイアウォール通過率向上）
+    if (this.options.useSecureConnection) {
+      this.url = this.url.replace('ws://', 'wss://');
+    }
+    
+    // 標準HTTPSポート使用（ファイアウォール制限回避）
+    if (this.options.useStandardPorts) {
+      this.url = this.url.replace(/:8080/, ':443');
+    }
+    
+    return this.establishConnectionWithRetry();
+  }
+  
+  async establishConnectionWithRetry() {
+    let attempts = 0;
+    
+    while (attempts < this.options.maxReconnectAttempts) {
+      try {
+        const connection = await this.attemptConnection();
+        
+        // 接続成功時の設定
+        this.setupKeepalive(connection);
+        this.setupHeartbeat(connection);
+        
+        return connection;
+        
+      } catch (error) {
+        attempts++;
+        console.log(`Connection attempt ${attempts} failed:`, error.message);
+        
+        if (attempts < this.options.maxReconnectAttempts) {
+          // 指数バックオフで再試行
+          const delay = this.options.reconnectDelay * Math.pow(2, attempts - 1);
+          await this.sleep(delay);
+        }
+      }
+    }
+    
+    throw new Error('Failed to establish WebSocket connection after maximum attempts');
+  }
+  
+  setupKeepalive(connection) {
+    // NAT状態テーブル維持のためのキープアライブ
+    this.keepaliveTimer = setInterval(() => {
+      if (connection.readyState === WebSocket.OPEN) {
+        connection.ping(); // WebSocket pingフレーム送信
+      }
+    }, this.options.keepaliveInterval);
+  }
+  
+  setupHeartbeat(connection) {
+    // アプリケーションレベルのハートビート
+    this.heartbeatTimer = setInterval(() => {
+      if (connection.readyState === WebSocket.OPEN) {
+        connection.send(JSON.stringify({
+          type: 'heartbeat',
+          timestamp: Date.now()
+        }));
+      }
+    }, this.options.heartbeatInterval);
+  }
+}
+```
+
+#### ファイアウォール環境での最適化
+
+- **標準ポート使用**：80/443ポートを使用してファイアウォール制限を回避
+- **WSS強制**：暗号化接続でDPI（Deep Packet Inspection）制限を回避
+- **キープアライブ**：NAT状態テーブルの維持で接続断を防止
+- **再接続戦略**：ネットワーク状況に応じた適応的再接続
+
+</Card>
+
+</Section>
+
+<Section title="実践的なデバッグとトラブルシューティング" icon="practice">
+
+<Card title="WebSocket接続のデバッグ手法" icon="check" accentColor="green">
+
+実際の開発では、接続問題の診断と解決が重要なスキルとなります。
+
+```javascript
+class WebSocketDebugger {
+  static enableDebugLogging() {
+    // 詳細な接続ログを有効化
+    const originalWebSocket = window.WebSocket;
+    
+    window.WebSocket = class extends originalWebSocket {
+      constructor(url, protocols) {
+        console.log('🔌 WebSocket接続開始:', { url, protocols });
+        super(url, protocols);
+        
+        this.addEventListener('open', (event) => {
+          console.log('✅ WebSocket接続成功:', {
+            url: this.url,
+            protocol: this.protocol,
+            extensions: this.extensions,
+            timestamp: new Date().toISOString()
+          });
+        });
+        
+        this.addEventListener('error', (event) => {
+          console.error('❌ WebSocket接続エラー:', {
+            url: this.url,
+            readyState: this.readyState,
+            event: event,
+            timestamp: new Date().toISOString()
+          });
+          
+          // エラー詳細分析
+          this.analyzeConnectionError();
+        });
+        
+        this.addEventListener('close', (event) => {
+          console.log('🔌 WebSocket接続クローズ:', {
+            code: event.code,
+            reason: event.reason,
+            wasClean: event.wasClean,
+            timestamp: new Date().toISOString()
+          });
+          
+          // クローズ理由の詳細解析
+          this.analyzeCloseReason(event.code);
+        });
+      }
+      
+      analyzeConnectionError() {
+        // ネットワーク診断
+        this.checkNetworkConnectivity();
+        
+        // プロキシ設定確認
+        this.checkProxyConfiguration();
+        
+        // ファイアウォール診断
+        this.checkFirewallRestrictions();
+      }
+      
+      analyzeCloseReason(code) {
+        const closeReasons = {
+          1000: '正常終了',
+          1001: 'エンドポイント離脱',
+          1002: 'プロトコルエラー',
+          1003: '不正なデータ受信',
+          1006: '異常終了（詳細不明）',
+          1007: 'データ形式エラー',
+          1008: 'ポリシー違反',
+          1009: 'メッセージサイズ過大',
+          1010: '拡張ネゴシエーション失敗',
+          1011: 'サーバー内部エラー'
+        };
+        
+        console.log('クローズ理由:', closeReasons[code] || `不明（コード: ${code}）`);
+        
+        // 再接続推奨判定
+        if ([1006, 1011, 1012, 1013, 1014, 1015].includes(code)) {
+          console.log('💡 推奨: 再接続を試行してください');
+        }
+      }
+      
+      async checkNetworkConnectivity() {
+        try {
+          const response = await fetch('https://httpbin.org/get', {
+            method: 'GET',
+            mode: 'cors'
+          });
+          
+          if (response.ok) {
+            console.log('✅ 基本的なHTTP接続は正常');
+          }
+        } catch (error) {
+          console.error('❌ 基本的なネットワーク接続に問題:', error);
+        }
+      }
+      
+      checkProxyConfiguration() {
+        // プロキシ設定の推定
+        const navigator = window.navigator;
+        
+        if (navigator.connection) {
+          console.log('ネットワーク情報:', {
+            effectiveType: navigator.connection.effectiveType,
+            downlink: navigator.connection.downlink,
+            rtt: navigator.connection.rtt
+          });
+        }
+        
+        // プロキシ存在の間接的検出
+        const userAgent = navigator.userAgent;
+        if (userAgent.includes('Proxy') || userAgent.includes('Gateway')) {
+          console.log('💡 プロキシまたはゲートウェイの存在が疑われます');
+        }
+      }
+    };
+  }
+  
+  static async performConnectionDiagnostics(url) {
+    console.log('🔍 WebSocket接続診断を開始:', url);
+    
+    const diagnostics = {
+      timestamp: new Date().toISOString(),
+      url: url,
+      results: {}
+    };
+    
+    // 1. URL形式の検証
+    diagnostics.results.urlValidation = this.validateWebSocketURL(url);
+    
+    // 2. DNS解決テスト
+    diagnostics.results.dnsResolution = await this.testDNSResolution(url);
+    
+    // 3. TCP接続テスト
+    diagnostics.results.tcpConnectivity = await this.testTCPConnectivity(url);
+    
+    // 4. HTTP接続テスト
+    diagnostics.results.httpConnectivity = await this.testHTTPConnectivity(url);
+    
+    // 5. WebSocketハンドシェイクテスト
+    diagnostics.results.websocketHandshake = await this.testWebSocketHandshake(url);
+    
+    console.log('🔍 診断結果:', diagnostics);
+    return diagnostics;
+  }
+  
+  static validateWebSocketURL(url) {
+    try {
+      const wsUrl = new URL(url);
+      
+      const validation = {
+        isValid: true,
+        protocol: wsUrl.protocol,
+        hostname: wsUrl.hostname,
+        port: wsUrl.port,
+        pathname: wsUrl.pathname,
+        issues: []
+      };
+      
+      if (!['ws:', 'wss:'].includes(wsUrl.protocol)) {
+        validation.isValid = false;
+        validation.issues.push('無効なプロトコル: ' + wsUrl.protocol);
+      }
+      
+      if (!wsUrl.hostname) {
+        validation.isValid = false;
+        validation.issues.push('ホスト名が指定されていません');
+      }
+      
+      return validation;
+      
+    } catch (error) {
+      return {
+        isValid: false,
+        error: error.message,
+        issues: ['URL形式が無効です']
+      };
+    }
+  }
+}
+
+// デバッグ機能の有効化
+WebSocketDebugger.enableDebugLogging();
+```
+
+</Card>
+
+<Card title="接続問題の系統的解決法" icon="star" accentColor="purple">
+
+```javascript
+class WebSocketTroubleshooter {
+  static async diagnoseConnectionFailure(url, error) {
+    console.log('🔧 接続問題の診断を開始');
+    
+    const troubleshootingSteps = [];
+    
+    // Step 1: エラータイプの分類
+    const errorType = this.classifyError(error);
+    troubleshootingSteps.push(`エラータイプ: ${errorType}`);
+    
+    // Step 2: 環境固有の問題チェック
+    const environmentIssues = await this.checkEnvironmentIssues();
+    troubleshootingSteps.push(...environmentIssues);
+    
+    // Step 3: 段階的接続テスト
+    const connectionTests = await this.performStepByStepTests(url);
+    troubleshootingSteps.push(...connectionTests);
+    
+    // Step 4: 解決策の提案
+    const solutions = this.proposeSolutions(errorType, environmentIssues);
+    
+    return {
+      diagnosis: troubleshootingSteps,
+      solutions: solutions,
+      timestamp: new Date().toISOString()
+    };
+  }
+  
+  static classifyError(error) {
+    if (error.name === 'SecurityError') {
+      return 'セキュリティ制限エラー';
+    } else if (error.message?.includes('network')) {
+      return 'ネットワーク接続エラー';
+    } else if (error.message?.includes('timeout')) {
+      return 'タイムアウトエラー';
+    } else if (error.message?.includes('refused')) {
+      return '接続拒否エラー';
+    } else {
+      return '不明なエラー';
+    }
+  }
+  
+  static async checkEnvironmentIssues() {
+    const issues = [];
+    
+    // ブラウザサポート確認
+    if (!window.WebSocket) {
+      issues.push('❌ WebSocketがサポートされていません');
+    } else {
+      issues.push('✅ WebSocketサポート確認済み');
+    }
+    
+    // HTTPS/HTTPコンテキスト確認
+    if (location.protocol === 'https:') {
+      issues.push('✅ セキュアコンテキスト（HTTPS）');
+    } else {
+      issues.push('⚠️ 非セキュアコンテキスト（HTTP）- wssプロトコル制限の可能性');
+    }
+    
+    // 企業ネットワーク検出
+    const isEnterpriseNetwork = await this.detectEnterpriseNetwork();
+    if (isEnterpriseNetwork) {
+      issues.push('⚠️ 企業ネットワーク環境 - プロキシ・ファイアウォール制限の可能性');
+    }
+    
+    return issues;
+  }
+  
+  static proposeSolutions(errorType, environmentIssues) {
+    const solutions = [];
+    
+    switch (errorType) {
+      case 'セキュリティ制限エラー':
+        solutions.push('1. HTTPSコンテキストでwssプロトコルを使用');
+        solutions.push('2. 適切なCORSヘッダーをサーバーで設定');
+        solutions.push('3. 信頼できるオリジンから接続');
+        break;
+        
+      case 'ネットワーク接続エラー':
+        solutions.push('1. インターネット接続を確認');
+        solutions.push('2. DNSサーバー設定を確認');
+        solutions.push('3. プロキシ設定を確認');
+        break;
+        
+      case 'タイムアウトエラー':
+        solutions.push('1. 接続タイムアウト設定を延長');
+        solutions.push('2. サーバーレスポンス時間を確認');
+        solutions.push('3. ネットワーク遅延を測定');
+        break;
+        
+      case '接続拒否エラー':
+        solutions.push('1. サーバーが稼働中か確認');
+        solutions.push('2. ポート番号が正しいか確認');
+        solutions.push('3. ファイアウォール設定を確認');
+        break;
+    }
+    
+    // 環境固有の解決策
+    if (environmentIssues.some(issue => issue.includes('企業ネットワーク'))) {
+      solutions.push('企業ネットワーク対策:');
+      solutions.push('- 標準ポート（80/443）を使用');
+      solutions.push('- WSSプロトコルを強制使用');
+      solutions.push('- プロキシ設定の確認・適用');
+    }
+    
+    return solutions;
+  }
+}
+```
+
+</Card>
+
+<Card title="学習の総括と次のステップ" icon="check" accentColor="indigo">
+
+#### このレッスンで習得した重要なスキル
+
+**技術的な深い理解**：
+- ✅ TCP 3-wayハンドシェイクからWebSocketハンドシェイクまでの完全な流れ
+- ✅ End-to-End通信とHop-by-Hop通信の実装レベルでの違い
+- ✅ HTTP/1.1 Upgradeメカニズムの詳細仕様と実装
+- ✅ セキュリティキー生成・検証の暗号学的基礎
+
+**実践的な問題解決能力**：
+- ✅ プロキシ環境（HTTP CONNECT、SOCKS）での接続確立手法
+- ✅ ファイアウォール・NAT環境での最適化戦略
+- ✅ 系統的なデバッグとトラブルシューティング手法
+- ✅ 企業ネットワーク環境でのベストプラクティス
+
+#### 次のレッスンへの準備
+
+このレッスンで学んだ接続確立の知識は、次の「セキュリティとポート管理」レッスンで以下の発展的トピックに活用されます：
+
+- **認証・認可メカニズム**：セキュアなWebSocket接続の実装
+- **証明書管理**：TLS/SSL層でのセキュリティ強化
+- **攻撃防御**：DDoS、中間者攻撃などへの対策
+- **監査・ログ**：セキュリティ監視とコンプライアンス対応
+
+</Card>
+
 </Section>
 
 </LessonLayout>
