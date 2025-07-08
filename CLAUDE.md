@@ -54,17 +54,17 @@ The project implements a **4-phase learning approach** with increasingly sophist
 ```typescript
 // Use public WebSocket services for learning (verified working)
 const DEMO_WEBSOCKET_URLS = {
-	echo: 'wss://echo.websocket.org',
-	postman: 'wss://ws.postman-echo.com/raw'
+  echo: 'wss://echo.websocket.org',
+  postman: 'wss://ws.postman-echo.com/raw'
 };
 
 // Client-side only implementation
 export class Phase1WebSocketManager {
-	constructor(url: string) {
-		// Ensure browser environment
-		if (typeof window === 'undefined') return;
-		this.connect(url);
-	}
+  constructor(url: string) {
+    // Ensure browser environment
+    if (typeof window === 'undefined') return;
+    this.connect(url);
+  }
 }
 ```
 
@@ -88,18 +88,18 @@ export class Phase1WebSocketManager {
 const WebSocket = require('ws');
 
 class Phase2LearningServer {
-	constructor() {
-		// Multiple protocol servers
-		this.basicServer = new WebSocket.Server({ port: 8080 });
-		this.graphqlServer = new WebSocket.Server({
-			port: 8081,
-			handleProtocols: (protocols) => (protocols.includes('graphql-ws') ? 'graphql-ws' : false)
-		});
-		this.mqttServer = new WebSocket.Server({
-			port: 8082,
-			handleProtocols: (protocols) => (protocols.includes('mqtt') ? 'mqtt' : false)
-		});
-	}
+  constructor() {
+    // Multiple protocol servers
+    this.basicServer = new WebSocket.Server({ port: 8080 });
+    this.graphqlServer = new WebSocket.Server({
+      port: 8081,
+      handleProtocols: (protocols) => (protocols.includes('graphql-ws') ? 'graphql-ws' : false)
+    });
+    this.mqttServer = new WebSocket.Server({
+      port: 8082,
+      handleProtocols: (protocols) => (protocols.includes('mqtt') ? 'mqtt' : false)
+    });
+  }
 }
 ```
 
@@ -122,21 +122,21 @@ docker-compose up -d
 ```typescript
 // Test WebSocket server for automated testing
 export class WebSocketTestServer {
-	constructor(port = 9999) {
-		this.port = port;
-		this.server = new WebSocket.Server({ port });
-	}
+  constructor(port = 9999) {
+    this.port = port;
+    this.server = new WebSocket.Server({ port });
+  }
 
-	// Simulate various WebSocket scenarios
-	simulateLatency(ms: number) {
-		/* ... */
-	}
-	simulateConnectionFailure() {
-		/* ... */
-	}
-	simulateServerError() {
-		/* ... */
-	}
+  // Simulate various WebSocket scenarios
+  simulateLatency(ms: number) {
+    /* ... */
+  }
+  simulateConnectionFailure() {
+    /* ... */
+  }
+  simulateServerError() {
+    /* ... */
+  }
 }
 ```
 
@@ -155,15 +155,15 @@ export class WebSocketTestServer {
 ```json
 // vercel.json
 {
-	"functions": {
-		"api/websocket.js": {
-			"runtime": "@vercel/node@18.x"
-		}
-	},
-	"env": {
-		"REDIS_URL": "@redis_url",
-		"WEBSOCKET_SECRET": "@websocket_secret"
-	}
+  "functions": {
+    "api/websocket.js": {
+      "runtime": "@vercel/node@18.x"
+    }
+  },
+  "env": {
+    "REDIS_URL": "@redis_url",
+    "WEBSOCKET_SECRET": "@websocket_secret"
+  }
 }
 ```
 
@@ -172,11 +172,11 @@ export class WebSocketTestServer {
 ```javascript
 // Production-ready WebSocket server
 class ProductionWebSocketServer {
-	setupCluster() {
-		// Multi-process WebSocket handling
-		// Redis pub/sub for scaling
-		// Health checks and monitoring
-	}
+  setupCluster() {
+    // Multi-process WebSocket handling
+    // Redis pub/sub for scaling
+    // Health checks and monitoring
+  }
 }
 ```
 
@@ -282,51 +282,51 @@ Before coding any Svelte components, **always reference the latest Svelte 5 docu
 ```typescript
 // src/lib/stores/websocket.svelte.ts
 export class WebSocketStore {
-	private socket = $state<WebSocket | null>(null);
-	private _connectionState = $state<'disconnected' | 'connecting' | 'connected' | 'error'>(
-		'disconnected'
-	);
-	private _messages = $state<WebSocketMessage[]>([]);
-	private _error = $state<string | null>(null);
+  private socket = $state<WebSocket | null>(null);
+  private _connectionState = $state<'disconnected' | 'connecting' | 'connected' | 'error'>(
+    'disconnected'
+  );
+  private _messages = $state<WebSocketMessage[]>([]);
+  private _error = $state<string | null>(null);
 
-	// Reactive getters
-	get connectionState() {
-		return this._connectionState;
-	}
-	get messages() {
-		return this._messages;
-	}
-	get error() {
-		return this._error;
-	}
-	get isConnected() {
-		return this._connectionState === 'connected';
-	}
+  // Reactive getters
+  get connectionState() {
+    return this._connectionState;
+  }
+  get messages() {
+    return this._messages;
+  }
+  get error() {
+    return this._error;
+  }
+  get isConnected() {
+    return this._connectionState === 'connected';
+  }
 
-	connect(url: string, protocols?: string[]) {
-		if (typeof window === 'undefined') return;
+  connect(url: string, protocols?: string[]) {
+    if (typeof window === 'undefined') return;
 
-		this._connectionState = 'connecting';
-		this.socket = new WebSocket(url, protocols);
+    this._connectionState = 'connecting';
+    this.socket = new WebSocket(url, protocols);
 
-		this.socket.onopen = () => {
-			this._connectionState = 'connected';
-			this._error = null;
-		};
+    this.socket.onopen = () => {
+      this._connectionState = 'connected';
+      this._error = null;
+    };
 
-		this.socket.onmessage = (event) => {
-			this._messages = [
-				...this._messages,
-				{
-					type: 'received',
-					data: event.data,
-					timestamp: Date.now()
-				}
-			];
-		};
+    this.socket.onmessage = (event) => {
+      this._messages = [
+        ...this._messages,
+        {
+          type: 'received',
+          data: event.data,
+          timestamp: Date.now()
+        }
+      ];
+    };
 
-		// ... other handlers
-	}
+    // ... other handlers
+  }
 }
 
 // Usage in components
@@ -366,41 +366,41 @@ const wsStore = new WebSocketStore();
 ```typescript
 // src/lib/types/websocket.ts
 export interface WebSocketMessage<T = unknown> {
-	id?: string;
-	type: string;
-	timestamp: number;
-	payload: T;
+  id?: string;
+  type: string;
+  timestamp: number;
+  payload: T;
 }
 
 export interface WebSocketSubprotocol {
-	name: string;
-	version: string;
-	messageTypes: Record<string, MessageSchema>;
+  name: string;
+  version: string;
+  messageTypes: Record<string, MessageSchema>;
 }
 
 export interface WebSocketConnectionConfig {
-	url: string;
-	protocols?: string[];
-	reconnect?: boolean;
-	maxReconnectAttempts?: number;
-	reconnectInterval?: number;
+  url: string;
+  protocols?: string[];
+  reconnect?: boolean;
+  maxReconnectAttempts?: number;
+  reconnectInterval?: number;
 }
 
 // Phase-specific types
 export interface Phase1DemoConfig extends WebSocketConnectionConfig {
-	demoType: 'echo' | 'chat' | 'notification';
-	fallbackUrls?: string[];
+  demoType: 'echo' | 'chat' | 'notification';
+  fallbackUrls?: string[];
 }
 
 export interface Phase4ProductionConfig extends WebSocketConnectionConfig {
-	auth?: {
-		token: string;
-		refreshUrl?: string;
-	};
-	scaling?: {
-		clustered: boolean;
-		redisUrl?: string;
-	};
+  auth?: {
+    token: string;
+    refreshUrl?: string;
+  };
+  scaling?: {
+    clustered: boolean;
+    redisUrl?: string;
+  };
 }
 ```
 
@@ -409,36 +409,36 @@ export interface Phase4ProductionConfig extends WebSocketConnectionConfig {
 ```typescript
 // ❌ NEVER DO THIS
 function handleMessage(data: any) {
-	console.log(data.someProperty); // Type unsafe
+  console.log(data.someProperty); // Type unsafe
 }
 
 // ✅ ALWAYS DO THIS
 interface ChatMessage {
-	type: 'chat';
-	user: string;
-	message: string;
-	timestamp: number;
+  type: 'chat';
+  user: string;
+  message: string;
+  timestamp: number;
 }
 
 interface SystemMessage {
-	type: 'system';
-	event: 'user_joined' | 'user_left';
-	userId: string;
+  type: 'system';
+  event: 'user_joined' | 'user_left';
+  userId: string;
 }
 
 type WebSocketMessage = ChatMessage | SystemMessage;
 
 function handleMessage(data: WebSocketMessage) {
-	switch (data.type) {
-		case 'chat':
-			// TypeScript knows this is ChatMessage
-			console.log(`${data.user}: ${data.message}`);
-			break;
-		case 'system':
-			// TypeScript knows this is SystemMessage
-			console.log(`System: ${data.event} - ${data.userId}`);
-			break;
-	}
+  switch (data.type) {
+    case 'chat':
+      // TypeScript knows this is ChatMessage
+      console.log(`${data.user}: ${data.message}`);
+      break;
+    case 'system':
+      // TypeScript knows this is SystemMessage
+      console.log(`System: ${data.event} - ${data.userId}`);
+      break;
+  }
 }
 ```
 

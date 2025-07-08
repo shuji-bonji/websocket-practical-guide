@@ -110,21 +110,21 @@ The WebSocket protocol supports these message types:
 
 ```typescript
 interface WebSocketMessage {
-	type:
-		| 'chat_message'
-		| 'typing_start'
-		| 'typing_stop'
-		| 'user_joined'
-		| 'user_left'
-		| 'room_update'
-		| 'error'
-		| 'ping'
-		| 'pong'
-		| 'auth_success'
-		| 'message_history';
-	payload: any;
-	timestamp: Date;
-	id: string;
+  type:
+    | 'chat_message'
+    | 'typing_start'
+    | 'typing_stop'
+    | 'user_joined'
+    | 'user_left'
+    | 'room_update'
+    | 'error'
+    | 'ping'
+    | 'pong'
+    | 'auth_success'
+    | 'message_history';
+  payload: any;
+  timestamp: Date;
+  id: string;
 }
 ```
 

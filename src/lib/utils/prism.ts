@@ -15,9 +15,9 @@ Prism.manual = true;
  * Highlight all code blocks on the page
  */
 export function highlightAll(): void {
-	if (typeof window !== 'undefined') {
-		Prism.highlightAll();
-	}
+  if (typeof window !== 'undefined') {
+    Prism.highlightAll();
+  }
 }
 
 /**
@@ -25,9 +25,9 @@ export function highlightAll(): void {
  * @param element - The code element to highlight
  */
 export function highlightElement(element: HTMLElement): void {
-	if (typeof window !== 'undefined' && element) {
-		Prism.highlightElement(element);
-	}
+  if (typeof window !== 'undefined' && element) {
+    Prism.highlightElement(element);
+  }
 }
 
 /**
@@ -37,10 +37,10 @@ export function highlightElement(element: HTMLElement): void {
  * @returns Highlighted HTML
  */
 export function highlight(code: string, language: string = 'javascript'): string {
-	if (typeof window !== 'undefined') {
-		return Prism.highlight(code, Prism.languages[language] || Prism.languages.javascript, language);
-	}
-	return code;
+  if (typeof window !== 'undefined') {
+    return Prism.highlight(code, Prism.languages[language] || Prism.languages.javascript, language);
+  }
+  return code;
 }
 
 export default Prism;

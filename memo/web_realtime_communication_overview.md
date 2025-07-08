@@ -52,12 +52,12 @@ sequenceDiagram
 ```typescript
 // 例：株価情報の5分間隔更新
 setInterval(
-	async () => {
-		const response = await fetch('/api/stock-prices');
-		const data = await response.json();
-		updateUI(data);
-	},
-	5 * 60 * 1000
+  async () => {
+    const response = await fetch('/api/stock-prices');
+    const data = await response.json();
+    updateUI(data);
+  },
+  5 * 60 * 1000
 );
 ```
 
@@ -91,15 +91,15 @@ sequenceDiagram
 ```typescript
 // 例：通知システム
 async function longPoll() {
-	try {
-		const response = await fetch('/api/notifications/poll', {
-			timeout: 30000
-		});
-		const notifications = await response.json();
-		processNotifications(notifications);
-	} finally {
-		setTimeout(longPoll, 1000); // 再接続
-	}
+  try {
+    const response = await fetch('/api/notifications/poll', {
+      timeout: 30000
+    });
+    const notifications = await response.json();
+    processNotifications(notifications);
+  } finally {
+    setTimeout(longPoll, 1000); // 再接続
+  }
 }
 ```
 
@@ -134,8 +134,8 @@ sequenceDiagram
 // 例：ライブブログ更新
 const eventSource = new EventSource('/api/live-blog');
 eventSource.onmessage = (event) => {
-	const update = JSON.parse(event.data);
-	appendBlogPost(update);
+  const update = JSON.parse(event.data);
+  appendBlogPost(update);
 };
 ```
 
@@ -171,8 +171,8 @@ sequenceDiagram
 // 例：リアルタイムチャット
 const ws = new WebSocket('wss://chat.example.com');
 ws.onmessage = (event) => {
-	const message = JSON.parse(event.data);
-	displayMessage(message);
+  const message = JSON.parse(event.data);
+  displayMessage(message);
 };
 ws.send(JSON.stringify({ type: 'chat', content: 'Hello!' }));
 ```
@@ -210,8 +210,8 @@ sequenceDiagram
 // 例：ビデオ通話
 const peerConnection = new RTCPeerConnection();
 const localStream = await navigator.mediaDevices.getUserMedia({
-	video: true,
-	audio: true
+  video: true,
+  audio: true
 });
 peerConnection.addStream(localStream);
 ```

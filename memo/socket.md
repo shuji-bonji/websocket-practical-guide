@@ -126,22 +126,22 @@ sequenceDiagram
 import * as net from 'net';
 
 const server = net.createServer((socket) => {
-	console.log('クライアント接続:', socket.remoteAddress);
+  console.log('クライアント接続:', socket.remoteAddress);
 
-	// データ受信イベント
-	socket.on('data', (data) => {
-		console.log('受信:', data.toString());
-		socket.write('Echo: ' + data.toString());
-	});
+  // データ受信イベント
+  socket.on('data', (data) => {
+    console.log('受信:', data.toString());
+    socket.write('Echo: ' + data.toString());
+  });
 
-	// 接続終了イベント
-	socket.on('end', () => {
-		console.log('クライアント切断');
-	});
+  // 接続終了イベント
+  socket.on('end', () => {
+    console.log('クライアント切断');
+  });
 });
 
 server.listen(8080, () => {
-	console.log('サーバー起動: localhost:8080');
+  console.log('サーバー起動: localhost:8080');
 });
 ```
 
@@ -154,19 +154,19 @@ const client = new net.Socket();
 
 // サーバーに接続
 client.connect(8080, 'localhost', () => {
-	console.log('サーバーに接続しました');
-	client.write('Hello from client!');
+  console.log('サーバーに接続しました');
+  client.write('Hello from client!');
 });
 
 // データ受信
 client.on('data', (data) => {
-	console.log('受信:', data.toString());
-	client.destroy(); // 接続終了
+  console.log('受信:', data.toString());
+  client.destroy(); // 接続終了
 });
 
 // 接続終了
 client.on('close', () => {
-	console.log('接続が閉じられました');
+  console.log('接続が閉じられました');
 });
 ```
 

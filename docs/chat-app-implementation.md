@@ -67,18 +67,18 @@ chat-app/
 ```typescript
 // WebSocket message types
 interface ChatMessage {
-	id: string;
-	userId: string;
-	username: string;
-	content: string;
-	timestamp: number;
-	type: 'text' | 'image' | 'file';
+  id: string;
+  userId: string;
+  username: string;
+  content: string;
+  timestamp: number;
+  type: 'text' | 'image' | 'file';
 }
 
 interface TypingIndicator {
-	userId: string;
-	username: string;
-	isTyping: boolean;
+  userId: string;
+  username: string;
+  isTyping: boolean;
 }
 ```
 
@@ -86,18 +86,18 @@ interface TypingIndicator {
 
 ```typescript
 interface User {
-	id: string;
-	username: string;
-	email: string;
-	avatar?: string;
-	isOnline: boolean;
-	lastSeen: number;
+  id: string;
+  username: string;
+  email: string;
+  avatar?: string;
+  isOnline: boolean;
+  lastSeen: number;
 }
 
 interface AuthToken {
-	token: string;
-	expiresAt: number;
-	userId: string;
+  token: string;
+  expiresAt: number;
+  userId: string;
 }
 ```
 
@@ -105,21 +105,21 @@ interface AuthToken {
 
 ```typescript
 class ChatWebSocketManager {
-	private reconnectAttempts = 0;
-	private maxReconnectAttempts = 5;
-	private reconnectDelay = 3000;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectDelay = 3000;
 
-	public async connect(token: string): Promise<void> {
-		// Implement with RxWebSocket
-	}
+  public async connect(token: string): Promise<void> {
+    // Implement with RxWebSocket
+  }
 
-	public handleConnectionLoss(): void {
-		// Auto-reconnection logic
-	}
+  public handleConnectionLoss(): void {
+    // Auto-reconnection logic
+  }
 
-	public sendMessage(message: ChatMessage): void {
-		// Message sending with retry logic
-	}
+  public sendMessage(message: ChatMessage): void {
+    // Message sending with retry logic
+  }
 }
 ```
 

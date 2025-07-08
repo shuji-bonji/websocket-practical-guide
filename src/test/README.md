@@ -43,15 +43,15 @@ src/test/
 
 ```typescript
 describe('Phase1WebSocketManager', () => {
-	it('should connect to a WebSocket service', async () => {
-		const manager = new Phase1WebSocketManager();
-		const service = PUBLIC_WEBSOCKET_SERVICES[0];
+  it('should connect to a WebSocket service', async () => {
+    const manager = new Phase1WebSocketManager();
+    const service = PUBLIC_WEBSOCKET_SERVICES[0];
 
-		manager.connect({ service });
-		const wsInstance = wsEnv.getLastInstance();
+    manager.connect({ service });
+    const wsInstance = wsEnv.getLastInstance();
 
-		expect(wsInstance?.url).toBe(service.url);
-	});
+    expect(wsInstance?.url).toBe(service.url);
+  });
 });
 ```
 
@@ -155,16 +155,16 @@ npm run format
 import { createWebSocketTestEnvironment } from '../test/mocks/websocket';
 
 describe('WebSocket Component', () => {
-	const wsEnv = createWebSocketTestEnvironment();
+  const wsEnv = createWebSocketTestEnvironment();
 
-	it('should handle connection', () => {
-		const ws = new WebSocket('wss://test.example.com');
-		const wsInstance = wsEnv.getLastInstance();
+  it('should handle connection', () => {
+    const ws = new WebSocket('wss://test.example.com');
+    const wsInstance = wsEnv.getLastInstance();
 
-		wsInstance?.simulateOpen();
-		wsInstance?.simulateMessage('Hello');
-		wsInstance?.simulateClose();
-	});
+    wsInstance?.simulateOpen();
+    wsInstance?.simulateMessage('Hello');
+    wsInstance?.simulateClose();
+  });
 });
 ```
 
@@ -172,15 +172,15 @@ describe('WebSocket Component', () => {
 
 ```typescript
 it('should track connection states', () => {
-	const states = [];
-	const manager = new Phase1WebSocketManager();
+  const states = [];
+  const manager = new Phase1WebSocketManager();
 
-	states.push(manager.getState().status); // 'disconnected'
-	manager.connect({ service });
-	states.push(manager.getState().status); // 'connecting'
+  states.push(manager.getState().status); // 'disconnected'
+  manager.connect({ service });
+  states.push(manager.getState().status); // 'connecting'
 
-	wsInstance?.simulateOpen();
-	states.push(manager.getState().status); // 'connected'
+  wsInstance?.simulateOpen();
+  states.push(manager.getState().status); // 'connected'
 });
 ```
 
@@ -188,10 +188,10 @@ it('should track connection states', () => {
 
 ```typescript
 bench('Message processing', () => {
-	const messages = [];
-	for (let i = 0; i < 1000; i++) {
-		messages.push(createMessage(`Test ${i}`));
-	}
+  const messages = [];
+  for (let i = 0; i < 1000; i++) {
+    messages.push(createMessage(`Test ${i}`));
+  }
 });
 ```
 
@@ -199,11 +199,11 @@ bench('Message processing', () => {
 
 ```typescript
 it('should handle connection errors gracefully', () => {
-	const onError = vi.fn();
-	manager.connect({ service, onError });
+  const onError = vi.fn();
+  manager.connect({ service, onError });
 
-	wsInstance?.simulateError();
-	expect(onError).toHaveBeenCalled();
+  wsInstance?.simulateError();
+  expect(onError).toHaveBeenCalled();
 });
 ```
 
@@ -292,7 +292,7 @@ it('should handle connection errors gracefully', () => {
    ```typescript
    // Solution: Use waitFor for async state changes
    await waitFor(() => {
-   	expect(component.getState().status).toBe('connected');
+     expect(component.getState().status).toBe('connected');
    });
    ```
 
@@ -300,8 +300,8 @@ it('should handle connection errors gracefully', () => {
    ```typescript
    // Solution: Proper cleanup
    afterEach(() => {
-   	manager.disconnect();
-   	WebSocketMock.reset();
+     manager.disconnect();
+     WebSocketMock.reset();
    });
    ```
 

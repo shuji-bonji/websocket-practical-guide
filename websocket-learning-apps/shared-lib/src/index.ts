@@ -13,15 +13,15 @@ export * from './utils/message.js';
 
 // Re-export commonly used types for convenience
 export type {
-	WSMessage,
-	ConnectionState,
-	ConnectionConfig,
-	ChatMessage,
-	ChatUser,
-	RPSGameState,
-	LocationData,
-	Phase1Config,
-	Phase2Config,
-	Phase3Config,
-	Phase4Config
+  WSMessage,
+  ConnectionState,
+  ConnectionConfig,
+  ChatMessage,
+  ChatUser,
+  RPSGameState,
+  LocationData,
+  Phase1Config,
+  Phase2Config,
+  Phase3Config,
+  Phase4Config
 } from './types/websocket.js';
