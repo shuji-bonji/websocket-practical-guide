@@ -36,7 +36,8 @@ difficulty: "初級"
 
 <Card title="WebSocketとは" icon="info" accentColor="blue">
 
-**WebSocket**は、クライアント（ブラウザ）とサーバー間で**持続的な双方向通信**を可能にするWeb技術です。
+**WebSocket**は、クライアント（ブラウザ）とサーバー間で**持続的な双方向通信**を可能にするWeb技術です。  
+従来のHTTPのように、リクエストとレスポンスを逐一やり取りする必要がなく、効率的なデータ伝送を実現します。
 
 ### 従来のHTTP通信との根本的違い
 
@@ -46,9 +47,7 @@ difficulty: "初級"
 - **ステートレス**：各リクエストは独立しており、接続は毎回確立・切断される
 - **オーバーヘッド**：HTTPヘッダーによる通信データの増大
 
-</Card>
-
-<Card title="WebSocketの特徴" icon="lightning" accentColor="green">
+### WebSocketの特徴
 
 WebSocketは、これらの制限を解決します。
 
@@ -62,6 +61,10 @@ WebSocketは、これらの制限を解決します。
 </Section>
 
 <Section title="WebSocket通信の仕組み" icon="demo">
+
+<Card title="WebSocket通信フロー" icon="network" accentColor="blue">
+
+WebSocketの通信は、以下の3つの段階で構成されます。
 
 <Mermaid chart={`
 sequenceDiagram
@@ -82,6 +85,36 @@ sequenceDiagram
     C->>S: Close Frame
     S->>C: Close Frame
 `} />
+
+#### 1. 接続確立フェーズ
+
+**HTTP Upgrade Request**  
+クライアント（ブラウザ）がサーバーに対して、通常のHTTP接続をWebSocket接続にアップグレードするよう要求します。この段階では、まだHTTPプロトコルを使用しています。
+
+**HTTP 101 Switching Protocols**  
+サーバーが要求を承認し、プロトコルをWebSocketに切り替えることを通知します。ステータスコード101「Switching Protocols」により、以降の通信がWebSocketプロトコルになります。
+
+#### 2. 持続的双方向通信フェーズ
+
+接続が確立されると、クライアントとサーバーは**どちらからでも**メッセージを送信できるようになります。
+
+- **従来のHTTP**：クライアント→サーバーの一方向のみ
+- **WebSocket**：クライアント↔サーバーの双方向通信
+
+この段階では、HTTPヘッダーのような重いオーバーヘッドはなく、メッセージのやり取りが効率的に行われます。
+
+#### 3. 接続終了フェーズ
+
+通信が完了したら、Close Frameを送信して接続を正常に終了します。どちらか一方が切断を開始し、相手がそれに応答することで、クリーンな接続終了が実現されます。
+
+### WebSocket通信の重要な特徴
+
+- **永続接続**：一度確立すれば、明示的に切断するまで接続を維持
+- **低遅延**：接続確立のオーバーヘッドが初回のみ
+- **フレーム効率**：最小限のヘッダーでメッセージを送信
+- **プロトコル独立**：テキストまたはバイナリデータを自由に送信可能
+
+</Card>
 
 </Section>
 
