@@ -2,32 +2,32 @@ import Database from 'better-sqlite3';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcryptjs';
 import type {
-	User,
-	CreateUserRequest,
-	ChatMessage,
-	ChatRoom,
-	CreateRoomRequest,
-	DatabaseUser,
-	DatabaseMessage,
-	DatabaseRoom,
-	PaginationOptions,
-	PaginatedResult
+  User,
+  CreateUserRequest,
+  ChatMessage,
+  ChatRoom,
+  CreateRoomRequest,
+  DatabaseUser,
+  DatabaseMessage,
+  DatabaseRoom,
+  PaginationOptions,
+  PaginatedResult
 } from '../types/index.js';
 
 export class ChatDatabase {
-	private db: Database.Database;
+  private db: Database.Database;
 
-	constructor(dbPath: string = 'chat.db') {
-		this.db = new Database(dbPath);
-		this.db.pragma('journal_mode = WAL');
-		this.db.pragma('foreign_keys = ON');
-		this.initializeSchema();
-		this.createDefaultData();
-	}
+  constructor(dbPath: string = 'chat.db') {
+    this.db = new Database(dbPath);
+    this.db.pragma('journal_mode = WAL');
+    this.db.pragma('foreign_keys = ON');
+    this.initializeSchema();
+    this.createDefaultData();
+  }
 
-	private initializeSchema(): void {
-		// Users table
-		this.db.exec(`
+  private initializeSchema(): void {
+    // Users table
+    this.db.exec(`
 			CREATE TABLE IF NOT EXISTS users (
 				id TEXT PRIMARY KEY,
 				username TEXT UNIQUE NOT NULL,
@@ -41,8 +41,8 @@ export class ChatDatabase {
 			)
 		`);
 
-		// Rooms table
-		this.db.exec(`
+    // Rooms table
+    this.db.exec(`
 			CREATE TABLE IF NOT EXISTS rooms (
 				id TEXT PRIMARY KEY,
 				name TEXT NOT NULL,
@@ -55,8 +55,8 @@ export class ChatDatabase {
 			)
 		`);
 
-		// Messages table
-		this.db.exec(`
+    // Messages table
+    this.db.exec(`
 			CREATE TABLE IF NOT EXISTS messages (
 				id TEXT PRIMARY KEY,
 				type TEXT NOT NULL DEFAULT 'message',
@@ -73,8 +73,8 @@ export class ChatDatabase {
 			)
 		`);
 
-		// Room members table (many-to-many relationship)
-		this.db.exec(`
+    // Room members table (many-to-many relationship)
+    this.db.exec(`
 			CREATE TABLE IF NOT EXISTS room_members (
 				room_id TEXT NOT NULL,
 				user_id TEXT NOT NULL,
@@ -86,8 +86,8 @@ export class ChatDatabase {
 			)
 		`);
 
-		// Message reactions table
-		this.db.exec(`
+    // Message reactions table
+    this.db.exec(`
 			CREATE TABLE IF NOT EXISTS message_reactions (
 				id TEXT PRIMARY KEY,
 				message_id TEXT NOT NULL,
@@ -100,8 +100,8 @@ export class ChatDatabase {
 			)
 		`);
 
-		// Indexes for performance
-		this.db.exec(`
+    // Indexes for performance
+    this.db.exec(`
 			CREATE INDEX IF NOT EXISTS idx_messages_room_created 
 			ON messages (room_id, created_at DESC);
 			
@@ -114,290 +114,290 @@ export class ChatDatabase {
 			CREATE INDEX IF NOT EXISTS idx_users_username 
 			ON users (username);
 		`);
-	}
+  }
 
-	private createDefaultData(): void {
-		const defaultRoomExists = this.db
-			.prepare('SELECT COUNT(*) as count FROM rooms WHERE id = ?')
-			.get('general') as { count: number };
+  private createDefaultData(): void {
+    const defaultRoomExists = this.db
+      .prepare('SELECT COUNT(*) as count FROM rooms WHERE id = ?')
+      .get('general') as { count: number };
 
-		if (defaultRoomExists.count === 0) {
-			// Create default admin user
-			const adminId = nanoid();
-			const adminPasswordHash = bcrypt.hashSync('admin123', 10);
+    if (defaultRoomExists.count === 0) {
+      // Create default admin user
+      const adminId = nanoid();
+      const adminPasswordHash = bcrypt.hashSync('admin123', 10);
 
-			this.db
-				.prepare(
-					`
+      this.db
+        .prepare(
+          `
 					INSERT INTO users (id, username, email, password_hash, is_online)
 					VALUES (?, ?, ?, ?, ?)
 				`
-				)
-				.run(adminId, 'admin', 'admin@chatapp.local', adminPasswordHash, 0);
+        )
+        .run(adminId, 'admin', 'admin@chatapp.local', adminPasswordHash, 0);
 
-			// Create default general room
-			this.db
-				.prepare(
-					`
+      // Create default general room
+      this.db
+        .prepare(
+          `
 					INSERT INTO rooms (id, name, description, is_private, owner_id)
 					VALUES (?, ?, ?, ?, ?)
 				`
-				)
-				.run('general', 'General', 'General chat room for everyone', 0, adminId);
+        )
+        .run('general', 'General', 'General chat room for everyone', 0, adminId);
 
-			// Add admin to the general room
-			this.db
-				.prepare(
-					`
+      // Add admin to the general room
+      this.db
+        .prepare(
+          `
 					INSERT INTO room_members (room_id, user_id, is_admin)
 					VALUES (?, ?, ?)
 				`
-				)
-				.run('general', adminId, 1);
+        )
+        .run('general', adminId, 1);
 
-			console.log('Default data created: admin user and general room');
-		}
-	}
+      console.log('Default data created: admin user and general room');
+    }
+  }
 
-	// User operations
-	async createUser(userData: CreateUserRequest): Promise<User> {
-		const userId = nanoid();
-		const passwordHash = await bcrypt.hash(userData.password, 10);
+  // User operations
+  async createUser(userData: CreateUserRequest): Promise<User> {
+    const userId = nanoid();
+    const passwordHash = await bcrypt.hash(userData.password, 10);
 
-		try {
-			this.db
-				.prepare(
-					`
+    try {
+      this.db
+        .prepare(
+          `
 					INSERT INTO users (id, username, email, password_hash)
 					VALUES (?, ?, ?, ?)
 				`
-				)
-				.run(userId, userData.username, userData.email, passwordHash);
+        )
+        .run(userId, userData.username, userData.email, passwordHash);
 
-			// Add user to general room
-			this.db
-				.prepare(
-					`
+      // Add user to general room
+      this.db
+        .prepare(
+          `
 					INSERT INTO room_members (room_id, user_id)
 					VALUES (?, ?)
 				`
-				)
-				.run('general', userId);
+        )
+        .run('general', userId);
 
-			return this.getUserById(userId)!;
-		} catch (error) {
-			if (error instanceof Error && error.message.includes('UNIQUE constraint failed')) {
-				if (error.message.includes('username')) {
-					throw new Error('Username already exists');
-				}
-				if (error.message.includes('email')) {
-					throw new Error('Email already exists');
-				}
-			}
-			throw error;
-		}
-	}
+      return this.getUserById(userId)!;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('UNIQUE constraint failed')) {
+        if (error.message.includes('username')) {
+          throw new Error('Username already exists');
+        }
+        if (error.message.includes('email')) {
+          throw new Error('Email already exists');
+        }
+      }
+      throw error;
+    }
+  }
 
-	getUserById(userId: string): User | null {
-		const dbUser = this.db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as
-			| DatabaseUser
-			| undefined;
+  getUserById(userId: string): User | null {
+    const dbUser = this.db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as
+      | DatabaseUser
+      | undefined;
 
-		return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
-	}
+    return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
+  }
 
-	getUserByEmail(email: string): User | null {
-		const dbUser = this.db.prepare('SELECT * FROM users WHERE email = ?').get(email) as
-			| DatabaseUser
-			| undefined;
+  getUserByEmail(email: string): User | null {
+    const dbUser = this.db.prepare('SELECT * FROM users WHERE email = ?').get(email) as
+      | DatabaseUser
+      | undefined;
 
-		return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
-	}
+    return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
+  }
 
-	getUserByUsername(username: string): User | null {
-		const dbUser = this.db.prepare('SELECT * FROM users WHERE username = ?').get(username) as
-			| DatabaseUser
-			| undefined;
+  getUserByUsername(username: string): User | null {
+    const dbUser = this.db.prepare('SELECT * FROM users WHERE username = ?').get(username) as
+      | DatabaseUser
+      | undefined;
 
-		return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
-	}
+    return dbUser ? this.mapDatabaseUserToUser(dbUser) : null;
+  }
 
-	async verifyPassword(email: string, password: string): Promise<User | null> {
-		const dbUser = this.db.prepare('SELECT * FROM users WHERE email = ?').get(email) as
-			| DatabaseUser
-			| undefined;
+  async verifyPassword(email: string, password: string): Promise<User | null> {
+    const dbUser = this.db.prepare('SELECT * FROM users WHERE email = ?').get(email) as
+      | DatabaseUser
+      | undefined;
 
-		if (!dbUser) return null;
+    if (!dbUser) return null;
 
-		const isValid = await bcrypt.compare(password, dbUser.password_hash);
-		return isValid ? this.mapDatabaseUserToUser(dbUser) : null;
-	}
+    const isValid = await bcrypt.compare(password, dbUser.password_hash);
+    return isValid ? this.mapDatabaseUserToUser(dbUser) : null;
+  }
 
-	updateUserOnlineStatus(userId: string, isOnline: boolean): void {
-		this.db
-			.prepare(
-				`
+  updateUserOnlineStatus(userId: string, isOnline: boolean): void {
+    this.db
+      .prepare(
+        `
 				UPDATE users 
 				SET is_online = ?, last_seen = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
 				WHERE id = ?
 			`
-			)
-			.run(isOnline ? 1 : 0, userId);
-	}
+      )
+      .run(isOnline ? 1 : 0, userId);
+  }
 
-	// Room operations
-	createRoom(roomData: CreateRoomRequest, ownerId: string): ChatRoom {
-		const roomId = nanoid();
+  // Room operations
+  createRoom(roomData: CreateRoomRequest, ownerId: string): ChatRoom {
+    const roomId = nanoid();
 
-		this.db
-			.prepare(
-				`
+    this.db
+      .prepare(
+        `
 				INSERT INTO rooms (id, name, description, is_private, owner_id)
 				VALUES (?, ?, ?, ?, ?)
 			`
-			)
-			.run(roomId, roomData.name, roomData.description || '', roomData.isPrivate ? 1 : 0, ownerId);
+      )
+      .run(roomId, roomData.name, roomData.description || '', roomData.isPrivate ? 1 : 0, ownerId);
 
-		// Add owner to the room
-		this.db
-			.prepare(
-				`
+    // Add owner to the room
+    this.db
+      .prepare(
+        `
 				INSERT INTO room_members (room_id, user_id, is_admin)
 				VALUES (?, ?, ?)
 			`
-			)
-			.run(roomId, ownerId, 1);
+      )
+      .run(roomId, ownerId, 1);
 
-		return this.getRoomById(roomId)!;
-	}
+    return this.getRoomById(roomId)!;
+  }
 
-	getRoomById(roomId: string): ChatRoom | null {
-		const dbRoom = this.db.prepare('SELECT * FROM rooms WHERE id = ?').get(roomId) as
-			| DatabaseRoom
-			| undefined;
+  getRoomById(roomId: string): ChatRoom | null {
+    const dbRoom = this.db.prepare('SELECT * FROM rooms WHERE id = ?').get(roomId) as
+      | DatabaseRoom
+      | undefined;
 
-		if (!dbRoom) return null;
+    if (!dbRoom) return null;
 
-		const members = this.db
-			.prepare('SELECT user_id FROM room_members WHERE room_id = ?')
-			.all(roomId) as { user_id: string }[];
+    const members = this.db
+      .prepare('SELECT user_id FROM room_members WHERE room_id = ?')
+      .all(roomId) as { user_id: string }[];
 
-		return {
-			id: dbRoom.id,
-			name: dbRoom.name,
-			description: dbRoom.description || '',
-			isPrivate: Boolean(dbRoom.is_private),
-			ownerId: dbRoom.owner_id,
-			members: new Set(members.map((m) => m.user_id)),
-			typingUsers: new Map(),
-			createdAt: new Date(dbRoom.created_at),
-			lastActivity: new Date(dbRoom.updated_at)
-		};
-	}
+    return {
+      id: dbRoom.id,
+      name: dbRoom.name,
+      description: dbRoom.description || '',
+      isPrivate: Boolean(dbRoom.is_private),
+      ownerId: dbRoom.owner_id,
+      members: new Set(members.map((m) => m.user_id)),
+      typingUsers: new Map(),
+      createdAt: new Date(dbRoom.created_at),
+      lastActivity: new Date(dbRoom.updated_at)
+    };
+  }
 
-	getRoomsByUserId(userId: string): ChatRoom[] {
-		const dbRooms = this.db
-			.prepare(
-				`
+  getRoomsByUserId(userId: string): ChatRoom[] {
+    const dbRooms = this.db
+      .prepare(
+        `
 				SELECT r.* FROM rooms r
 				JOIN room_members rm ON r.id = rm.room_id
 				WHERE rm.user_id = ?
 				ORDER BY r.updated_at DESC
 			`
-			)
-			.all(userId) as DatabaseRoom[];
+      )
+      .all(userId) as DatabaseRoom[];
 
-		return dbRooms.map((dbRoom) => {
-			const members = this.db
-				.prepare('SELECT user_id FROM room_members WHERE room_id = ?')
-				.all(dbRoom.id) as { user_id: string }[];
+    return dbRooms.map((dbRoom) => {
+      const members = this.db
+        .prepare('SELECT user_id FROM room_members WHERE room_id = ?')
+        .all(dbRoom.id) as { user_id: string }[];
 
-			return {
-				id: dbRoom.id,
-				name: dbRoom.name,
-				description: dbRoom.description || '',
-				isPrivate: Boolean(dbRoom.is_private),
-				ownerId: dbRoom.owner_id,
-				members: new Set(members.map((m) => m.user_id)),
-				typingUsers: new Map(),
-				createdAt: new Date(dbRoom.created_at),
-				lastActivity: new Date(dbRoom.updated_at)
-			};
-		});
-	}
+      return {
+        id: dbRoom.id,
+        name: dbRoom.name,
+        description: dbRoom.description || '',
+        isPrivate: Boolean(dbRoom.is_private),
+        ownerId: dbRoom.owner_id,
+        members: new Set(members.map((m) => m.user_id)),
+        typingUsers: new Map(),
+        createdAt: new Date(dbRoom.created_at),
+        lastActivity: new Date(dbRoom.updated_at)
+      };
+    });
+  }
 
-	joinRoom(roomId: string, userId: string): void {
-		this.db
-			.prepare(
-				`
+  joinRoom(roomId: string, userId: string): void {
+    this.db
+      .prepare(
+        `
 				INSERT OR IGNORE INTO room_members (room_id, user_id)
 				VALUES (?, ?)
 			`
-			)
-			.run(roomId, userId);
-	}
+      )
+      .run(roomId, userId);
+  }
 
-	leaveRoom(roomId: string, userId: string): void {
-		this.db
-			.prepare('DELETE FROM room_members WHERE room_id = ? AND user_id = ?')
-			.run(roomId, userId);
-	}
+  leaveRoom(roomId: string, userId: string): void {
+    this.db
+      .prepare('DELETE FROM room_members WHERE room_id = ? AND user_id = ?')
+      .run(roomId, userId);
+  }
 
-	// Message operations
-	createMessage(message: Omit<ChatMessage, 'id' | 'timestamp' | 'reactions'>): ChatMessage {
-		const messageId = nanoid();
+  // Message operations
+  createMessage(message: Omit<ChatMessage, 'id' | 'timestamp' | 'reactions'>): ChatMessage {
+    const messageId = nanoid();
 
-		this.db
-			.prepare(
-				`
+    this.db
+      .prepare(
+        `
 				INSERT INTO messages (id, type, content, user_id, room_id, reply_to_id)
 				VALUES (?, ?, ?, ?, ?, ?)
 			`
-			)
-			.run(
-				messageId,
-				message.type,
-				message.content,
-				message.userId,
-				message.roomId,
-				message.replyToId || null
-			);
+      )
+      .run(
+        messageId,
+        message.type,
+        message.content,
+        message.userId,
+        message.roomId,
+        message.replyToId || null
+      );
 
-		// Update room activity
-		this.db
-			.prepare('UPDATE rooms SET updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-			.run(message.roomId);
+    // Update room activity
+    this.db
+      .prepare('UPDATE rooms SET updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .run(message.roomId);
 
-		return this.getMessageById(messageId)!;
-	}
+    return this.getMessageById(messageId)!;
+  }
 
-	getMessageById(messageId: string): ChatMessage | null {
-		const dbMessage = this.db
-			.prepare(
-				`
+  getMessageById(messageId: string): ChatMessage | null {
+    const dbMessage = this.db
+      .prepare(
+        `
 				SELECT m.*, u.username 
 				FROM messages m
 				JOIN users u ON m.user_id = u.id
 				WHERE m.id = ?
 			`
-			)
-			.get(messageId) as (DatabaseMessage & { username: string }) | undefined;
+      )
+      .get(messageId) as (DatabaseMessage & { username: string }) | undefined;
 
-		return dbMessage ? this.mapDatabaseMessageToChatMessage(dbMessage) : null;
-	}
+    return dbMessage ? this.mapDatabaseMessageToChatMessage(dbMessage) : null;
+  }
 
-	getMessagesByRoom(
-		roomId: string,
-		options: PaginationOptions = { page: 1, limit: 50 }
-	): PaginatedResult<ChatMessage> {
-		const offset = (options.page - 1) * options.limit;
-		const orderBy = options.orderBy || 'created_at';
-		const orderDirection = options.orderDirection || 'DESC';
+  getMessagesByRoom(
+    roomId: string,
+    options: PaginationOptions = { page: 1, limit: 50 }
+  ): PaginatedResult<ChatMessage> {
+    const offset = (options.page - 1) * options.limit;
+    const orderBy = options.orderBy || 'created_at';
+    const orderDirection = options.orderDirection || 'DESC';
 
-		const totalQuery = this.db.prepare('SELECT COUNT(*) as count FROM messages WHERE room_id = ?');
-		const total = (totalQuery.get(roomId) as { count: number }).count;
+    const totalQuery = this.db.prepare('SELECT COUNT(*) as count FROM messages WHERE room_id = ?');
+    const total = (totalQuery.get(roomId) as { count: number }).count;
 
-		const messagesQuery = this.db.prepare(`
+    const messagesQuery = this.db.prepare(`
 			SELECT m.*, u.username 
 			FROM messages m
 			JOIN users u ON m.user_id = u.id
@@ -406,66 +406,66 @@ export class ChatDatabase {
 			LIMIT ? OFFSET ?
 		`);
 
-		const dbMessages = messagesQuery.all(roomId, options.limit, offset) as (DatabaseMessage & {
-			username: string;
-		})[];
+    const dbMessages = messagesQuery.all(roomId, options.limit, offset) as (DatabaseMessage & {
+      username: string;
+    })[];
 
-		const messages = dbMessages.map((msg) => this.mapDatabaseMessageToChatMessage(msg));
+    const messages = dbMessages.map((msg) => this.mapDatabaseMessageToChatMessage(msg));
 
-		return {
-			data: messages,
-			total,
-			page: options.page,
-			limit: options.limit,
-			totalPages: Math.ceil(total / options.limit)
-		};
-	}
+    return {
+      data: messages,
+      total,
+      page: options.page,
+      limit: options.limit,
+      totalPages: Math.ceil(total / options.limit)
+    };
+  }
 
-	// Helper methods
-	private mapDatabaseUserToUser(dbUser: DatabaseUser): User {
-		return {
-			id: dbUser.id,
-			username: dbUser.username,
-			email: dbUser.email,
-			avatar: dbUser.avatar || undefined,
-			isOnline: Boolean(dbUser.is_online),
-			lastSeen: new Date(dbUser.last_seen),
-			createdAt: new Date(dbUser.created_at),
-			updatedAt: new Date(dbUser.updated_at)
-		};
-	}
+  // Helper methods
+  private mapDatabaseUserToUser(dbUser: DatabaseUser): User {
+    return {
+      id: dbUser.id,
+      username: dbUser.username,
+      email: dbUser.email,
+      avatar: dbUser.avatar || undefined,
+      isOnline: Boolean(dbUser.is_online),
+      lastSeen: new Date(dbUser.last_seen),
+      createdAt: new Date(dbUser.created_at),
+      updatedAt: new Date(dbUser.updated_at)
+    };
+  }
 
-	private mapDatabaseMessageToChatMessage(
-		dbMessage: DatabaseMessage & { username: string }
-	): ChatMessage {
-		return {
-			id: dbMessage.id,
-			type: dbMessage.type as 'message' | 'system' | 'join' | 'leave',
-			content: dbMessage.content,
-			userId: dbMessage.user_id,
-			username: dbMessage.username,
-			roomId: dbMessage.room_id,
-			replyToId: dbMessage.reply_to_id || undefined,
-			timestamp: new Date(dbMessage.created_at),
-			editedAt: dbMessage.edited_at ? new Date(dbMessage.edited_at) : undefined,
-			reactions: [] // TODO: Implement reactions
-		};
-	}
+  private mapDatabaseMessageToChatMessage(
+    dbMessage: DatabaseMessage & { username: string }
+  ): ChatMessage {
+    return {
+      id: dbMessage.id,
+      type: dbMessage.type as 'message' | 'system' | 'join' | 'leave',
+      content: dbMessage.content,
+      userId: dbMessage.user_id,
+      username: dbMessage.username,
+      roomId: dbMessage.room_id,
+      replyToId: dbMessage.reply_to_id || undefined,
+      timestamp: new Date(dbMessage.created_at),
+      editedAt: dbMessage.edited_at ? new Date(dbMessage.edited_at) : undefined,
+      reactions: [] // TODO: Implement reactions
+    };
+  }
 
-	// Cleanup operations
-	cleanup(): void {
-		// Clean up old messages (older than 30 days)
-		const thirtyDaysAgo = new Date();
-		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  // Cleanup operations
+  cleanup(): void {
+    // Clean up old messages (older than 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-		this.db.prepare('DELETE FROM messages WHERE created_at < ?').run(thirtyDaysAgo.toISOString());
+    this.db.prepare('DELETE FROM messages WHERE created_at < ?').run(thirtyDaysAgo.toISOString());
 
-		// Set all users as offline
-		this.db.prepare('UPDATE users SET is_online = FALSE').run();
-	}
+    // Set all users as offline
+    this.db.prepare('UPDATE users SET is_online = FALSE').run();
+  }
 
-	close(): void {
-		this.cleanup();
-		this.db.close();
-	}
+  close(): void {
+    this.cleanup();
+    this.db.close();
+  }
 }

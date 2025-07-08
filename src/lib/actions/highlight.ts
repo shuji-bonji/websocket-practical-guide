@@ -2,8 +2,8 @@
 import { highlightElement } from '$lib/utils/prism';
 
 interface HighlightOptions {
-	language?: string;
-	autoHighlight?: boolean;
+  language?: string;
+  autoHighlight?: boolean;
 }
 
 /**
@@ -12,33 +12,33 @@ interface HighlightOptions {
  * @param options - Configuration options
  */
 export function highlight(node: HTMLElement, options: HighlightOptions = {}) {
-	const { language = 'javascript', autoHighlight = true } = options;
+  const { language = 'javascript', autoHighlight = true } = options;
 
-	function doHighlight() {
-		// Add language class if not present
-		if (language && !node.classList.contains(`language-${language}`)) {
-			node.classList.add(`language-${language}`);
-		}
+  function doHighlight() {
+    // Add language class if not present
+    if (language && !node.classList.contains(`language-${language}`)) {
+      node.classList.add(`language-${language}`);
+    }
 
-		// Highlight the element
-		highlightElement(node);
-	}
+    // Highlight the element
+    highlightElement(node);
+  }
 
-	// Highlight immediately if autoHighlight is true
-	if (autoHighlight) {
-		// Small delay to ensure DOM is ready
-		setTimeout(doHighlight, 10);
-	}
+  // Highlight immediately if autoHighlight is true
+  if (autoHighlight) {
+    // Small delay to ensure DOM is ready
+    setTimeout(doHighlight, 10);
+  }
 
-	return {
-		update(newOptions: HighlightOptions) {
-			Object.assign(options, newOptions);
-			if (options.autoHighlight) {
-				doHighlight();
-			}
-		},
-		destroy() {
-			// Cleanup if needed
-		}
-	};
+  return {
+    update(newOptions: HighlightOptions) {
+      Object.assign(options, newOptions);
+      if (options.autoHighlight) {
+        doHighlight();
+      }
+    },
+    destroy() {
+      // Cleanup if needed
+    }
+  };
 }

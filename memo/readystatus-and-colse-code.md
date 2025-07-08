@@ -14,7 +14,7 @@ WebSocket の接続状態を示す `readyState` プロパティは、以下の�
 ```ts
 const ws = new WebSocket('wss://example.com/socket');
 if (ws.readyState === WebSocket.OPEN) {
-	ws.send('Hello');
+  ws.send('Hello');
 }
 ```
 

@@ -92,21 +92,21 @@ import adapter from '@sveltejs/adapter-static';
 const dev = process.argv.includes('dev');
 
 const config = {
-	kit: {
-		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: null,
-			precompress: false,
-			strict: true
-		}),
-		paths: {
-			base: dev ? '' : process.env.BASE_PATH || ''
-		},
-		prerender: {
-			entries: ['*']
-		}
-	}
+  kit: {
+    adapter: adapter({
+      pages: 'build',
+      assets: 'build',
+      fallback: null,
+      precompress: false,
+      strict: true
+    }),
+    paths: {
+      base: dev ? '' : process.env.BASE_PATH || ''
+    },
+    prerender: {
+      entries: ['*']
+    }
+  }
 };
 ```
 
@@ -157,10 +157,10 @@ const config = {
 ```json
 // vercel.json
 {
-	"buildCommand": "npm run build",
-	"outputDirectory": "build",
-	"trailingSlash": false,
-	"cleanUrls": true
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "trailingSlash": false,
+  "cleanUrls": true
 }
 ```
 
@@ -258,102 +258,102 @@ import Redis from 'ioredis';
 let io;
 
 export default function handler(req, res) {
-	if (!io) {
-		io = new Server(res.socket.server, {
-			path: '/api/websocket',
-			addTrailingSlash: false,
-			cors: {
-				origin: process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL,
-				methods: ['GET', 'POST']
-			},
-			transports: ['websocket', 'polling'],
-			allowEIO3: true
-		});
+  if (!io) {
+    io = new Server(res.socket.server, {
+      path: '/api/websocket',
+      addTrailingSlash: false,
+      cors: {
+        origin: process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL,
+        methods: ['GET', 'POST']
+      },
+      transports: ['websocket', 'polling'],
+      allowEIO3: true
+    });
 
-		// Redis Adapter for scaling
-		if (process.env.REDIS_URL) {
-			const redisClient = new Redis(process.env.REDIS_URL);
-			const { createAdapter } = require('@socket.io/redis-adapter');
-			io.adapter(createAdapter(redisClient, redisClient.duplicate()));
-		}
+    // Redis Adapter for scaling
+    if (process.env.REDIS_URL) {
+      const redisClient = new Redis(process.env.REDIS_URL);
+      const { createAdapter } = require('@socket.io/redis-adapter');
+      io.adapter(createAdapter(redisClient, redisClient.duplicate()));
+    }
 
-		// Production-grade connection handling
-		io.on('connection', (socket) => {
-			console.log(`Client connected: ${socket.id}`);
+    // Production-grade connection handling
+    io.on('connection', (socket) => {
+      console.log(`Client connected: ${socket.id}`);
 
-			// Rate limiting per socket
-			const rateLimiter = new Map();
+      // Rate limiting per socket
+      const rateLimiter = new Map();
 
-			socket.use(async ([event, ...args], next) => {
-				const now = Date.now();
-				const windowStart = now - 60000; // 1 minute window
+      socket.use(async ([event, ...args], next) => {
+        const now = Date.now();
+        const windowStart = now - 60000; // 1 minute window
 
-				if (!rateLimiter.has(socket.id)) {
-					rateLimiter.set(socket.id, []);
-				}
+        if (!rateLimiter.has(socket.id)) {
+          rateLimiter.set(socket.id, []);
+        }
 
-				const requests = rateLimiter.get(socket.id);
-				const validRequests = requests.filter((time) => time > windowStart);
+        const requests = rateLimiter.get(socket.id);
+        const validRequests = requests.filter((time) => time > windowStart);
 
-				if (validRequests.length >= 100) {
-					// 100 requests per minute
-					return next(new Error('Rate limit exceeded'));
-				}
+        if (validRequests.length >= 100) {
+          // 100 requests per minute
+          return next(new Error('Rate limit exceeded'));
+        }
 
-				validRequests.push(now);
-				rateLimiter.set(socket.id, validRequests);
-				next();
-			});
+        validRequests.push(now);
+        rateLimiter.set(socket.id, validRequests);
+        next();
+      });
 
-			// Chat message handling
-			socket.on('chat-message', async (data) => {
-				try {
-					// Validate and sanitize message
-					const sanitizedMessage = sanitizeMessage(data);
+      // Chat message handling
+      socket.on('chat-message', async (data) => {
+        try {
+          // Validate and sanitize message
+          const sanitizedMessage = sanitizeMessage(data);
 
-					// Store in Redis with TTL
-					if (process.env.REDIS_URL) {
-						const redis = new Redis(process.env.REDIS_URL);
-						await redis.setex(
-							`msg:${sanitizedMessage.id}`,
-							86400, // 24 hours
-							JSON.stringify(sanitizedMessage)
-						);
-					}
+          // Store in Redis with TTL
+          if (process.env.REDIS_URL) {
+            const redis = new Redis(process.env.REDIS_URL);
+            await redis.setex(
+              `msg:${sanitizedMessage.id}`,
+              86400, // 24 hours
+              JSON.stringify(sanitizedMessage)
+            );
+          }
 
-					// Broadcast to room
-					io.to(sanitizedMessage.roomId).emit('chat-message', sanitizedMessage);
-				} catch (error) {
-					socket.emit('error', { message: 'Invalid message format' });
-				}
-			});
+          // Broadcast to room
+          io.to(sanitizedMessage.roomId).emit('chat-message', sanitizedMessage);
+        } catch (error) {
+          socket.emit('error', { message: 'Invalid message format' });
+        }
+      });
 
-			socket.on('disconnect', () => {
-				console.log(`Client disconnected: ${socket.id}`);
-				rateLimiter.delete(socket.id);
-			});
-		});
+      socket.on('disconnect', () => {
+        console.log(`Client disconnected: ${socket.id}`);
+        rateLimiter.delete(socket.id);
+      });
+    });
 
-		res.socket.server.io = io;
-	}
-	res.end();
+    res.socket.server.io = io;
+  }
+  res.end();
 }
 
 function sanitizeMessage(data) {
-	// Input validation and sanitization
-	const { roomId, message, username } = data;
+  // Input validation and sanitization
+  const { roomId, message, username } = data;
 
-	if (!roomId || !message || !username) {
-		throw new Error('Missing required fields');
-	}
+  if (!roomId || !message || !username) {
+    throw new Error('Missing required fields');
+  }
 
-	return {
-		id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-		roomId: roomId.replace(/[^a-zA-Z0-9-_]/g, ''),
-		message: message.substring(0, 1000), // Limit message length
-		username: username.substring(0, 50), // Limit username length
-		timestamp: Date.now()
-	};
+  return {
+    id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    roomId: roomId.replace(/[^a-zA-Z0-9-_]/g, ''),
+    message: message.substring(0, 1000), // Limit message length
+    username: username.substring(0, 50), // Limit username length
+    timestamp: Date.now()
+  };
 }
 ```
 
@@ -402,17 +402,17 @@ vercel --prod
 ```json
 // railway.json
 {
-	"build": {
-		"builder": "NIXPACKS",
-		"buildCommand": "npm install && npm run build"
-	},
-	"deploy": {
-		"startCommand": "npm start",
-		"healthcheckPath": "/health",
-		"healthcheckTimeout": 100,
-		"restartPolicyType": "ON_FAILURE",
-		"restartPolicyMaxRetries": 3
-	}
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm install && npm run build"
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  }
 }
 ```
 
@@ -427,223 +427,223 @@ const express = require('express');
 const Redis = require('ioredis');
 
 class ProductionWebSocketServer {
-	constructor() {
-		this.port = process.env.PORT || 8080;
-		this.redisUrl = process.env.REDIS_URL;
-		this.nodeEnv = process.env.NODE_ENV || 'production';
+  constructor() {
+    this.port = process.env.PORT || 8080;
+    this.redisUrl = process.env.REDIS_URL;
+    this.nodeEnv = process.env.NODE_ENV || 'production';
 
-		if (cluster.isMaster && this.nodeEnv === 'production') {
-			this.setupCluster();
-		} else {
-			this.startWorker();
-		}
-	}
+    if (cluster.isMaster && this.nodeEnv === 'production') {
+      this.setupCluster();
+    } else {
+      this.startWorker();
+    }
+  }
 
-	setupCluster() {
-		const numWorkers = process.env.WEB_CONCURRENCY || os.cpus().length;
+  setupCluster() {
+    const numWorkers = process.env.WEB_CONCURRENCY || os.cpus().length;
 
-		console.log(`Master ${process.pid} is running`);
-		console.log(`Starting ${numWorkers} workers`);
+    console.log(`Master ${process.pid} is running`);
+    console.log(`Starting ${numWorkers} workers`);
 
-		// Fork workers
-		for (let i = 0; i < numWorkers; i++) {
-			cluster.fork();
-		}
+    // Fork workers
+    for (let i = 0; i < numWorkers; i++) {
+      cluster.fork();
+    }
 
-		// Handle worker death
-		cluster.on('exit', (worker, code, signal) => {
-			console.log(`Worker ${worker.process.pid} died`);
-			console.log('Starting a new worker');
-			cluster.fork();
-		});
+    // Handle worker death
+    cluster.on('exit', (worker, code, signal) => {
+      console.log(`Worker ${worker.process.pid} died`);
+      console.log('Starting a new worker');
+      cluster.fork();
+    });
 
-		// Graceful shutdown
-		process.on('SIGTERM', () => {
-			console.log('Master received SIGTERM, shutting down gracefully');
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('Master received SIGTERM, shutting down gracefully');
 
-			for (const id in cluster.workers) {
-				cluster.workers[id].kill();
-			}
+      for (const id in cluster.workers) {
+        cluster.workers[id].kill();
+      }
 
-			setTimeout(() => {
-				console.log('Force shutdown');
-				process.exit(1);
-			}, 10000);
-		});
-	}
+      setTimeout(() => {
+        console.log('Force shutdown');
+        process.exit(1);
+      }, 10000);
+    });
+  }
 
-	startWorker() {
-		const app = express();
+  startWorker() {
+    const app = express();
 
-		// Health check endpoint
-		app.get('/health', (req, res) => {
-			res.status(200).json({
-				status: 'healthy',
-				worker: process.pid,
-				uptime: process.uptime(),
-				memory: process.memoryUsage()
-			});
-		});
+    // Health check endpoint
+    app.get('/health', (req, res) => {
+      res.status(200).json({
+        status: 'healthy',
+        worker: process.pid,
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+      });
+    });
 
-		// WebSocket server
-		const wss = new WebSocket.Server({
-			port: this.port,
-			perMessageDeflate: {
-				threshold: 1024,
-				zlibDeflateOptions: {
-					chunkSize: 16 * 1024,
-					windowBits: 15,
-					level: 3
-				}
-			}
-		});
+    // WebSocket server
+    const wss = new WebSocket.Server({
+      port: this.port,
+      perMessageDeflate: {
+        threshold: 1024,
+        zlibDeflateOptions: {
+          chunkSize: 16 * 1024,
+          windowBits: 15,
+          level: 3
+        }
+      }
+    });
 
-		// Redis for inter-worker communication
-		const redis = new Redis(this.redisUrl);
-		const redisSub = new Redis(this.redisUrl);
+    // Redis for inter-worker communication
+    const redis = new Redis(this.redisUrl);
+    const redisSub = new Redis(this.redisUrl);
 
-		wss.on('connection', (ws, request) => {
-			ws.isAlive = true;
-			ws.workerId = process.pid;
+    wss.on('connection', (ws, request) => {
+      ws.isAlive = true;
+      ws.workerId = process.pid;
 
-			console.log(`Worker ${process.pid}: Client connected`);
+      console.log(`Worker ${process.pid}: Client connected`);
 
-			ws.on('pong', () => {
-				ws.isAlive = true;
-			});
+      ws.on('pong', () => {
+        ws.isAlive = true;
+      });
 
-			ws.on('message', async (data) => {
-				try {
-					const message = JSON.parse(data);
-					await this.handleMessage(ws, message, redis);
-				} catch (error) {
-					console.error('Message handling error:', error);
-					ws.send(
-						JSON.stringify({
-							type: 'error',
-							message: 'Invalid message format'
-						})
-					);
-				}
-			});
+      ws.on('message', async (data) => {
+        try {
+          const message = JSON.parse(data);
+          await this.handleMessage(ws, message, redis);
+        } catch (error) {
+          console.error('Message handling error:', error);
+          ws.send(
+            JSON.stringify({
+              type: 'error',
+              message: 'Invalid message format'
+            })
+          );
+        }
+      });
 
-			ws.on('close', () => {
-				console.log(`Worker ${process.pid}: Client disconnected`);
-			});
-		});
+      ws.on('close', () => {
+        console.log(`Worker ${process.pid}: Client disconnected`);
+      });
+    });
 
-		// Health check ping
-		setInterval(() => {
-			wss.clients.forEach((ws) => {
-				if (!ws.isAlive) return ws.terminate();
-				ws.isAlive = false;
-				ws.ping();
-			});
-		}, 30000);
+    // Health check ping
+    setInterval(() => {
+      wss.clients.forEach((ws) => {
+        if (!ws.isAlive) return ws.terminate();
+        ws.isAlive = false;
+        ws.ping();
+      });
+    }, 30000);
 
-		// Redis subscription for broadcasting
-		redisSub.subscribe('broadcast');
-		redisSub.on('message', (channel, message) => {
-			if (channel === 'broadcast') {
-				const data = JSON.parse(message);
-				this.broadcastToClients(wss, data);
-			}
-		});
+    // Redis subscription for broadcasting
+    redisSub.subscribe('broadcast');
+    redisSub.on('message', (channel, message) => {
+      if (channel === 'broadcast') {
+        const data = JSON.parse(message);
+        this.broadcastToClients(wss, data);
+      }
+    });
 
-		const server = app.listen(this.port, () => {
-			console.log(`Worker ${process.pid} listening on port ${this.port}`);
-		});
+    const server = app.listen(this.port, () => {
+      console.log(`Worker ${process.pid} listening on port ${this.port}`);
+    });
 
-		// Graceful shutdown
-		process.on('SIGTERM', () => {
-			console.log(`Worker ${process.pid} received SIGTERM`);
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log(`Worker ${process.pid} received SIGTERM`);
 
-			server.close(() => {
-				wss.close(() => {
-					redis.disconnect();
-					redisSub.disconnect();
-					process.exit(0);
-				});
-			});
-		});
-	}
+      server.close(() => {
+        wss.close(() => {
+          redis.disconnect();
+          redisSub.disconnect();
+          process.exit(0);
+        });
+      });
+    });
+  }
 
-	async handleMessage(ws, message, redis) {
-		switch (message.type) {
-			case 'document-operation':
-				await this.handleDocumentOperation(ws, message, redis);
-				break;
-			case 'cursor-update':
-				await this.handleCursorUpdate(ws, message, redis);
-				break;
-			default:
-				ws.send(
-					JSON.stringify({
-						type: 'error',
-						message: `Unknown message type: ${message.type}`
-					})
-				);
-		}
-	}
+  async handleMessage(ws, message, redis) {
+    switch (message.type) {
+      case 'document-operation':
+        await this.handleDocumentOperation(ws, message, redis);
+        break;
+      case 'cursor-update':
+        await this.handleCursorUpdate(ws, message, redis);
+        break;
+      default:
+        ws.send(
+          JSON.stringify({
+            type: 'error',
+            message: `Unknown message type: ${message.type}`
+          })
+        );
+    }
+  }
 
-	async handleDocumentOperation(ws, message, redis) {
-		const { documentId, operation, version } = message;
+  async handleDocumentOperation(ws, message, redis) {
+    const { documentId, operation, version } = message;
 
-		// Distributed locking
-		const lockKey = `lock:doc:${documentId}`;
-		const lock = await redis.set(lockKey, ws.workerId, 'PX', 5000, 'NX');
+    // Distributed locking
+    const lockKey = `lock:doc:${documentId}`;
+    const lock = await redis.set(lockKey, ws.workerId, 'PX', 5000, 'NX');
 
-		if (!lock) {
-			ws.send(
-				JSON.stringify({
-					type: 'error',
-					message: 'Document is locked by another operation'
-				})
-			);
-			return;
-		}
+    if (!lock) {
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          message: 'Document is locked by another operation'
+        })
+      );
+      return;
+    }
 
-		try {
-			// Apply operation with version check
-			const currentVersion = (await redis.get(`doc:${documentId}:version`)) || '0';
+    try {
+      // Apply operation with version check
+      const currentVersion = (await redis.get(`doc:${documentId}:version`)) || '0';
 
-			if (parseInt(version) !== parseInt(currentVersion)) {
-				ws.send(
-					JSON.stringify({
-						type: 'version-mismatch',
-						currentVersion: parseInt(currentVersion)
-					})
-				);
-				return;
-			}
+      if (parseInt(version) !== parseInt(currentVersion)) {
+        ws.send(
+          JSON.stringify({
+            type: 'version-mismatch',
+            currentVersion: parseInt(currentVersion)
+          })
+        );
+        return;
+      }
 
-			// Update document
-			const newVersion = parseInt(currentVersion) + 1;
-			await redis.set(`doc:${documentId}:version`, newVersion);
+      // Update document
+      const newVersion = parseInt(currentVersion) + 1;
+      await redis.set(`doc:${documentId}:version`, newVersion);
 
-			// Broadcast to other workers
-			await redis.publish(
-				'broadcast',
-				JSON.stringify({
-					type: 'document-operation',
-					documentId,
-					operation,
-					version: newVersion,
-					excludeWorker: ws.workerId
-				})
-			);
+      // Broadcast to other workers
+      await redis.publish(
+        'broadcast',
+        JSON.stringify({
+          type: 'document-operation',
+          documentId,
+          operation,
+          version: newVersion,
+          excludeWorker: ws.workerId
+        })
+      );
 
-			// Confirm to sender
-			ws.send(
-				JSON.stringify({
-					type: 'operation-confirmed',
-					version: newVersion
-				})
-			);
-		} finally {
-			await redis.del(lockKey);
-		}
-	}
+      // Confirm to sender
+      ws.send(
+        JSON.stringify({
+          type: 'operation-confirmed',
+          version: newVersion
+        })
+      );
+    } finally {
+      await redis.del(lockKey);
+    }
+  }
 }
 
 // Start the server
@@ -687,45 +687,45 @@ railway domain
 ```javascript
 // scripts/setup-monitoring.js
 const monitors = [
-	{
-		name: 'WebSocket Learning Site',
-		url: 'https://shuji-bonji.github.io/websocket-learning/',
-		type: 'HTTP',
-		interval: 300 // 5 minutes
-	},
-	{
-		name: 'Chat App WebSocket',
-		url: 'wss://websocket-chat-app.vercel.app/api/websocket',
-		type: 'KEYWORD',
-		keyword: 'websocket',
-		interval: 300
-	},
-	{
-		name: 'Collaborative Editor API',
-		url: 'https://collaborative-editor.up.railway.app/health',
-		type: 'HTTP',
-		interval: 300
-	}
+  {
+    name: 'WebSocket Learning Site',
+    url: 'https://shuji-bonji.github.io/websocket-learning/',
+    type: 'HTTP',
+    interval: 300 // 5 minutes
+  },
+  {
+    name: 'Chat App WebSocket',
+    url: 'wss://websocket-chat-app.vercel.app/api/websocket',
+    type: 'KEYWORD',
+    keyword: 'websocket',
+    interval: 300
+  },
+  {
+    name: 'Collaborative Editor API',
+    url: 'https://collaborative-editor.up.railway.app/health',
+    type: 'HTTP',
+    interval: 300
+  }
 ];
 
 // Uptime Robot API経由でモニター設定
 async function setupMonitoring() {
-	for (const monitor of monitors) {
-		await fetch('https://api.uptimerobot.com/v2/newMonitor', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: new URLSearchParams({
-				api_key: process.env.UPTIMEROBOT_API_KEY,
-				format: 'json',
-				type: monitor.type === 'HTTP' ? '1' : '2',
-				url: monitor.url,
-				friendly_name: monitor.name,
-				interval: monitor.interval
-			})
-		});
-	}
+  for (const monitor of monitors) {
+    await fetch('https://api.uptimerobot.com/v2/newMonitor', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        api_key: process.env.UPTIMEROBOT_API_KEY,
+        format: 'json',
+        type: monitor.type === 'HTTP' ? '1' : '2',
+        url: monitor.url,
+        friendly_name: monitor.name,
+        interval: monitor.interval
+      })
+    });
+  }
 }
 ```
 
@@ -942,33 +942,33 @@ echo "✅ All deployments completed successfully!"
 ```javascript
 // config/development.js
 module.exports = {
-	websocket: {
-		basic: {
-			url: 'ws://localhost:8080',
-			reconnect: true,
-			debug: true
-		},
-		graphql: {
-			url: 'ws://localhost:8081',
-			protocol: 'graphql-ws',
-			debug: true
-		},
-		mqtt: {
-			url: 'ws://localhost:8082',
-			protocol: 'mqtt',
-			debug: true
-		}
-	},
-	redis: {
-		url: 'redis://localhost:6379',
-		retryDelayOnFailover: 100,
-		enableReadyCheck: false,
-		lazyConnect: true
-	},
-	logging: {
-		level: 'debug',
-		format: 'pretty'
-	}
+  websocket: {
+    basic: {
+      url: 'ws://localhost:8080',
+      reconnect: true,
+      debug: true
+    },
+    graphql: {
+      url: 'ws://localhost:8081',
+      protocol: 'graphql-ws',
+      debug: true
+    },
+    mqtt: {
+      url: 'ws://localhost:8082',
+      protocol: 'mqtt',
+      debug: true
+    }
+  },
+  redis: {
+    url: 'redis://localhost:6379',
+    retryDelayOnFailover: 100,
+    enableReadyCheck: false,
+    lazyConnect: true
+  },
+  logging: {
+    level: 'debug',
+    format: 'pretty'
+  }
 };
 ```
 
@@ -977,45 +977,45 @@ module.exports = {
 ```javascript
 // config/production.js
 module.exports = {
-	websocket: {
-		chat: {
-			url: process.env.VERCEL_URL
-				? `wss://${process.env.VERCEL_URL}/api/websocket`
-				: 'wss://websocket-chat-app.vercel.app/api/websocket',
-			reconnect: true,
-			timeout: 30000,
-			transports: ['websocket', 'polling']
-		},
-		collaborative: {
-			url: process.env.RAILWAY_PUBLIC_DOMAIN
-				? `wss://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-				: 'wss://collaborative-editor.up.railway.app',
-			reconnect: true,
-			maxReconnectAttempts: 5,
-			reconnectInterval: 2000
-		}
-	},
-	redis: {
-		url: process.env.REDIS_URL,
-		retryDelayOnFailover: 1000,
-		enableReadyCheck: true,
-		lazyConnect: false,
-		maxRetriesPerRequest: 3
-	},
-	monitoring: {
-		sentry: {
-			dsn: process.env.SENTRY_DSN,
-			environment: 'production',
-			tracesSampleRate: 0.1
-		},
-		analytics: {
-			googleAnalytics: process.env.GA_TRACKING_ID
-		}
-	},
-	logging: {
-		level: 'info',
-		format: 'json'
-	}
+  websocket: {
+    chat: {
+      url: process.env.VERCEL_URL
+        ? `wss://${process.env.VERCEL_URL}/api/websocket`
+        : 'wss://websocket-chat-app.vercel.app/api/websocket',
+      reconnect: true,
+      timeout: 30000,
+      transports: ['websocket', 'polling']
+    },
+    collaborative: {
+      url: process.env.RAILWAY_PUBLIC_DOMAIN
+        ? `wss://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+        : 'wss://collaborative-editor.up.railway.app',
+      reconnect: true,
+      maxReconnectAttempts: 5,
+      reconnectInterval: 2000
+    }
+  },
+  redis: {
+    url: process.env.REDIS_URL,
+    retryDelayOnFailover: 1000,
+    enableReadyCheck: true,
+    lazyConnect: false,
+    maxRetriesPerRequest: 3
+  },
+  monitoring: {
+    sentry: {
+      dsn: process.env.SENTRY_DSN,
+      environment: 'production',
+      tracesSampleRate: 0.1
+    },
+    analytics: {
+      googleAnalytics: process.env.GA_TRACKING_ID
+    }
+  },
+  logging: {
+    level: 'info',
+    format: 'json'
+  }
 };
 ```
 
@@ -1089,77 +1089,77 @@ echo "✅ Secrets setup completed!"
 import { test, expect } from '@playwright/test';
 
 const deploymentTargets = [
-	{
-		name: 'Learning Site',
-		url: 'https://shuji-bonji.github.io/websocket-learning/',
-		type: 'static'
-	},
-	{
-		name: 'Chat App',
-		url: 'https://websocket-chat-app.vercel.app',
-		type: 'vercel'
-	},
-	{
-		name: 'Collaborative Editor',
-		url: 'https://collaborative-editor.up.railway.app',
-		type: 'railway'
-	}
+  {
+    name: 'Learning Site',
+    url: 'https://shuji-bonji.github.io/websocket-learning/',
+    type: 'static'
+  },
+  {
+    name: 'Chat App',
+    url: 'https://websocket-chat-app.vercel.app',
+    type: 'vercel'
+  },
+  {
+    name: 'Collaborative Editor',
+    url: 'https://collaborative-editor.up.railway.app',
+    type: 'railway'
+  }
 ];
 
 for (const target of deploymentTargets) {
-	test.describe(`${target.name} Smoke Tests`, () => {
-		test('should load homepage', async ({ page }) => {
-			await page.goto(target.url);
-			await expect(page).toHaveTitle(/WebSocket/);
-		});
+  test.describe(`${target.name} Smoke Tests`, () => {
+    test('should load homepage', async ({ page }) => {
+      await page.goto(target.url);
+      await expect(page).toHaveTitle(/WebSocket/);
+    });
 
-		test('should have no console errors', async ({ page }) => {
-			const errors = [];
-			page.on('console', (msg) => {
-				if (msg.type() === 'error') {
-					errors.push(msg.text());
-				}
-			});
+    test('should have no console errors', async ({ page }) => {
+      const errors = [];
+      page.on('console', (msg) => {
+        if (msg.type() === 'error') {
+          errors.push(msg.text());
+        }
+      });
 
-			await page.goto(target.url);
-			await page.waitForLoadState('networkidle');
+      await page.goto(target.url);
+      await page.waitForLoadState('networkidle');
 
-			expect(errors).toHaveLength(0);
-		});
+      expect(errors).toHaveLength(0);
+    });
 
-		if (target.type !== 'static') {
-			test('should establish WebSocket connection', async ({ page }) => {
-				await page.goto(target.url);
+    if (target.type !== 'static') {
+      test('should establish WebSocket connection', async ({ page }) => {
+        await page.goto(target.url);
 
-				// Wait for WebSocket connection
-				const wsConnected = await page.evaluate(() => {
-					return new Promise((resolve) => {
-						const ws = new WebSocket(
-							target.type === 'vercel'
-								? 'wss://websocket-chat-app.vercel.app/api/websocket'
-								: 'wss://collaborative-editor.up.railway.app'
-						);
+        // Wait for WebSocket connection
+        const wsConnected = await page.evaluate(() => {
+          return new Promise((resolve) => {
+            const ws = new WebSocket(
+              target.type === 'vercel'
+                ? 'wss://websocket-chat-app.vercel.app/api/websocket'
+                : 'wss://collaborative-editor.up.railway.app'
+            );
 
-						ws.onopen = () => resolve(true);
-						ws.onerror = () => resolve(false);
+            ws.onopen = () => resolve(true);
+            ws.onerror = () => resolve(false);
 
-						setTimeout(() => resolve(false), 10000);
-					});
-				});
+            setTimeout(() => resolve(false), 10000);
+          });
+        });
 
-				expect(wsConnected).toBe(true);
-			});
-		}
+        expect(wsConnected).toBe(true);
+      });
+    }
 
-		test('should have acceptable performance', async ({ page }) => {
-			const startTime = Date.now();
-			await page.goto(target.url);
-			await page.waitForLoadState('domcontentloaded');
-			const loadTime = Date.now() - startTime;
+    test('should have acceptable performance', async ({ page }) => {
+      const startTime = Date.now();
+      await page.goto(target.url);
+      await page.waitForLoadState('domcontentloaded');
+      const loadTime = Date.now() - startTime;
 
-			expect(loadTime).toBeLessThan(5000); // 5 seconds max load time
-		});
-	});
+      expect(loadTime).toBeLessThan(5000); // 5 seconds max load time
+    });
+  });
 }
 ```
 
@@ -1168,42 +1168,42 @@ for (const target of deploymentTargets) {
 ```javascript
 // api/health.js - Vercel health check
 export default function handler(req, res) {
-	const health = {
-		status: 'healthy',
-		timestamp: new Date().toISOString(),
-		version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
-		environment: process.env.NODE_ENV || 'development',
-		services: {
-			redis: checkRedisHealth(),
-			websocket: checkWebSocketHealth()
-		}
-	};
+  const health = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
+    environment: process.env.NODE_ENV || 'development',
+    services: {
+      redis: checkRedisHealth(),
+      websocket: checkWebSocketHealth()
+    }
+  };
 
-	const isHealthy = Object.values(health.services).every((service) => service.status === 'healthy');
+  const isHealthy = Object.values(health.services).every((service) => service.status === 'healthy');
 
-	res.status(isHealthy ? 200 : 503).json(health);
+  res.status(isHealthy ? 200 : 503).json(health);
 }
 
 async function checkRedisHealth() {
-	try {
-		if (!process.env.REDIS_URL) {
-			return { status: 'not_configured' };
-		}
+  try {
+    if (!process.env.REDIS_URL) {
+      return { status: 'not_configured' };
+    }
 
-		const Redis = require('ioredis');
-		const redis = new Redis(process.env.REDIS_URL);
-		await redis.ping();
-		redis.disconnect();
+    const Redis = require('ioredis');
+    const redis = new Redis(process.env.REDIS_URL);
+    await redis.ping();
+    redis.disconnect();
 
-		return { status: 'healthy', latency: Date.now() };
-	} catch (error) {
-		return { status: 'unhealthy', error: error.message };
-	}
+    return { status: 'healthy', latency: Date.now() };
+  } catch (error) {
+    return { status: 'unhealthy', error: error.message };
+  }
 }
 
 function checkWebSocketHealth() {
-	// WebSocket health check logic
-	return { status: 'healthy' };
+  // WebSocket health check logic
+  return { status: 'healthy' };
 }
 ```
 
@@ -1316,123 +1316,123 @@ const { WebhookClient } = require('discord.js');
 const nodemailer = require('nodemailer');
 
 class AlertingSystem {
-	constructor() {
-		this.discordWebhook = new WebhookClient({
-			url: process.env.DISCORD_WEBHOOK_URL
-		});
+  constructor() {
+    this.discordWebhook = new WebhookClient({
+      url: process.env.DISCORD_WEBHOOK_URL
+    });
 
-		this.emailTransporter = nodemailer.createTransporter({
-			host: process.env.SMTP_HOST,
-			port: 587,
-			secure: false,
-			auth: {
-				user: process.env.SMTP_USER,
-				pass: process.env.SMTP_PASS
-			}
-		});
-	}
+    this.emailTransporter = nodemailer.createTransporter({
+      host: process.env.SMTP_HOST,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
+  }
 
-	async sendAlert(severity, message, details) {
-		const timestamp = new Date().toISOString();
+  async sendAlert(severity, message, details) {
+    const timestamp = new Date().toISOString();
 
-		// Discord notification
-		if (this.discordWebhook) {
-			await this.discordWebhook.send({
-				content: `🚨 **${severity.toUpperCase()} ALERT** 🚨`,
-				embeds: [
-					{
-						title: message,
-						description: details,
-						color: severity === 'critical' ? 0xff0000 : 0xffff00,
-						timestamp: timestamp,
-						fields: [
-							{
-								name: 'Environment',
-								value: process.env.NODE_ENV,
-								inline: true
-							},
-							{
-								name: 'Service',
-								value: process.env.SERVICE_NAME || 'WebSocket Learning',
-								inline: true
-							}
-						]
-					}
-				]
-			});
-		}
+    // Discord notification
+    if (this.discordWebhook) {
+      await this.discordWebhook.send({
+        content: `🚨 **${severity.toUpperCase()} ALERT** 🚨`,
+        embeds: [
+          {
+            title: message,
+            description: details,
+            color: severity === 'critical' ? 0xff0000 : 0xffff00,
+            timestamp: timestamp,
+            fields: [
+              {
+                name: 'Environment',
+                value: process.env.NODE_ENV,
+                inline: true
+              },
+              {
+                name: 'Service',
+                value: process.env.SERVICE_NAME || 'WebSocket Learning',
+                inline: true
+              }
+            ]
+          }
+        ]
+      });
+    }
 
-		// Email notification for critical alerts
-		if (severity === 'critical' && this.emailTransporter) {
-			await this.emailTransporter.sendMail({
-				from: process.env.ALERT_EMAIL_FROM,
-				to: process.env.ALERT_EMAIL_TO,
-				subject: `🚨 Critical Alert: ${message}`,
-				html: `
+    // Email notification for critical alerts
+    if (severity === 'critical' && this.emailTransporter) {
+      await this.emailTransporter.sendMail({
+        from: process.env.ALERT_EMAIL_FROM,
+        to: process.env.ALERT_EMAIL_TO,
+        subject: `🚨 Critical Alert: ${message}`,
+        html: `
           <h2>Critical System Alert</h2>
           <p><strong>Message:</strong> ${message}</p>
           <p><strong>Details:</strong> ${details}</p>
           <p><strong>Time:</strong> ${timestamp}</p>
           <p><strong>Environment:</strong> ${process.env.NODE_ENV}</p>
         `
-			});
-		}
+      });
+    }
 
-		// Log to console
-		console.error(`[${severity.toUpperCase()}] ${timestamp}: ${message}`, details);
-	}
+    // Log to console
+    console.error(`[${severity.toUpperCase()}] ${timestamp}: ${message}`, details);
+  }
 
-	async checkServices() {
-		const services = [
-			{
-				name: 'Learning Site',
-				url: 'https://shuji-bonji.github.io/websocket-learning/',
-				critical: false
-			},
-			{
-				name: 'Chat App',
-				url: 'https://websocket-chat-app.vercel.app/api/health',
-				critical: true
-			},
-			{
-				name: 'Collaborative Editor',
-				url: 'https://collaborative-editor.up.railway.app/health',
-				critical: true
-			}
-		];
+  async checkServices() {
+    const services = [
+      {
+        name: 'Learning Site',
+        url: 'https://shuji-bonji.github.io/websocket-learning/',
+        critical: false
+      },
+      {
+        name: 'Chat App',
+        url: 'https://websocket-chat-app.vercel.app/api/health',
+        critical: true
+      },
+      {
+        name: 'Collaborative Editor',
+        url: 'https://collaborative-editor.up.railway.app/health',
+        critical: true
+      }
+    ];
 
-		for (const service of services) {
-			try {
-				const response = await fetch(service.url);
-				if (!response.ok) {
-					await this.sendAlert(
-						service.critical ? 'critical' : 'warning',
-						`${service.name} is down`,
-						`HTTP ${response.status} - ${service.url}`
-					);
-				}
-			} catch (error) {
-				await this.sendAlert(
-					service.critical ? 'critical' : 'warning',
-					`${service.name} is unreachable`,
-					`Error: ${error.message} - ${service.url}`
-				);
-			}
-		}
-	}
+    for (const service of services) {
+      try {
+        const response = await fetch(service.url);
+        if (!response.ok) {
+          await this.sendAlert(
+            service.critical ? 'critical' : 'warning',
+            `${service.name} is down`,
+            `HTTP ${response.status} - ${service.url}`
+          );
+        }
+      } catch (error) {
+        await this.sendAlert(
+          service.critical ? 'critical' : 'warning',
+          `${service.name} is unreachable`,
+          `Error: ${error.message} - ${service.url}`
+        );
+      }
+    }
+  }
 }
 
 // Health check cron job
 if (process.env.NODE_ENV === 'production') {
-	const alerting = new AlertingSystem();
+  const alerting = new AlertingSystem();
 
-	// Check every 5 minutes
-	setInterval(
-		() => {
-			alerting.checkServices();
-		},
-		5 * 60 * 1000
-	);
+  // Check every 5 minutes
+  setInterval(
+    () => {
+      alerting.checkServices();
+    },
+    5 * 60 * 1000
+  );
 }
 
 module.exports = AlertingSystem;

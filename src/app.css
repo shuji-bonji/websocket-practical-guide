@@ -7,106 +7,106 @@
 
 /* Mermaid図表の全体スタイル */
 .mermaid-container {
-	@apply my-8 flex justify-center items-center;
+  @apply my-8 flex justify-center items-center;
 }
 
 .mermaid-container svg {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-	background-color: #1f2937;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  background-color: #1f2937;
 }
 
 @layer base {
-	html {
-		scroll-behavior: smooth;
-	}
+  html {
+    scroll-behavior: smooth;
+  }
 
-	body {
-		@apply bg-gray-50 text-gray-900;
-	}
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
 }
 
 @layer components {
-	.btn-primary {
-		@apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-	}
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
 
-	.btn-secondary {
-		@apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-	}
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
 
-	.card {
-		@apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
-	}
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
 
-	.progress-bar {
-		@apply bg-gray-200 rounded-full h-2 overflow-hidden;
-	}
+  .progress-bar {
+    @apply bg-gray-200 rounded-full h-2 overflow-hidden;
+  }
 
-	.progress-fill {
-		@apply bg-primary-600 h-full transition-all duration-300 ease-out;
-	}
+  .progress-fill {
+    @apply bg-primary-600 h-full transition-all duration-300 ease-out;
+  }
 
-	/* details/summary のスタイル調整 */
-	details summary {
-		@apply cursor-pointer list-none;
-	}
+  /* details/summary のスタイル調整 */
+  details summary {
+    @apply cursor-pointer list-none;
+  }
 
-	details summary::-webkit-details-marker {
-		display: none;
-	}
+  details summary::-webkit-details-marker {
+    display: none;
+  }
 
-	details summary::marker {
-		display: none;
-	}
+  details summary::marker {
+    display: none;
+  }
 
-	details summary h2 {
-		@apply relative inline-flex items-center gap-3;
-	}
+  details summary h2 {
+    @apply relative inline-flex items-center gap-3;
+  }
 
-	details summary h2::after {
-		content: '▶';
-		@apply text-blue-600 transition-transform duration-200 text-lg;
-		transform-origin: center;
-	}
+  details summary h2::after {
+    content: '▶';
+    @apply text-blue-600 transition-transform duration-200 text-lg;
+    transform-origin: center;
+  }
 
-	details[open] summary h2::after {
-		@apply rotate-90;
-	}
+  details[open] summary h2::after {
+    @apply rotate-90;
+  }
 
-	details summary:hover h2::after {
-		@apply text-blue-700;
-	}
+  details summary:hover h2::after {
+    @apply text-blue-700;
+  }
 
-	/* コードブロックのマージン・パディング調整 */
-	/* pre.language-javascript {
+  /* コードブロックのマージン・パディング調整 */
+  /* pre.language-javascript {
 		margin: 0 !important;
 		padding: 0 !important;
 	} */
 
-	/* Proseスタイルを上書きするための高特異性セレクター */
-	.prose-sm pre.language-javascript,
-	.prose pre.language-javascript {
-		margin: 0 !important;
-	}
+  /* Proseスタイルを上書きするための高特異性セレクター */
+  .prose-sm pre.language-javascript,
+  .prose pre.language-javascript {
+    margin: 0 !important;
+  }
 }
 
 /* Prism.js custom styling for better integration */
 :root {
-	--prism-background: #1e293b;
-	--prism-foreground: #f1f5f9;
+  --prism-background: #1e293b;
+  --prism-foreground: #f1f5f9;
 }
 
 /* Override default Prism theme for better readability */
 code[class*='language-'],
 pre[class*='language-'] {
-	background: var(--prism-background) !important;
-	color: var(--prism-foreground) !important;
-	font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
-	font-size: 0.875rem !important;
-	line-height: 1.5 !important;
+  background: var(--prism-background) !important;
+  color: var(--prism-foreground) !important;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
 }
 
 /* Token colors for better contrast */
@@ -114,7 +114,7 @@ pre[class*='language-'] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-	color: #64748b !important;
+  color: #64748b !important;
 }
 
 .token.property,
@@ -122,12 +122,12 @@ pre[class*='language-'] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-	color: #f87171 !important;
+  color: #f87171 !important;
 }
 
 .token.boolean,
 .token.number {
-	color: #fbbf24 !important;
+  color: #fbbf24 !important;
 }
 
 .token.selector,
@@ -136,7 +136,7 @@ pre[class*='language-'] {
 .token.char,
 .token.builtin,
 .token.inserted {
-	color: #34d399 !important;
+  color: #34d399 !important;
 }
 
 .token.operator,
@@ -145,23 +145,23 @@ pre[class*='language-'] {
 .language-css .token.string,
 .style .token.string,
 .token.variable {
-	color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 .token.atrule,
 .token.attr-value,
 .token.function,
 .token.class-name {
-	color: #a78bfa !important;
+  color: #a78bfa !important;
 }
 
 .token.keyword {
-	color: #fb7185 !important;
-	font-weight: bold !important;
+  color: #fb7185 !important;
+  font-weight: bold !important;
 }
 
 .token.regex,
 .token.important {
-	color: #fbbf24 !important;
-	font-weight: bold !important;
+  color: #fbbf24 !important;
+  font-weight: bold !important;
 }

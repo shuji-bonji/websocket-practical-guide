@@ -218,25 +218,25 @@
 
   ws.onopen = () => console.log('接続確立');
   ws.onmessage = (event) => {
-  	const data = JSON.parse(event.data);
-  	console.log('受信:', data);
+    const data = JSON.parse(event.data);
+    console.log('受信:', data);
   };
   ws.send(JSON.stringify({ type: 'message', content: 'Hello' }));
 
   // Svelteストア形式のWebSocketクライアント
   interface WebSocketStore {
-  	connected: boolean;
-  	error: string | null;
-  	data: any[];
+    connected: boolean;
+    error: string | null;
+    data: any[];
   }
 
   export function createWebSocketStore(url: string): {
-  	subscribe: Writable<WebSocketStore>['subscribe'];
-  	connect: () => void;
-  	send: <T>(data: T) => void;
-  	disconnect: () => void;
+    subscribe: Writable<WebSocketStore>['subscribe'];
+    connect: () => void;
+    send: <T>(data: T) => void;
+    disconnect: () => void;
   } {
-  	// 実装演習
+    // 実装演習
   }
   ```
 
@@ -265,13 +265,13 @@
   ```svelte
   <!-- WebSocket接続状態表示コンポーネント -->
   <script lang="ts">
-  	import { webSocketStore } from '$lib/stores/websocket';
+    import { webSocketStore } from '$lib/stores/websocket';
 
-  	$: status = $webSocketStore.connected ? '接続中' : '切断中';
+    $: status = $webSocketStore.connected ? '接続中' : '切断中';
   </script>
 
   <div class="status {$webSocketStore.connected ? 'connected' : 'disconnected'}">
-  	{status}
+    {status}
   </div>
   ```
 
@@ -285,17 +285,17 @@
 
   ```typescript
   interface WebSocketMessage<T = any> {
-  	type: string;
-  	id?: string;
-  	timestamp: number;
-  	payload: T;
+    type: string;
+    id?: string;
+    timestamp: number;
+    payload: T;
   }
 
   // メッセージハンドラーの実装
   class MessageHandler {
-  	handle<T>(message: WebSocketMessage<T>): void {
-  		// 実装演習
-  	}
+    handle<T>(message: WebSocketMessage<T>): void {
+      // 実装演習
+    }
   }
   ```
 
@@ -354,12 +354,12 @@
   ```typescript
   // 独自チャットプロトコルの設計演習
   interface ChatMessage {
-  	type: 'message' | 'join' | 'leave' | 'typing';
-  	user: string;
-  	room: string;
-  	content?: string;
-  	timestamp: number;
-  	version: string;
+    type: 'message' | 'join' | 'leave' | 'typing';
+    user: string;
+    room: string;
+    content?: string;
+    timestamp: number;
+    version: string;
   }
 
   // サブプロトコル指定での接続
@@ -380,23 +380,23 @@
   ```typescript
   // 認証付きWebSocket接続
   class AuthenticatedWebSocket {
-  	constructor(private authToken: string) {}
+    constructor(private authToken: string) {}
 
-  	createConnection(url: string): WebSocket {
-  		const ws = new WebSocket(url);
+    createConnection(url: string): WebSocket {
+      const ws = new WebSocket(url);
 
-  		ws.onopen = () => {
-  			// 接続後にJWT認証
-  			ws.send(
-  				JSON.stringify({
-  					type: 'auth',
-  					token: this.authToken
-  				})
-  			);
-  		};
+      ws.onopen = () => {
+        // 接続後にJWT認証
+        ws.send(
+          JSON.stringify({
+            type: 'auth',
+            token: this.authToken
+          })
+        );
+      };
 
-  		return ws;
-  	}
+      return ws;
+    }
   }
   ```
 
@@ -414,9 +414,9 @@
   // Service Worker内でのWebSocketメッセージ管理
   // sw.js
   self.addEventListener('message', (event) => {
-  	if (event.data.type === 'WEBSOCKET_MESSAGE') {
-  		// オフライン時のメッセージ保存演習
-  	}
+    if (event.data.type === 'WEBSOCKET_MESSAGE') {
+      // オフライン時のメッセージ保存演習
+    }
   });
 
   // SvelteKitでのPWA統合
@@ -452,13 +452,13 @@
   import { createWebSocketStore } from '$lib/stores/websocket';
 
   describe('WebSocketStore', () => {
-  	it('should connect and send message', async () => {
-  		// WebSocketモック作成
-  		const mockWS = vi.fn();
-  		global.WebSocket = mockWS;
+    it('should connect and send message', async () => {
+      // WebSocketモック作成
+      const mockWS = vi.fn();
+      global.WebSocket = mockWS;
 
-  		// テスト実装演習
-  	});
+      // テスト実装演習
+    });
   });
   ```
 
@@ -525,11 +525,11 @@
   ```typescript
   // 1. プロトコル設計から開始
   interface ChatProtocol {
-  	message: { user: string; content: string; room: string };
-  	join: { user: string; room: string };
-  	leave: { user: string; room: string };
-  	typing: { user: string; room: string; isTyping: boolean };
-  	userList: { room: string; users: string[] };
+    message: { user: string; content: string; room: string };
+    join: { user: string; room: string };
+    leave: { user: string; room: string };
+    typing: { user: string; room: string; isTyping: boolean };
+    userList: { room: string; users: string[] };
   }
 
   // 2. サブプロトコル指定での接続
@@ -600,9 +600,9 @@ import { Server } from 'socket.io';
 
 const io = new Server(server);
 io.on('connection', (socket) => {
-	socket.on('message', (data) => {
-		io.emit('message', data); // 全クライアントに配信
-	});
+  socket.on('message', (data) => {
+    io.emit('message', data); // 全クライアントに配信
+  });
 });
 
 // クライアント側（Socket.IO）

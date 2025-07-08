@@ -59,8 +59,8 @@ import { WebSocketServer } from 'ws';
 
 // HTTPS と同じ証明書を使用
 const serverOptions = {
-	cert: fs.readFileSync('/path/to/cert.pem'),
-	key: fs.readFileSync('/path/to/private-key.pem')
+  cert: fs.readFileSync('/path/to/cert.pem'),
+  key: fs.readFileSync('/path/to/private-key.pem')
 };
 
 // HTTPSサーバーを作成
@@ -68,12 +68,12 @@ const httpsServer = https.createServer(serverOptions);
 
 // WebSocketServerをHTTPSサーバーにアタッチ
 const wss = new WebSocketServer({
-	server: httpsServer,
-	path: '/websocket'
+  server: httpsServer,
+  path: '/websocket'
 });
 
 httpsServer.listen(443, () => {
-	console.log('wss://server.example.com:443/websocket で待機中');
+  console.log('wss://server.example.com:443/websocket で待機中');
 });
 ```
 
@@ -163,35 +163,35 @@ const encryptedData = `
 
 ```typescript
 class EnterpriseWebSocket {
-	private proxyHost = 'proxy.company.com';
-	private proxyPort = 8080;
-	private proxyAuth = 'Basic ' + btoa('user:password');
+  private proxyHost = 'proxy.company.com';
+  private proxyPort = 8080;
+  private proxyAuth = 'Basic ' + btoa('user:password');
 
-	async connectThroughProxy(wsUrl: string): Promise<WebSocket> {
-		const url = new URL(wsUrl);
+  async connectThroughProxy(wsUrl: string): Promise<WebSocket> {
+    const url = new URL(wsUrl);
 
-		if (this.isProxyEnvironment()) {
-			// 1. HTTP CONNECTでトンネル確立
-			await this.establishSecureTunnel(url.host);
-		}
+    if (this.isProxyEnvironment()) {
+      // 1. HTTP CONNECTでトンネル確立
+      await this.establishSecureTunnel(url.host);
+    }
 
-		// 2. wss接続（プロキシには暗号化データのみ見える）
-		return new WebSocket(wsUrl);
-	}
+    // 2. wss接続（プロキシには暗号化データのみ見える）
+    return new WebSocket(wsUrl);
+  }
 
-	private async establishSecureTunnel(targetHost: string): Promise<void> {
-		const connectRequest = new Request(`http://${this.proxyHost}:${this.proxyPort}`, {
-			method: 'CONNECT',
-			headers: {
-				Host: targetHost,
-				'Proxy-Authorization': this.proxyAuth,
-				'Proxy-Connection': 'Keep-Alive'
-			}
-		});
+  private async establishSecureTunnel(targetHost: string): Promise<void> {
+    const connectRequest = new Request(`http://${this.proxyHost}:${this.proxyPort}`, {
+      method: 'CONNECT',
+      headers: {
+        Host: targetHost,
+        'Proxy-Authorization': this.proxyAuth,
+        'Proxy-Connection': 'Keep-Alive'
+      }
+    });
 
-		// プロキシはここでトンネルを提供するのみ
-		// WebSocketの内容は見えない
-	}
+    // プロキシはここでトンネルを提供するのみ
+    // WebSocketの内容は見えない
+  }
 }
 ```
 
@@ -200,21 +200,21 @@ class EnterpriseWebSocket {
 ```typescript
 // ロードバランサー（L4/L7）での違い
 class LoadBalancerAwareWebSocket {
-	connectWithStickySession(wsUrl: string): WebSocket {
-		// wssの場合、ロードバランサーの動作が変わる
+  connectWithStickySession(wsUrl: string): WebSocket {
+    // wssの場合、ロードバランサーの動作が変わる
 
-		if (this.isL4LoadBalancer()) {
-			// L4（Transport Layer）: IPとポートのみ見える
-			// WebSocketの内容は完全に暗号化
-			console.log('L4 LB: WebSocket内容は完全に見えない');
-		} else if (this.isL7LoadBalancer()) {
-			// L7（Application Layer）: SSL terminationの場合
-			// LBで一度復号化され、再暗号化される
-			console.log('L7 LB: SSL termination環境では内容が見える');
-		}
+    if (this.isL4LoadBalancer()) {
+      // L4（Transport Layer）: IPとポートのみ見える
+      // WebSocketの内容は完全に暗号化
+      console.log('L4 LB: WebSocket内容は完全に見えない');
+    } else if (this.isL7LoadBalancer()) {
+      // L7（Application Layer）: SSL terminationの場合
+      // LBで一度復号化され、再暗号化される
+      console.log('L7 LB: SSL termination環境では内容が見える');
+    }
 
-		return new WebSocket(wsUrl);
-	}
+    return new WebSocket(wsUrl);
+  }
 }
 ```
 
@@ -230,9 +230,9 @@ const ws = new WebSocket('wss://secret-service.company.com/api');
 
 // 対策：IPアドレス直接指定（ただし証明書検証が複雑に）
 const ws = new WebSocket('wss://192.168.1.100/api', {
-	headers: {
-		Host: 'secret-service.company.com'
-	}
+  headers: {
+    Host: 'secret-service.company.com'
+  }
 });
 ```
 
@@ -241,19 +241,19 @@ const ws = new WebSocket('wss://192.168.1.100/api', {
 ```typescript
 // SSL Terminationを行うロードバランサー環境
 class SSLTerminationAwareWebSocket {
-	connect(wsUrl: string): WebSocket {
-		// 注意：ロードバランサーで一度復号化される環境では
-		// ロードバランサー上でWebSocketの内容が見える
+  connect(wsUrl: string): WebSocket {
+    // 注意：ロードバランサーで一度復号化される環境では
+    // ロードバランサー上でWebSocketの内容が見える
 
-		console.warn(`
+    console.warn(`
       SSL Termination環境では：
       Client --[暗号化]--> LB --[平文]--> Server
                             ↑
                       ここで内容が見える
     `);
 
-		return new WebSocket(wsUrl);
-	}
+    return new WebSocket(wsUrl);
+  }
 }
 ```
 
@@ -264,31 +264,31 @@ class SSLTerminationAwareWebSocket {
 ```typescript
 // Let's Encryptでの自動更新対応
 class AutoRenewWebSocketServer {
-	private wss: WebSocketServer;
-	private httpsServer: https.Server;
+  private wss: WebSocketServer;
+  private httpsServer: https.Server;
 
-	constructor() {
-		this.setupCertificateWatcher();
-	}
+  constructor() {
+    this.setupCertificateWatcher();
+  }
 
-	private setupCertificateWatcher(): void {
-		// 証明書ファイルの変更監視
-		fs.watchFile('/etc/letsencrypt/live/server.example.com/fullchain.pem', () => {
-			console.log('証明書が更新されました。サーバーを再起動します。');
-			this.reloadCertificates();
-		});
-	}
+  private setupCertificateWatcher(): void {
+    // 証明書ファイルの変更監視
+    fs.watchFile('/etc/letsencrypt/live/server.example.com/fullchain.pem', () => {
+      console.log('証明書が更新されました。サーバーを再起動します。');
+      this.reloadCertificates();
+    });
+  }
 
-	private reloadCertificates(): void {
-		// ゼロダウンタイムでの証明書更新
-		const newOptions = {
-			cert: fs.readFileSync('/etc/letsencrypt/live/server.example.com/fullchain.pem'),
-			key: fs.readFileSync('/etc/letsencrypt/live/server.example.com/privkey.pem')
-		};
+  private reloadCertificates(): void {
+    // ゼロダウンタイムでの証明書更新
+    const newOptions = {
+      cert: fs.readFileSync('/etc/letsencrypt/live/server.example.com/fullchain.pem'),
+      key: fs.readFileSync('/etc/letsencrypt/live/server.example.com/privkey.pem')
+    };
 
-		// 新しい証明書でサーバー再起動
-		this.gracefulRestart(newOptions);
-	}
+    // 新しい証明書でサーバー再起動
+    this.gracefulRestart(newOptions);
+  }
 }
 ```
 
@@ -297,19 +297,19 @@ class AutoRenewWebSocketServer {
 ```typescript
 // 環境別の接続設定
 class EnvironmentAwareWebSocket {
-	createConnection(): WebSocket {
-		const isDevelopment = process.env.NODE_ENV === 'development';
-		const isLocalhost = window.location.hostname === 'localhost';
+  createConnection(): WebSocket {
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const isLocalhost = window.location.hostname === 'localhost';
 
-		if (isDevelopment && isLocalhost) {
-			// 開発環境：非暗号化（デバッグ容易）
-			console.warn('開発環境：非暗号化WebSocket使用');
-			return new WebSocket('ws://localhost:8080/websocket');
-		} else {
-			// 本番環境：暗号化必須
-			return new WebSocket('wss://api.example.com/websocket');
-		}
-	}
+    if (isDevelopment && isLocalhost) {
+      // 開発環境：非暗号化（デバッグ容易）
+      console.warn('開発環境：非暗号化WebSocket使用');
+      return new WebSocket('ws://localhost:8080/websocket');
+    } else {
+      // 本番環境：暗号化必須
+      return new WebSocket('wss://api.example.com/websocket');
+    }
+  }
 }
 ```
 
@@ -339,10 +339,10 @@ class EnvironmentAwareWebSocket {
 const ws = new WebSocket('ws://server.example.com/chat');
 
 ws.send(
-	JSON.stringify({
-		type: 'sensitive_data',
-		content: 'クレジットカード番号: 1234-5678-9012-3456' // ← 危険！
-	})
+  JSON.stringify({
+    type: 'sensitive_data',
+    content: 'クレジットカード番号: 1234-5678-9012-3456' // ← 危険！
+  })
 );
 ```
 
@@ -369,10 +369,10 @@ ws.send(
 const ws = new WebSocket('wss://server.example.com/chat');
 
 ws.send(
-	JSON.stringify({
-		type: 'sensitive_data',
-		content: 'クレジットカード番号: 1234-5678-9012-3456' // ← 安全
-	})
+  JSON.stringify({
+    type: 'sensitive_data',
+    content: 'クレジットカード番号: 1234-5678-9012-3456' // ← 安全
+  })
 );
 ```
 
@@ -397,16 +397,16 @@ ws.send(
 ```typescript
 // プロキシがWebSocketの内容を検査・変更可能
 class InsecureProxyWebSocket {
-	connect(url: string): void {
-		// HTTP Upgradeリクエスト（平文）
-		// プロキシがWebSocketフレームの内容を読み取り・変更可能
-		this.ws = new WebSocket('ws://internal-server/chat');
+  connect(url: string): void {
+    // HTTP Upgradeリクエスト（平文）
+    // プロキシがWebSocketフレームの内容を読み取り・変更可能
+    this.ws = new WebSocket('ws://internal-server/chat');
 
-		this.ws.onmessage = (event) => {
-			// プロキシで変更された可能性のあるデータ
-			console.log('受信（改ざんリスク）:', event.data);
-		};
-	}
+    this.ws.onmessage = (event) => {
+      // プロキシで変更された可能性のあるデータ
+      console.log('受信（改ざんリスク）:', event.data);
+    };
+  }
 }
 ```
 
@@ -415,25 +415,25 @@ class InsecureProxyWebSocket {
 ```typescript
 // プロキシではHTTP CONNECTでトンネルを確立
 class SecureProxyWebSocket {
-	async connect(url: string): Promise<void> {
-		// 1. HTTP CONNECTでプロキシにトンネル要求
-		const tunnelResponse = await fetch('CONNECT server.example.com:443', {
-			method: 'CONNECT',
-			headers: {
-				'Proxy-Authorization': 'Basic ' + btoa('user:pass')
-			}
-		});
+  async connect(url: string): Promise<void> {
+    // 1. HTTP CONNECTでプロキシにトンネル要求
+    const tunnelResponse = await fetch('CONNECT server.example.com:443', {
+      method: 'CONNECT',
+      headers: {
+        'Proxy-Authorization': 'Basic ' + btoa('user:pass')
+      }
+    });
 
-		if (tunnelResponse.status === 200) {
-			// 2. トンネル確立後、暗号化WebSocket接続
-			this.ws = new WebSocket('wss://server.example.com/chat');
+    if (tunnelResponse.status === 200) {
+      // 2. トンネル確立後、暗号化WebSocket接続
+      this.ws = new WebSocket('wss://server.example.com/chat');
 
-			this.ws.onmessage = (event) => {
-				// プロキシには暗号化データのみ送信される
-				console.log('受信（安全）:', event.data);
-			};
-		}
-	}
+      this.ws.onmessage = (event) => {
+        // プロキシには暗号化データのみ送信される
+        console.log('受信（安全）:', event.data);
+      };
+    }
+  }
 }
 ```
 
@@ -480,29 +480,29 @@ Authorization: Bearer secret-token    # ← 安全！暗号化されている
 ```typescript
 // ws使用時は追加の暗号化を実装
 class DoubleEncryptedWebSocket {
-	private applicationKey: CryptoKey;
+  private applicationKey: CryptoKey;
 
-	async sendSecureMessage(data: any): Promise<void> {
-		// ws://でも内容を保護するため、アプリケーションレベルで暗号化
-		const jsonData = JSON.stringify(data);
-		const encryptedData = await this.encryptAtAppLevel(jsonData);
+  async sendSecureMessage(data: any): Promise<void> {
+    // ws://でも内容を保護するため、アプリケーションレベルで暗号化
+    const jsonData = JSON.stringify(data);
+    const encryptedData = await this.encryptAtAppLevel(jsonData);
 
-		// wsで送信するが、内容は暗号化済み
-		this.ws.send(encryptedData);
-	}
+    // wsで送信するが、内容は暗号化済み
+    this.ws.send(encryptedData);
+  }
 
-	private async encryptAtAppLevel(data: string): Promise<string> {
-		const encoder = new TextEncoder();
-		const dataBuffer = encoder.encode(data);
+  private async encryptAtAppLevel(data: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
 
-		const encrypted = await crypto.subtle.encrypt(
-			{ name: 'AES-GCM', iv: crypto.getRandomValues(new Uint8Array(12)) },
-			this.applicationKey,
-			dataBuffer
-		);
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: crypto.getRandomValues(new Uint8Array(12)) },
+      this.applicationKey,
+      dataBuffer
+    );
 
-		return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
-	}
+    return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
+  }
 }
 ```
 
@@ -511,19 +511,19 @@ class DoubleEncryptedWebSocket {
 ```typescript
 // wss + 証明書検証
 class SecureWebSocketWithValidation {
-	constructor(url: string) {
-		// wss://の使用を強制
-		if (!url.startsWith('wss://')) {
-			throw new Error('非暗号化接続は許可されていません');
-		}
+  constructor(url: string) {
+    // wss://の使用を強制
+    if (!url.startsWith('wss://')) {
+      throw new Error('非暗号化接続は許可されていません');
+    }
 
-		this.ws = new WebSocket(url);
+    this.ws = new WebSocket(url);
 
-		// 接続エラー時の適切な処理
-		this.ws.onerror = (error) => {
-			console.error('暗号化接続エラー（証明書問題の可能性）:', error);
-		};
-	}
+    // 接続エラー時の適切な処理
+    this.ws.onerror = (error) => {
+      console.error('暗号化接続エラー（証明書問題の可能性）:', error);
+    };
+  }
 }
 ```
 
@@ -562,11 +562,11 @@ class SecureWebSocketWithValidation {
 ```typescript
 // TLS/SSL暗号化 - エンドツーエンド
 const httpsRequest = https.request({
-	hostname: 'api.example.com',
-	port: 443,
-	path: '/data',
-	method: 'GET'
-	// 中継点では暗号化されたデータのみ見える
+  hostname: 'api.example.com',
+  port: 443,
+  path: '/data',
+  method: 'GET'
+  // 中継点では暗号化されたデータのみ見える
 });
 ```
 
@@ -581,13 +581,13 @@ const httpsRequest = https.request({
 ```typescript
 // プロキシ認証 - ホップバイホップ
 const proxyRequest = http.request({
-	host: 'proxy.company.com',
-	port: 8080,
-	method: 'GET',
-	path: 'http://api.example.com/data',
-	headers: {
-		'Proxy-Authorization': 'Basic ' + Buffer.from('user:pass').toString('base64')
-	}
+  host: 'proxy.company.com',
+  port: 8080,
+  method: 'GET',
+  path: 'http://api.example.com/data',
+  headers: {
+    'Proxy-Authorization': 'Basic ' + Buffer.from('user:pass').toString('base64')
+  }
 });
 ```
 
@@ -617,13 +617,13 @@ Sec-WebSocket-Version: 13             # ← End to End
 const ws = new WebSocket('wss://server.example.com/chat');
 
 ws.onopen = () => {
-	// この通信は暗号化されてエンドツーエンド
-	ws.send(
-		JSON.stringify({
-			type: 'message',
-			content: 'Hello World'
-		})
-	);
+  // この通信は暗号化されてエンドツーエンド
+  ws.send(
+    JSON.stringify({
+      type: 'message',
+      content: 'Hello World'
+    })
+  );
 };
 ```
 
@@ -672,27 +672,27 @@ graph LR
 ```typescript
 // プロキシ環境でのWebSocket接続
 class ProxyAwareWebSocket {
-	constructor(url: string, protocols?: string[]) {
-		// プロキシ設定の確認
-		if (this.hasProxy()) {
-			// HTTP CONNECTメソッドでトンネル確立
-			this.establishTunnel(url).then(() => {
-				this.ws = new WebSocket(url, protocols);
-			});
-		} else {
-			this.ws = new WebSocket(url, protocols);
-		}
-	}
+  constructor(url: string, protocols?: string[]) {
+    // プロキシ設定の確認
+    if (this.hasProxy()) {
+      // HTTP CONNECTメソッドでトンネル確立
+      this.establishTunnel(url).then(() => {
+        this.ws = new WebSocket(url, protocols);
+      });
+    } else {
+      this.ws = new WebSocket(url, protocols);
+    }
+  }
 
-	private hasProxy(): boolean {
-		// プロキシ環境の検出ロジック
-		return window.location.hostname.includes('.corporate.com');
-	}
+  private hasProxy(): boolean {
+    // プロキシ環境の検出ロジック
+    return window.location.hostname.includes('.corporate.com');
+  }
 
-	private async establishTunnel(url: string): Promise<void> {
-		// HTTP CONNECT要求でプロキシトンネル確立
-		// これはHop by Hopでプロキシに処理される
-	}
+  private async establishTunnel(url: string): Promise<void> {
+    // HTTP CONNECT要求でプロキシトンネル確立
+    // これはHop by Hopでプロキシに処理される
+  }
 }
 ```
 
@@ -701,29 +701,29 @@ class ProxyAwareWebSocket {
 ```typescript
 // アプリケーションレベルでのEnd to End暗号化
 class SecureWebSocket {
-	private encryptionKey: CryptoKey;
+  private encryptionKey: CryptoKey;
 
-	async sendSecureMessage(data: any): Promise<void> {
-		// 1. データをJSON化
-		const jsonData = JSON.stringify(data);
+  async sendSecureMessage(data: any): Promise<void> {
+    // 1. データをJSON化
+    const jsonData = JSON.stringify(data);
 
-		// 2. End to End暗号化（中継点では読めない）
-		const encryptedData = await this.encrypt(jsonData);
+    // 2. End to End暗号化（中継点では読めない）
+    const encryptedData = await this.encrypt(jsonData);
 
-		// 3. WebSocketで送信（TLS + アプリケーション暗号化）
-		this.ws.send(encryptedData);
-	}
+    // 3. WebSocketで送信（TLS + アプリケーション暗号化）
+    this.ws.send(encryptedData);
+  }
 
-	private async encrypt(data: string): Promise<ArrayBuffer> {
-		const encoder = new TextEncoder();
-		const dataBuffer = encoder.encode(data);
+  private async encrypt(data: string): Promise<ArrayBuffer> {
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
 
-		return await crypto.subtle.encrypt(
-			{ name: 'AES-GCM', iv: crypto.getRandomValues(new Uint8Array(12)) },
-			this.encryptionKey,
-			dataBuffer
-		);
-	}
+    return await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: crypto.getRandomValues(new Uint8Array(12)) },
+      this.encryptionKey,
+      dataBuffer
+    );
+  }
 }
 ```
 
@@ -749,36 +749,36 @@ class SecureWebSocket {
 
 ```typescript
 interface EndToEndMessage {
-	type: string;
-	timestamp: number;
-	signature: string; // サーバーが検証
-	payload: any;
+  type: string;
+  timestamp: number;
+  signature: string; // サーバーが検証
+  payload: any;
 }
 
 class AuthenticatedWebSocket {
-	private privateKey: CryptoKey;
+  private privateKey: CryptoKey;
 
-	async sendAuthenticatedMessage(data: any): Promise<void> {
-		const message: EndToEndMessage = {
-			type: 'authenticated',
-			timestamp: Date.now(),
-			signature: await this.sign(data),
-			payload: data
-		};
+  async sendAuthenticatedMessage(data: any): Promise<void> {
+    const message: EndToEndMessage = {
+      type: 'authenticated',
+      timestamp: Date.now(),
+      signature: await this.sign(data),
+      payload: data
+    };
 
-		this.ws.send(JSON.stringify(message));
-	}
+    this.ws.send(JSON.stringify(message));
+  }
 
-	private async sign(data: any): Promise<string> {
-		// End to End署名（中継点では検証されない）
-		const dataString = JSON.stringify(data);
-		const signature = await crypto.subtle.sign(
-			'RSASSA-PKCS1-v1_5',
-			this.privateKey,
-			new TextEncoder().encode(dataString)
-		);
-		return btoa(String.fromCharCode(...new Uint8Array(signature)));
-	}
+  private async sign(data: any): Promise<string> {
+    // End to End署名（中継点では検証されない）
+    const dataString = JSON.stringify(data);
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      this.privateKey,
+      new TextEncoder().encode(dataString)
+    );
+    return btoa(String.fromCharCode(...new Uint8Array(signature)));
+  }
 }
 ```
 
@@ -786,38 +786,38 @@ class AuthenticatedWebSocket {
 
 ```typescript
 class HopByHopWebSocket {
-	private reconnectAttempts = 0;
-	private maxReconnectAttempts = 5;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
 
-	connect(url: string): void {
-		this.ws = new WebSocket(url);
+  connect(url: string): void {
+    this.ws = new WebSocket(url);
 
-		this.ws.onopen = () => {
-			console.log('Connected to immediate hop');
-			this.reconnectAttempts = 0;
-		};
+    this.ws.onopen = () => {
+      console.log('Connected to immediate hop');
+      this.reconnectAttempts = 0;
+    };
 
-		this.ws.onclose = (event) => {
-			// Hop by Hopで切断された場合の処理
-			if (event.code === 1006) {
-				// プロキシ切断
-				this.handleProxyDisconnection();
-			}
-		};
-	}
+    this.ws.onclose = (event) => {
+      // Hop by Hopで切断された場合の処理
+      if (event.code === 1006) {
+        // プロキシ切断
+        this.handleProxyDisconnection();
+      }
+    };
+  }
 
-	private handleProxyDisconnection(): void {
-		// 各Hopでの切断に対する個別対応
-		if (this.reconnectAttempts < this.maxReconnectAttempts) {
-			setTimeout(
-				() => {
-					this.reconnectAttempts++;
-					this.connect(this.currentUrl);
-				},
-				Math.pow(2, this.reconnectAttempts) * 1000
-			);
-		}
-	}
+  private handleProxyDisconnection(): void {
+    // 各Hopでの切断に対する個別対応
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      setTimeout(
+        () => {
+          this.reconnectAttempts++;
+          this.connect(this.currentUrl);
+        },
+        Math.pow(2, this.reconnectAttempts) * 1000
+      );
+    }
+  }
 }
 ```
 

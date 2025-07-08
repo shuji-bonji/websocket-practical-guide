@@ -54,91 +54,91 @@
 ```typescript
 // src/lib/utils/phase1-websocket-urls.ts
 export interface PublicWebSocketService {
-	name: string;
-	url: string;
-	description: string;
-	features: string[];
-	reliability: 'high' | 'medium' | 'low';
-	latency: 'low' | 'medium' | 'high';
+  name: string;
+  url: string;
+  description: string;
+  features: string[];
+  reliability: 'high' | 'medium' | 'low';
+  latency: 'low' | 'medium' | 'high';
 }
 
 export const PUBLIC_WEBSOCKET_SERVICES: PublicWebSocketService[] = [
-	{
-		name: 'Echo WebSocket',
-		url: 'wss://echo.websocket.org',
-		description: 'Simple echo server for basic testing',
-		features: ['echo', 'connection-test', 'message-round-trip'],
-		reliability: 'high',
-		latency: 'low'
-	},
-	{
-		name: 'Postman Echo',
-		url: 'wss://ws.postman-echo.com/raw',
-		description: 'Postman WebSocket echo service',
-		features: ['echo', 'headers-inspection', 'json-support'],
-		reliability: 'high',
-		latency: 'medium'
-	},
-	{
-		name: 'SocketsBay Demo',
-		url: 'wss://socketsbay.com/wss/v2/1/demo/',
-		description: 'Educational WebSocket service',
-		features: ['multi-client', 'broadcasting', 'room-concept'],
-		reliability: 'medium',
-		latency: 'medium'
-	}
+  {
+    name: 'Echo WebSocket',
+    url: 'wss://echo.websocket.org',
+    description: 'Simple echo server for basic testing',
+    features: ['echo', 'connection-test', 'message-round-trip'],
+    reliability: 'high',
+    latency: 'low'
+  },
+  {
+    name: 'Postman Echo',
+    url: 'wss://ws.postman-echo.com/raw',
+    description: 'Postman WebSocket echo service',
+    features: ['echo', 'headers-inspection', 'json-support'],
+    reliability: 'high',
+    latency: 'medium'
+  },
+  {
+    name: 'SocketsBay Demo',
+    url: 'wss://socketsbay.com/wss/v2/1/demo/',
+    description: 'Educational WebSocket service',
+    features: ['multi-client', 'broadcasting', 'room-concept'],
+    reliability: 'medium',
+    latency: 'medium'
+  }
 ];
 
 export class Phase1WebSocketManager {
-	private currentService: PublicWebSocketService | null = null;
-	private socket: WebSocket | null = null;
-	private fallbackIndex = 0;
+  private currentService: PublicWebSocketService | null = null;
+  private socket: WebSocket | null = null;
+  private fallbackIndex = 0;
 
-	async connectToService(serviceName: string): Promise<WebSocket> {
-		const service = PUBLIC_WEBSOCKET_SERVICES.find((s) => s.name === serviceName);
-		if (!service) {
-			throw new Error(`Service ${serviceName} not found`);
-		}
+  async connectToService(serviceName: string): Promise<WebSocket> {
+    const service = PUBLIC_WEBSOCKET_SERVICES.find((s) => s.name === serviceName);
+    if (!service) {
+      throw new Error(`Service ${serviceName} not found`);
+    }
 
-		return this.connectWithFallback(service);
-	}
+    return this.connectWithFallback(service);
+  }
 
-	private async connectWithFallback(
-		service: PublicWebSocketService,
-		attempt = 0
-	): Promise<WebSocket> {
-		try {
-			return await this.createConnection(service.url);
-		} catch (error) {
-			if (attempt < PUBLIC_WEBSOCKET_SERVICES.length - 1) {
-				console.warn(`Failed to connect to ${service.name}, trying fallback...`);
-				const fallbackService = PUBLIC_WEBSOCKET_SERVICES[attempt + 1];
-				return this.connectWithFallback(fallbackService, attempt + 1);
-			}
-			throw new Error('All public WebSocket services unavailable');
-		}
-	}
+  private async connectWithFallback(
+    service: PublicWebSocketService,
+    attempt = 0
+  ): Promise<WebSocket> {
+    try {
+      return await this.createConnection(service.url);
+    } catch (error) {
+      if (attempt < PUBLIC_WEBSOCKET_SERVICES.length - 1) {
+        console.warn(`Failed to connect to ${service.name}, trying fallback...`);
+        const fallbackService = PUBLIC_WEBSOCKET_SERVICES[attempt + 1];
+        return this.connectWithFallback(fallbackService, attempt + 1);
+      }
+      throw new Error('All public WebSocket services unavailable');
+    }
+  }
 
-	private createConnection(url: string): Promise<WebSocket> {
-		return new Promise((resolve, reject) => {
-			const ws = new WebSocket(url);
-			const timeout = setTimeout(() => {
-				ws.close();
-				reject(new Error('Connection timeout'));
-			}, 10000);
+  private createConnection(url: string): Promise<WebSocket> {
+    return new Promise((resolve, reject) => {
+      const ws = new WebSocket(url);
+      const timeout = setTimeout(() => {
+        ws.close();
+        reject(new Error('Connection timeout'));
+      }, 10000);
 
-			ws.onopen = () => {
-				clearTimeout(timeout);
-				this.socket = ws;
-				resolve(ws);
-			};
+      ws.onopen = () => {
+        clearTimeout(timeout);
+        this.socket = ws;
+        resolve(ws);
+      };
 
-			ws.onerror = () => {
-				clearTimeout(timeout);
-				reject(new Error('Connection failed'));
-			};
-		});
-	}
+      ws.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error('Connection failed'));
+      };
+    });
+  }
 }
 ```
 
@@ -373,149 +373,149 @@ const { execute, subscribe, parse, validate } = require('graphql');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 
 class GraphQLWSServer {
-	constructor(port = 8081) {
-		this.port = port;
-		this.schema = this.createSchema();
-		this.subscriptions = new Map();
-		this.setupServer();
-	}
+  constructor(port = 8081) {
+    this.port = port;
+    this.schema = this.createSchema();
+    this.subscriptions = new Map();
+    this.setupServer();
+  }
 
-	setupServer() {
-		this.wss = new WebSocket.Server({
-			port: this.port,
-			handleProtocols: (protocols, request) => {
-				// GraphQL-WS プロトコル交渉
-				console.log('Requested protocols:', protocols);
-				if (protocols.includes('graphql-ws')) {
-					return 'graphql-ws';
-				}
-				return false;
-			}
-		});
+  setupServer() {
+    this.wss = new WebSocket.Server({
+      port: this.port,
+      handleProtocols: (protocols, request) => {
+        // GraphQL-WS プロトコル交渉
+        console.log('Requested protocols:', protocols);
+        if (protocols.includes('graphql-ws')) {
+          return 'graphql-ws';
+        }
+        return false;
+      }
+    });
 
-		this.wss.on('connection', (ws, request) => {
-			console.log(`GraphQL-WS connection established. Protocol: ${ws.protocol}`);
+    this.wss.on('connection', (ws, request) => {
+      console.log(`GraphQL-WS connection established. Protocol: ${ws.protocol}`);
 
-			ws.on('message', (data) => {
-				try {
-					const message = JSON.parse(data);
-					this.handleMessage(ws, message);
-				} catch (error) {
-					this.sendError(ws, null, 'Invalid JSON');
-				}
-			});
+      ws.on('message', (data) => {
+        try {
+          const message = JSON.parse(data);
+          this.handleMessage(ws, message);
+        } catch (error) {
+          this.sendError(ws, null, 'Invalid JSON');
+        }
+      });
 
-			ws.on('close', () => {
-				// クリーンアップ: アクティブなサブスクリプションを停止
-				this.cleanupSubscriptions(ws);
-			});
-		});
-	}
+      ws.on('close', () => {
+        // クリーンアップ: アクティブなサブスクリプションを停止
+        this.cleanupSubscriptions(ws);
+      });
+    });
+  }
 
-	handleMessage(ws, message) {
-		const { id, type, payload } = message;
+  handleMessage(ws, message) {
+    const { id, type, payload } = message;
 
-		switch (type) {
-			case 'connection_init':
-				// 接続初期化
-				this.sendMessage(ws, { type: 'connection_ack' });
-				break;
+    switch (type) {
+      case 'connection_init':
+        // 接続初期化
+        this.sendMessage(ws, { type: 'connection_ack' });
+        break;
 
-			case 'start':
-				// GraphQLクエリ/サブスクリプション開始
-				this.handleStart(ws, id, payload);
-				break;
+      case 'start':
+        // GraphQLクエリ/サブスクリプション開始
+        this.handleStart(ws, id, payload);
+        break;
 
-			case 'stop':
-				// サブスクリプション停止
-				this.handleStop(ws, id);
-				break;
+      case 'stop':
+        // サブスクリプション停止
+        this.handleStop(ws, id);
+        break;
 
-			case 'connection_terminate':
-				// 接続終了
-				ws.close();
-				break;
+      case 'connection_terminate':
+        // 接続終了
+        ws.close();
+        break;
 
-			default:
-				this.sendError(ws, id, `Unknown message type: ${type}`);
-		}
-	}
+      default:
+        this.sendError(ws, id, `Unknown message type: ${type}`);
+    }
+  }
 
-	async handleStart(ws, id, payload) {
-		try {
-			const { query, variables, operationName } = payload;
-			const document = parse(query);
-			const validationErrors = validate(this.schema, document);
+  async handleStart(ws, id, payload) {
+    try {
+      const { query, variables, operationName } = payload;
+      const document = parse(query);
+      const validationErrors = validate(this.schema, document);
 
-			if (validationErrors.length > 0) {
-				this.sendError(ws, id, 'Query validation failed');
-				return;
-			}
+      if (validationErrors.length > 0) {
+        this.sendError(ws, id, 'Query validation failed');
+        return;
+      }
 
-			// サブスクリプションかクエリかを判定
-			const operationAST = document.definitions.find((def) => def.kind === 'OperationDefinition');
+      // サブスクリプションかクエリかを判定
+      const operationAST = document.definitions.find((def) => def.kind === 'OperationDefinition');
 
-			if (operationAST.operation === 'subscription') {
-				// サブスクリプション処理
-				const iterator = await subscribe({
-					schema: this.schema,
-					document,
-					variableValues: variables,
-					operationName
-				});
+      if (operationAST.operation === 'subscription') {
+        // サブスクリプション処理
+        const iterator = await subscribe({
+          schema: this.schema,
+          document,
+          variableValues: variables,
+          operationName
+        });
 
-				// サブスクリプションを記録
-				this.subscriptions.set(id, { ws, iterator });
+        // サブスクリプションを記録
+        this.subscriptions.set(id, { ws, iterator });
 
-				// 非同期でデータを送信
-				this.handleSubscription(id, iterator);
-			} else {
-				// 通常のクエリ/ミューテーション
-				const result = await execute({
-					schema: this.schema,
-					document,
-					variableValues: variables,
-					operationName
-				});
+        // 非同期でデータを送信
+        this.handleSubscription(id, iterator);
+      } else {
+        // 通常のクエリ/ミューテーション
+        const result = await execute({
+          schema: this.schema,
+          document,
+          variableValues: variables,
+          operationName
+        });
 
-				this.sendMessage(ws, {
-					id,
-					type: 'data',
-					payload: result
-				});
+        this.sendMessage(ws, {
+          id,
+          type: 'data',
+          payload: result
+        });
 
-				this.sendMessage(ws, {
-					id,
-					type: 'complete'
-				});
-			}
-		} catch (error) {
-			this.sendError(ws, id, error.message);
-		}
-	}
+        this.sendMessage(ws, {
+          id,
+          type: 'complete'
+        });
+      }
+    } catch (error) {
+      this.sendError(ws, id, error.message);
+    }
+  }
 
-	async handleSubscription(id, iterator) {
-		for await (const result of iterator) {
-			const subscription = this.subscriptions.get(id);
-			if (!subscription) break;
+  async handleSubscription(id, iterator) {
+    for await (const result of iterator) {
+      const subscription = this.subscriptions.get(id);
+      if (!subscription) break;
 
-			this.sendMessage(subscription.ws, {
-				id,
-				type: 'data',
-				payload: result
-			});
-		}
+      this.sendMessage(subscription.ws, {
+        id,
+        type: 'data',
+        payload: result
+      });
+    }
 
-		this.sendMessage(this.subscriptions.get(id)?.ws, {
-			id,
-			type: 'complete'
-		});
+    this.sendMessage(this.subscriptions.get(id)?.ws, {
+      id,
+      type: 'complete'
+    });
 
-		this.subscriptions.delete(id);
-	}
+    this.subscriptions.delete(id);
+  }
 
-	createSchema() {
-		const typeDefs = `
+  createSchema() {
+    const typeDefs = `
       type Query {
         hello: String
         currentTime: String
@@ -533,40 +533,40 @@ class GraphQLWSServer {
       }
     `;
 
-		const resolvers = {
-			Query: {
-				hello: () => 'Hello from GraphQL-WS!',
-				currentTime: () => new Date().toISOString()
-			},
-			Subscription: {
-				timeUpdates: {
-					subscribe: async function* () {
-						while (true) {
-							yield { timeUpdates: new Date().toISOString() };
-							await new Promise((resolve) => setTimeout(resolve, 1000));
-						}
-					}
-				},
-				messageUpdates: {
-					subscribe: async function* () {
-						let counter = 0;
-						while (true) {
-							yield {
-								messageUpdates: {
-									id: `msg_${counter++}`,
-									content: `Message ${counter}`,
-									timestamp: new Date().toISOString()
-								}
-							};
-							await new Promise((resolve) => setTimeout(resolve, 2000));
-						}
-					}
-				}
-			}
-		};
+    const resolvers = {
+      Query: {
+        hello: () => 'Hello from GraphQL-WS!',
+        currentTime: () => new Date().toISOString()
+      },
+      Subscription: {
+        timeUpdates: {
+          subscribe: async function* () {
+            while (true) {
+              yield { timeUpdates: new Date().toISOString() };
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
+          }
+        },
+        messageUpdates: {
+          subscribe: async function* () {
+            let counter = 0;
+            while (true) {
+              yield {
+                messageUpdates: {
+                  id: `msg_${counter++}`,
+                  content: `Message ${counter}`,
+                  timestamp: new Date().toISOString()
+                }
+              };
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+            }
+          }
+        }
+      }
+    };
 
-		return makeExecutableSchema({ typeDefs, resolvers });
-	}
+    return makeExecutableSchema({ typeDefs, resolvers });
+  }
 }
 
 module.exports = GraphQLWSServer;
@@ -631,131 +631,131 @@ module.exports = GraphQLWSServer;
 ```javascript
 // tests/servers/chaos-websocket-server.js
 class ChaosWebSocketServer {
-	constructor(port = 9997) {
-		this.port = port;
-		this.chaosConfig = {
-			disconnectionRate: 0.05, // 5% chance of random disconnection
-			messageCorruptionRate: 0.02, // 2% chance of message corruption
-			latencyInjection: {
-				enabled: true,
-				minDelay: 100,
-				maxDelay: 2000,
-				probability: 0.1
-			},
-			networkPartition: {
-				enabled: false,
-				duration: 5000
-			}
-		};
-		this.setupServer();
-	}
+  constructor(port = 9997) {
+    this.port = port;
+    this.chaosConfig = {
+      disconnectionRate: 0.05, // 5% chance of random disconnection
+      messageCorruptionRate: 0.02, // 2% chance of message corruption
+      latencyInjection: {
+        enabled: true,
+        minDelay: 100,
+        maxDelay: 2000,
+        probability: 0.1
+      },
+      networkPartition: {
+        enabled: false,
+        duration: 5000
+      }
+    };
+    this.setupServer();
+  }
 
-	setupServer() {
-		this.wss = new WebSocket.Server({ port: this.port });
+  setupServer() {
+    this.wss = new WebSocket.Server({ port: this.port });
 
-		this.wss.on('connection', (ws) => {
-			console.log(`Chaos server: Client connected`);
+    this.wss.on('connection', (ws) => {
+      console.log(`Chaos server: Client connected`);
 
-			// ランダム切断タイマー
-			this.scheduleRandomDisconnection(ws);
+      // ランダム切断タイマー
+      this.scheduleRandomDisconnection(ws);
 
-			ws.on('message', async (data) => {
-				await this.handleMessage(ws, data);
-			});
+      ws.on('message', async (data) => {
+        await this.handleMessage(ws, data);
+      });
 
-			ws.on('close', () => {
-				console.log(`Chaos server: Client disconnected`);
-			});
-		});
-	}
+      ws.on('close', () => {
+        console.log(`Chaos server: Client disconnected`);
+      });
+    });
+  }
 
-	async handleMessage(ws, data) {
-		// ネットワーク分断シミュレーション
-		if (this.chaosConfig.networkPartition.enabled) {
-			console.log('Network partition active - dropping message');
-			return;
-		}
+  async handleMessage(ws, data) {
+    // ネットワーク分断シミュレーション
+    if (this.chaosConfig.networkPartition.enabled) {
+      console.log('Network partition active - dropping message');
+      return;
+    }
 
-		// レイテンシー注入
-		if (this.shouldInjectLatency()) {
-			const delay = this.generateRandomDelay();
-			console.log(`Injecting ${delay}ms latency`);
-			await new Promise((resolve) => setTimeout(resolve, delay));
-		}
+    // レイテンシー注入
+    if (this.shouldInjectLatency()) {
+      const delay = this.generateRandomDelay();
+      console.log(`Injecting ${delay}ms latency`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
 
-		// メッセージ破損シミュレーション
-		let processedData = data;
-		if (this.shouldCorruptMessage()) {
-			processedData = this.corruptMessage(data);
-			console.log('Message corrupted');
-		}
+    // メッセージ破損シミュレーション
+    let processedData = data;
+    if (this.shouldCorruptMessage()) {
+      processedData = this.corruptMessage(data);
+      console.log('Message corrupted');
+    }
 
-		// エコー送信（破損または正常）
-		if (ws.readyState === WebSocket.OPEN) {
-			ws.send(processedData);
-		}
-	}
+    // エコー送信（破損または正常）
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(processedData);
+    }
+  }
 
-	scheduleRandomDisconnection(ws) {
-		if (Math.random() < this.chaosConfig.disconnectionRate) {
-			const disconnectTime = Math.random() * 30000 + 5000; // 5-35秒後
-			setTimeout(() => {
-				if (ws.readyState === WebSocket.OPEN) {
-					console.log('Chaos server: Random disconnection triggered');
-					ws.close(1006, 'Random disconnection');
-				}
-			}, disconnectTime);
-		}
-	}
+  scheduleRandomDisconnection(ws) {
+    if (Math.random() < this.chaosConfig.disconnectionRate) {
+      const disconnectTime = Math.random() * 30000 + 5000; // 5-35秒後
+      setTimeout(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          console.log('Chaos server: Random disconnection triggered');
+          ws.close(1006, 'Random disconnection');
+        }
+      }, disconnectTime);
+    }
+  }
 
-	shouldInjectLatency() {
-		return (
-			this.chaosConfig.latencyInjection.enabled &&
-			Math.random() < this.chaosConfig.latencyInjection.probability
-		);
-	}
+  shouldInjectLatency() {
+    return (
+      this.chaosConfig.latencyInjection.enabled &&
+      Math.random() < this.chaosConfig.latencyInjection.probability
+    );
+  }
 
-	generateRandomDelay() {
-		const { minDelay, maxDelay } = this.chaosConfig.latencyInjection;
-		return Math.floor(Math.random() * (maxDelay - minDelay) + minDelay);
-	}
+  generateRandomDelay() {
+    const { minDelay, maxDelay } = this.chaosConfig.latencyInjection;
+    return Math.floor(Math.random() * (maxDelay - minDelay) + minDelay);
+  }
 
-	shouldCorruptMessage() {
-		return Math.random() < this.chaosConfig.messageCorruptionRate;
-	}
+  shouldCorruptMessage() {
+    return Math.random() < this.chaosConfig.messageCorruptionRate;
+  }
 
-	corruptMessage(data) {
-		if (typeof data === 'string') {
-			// テキストメッセージの破損
-			const chars = data.split('');
-			const corruptIndex = Math.floor(Math.random() * chars.length);
-			chars[corruptIndex] = String.fromCharCode(Math.floor(Math.random() * 126) + 32);
-			return chars.join('');
-		} else {
-			// バイナリメッセージの破損
-			const buffer = Buffer.from(data);
-			const corruptIndex = Math.floor(Math.random() * buffer.length);
-			buffer[corruptIndex] = Math.floor(Math.random() * 256);
-			return buffer;
-		}
-	}
+  corruptMessage(data) {
+    if (typeof data === 'string') {
+      // テキストメッセージの破損
+      const chars = data.split('');
+      const corruptIndex = Math.floor(Math.random() * chars.length);
+      chars[corruptIndex] = String.fromCharCode(Math.floor(Math.random() * 126) + 32);
+      return chars.join('');
+    } else {
+      // バイナリメッセージの破損
+      const buffer = Buffer.from(data);
+      const corruptIndex = Math.floor(Math.random() * buffer.length);
+      buffer[corruptIndex] = Math.floor(Math.random() * 256);
+      return buffer;
+    }
+  }
 
-	// Chaos設定の動的変更
-	updateChaosConfig(newConfig) {
-		this.chaosConfig = { ...this.chaosConfig, ...newConfig };
-		console.log('Chaos configuration updated:', this.chaosConfig);
-	}
+  // Chaos設定の動的変更
+  updateChaosConfig(newConfig) {
+    this.chaosConfig = { ...this.chaosConfig, ...newConfig };
+    console.log('Chaos configuration updated:', this.chaosConfig);
+  }
 
-	// ネットワーク分断の開始/停止
-	triggerNetworkPartition(duration = 5000) {
-		console.log(`Network partition triggered for ${duration}ms`);
-		this.chaosConfig.networkPartition.enabled = true;
+  // ネットワーク分断の開始/停止
+  triggerNetworkPartition(duration = 5000) {
+    console.log(`Network partition triggered for ${duration}ms`);
+    this.chaosConfig.networkPartition.enabled = true;
 
-		setTimeout(() => {
-			this.chaosConfig.networkPartition.enabled = false;
-			console.log('Network partition ended');
-		}, duration);
-	}
+    setTimeout(() => {
+      this.chaosConfig.networkPartition.enabled = false;
+      console.log('Network partition ended');
+    }, duration);
+  }
 }
 
 module.exports = ChaosWebSocketServer;
@@ -828,59 +828,59 @@ module.exports = ChaosWebSocketServer;
 ```json
 // vercel.json - 本番環境設定
 {
-	"version": 2,
-	"functions": {
-		"api/websocket.js": {
-			"runtime": "@vercel/node@18.x",
-			"maxDuration": 300
-		}
-	},
-	"builds": [
-		{
-			"src": "package.json",
-			"use": "@vercel/static-build",
-			"config": {
-				"distDir": "build"
-			}
-		}
-	],
-	"routes": [
-		{
-			"src": "/api/(.*)",
-			"dest": "/api/$1"
-		},
-		{
-			"handle": "filesystem"
-		},
-		{
-			"src": "/.*",
-			"dest": "/index.html"
-		}
-	],
-	"env": {
-		"REDIS_URL": "@redis_url",
-		"WEBSOCKET_SECRET": "@websocket_secret",
-		"SENTRY_DSN": "@sentry_dsn"
-	},
-	"headers": [
-		{
-			"source": "/api/websocket",
-			"headers": [
-				{
-					"key": "Access-Control-Allow-Origin",
-					"value": "*"
-				},
-				{
-					"key": "Access-Control-Allow-Methods",
-					"value": "GET, POST, OPTIONS"
-				},
-				{
-					"key": "Access-Control-Allow-Headers",
-					"value": "Content-Type, Authorization"
-				}
-			]
-		}
-	]
+  "version": 2,
+  "functions": {
+    "api/websocket.js": {
+      "runtime": "@vercel/node@18.x",
+      "maxDuration": 300
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REDIS_URL": "@redis_url",
+    "WEBSOCKET_SECRET": "@websocket_secret",
+    "SENTRY_DSN": "@sentry_dsn"
+  },
+  "headers": [
+    {
+      "source": "/api/websocket",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
 }
 ```
 

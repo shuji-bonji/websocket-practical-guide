@@ -1,9 +1,9 @@
 <!-- [![Build and Deploy](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml) -->
 
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.0-red?logo=svelte&labelColor=000)](https://svelte.dev/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.16-red?logo=svelte&labelColor=000)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
 
@@ -15,14 +15,14 @@
 
 - **学習目標**: ブラウザ標準WebSocket APIをマスターし、PWA対応のリアルタイムWebアプリケーションを構築する
 - **総学習時間**: 約50-60時間の構造化されたカリキュラム
-- **技術スタック**: SvelteKit + TypeScript + MDsveX + Vite
+- **技術スタック**: SvelteKit + TypeScript + MDsveX + Vite + Prism.js
 
 ## 🛠️ 開発環境セットアップ
 
 ### 前提条件
 
-- Node.js (推奨: v18以上)
-- npm または pnpm または yarn
+- Node.js (推奨: v20以上)
+- npm (推奨: v8以上) または pnpm または yarn
 
 ### インストール
 
@@ -168,11 +168,13 @@ src/routes/
 
 ## 🔧 技術仕様
 
-- **フロントエンド**: SvelteKit 2.x + TypeScript 5.x
-- **ビルドツール**: Vite 6.x
+- **フロントエンド**: SvelteKit 2.16.x + TypeScript 5.x
+- **ビルドツール**: Vite 6.2.x
 - **ドキュメント**: MDsveX 0.12.x
-- **コード品質**: ESLint 9.x + Prettier 3.x
+- **コード品質**: ESLint 9.18.x + Prettier 3.4.x
 - **型チェック**: svelte-check 4.x
+- **シンタックスハイライト**: Prism.js 1.30.x
+- **図表作成**: Mermaid 11.7.x
 
 ## 📝 開発時の注意点
 
