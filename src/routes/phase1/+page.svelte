@@ -68,7 +68,7 @@
 					]
 				},
 				{
-					id: 'phase1-use-cases',
+					id: 'phase1-introduction-use-cases',
 					title: 'WebSocketの利用例と適用場面',
 					duration: '2-3時間',
 					description: 'WebSocketの11の主要カテゴリーと実際の適用事例を詳しく学習',
@@ -318,7 +318,7 @@
 		const lessonPaths: Record<string, string> = {
 			'phase1-introduction-what-is-websocket': '/phase1/introduction/what-is-websocket',
 			'phase1-introduction-http-limitations': '/phase1/introduction/http-limitations',
-			'phase1-use-cases': '/phase1/introduction/use-cases',
+			'phase1-introduction-use-cases': '/phase1/introduction/use-cases',
 			'phase1-introduction-comparison': '/phase1/introduction/comparison',
 			'phase1-websocket-states': '/phase1/websocket-states',
 			// ネットワーク技術レッスン
@@ -332,6 +332,7 @@
 			'1.2': '/phase1/introduction/http-limitations',
 			'1.3': '/phase1/introduction/use-cases',
 			'1.4': '/phase1/introduction/comparison',
+			'phase1-use-cases': '/phase1/introduction/use-cases',
 			'3.1': '/phase1/websocket-states'
 		};
 
@@ -370,29 +371,29 @@
 <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex items-center justify-between">
-			<div class="flex-1">
+			<div class="flex-shrink-0" style="width: 60%">
 				<nav class="text-blue-200 text-sm mb-4">
 					<a href="/curriculum" class="hover:text-white">カリキュラム</a>
 					<span class="mx-2">›</span>
 					<span>Phase 1</span>
 				</nav>
 				<h1 class="text-4xl font-bold mb-4">Phase 1: {phase1Data.title}</h1>
-				<p class="text-xl text-blue-100 mb-6">{phase1Data.description}</p>
+				<p class="text-xl text-blue-100 mb-6 max-w-none pr-4">{phase1Data.description}</p>
 				<div class="flex items-center space-x-6">
-					<div class="bg-white/10 rounded-lg px-4 py-2">
-						<span class="text-blue-200 text-sm">推奨学習時間</span>
-						<div class="font-bold">{phase1Data.duration}</div>
+					<div class="bg-white/10 rounded-lg px-4 py-2 w-40">
+						<span class="text-blue-200 text-sm text-center block">推奨学習時間</span>
+						<div class="font-bold text-center">{phase1Data.duration}</div>
 					</div>
 					{#if mounted && phase1Progress}
-						<div class="bg-white/10 rounded-lg px-4 py-2">
-							<span class="text-blue-200 text-sm">完了レッスン</span>
-							<div class="font-bold">
+						<div class="bg-white/10 rounded-lg px-4 py-2 w-32">
+							<span class="text-blue-200 text-sm text-center block">完了レッスン</span>
+							<div class="font-bold text-center">
 								{phase1Progress.completedLessons}/{phase1Progress.totalLessons}
 							</div>
 						</div>
-						<div class="bg-white/10 rounded-lg px-4 py-2">
-							<span class="text-blue-200 text-sm">進捗率</span>
-							<div class="font-bold">
+						<div class="bg-white/10 rounded-lg px-4 py-2 w-20">
+							<span class="text-blue-200 text-sm text-center block">進捗率</span>
+							<div class="font-bold text-center">
 								{Math.round((phase1Progress.completedLessons / phase1Progress.totalLessons) * 100)}%
 							</div>
 						</div>
@@ -400,16 +401,37 @@
 				</div>
 			</div>
 
-			{#if nextLesson}
-				<div class="hidden lg:block">
+			<div class="flex-shrink-0 hidden lg:block" style="width: 40%">
+				{#if mounted && phase1Progress}
+					<div class="mb-6">
+						<div class="text-blue-200 text-sm mb-2">Phase 1 進捗状況</div>
+						<div class="bg-white/10 rounded-lg p-4">
+							<div class="flex justify-between text-sm text-blue-100 mb-2">
+								<span>完了率</span>
+								<span>{Math.round((phase1Progress.completedLessons / phase1Progress.totalLessons) * 100)}%</span>
+							</div>
+							<div class="w-64 bg-white/20 rounded-full h-2">
+								<div
+									class="bg-white h-2 rounded-full transition-all duration-300"
+									style="width: {(phase1Progress.completedLessons / phase1Progress.totalLessons) * 100}%"
+								></div>
+							</div>
+							<div class="text-xs text-blue-200 mt-1">
+								{phase1Progress.completedLessons} / {phase1Progress.totalLessons} レッスン完了
+							</div>
+						</div>
+					</div>
+				{/if}
+
+				{#if nextLesson}
 					<div class="text-center">
 						<div class="text-blue-200 text-sm mb-2">次の推奨レッスン</div>
-						<a href={nextLesson.path} class="btn-primary bg-white text-blue-600 hover:bg-gray-50">
-							{nextLesson.lessonId}: {nextLesson.title}
+						<a href={nextLesson.path} class="btn-primary bg-white text-blue-600 hover:bg-gray-50 w-full block" style="font-size: clamp(0.65rem, 2vw, 0.875rem); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+							{nextLesson.title}
 						</a>
 					</div>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 	</div>
 </section>
@@ -516,7 +538,7 @@
 												<div class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3"></div>
 											{/if}
 											<h4 class="text-lg font-semibold text-gray-900">
-												{lesson.id}: {lesson.title}
+												{lesson.title}
 											</h4>
 											<span
 												class="ml-3 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700"
@@ -619,7 +641,7 @@
 							{nextLesson.sectionTitle} の続きを学習しましょう
 						</p>
 						<a href={nextLesson.path} class="btn-primary">
-							{nextLesson.lessonId}: {nextLesson.title}
+							{nextLesson.title}
 						</a>
 					</div>
 				</div>

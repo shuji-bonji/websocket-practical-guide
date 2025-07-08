@@ -248,209 +248,230 @@
 		}
 	];
 
-	// 進捗計算
-	function calculateProgress(section: { lessons: { id: string }[] }) {
+	let mounted = $derived(typeof window !== 'undefined');
+
+	// セクションの進捗率を計算
+	function getSectionProgress(sectionId: number): number {
 		if (!phase2Progress) return 0;
-		const completedLessons = section.lessons.filter((lesson) =>
-			phase2Progress.lessons.some((l) => l.id === lesson.id && l.completed)
+		const sectionLessons = sections[sectionId - 1]?.lessons || [];
+		const completedCount = sectionLessons.filter(
+			(lesson) => phase2Progress.lessons.find((l) => l.id === lesson.id)?.completed
 		).length;
-		return Math.round((completedLessons / section.lessons.length) * 100);
+		return Math.round((completedCount / sectionLessons.length) * 100);
 	}
 
-	function isLessonCompleted(lessonId: string) {
-		return phase2Progress?.lessons.some((l) => l.id === lessonId && l.completed) || false;
+	// レッスンの完了状態を取得
+	function isLessonCompleted(lessonId: string): boolean {
+		if (!phase2Progress) return false;
+		return phase2Progress.lessons.find((l) => l.id === lessonId)?.completed || false;
 	}
 
-	function getSectionStatusColor(progress: number) {
-		if (progress === 100) return 'bg-green-100 text-green-800';
-		if (progress > 0) return 'bg-yellow-100 text-yellow-800';
-		return 'bg-gray-100 text-gray-600';
+	// lessonIdから適切なパスを生成
+	function getLessonPath(lessonId: string): string {
+		// Phase2のパスマッピング
+		const lessonPaths: Record<string, string> = {
+			'phase2-data-communication-svelte-stores': '/phase2/data/communication/svelte/stores',
+			'phase2-data-communication-send-receive': '/phase2/data/communication/send/receive',
+			'phase2-data-communication-error-handling': '/phase2/data/communication/error/handling',
+			'phase2-frames-protocols-frame-structure': '/phase2/frames/protocols/frame/structure',
+			'phase2-frames-protocols-binary-data': '/phase2/frames/protocols/binary/data',
+			'phase2-frames-protocols-subprotocols': '/phase2/frames/protocols/subprotocols',
+			'phase2-frames-protocols-graphql-ws': '/phase2/frames/protocols/graphql/ws',
+			'phase2-frames-protocols-mqtt': '/phase2/frames/protocols/mqtt',
+			'phase2-advanced-topics-security': '/phase2/advanced/topics/security',
+			'phase2-advanced-topics-pwa-integration': '/phase2/advanced/topics/pwa/integration',
+			'phase2-advanced-topics-scalability': '/phase2/advanced/topics/scalability'
+		};
+
+		return lessonPaths[lessonId] || `/phase2/${lessonId}`;
 	}
+
+	// 次の推奨レッスンを取得
+	let nextLesson = $derived(
+		(() => {
+			if (!phase2Progress) return null;
+			for (const section of sections) {
+				const incompleteLesson = section.lessons.find((lesson) => !isLessonCompleted(lesson.id));
+				if (incompleteLesson) {
+					return {
+						lessonId: incompleteLesson.id,
+						title: incompleteLesson.title,
+						sectionTitle: section.title,
+						path: getLessonPath(incompleteLesson.id)
+					};
+				}
+			}
+			return null;
+		})()
+	);
 </script>
 
 <svelte:head>
-	<title>Phase 2: 実装技術 | WebSocket学習</title>
-	<meta name="description" content="WebSocketの実装技術とプロトコル詳細を学習するPhase 2" />
+	<title>Phase 2: 実装技術 - WebSocket Learning</title>
+	<meta
+		name="description"
+		content="WebSocket実装技術フェーズ。フレーム構造、サブプロトコル、セキュリティなどを20-23時間で体系的に学習。"
+	/>
 </svelte:head>
 
-<div class="max-w-6xl mx-auto py-8 px-4">
-	<!-- Phase Header -->
-	<div class="mb-8">
-		<nav class="text-sm text-gray-500 mb-4">
-			<a href="/" class="hover:text-gray-700">ホーム</a>
-			<span class="mx-2">›</span>
-			<span class="text-gray-900">Phase 2: 実装技術</span>
-		</nav>
-
-		<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-			<div class="flex items-start justify-between mb-6">
-				<div>
-					<h1 class="text-3xl font-bold text-gray-900 mb-4">
-						🔧 Phase {phase2Data.phase}: {phase2Data.title}
-					</h1>
-					<p class="text-lg text-gray-600 mb-4">{phase2Data.description}</p>
-					<div class="flex items-center space-x-4 text-sm text-gray-500">
-						<div class="flex items-center">
-							<svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-								<path
-									fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 9.586V6z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-							{phase2Data.duration}
-						</div>
-						<div class="flex items-center">
-							<svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-								<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-							{phase2Progress?.lessons.filter((l) => l.completed).length || 0} / {sections.reduce(
-								(total, section) => total + section.lessons.length,
-								0
-							)} レッスン完了
-						</div>
+<!-- Header Section -->
+<section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex items-center justify-between">
+			<div class="flex-shrink-0" style="width: 60%">
+				<nav class="text-blue-200 text-sm mb-4">
+					<a href="/curriculum" class="hover:text-white">カリキュラム</a>
+					<span class="mx-2">›</span>
+					<span>Phase 2</span>
+				</nav>
+				<h1 class="text-4xl font-bold mb-4">Phase 2: {phase2Data.title}</h1>
+				<p class="text-xl text-blue-100 mb-6 max-w-none pr-4">{phase2Data.description}</p>
+				<div class="flex items-center space-x-6">
+					<div class="bg-white/10 rounded-lg px-4 py-2 w-40">
+						<span class="text-blue-200 text-sm text-center block">推奨学習時間</span>
+						<div class="font-bold text-center">{phase2Data.duration}</div>
 					</div>
-				</div>
-				<div class="flex-shrink-0">
-					<div
-						class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold"
-					>
-						{phase2Data.phase}
-					</div>
+					{#if mounted && phase2Progress}
+						<div class="bg-white/10 rounded-lg px-4 py-2 w-32">
+							<span class="text-blue-200 text-sm text-center block">完了レッスン</span>
+							<div class="font-bold text-center">
+								{phase2Progress.completedLessons}/{phase2Progress.totalLessons}
+							</div>
+						</div>
+						<div class="bg-white/10 rounded-lg px-4 py-2 w-20">
+							<span class="text-blue-200 text-sm text-center block">進捗率</span>
+							<div class="font-bold text-center">
+								{Math.round((phase2Progress.completedLessons / phase2Progress.totalLessons) * 100)}%
+							</div>
+						</div>
+					{/if}
 				</div>
 			</div>
 
-			<!-- 進捗バー -->
-			<div class="mb-6">
-				<div class="flex justify-between text-sm text-gray-600 mb-2">
-					<span>全体進捗</span>
-					<span
-						>{Math.round(
-							((phase2Progress?.lessons.filter((l) => l.completed).length || 0) /
-								sections.reduce((total, section) => total + section.lessons.length, 0)) *
-								100
-						)}%</span
-					>
-				</div>
-				<div class="w-full bg-gray-200 rounded-full h-2">
-					<div
-						class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-						style="width: {Math.round(
-							((phase2Progress?.lessons.filter((l) => l.completed).length || 0) /
-								sections.reduce((total, section) => total + section.lessons.length, 0)) *
-								100
-						)}%"
-					></div>
-				</div>
-			</div>
+			<div class="flex-shrink-0 hidden lg:block" style="width: 40%">
+				{#if mounted && phase2Progress}
+					<div class="mb-6">
+						<div class="text-blue-200 text-sm mb-2">Phase 2 進捗状況</div>
+						<div class="bg-white/10 rounded-lg p-4">
+							<div class="flex justify-between text-sm text-blue-100 mb-2">
+								<span>完了率</span>
+								<span>{Math.round((phase2Progress.completedLessons / phase2Progress.totalLessons) * 100)}%</span>
+							</div>
+							<div class="w-64 bg-white/20 rounded-full h-2">
+								<div
+									class="bg-white h-2 rounded-full transition-all duration-300"
+									style="width: {(phase2Progress.completedLessons / phase2Progress.totalLessons) * 100}%"
+								></div>
+							</div>
+							<div class="text-xs text-blue-200 mt-1">
+								{phase2Progress.completedLessons} / {phase2Progress.totalLessons} レッスン完了
+							</div>
+						</div>
+					</div>
+				{/if}
 
-			<!-- 学習目標 -->
-			<div class="grid md:grid-cols-2 gap-8">
-				<div>
-					<h3 class="text-lg font-semibold text-gray-900 mb-3">🎯 学習目標</h3>
-					<ul class="space-y-2">
-						{#each phase2Data.learningGoals as goal (goal)}
-							<li class="flex items-start">
-								<svg
-									class="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-								>
-									<path
-										fill-rule="evenodd"
-										d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-								<span class="text-gray-700 text-sm">{goal}</span>
-							</li>
-						{/each}
-					</ul>
-				</div>
-
-				<div>
-					<h3 class="text-lg font-semibold text-gray-900 mb-3">📋 前提条件</h3>
-					<ul class="space-y-2">
-						{#each phase2Data.prerequisites as prerequisite (prerequisite)}
-							<li class="flex items-start">
-								<svg
-									class="w-5 h-5 text-gray-400 mr-2 mt-0.5 flex-shrink-0"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-								>
-									<path
-										fill-rule="evenodd"
-										d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-								<span class="text-gray-600 text-sm">{prerequisite}</span>
-							</li>
-						{/each}
-					</ul>
-				</div>
+				{#if nextLesson}
+					<div class="text-center">
+						<div class="text-blue-200 text-sm mb-2">次の推奨レッスン</div>
+						<a href={nextLesson.path} class="btn-primary bg-white text-blue-600 hover:bg-gray-50 w-full block" style="font-size: clamp(0.65rem, 2vw, 0.875rem); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+							{nextLesson.title}
+						</a>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
+</section>
 
-	<!-- Sections -->
-	<div class="space-y-8">
-		{#each sections as section (section.id)}
-			{@const sectionProgress = calculateProgress(section)}
-			<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-				<!-- Section Header -->
-				<div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-					<div class="flex items-center justify-between">
-						<div class="flex items-center space-x-4">
-							<div
-								class="w-8 h-8 {section.accentColor} rounded-full flex items-center justify-center text-white text-sm font-bold"
-							>
-								{section.id}
+<!-- 学習目標と前提知識 -->
+<section class="py-12 bg-white">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+			<div class="card">
+				<h2 class="text-2xl font-bold text-gray-900 mb-4">🎯 学習目標</h2>
+				<ul class="space-y-2">
+					{#each phase2Data.learningGoals as goal (goal)}
+						<li class="flex items-start">
+							<span class="text-blue-600 mr-2 mt-1">✓</span>
+							<span class="text-gray-700">{goal}</span>
+						</li>
+					{/each}
+				</ul>
+			</div>
+
+			<div class="card">
+				<h2 class="text-2xl font-bold text-gray-900 mb-4">📋 前提知識</h2>
+				<ul class="space-y-2">
+					{#each phase2Data.prerequisites as prerequisite (prerequisite)}
+						<li class="flex items-start">
+							<span class="text-gray-400 mr-2 mt-1">•</span>
+							<span class="text-gray-700">{prerequisite}</span>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- セクション詳細 -->
+<section class="py-16 bg-gray-50">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="text-center mb-12">
+			<h2 class="text-3xl font-bold text-gray-900 mb-4">学習セクション</h2>
+			<p class="text-lg text-gray-600 max-w-3xl mx-auto">
+				3つのセクションで段階的にWebSocketの実装技術を習得します
+			</p>
+		</div>
+
+		<div class="space-y-8">
+			{#each sections as section (section.id)}
+				<div class="card border-l-4 {section.color.split(' ')[2]} bg-white">
+					<div class="mb-6">
+						<div class="flex items-center justify-between mb-4">
+							<div class="flex items-center">
+								<div
+									class="{section.accentColor} text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4"
+								>
+									{section.id}
+								</div>
+								<div>
+									<h3 class="text-xl font-bold text-gray-900">{section.title}</h3>
+									<div class="flex items-center space-x-4 mt-1">
+										<span
+											class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {section.color}"
+										>
+											{section.duration}
+										</span>
+										{#if mounted}
+											<span class="text-sm text-gray-500">
+												進捗: {getSectionProgress(section.id)}%
+											</span>
+										{/if}
+									</div>
+								</div>
 							</div>
-							<div>
-								<h2 class="text-xl font-semibold text-gray-900">{section.title}</h2>
-								<p class="text-sm text-gray-600">{section.description}</p>
-							</div>
+							<a href={getLessonPath(section.lessons[0].id)} class="btn-secondary">
+								セクション開始
+							</a>
 						</div>
-						<div class="flex items-center space-x-4">
-							<span
-								class="text-xs {getSectionStatusColor(
-									sectionProgress
-								)} px-2 py-1 rounded-full font-medium"
-							>
-								{sectionProgress}% 完了
-							</span>
-							<span class="text-sm text-gray-500">{section.duration}</span>
-						</div>
+						<p class="text-gray-600">{section.description}</p>
 					</div>
 
-					<!-- Section Progress Bar -->
-					<div class="mt-3">
-						<div class="w-full bg-gray-200 rounded-full h-1.5">
+					<!-- レッスン一覧 -->
+					<div class="space-y-4">
+						{#each section.lessons as lesson (lesson.id)}
 							<div
-								class="{section.accentColor} h-1.5 rounded-full transition-all duration-300"
-								style="width: {sectionProgress}%"
-							></div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Lessons -->
-				<div class="p-6">
-					<div class="grid gap-4">
-						{#each section.lessons as lesson, lessonIndex (lesson.id)}
-							{@const isCompleted = isLessonCompleted(lesson.id)}
-							{@const lessonUrl = `/phase2/${lesson.id.replace('phase2-', '').replace(/-/g, '/')}`}
-							<a
-								href={lessonUrl}
-								class="block border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:bg-blue-50 transition-all group"
+								class="bg-gray-50 rounded-lg p-6 {isLessonCompleted(lesson.id)
+									? 'border-l-4 border-green-500'
+									: ''}"
 							>
 								<div class="flex items-start justify-between">
-									<div class="flex items-start space-x-3 flex-1">
-										<div class="flex-shrink-0 mt-1">
-											{#if isCompleted}
+									<div class="flex-1">
+										<div class="flex items-center mb-2">
+											{#if isLessonCompleted(lesson.id)}
 												<div
-													class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
+													class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3"
 												>
 													<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
 														<path
@@ -461,108 +482,161 @@
 													</svg>
 												</div>
 											{:else}
-												<div
-													class="w-6 h-6 border-2 border-gray-300 rounded-full group-hover:border-blue-400 transition-colors"
-												></div>
+												<div class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3"></div>
 											{/if}
-										</div>
-										<div class="flex-1">
-											<h3
-												class="font-semibold text-gray-900 group-hover:text-blue-900 transition-colors"
-											>
-												{section.id}.{lessonIndex + 1}
+											<h4 class="text-lg font-semibold text-gray-900">
 												{lesson.title}
-											</h3>
-											<p class="text-sm text-gray-600 mt-1">{lesson.description}</p>
+											</h4>
+											<span
+												class="ml-3 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700"
+											>
+												{lesson.duration}
+											</span>
+										</div>
+										<p class="text-gray-600 mb-4 ml-9">{lesson.description}</p>
 
-											<!-- Topics -->
-											<div class="mt-3">
-												<h4 class="text-xs font-medium text-gray-500 mb-2">学習トピック:</h4>
-												<div class="flex flex-wrap gap-1">
-													{#each lesson.topics.slice(0, 3) as topic (topic)}
-														<span class="text-xs {section.color} px-2 py-1 rounded">{topic}</span>
+										<div class="ml-9 grid grid-cols-1 lg:grid-cols-2 gap-6">
+											<div>
+												<h5 class="font-medium text-gray-900 mb-2">📚 学習内容</h5>
+												<ul class="space-y-1">
+													{#each lesson.topics as topic (topic)}
+														<li class="text-sm text-gray-600 flex items-start">
+															<span class="text-gray-400 mr-2">•</span>
+															<span>{topic}</span>
+														</li>
 													{/each}
-													{#if lesson.topics.length > 3}
-														<span class="text-xs text-gray-500 px-2 py-1"
-															>+{lesson.topics.length - 3}個</span
-														>
-													{/if}
-												</div>
+												</ul>
 											</div>
 
-											<!-- Exercises -->
-											{#if lesson.exercises?.length > 0}
-												<div class="mt-2">
-													<h4 class="text-xs font-medium text-gray-500 mb-1">実習:</h4>
-													<p class="text-xs text-gray-600">{lesson.exercises.length}個の実習課題</p>
-												</div>
-											{/if}
+											<div>
+												<h5 class="font-medium text-gray-900 mb-2">💻 演習</h5>
+												<ul class="space-y-1">
+													{#each lesson.exercises as exercise (exercise)}
+														<li class="text-sm text-gray-600 flex items-start">
+															<span class="text-blue-500 mr-2">▸</span>
+															<span>{exercise}</span>
+														</li>
+													{/each}
+												</ul>
+											</div>
 										</div>
 									</div>
-									<div class="flex-shrink-0 ml-4 text-right">
-										<div class="text-sm text-gray-500">{lesson.duration}</div>
-										<svg
-											class="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors mt-1"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
+
+									<div class="ml-6">
+										<a
+											href={getLessonPath(lesson.id)}
+											class="btn-primary {isLessonCompleted(lesson.id)
+												? 'bg-green-600 hover:bg-green-700'
+												: ''}"
 										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M9 5l7 7-7 7"
-											/>
-										</svg>
+											{isLessonCompleted(lesson.id) ? '復習する' : '学習開始'}
+										</a>
 									</div>
 								</div>
-							</a>
+							</div>
 						{/each}
 					</div>
 				</div>
-			</div>
-		{/each}
-	</div>
-
-	<!-- Next Phase Preview -->
-	<div
-		class="mt-12 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6"
-	>
-		<h3 class="text-lg font-semibold text-gray-900 mb-3">🚀 次のフェーズ</h3>
-		<div class="flex items-center justify-between">
-			<div>
-				<h4 class="font-semibold text-gray-900">Phase 3: テスト・評価</h4>
-				<p class="text-sm text-gray-600">WebSocketアプリケーションの品質保証とテスト環境構築</p>
-			</div>
-			<a
-				href="/phase3"
-				class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-			>
-				Phase 3 へ →
-			</a>
+			{/each}
 		</div>
 	</div>
+</section>
 
-	<!-- Docker Setup Guide -->
-	<div class="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-6">
-		<h3 class="text-lg font-semibold text-gray-900 mb-4">🐳 開発環境セットアップ</h3>
-		<div class="grid md:grid-cols-2 gap-6">
-			<div>
-				<h4 class="font-medium text-gray-900 mb-2">必要な環境</h4>
-				<ul class="text-sm text-gray-600 space-y-1">
-					<li>• Docker & Docker Compose</li>
-					<li>• Node.js 18+ & npm</li>
-					<li>• Git</li>
-					<li>• VSCode（推奨）</li>
-				</ul>
+<!-- Phase進捗と次のステップ -->
+<section class="py-16 bg-white">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+		{#if mounted && phase2Progress}
+			<div class="mb-8">
+				<h2 class="text-2xl font-bold text-gray-900 mb-4">Phase 2 進捗状況</h2>
+				<div class="max-w-md mx-auto">
+					<div class="flex justify-between text-sm text-gray-600 mb-2">
+						<span>完了率</span>
+						<span
+							>{Math.round(
+								(phase2Progress.completedLessons / phase2Progress.totalLessons) * 100
+							)}%</span
+						>
+					</div>
+					<div class="progress-bar h-4">
+						<div
+							class="progress-fill h-4 rounded-full"
+							style="width: {(phase2Progress.completedLessons / phase2Progress.totalLessons) *
+								100}%"
+						></div>
+					</div>
+					<div class="text-sm text-gray-500 mt-2">
+						{phase2Progress.completedLessons} / {phase2Progress.totalLessons} レッスン完了
+					</div>
+				</div>
 			</div>
-			<div>
-				<h4 class="font-medium text-gray-900 mb-2">クイックスタート</h4>
-				<div class="bg-gray-800 text-green-400 p-3 rounded font-mono text-sm">
-					<div>cd ../websocket-learning-apps</div>
-					<div>docker-compose up -d</div>
+
+			{#if phase2Progress.completedLessons === phase2Progress.totalLessons}
+				<div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+					<div class="text-green-800">
+						<h3 class="text-lg font-semibold mb-2">🎉 Phase 2 完了おめでとうございます！</h3>
+						<p class="mb-4">
+							WebSocketの実装技術を習得しました。次はPhase 3でテスト・評価を学習しましょう。
+						</p>
+						<a href="/phase3" class="btn-primary">Phase 3: テスト・評価に進む</a>
+					</div>
+				</div>
+			{:else if nextLesson}
+				<div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+					<div class="text-blue-800">
+						<h3 class="text-lg font-semibold mb-2">📖 次の学習</h3>
+						<p class="mb-4">
+							{nextLesson.sectionTitle} の続きを学習しましょう
+						</p>
+						<a href={nextLesson.path} class="btn-primary">
+							{nextLesson.title}
+						</a>
+					</div>
+				</div>
+			{/if}
+		{/if}
+
+		<div class="mt-12 flex justify-center space-x-4">
+			<a href="/curriculum" class="btn-secondary"> カリキュラム概要に戻る </a>
+			<a href="/table-of-contents" class="btn-secondary"> 全体目次を見る </a>
+		</div>
+	</div>
+</section>
+
+<!-- Docker Setup Guide -->
+<section class="py-12 bg-gray-50">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="card">
+			<h3 class="text-2xl font-bold text-gray-900 mb-6">🐳 開発環境セットアップ</h3>
+			<div class="grid md:grid-cols-2 gap-8">
+				<div>
+					<h4 class="font-semibold text-gray-900 mb-3">必要な環境</h4>
+					<ul class="space-y-2">
+						<li class="flex items-start">
+							<span class="text-gray-400 mr-2 mt-1">•</span>
+							<span class="text-gray-700">Docker & Docker Compose</span>
+						</li>
+						<li class="flex items-start">
+							<span class="text-gray-400 mr-2 mt-1">•</span>
+							<span class="text-gray-700">Node.js 18+ & npm</span>
+						</li>
+						<li class="flex items-start">
+							<span class="text-gray-400 mr-2 mt-1">•</span>
+							<span class="text-gray-700">Git</span>
+						</li>
+						<li class="flex items-start">
+							<span class="text-gray-400 mr-2 mt-1">•</span>
+							<span class="text-gray-700">VSCode（推奨）</span>
+						</li>
+					</ul>
+				</div>
+				<div>
+					<h4 class="font-semibold text-gray-900 mb-3">クイックスタート</h4>
+					<div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+						<div>cd ../websocket-learning-apps</div>
+						<div>docker-compose up -d</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</section>
