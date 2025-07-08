@@ -1,0 +1,805 @@
+---
+title: 'IoT統合システム詳細'
+description: 'IoTデバイス管理、スマートホーム、産業IoTのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import { iotAutomationDiagram } from '$lib/charts/allCharts.ts';
+  
+  const smartHomeCode = `// スマートホーム統合システム
+class SmartHomeHub {
+  constructor() {
+    this.devices = new Map();
+    this.automationRules = new Map();
+    this.websocket = null;
+    this.eventHandlers = new Map();
+  }
+  
+  async connect() {
+    this.websocket = new WebSocket('ws://localhost:8080/smarthome');
+    
+    this.websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      this.handleDeviceMessage(message);
+    };
+    
+    this.websocket.onopen = () => {
+      console.log('スマートホームハブに接続しました');
+      this.requestDeviceStatus();
+    };
+    
+    this.websocket.onerror = (error) => {
+      console.error('WebSocketエラー:', error);
+      this.reconnect();
+    };
+  }
+  
+  registerDevice(deviceId, deviceType, config) {
+    const device = {
+      id: deviceId,
+      type: deviceType,
+      config: config,
+      status: 'offline',
+      lastSeen: null,
+      data: {}
+    };
+    
+    this.devices.set(deviceId, device);
+    
+    // デバイス登録をサーバーに送信
+    this.sendMessage({
+      type: 'register_device',
+      device: device
+    });
+  }
+  
+  handleDeviceMessage(message) {
+    switch (message.type) {
+      case 'device_status':
+        this.updateDeviceStatus(message.deviceId, message.status);
+        break;
+      case 'sensor_data':
+        this.processSensorData(message.deviceId, message.data);
+        break;
+      case 'automation_trigger':
+        this.executeAutomation(message.ruleId, message.trigger);
+        break;
+      case 'alert':
+        this.handleAlert(message.level, message.message);
+        break;
+    }
+  }
+  
+  updateDeviceStatus(deviceId, status) {
+    const device = this.devices.get(deviceId);
+    if (device) {
+      device.status = status.state;
+      device.lastSeen = Date.now();
+      device.data = { ...device.data, ...status.data };
+      
+      // UIを更新
+      this.updateDeviceUI(deviceId, device);
+      
+      // 自動化ルールをチェック
+      this.checkAutomationRules(deviceId, device);
+    }
+  }
+  
+  processSensorData(deviceId, data) {
+    const device = this.devices.get(deviceId);
+    if (!device) return;
+    
+    // データを履歴に保存
+    this.saveSensorData(deviceId, data);
+    
+    // 閾値チェック
+    this.checkThresholds(deviceId, data);
+    
+    // リアルタイム分析
+    this.analyzePattern(deviceId, data);
+  }
+  
+  controlDevice(deviceId, action, params = {}) {
+    const device = this.devices.get(deviceId);
+    if (!device || device.status !== 'online') {
+      throw new Error('デバイスがオフラインです');
+    }
+    
+    const controlMessage = {
+      type: 'device_control',
+      deviceId: deviceId,
+      action: action,
+      parameters: params,
+      timestamp: Date.now()
+    };
+    
+    this.sendMessage(controlMessage);
+  }
+  
+  createAutomationRule(name, conditions, actions) {
+    const rule = {
+      id: this.generateRuleId(),
+      name: name,
+      conditions: conditions,
+      actions: actions,
+      enabled: true,
+      lastTriggered: null
+    };
+    
+    this.automationRules.set(rule.id, rule);
+    
+    // サーバーに保存
+    this.sendMessage({
+      type: 'save_automation_rule',
+      rule: rule
+    });
+    
+    return rule.id;
+  }
+  
+  checkAutomationRules(deviceId, device) {
+    this.automationRules.forEach(rule => {
+      if (!rule.enabled) return;
+      
+      const isTriggered = this.evaluateConditions(rule.conditions, deviceId, device);
+      
+      if (isTriggered) {
+        this.executeActions(rule.actions);
+        rule.lastTriggered = Date.now();
+      }
+    });
+  }
+  
+  generateRuleId() {
+    return 'rule_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+  
+  sendMessage(message) {
+    if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+      this.websocket.send(JSON.stringify(message));
+    }
+  }
+  
+  reconnect() {
+    setTimeout(() => {
+      console.log('再接続を試行します...');
+      this.connect();
+    }, 5000);
+  }
+}
+
+// 使用例
+const smartHome = new SmartHomeHub();
+smartHome.connect();
+
+// デバイスの登録
+smartHome.registerDevice('temp_001', 'temperature_sensor', {
+  location: 'living_room',
+  unit: 'celsius',
+  updateInterval: 10000
+});
+
+// 自動化ルールの作成
+smartHome.createAutomationRule('温度制御', 
+  [{ device: 'temp_001', condition: 'temperature > 25' }],
+  [{ device: 'ac_001', action: 'turn_on', params: { temperature: 22 } }]
+);`;
+
+  const industrialIoTCode = `// 産業IoT監視システム
+class IndustrialIoTMonitor {
+  constructor() {
+    this.sensors = new Map();
+    this.machines = new Map();
+    this.alerts = [];
+    this.websocket = null;
+    this.metricsBuffer = [];
+  }
+  
+  async connect() {
+    this.websocket = new WebSocket('wss://industrial-iot.example.com/monitor');
+    
+    this.websocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.processIndustrialData(data);
+    };
+    
+    this.websocket.onopen = () => {
+      console.log('産業IoTシステムに接続しました');
+      this.startMetricsCollection();
+    };
+  }
+  
+  registerSensor(sensorId, type, location, specs) {
+    const sensor = {
+      id: sensorId,
+      type: type,
+      location: location,
+      specifications: specs,
+      status: 'active',
+      lastMaintenance: null,
+      calibrationDate: null,
+      readings: []
+    };
+    
+    this.sensors.set(sensorId, sensor);
+    
+    // センサー登録をサーバーに送信
+    this.sendMessage({
+      type: 'register_sensor',
+      sensor: sensor
+    });
+  }
+  
+  processIndustrialData(data) {
+    switch (data.type) {
+      case 'sensor_reading':
+        this.processSensorReading(data.sensorId, data.reading);
+        break;
+      case 'machine_status':
+        this.updateMachineStatus(data.machineId, data.status);
+        break;
+      case 'production_metrics':
+        this.updateProductionMetrics(data.metrics);
+        break;
+      case 'maintenance_alert':
+        this.handleMaintenanceAlert(data.alert);
+        break;
+      case 'quality_check':
+        this.processQualityCheck(data.checkId, data.results);
+        break;
+    }
+  }
+  
+  processSensorReading(sensorId, reading) {
+    const sensor = this.sensors.get(sensorId);
+    if (!sensor) return;
+    
+    // 異常値検出
+    const anomaly = this.detectAnomaly(sensorId, reading);
+    if (anomaly) {
+      this.triggerAlert('anomaly', \`センサー \${sensorId} で異常値を検出: \${reading.value}\`);
+    }
+    
+    // 予測メンテナンス
+    this.predictiveMaintenance(sensorId, reading);
+    
+    // リアルタイム分析
+    this.realTimeAnalysis(sensorId, reading);
+    
+    // データを履歴に保存
+    sensor.readings.push({
+      ...reading,
+      timestamp: Date.now()
+    });
+    
+    // 最新1000件のみ保持
+    if (sensor.readings.length > 1000) {
+      sensor.readings = sensor.readings.slice(-1000);
+    }
+  }
+  
+  detectAnomaly(sensorId, reading) {
+    const sensor = this.sensors.get(sensorId);
+    if (!sensor || sensor.readings.length < 10) return false;
+    
+    // 統計的異常検出
+    const recentValues = sensor.readings.slice(-10).map(r => r.value);
+    const mean = recentValues.reduce((sum, val) => sum + val, 0) / recentValues.length;
+    const stdDev = Math.sqrt(
+      recentValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / recentValues.length
+    );
+    
+    const threshold = 2 * stdDev;
+    return Math.abs(reading.value - mean) > threshold;
+  }
+  
+  predictiveMaintenance(sensorId, reading) {
+    const sensor = this.sensors.get(sensorId);
+    if (!sensor) return;
+    
+    // 劣化パターンの検出
+    const degradationScore = this.calculateDegradationScore(sensor.readings);
+    
+    if (degradationScore > 0.7) {
+      this.scheduleMaintenanceCheck(sensorId, 'high', degradationScore);
+    } else if (degradationScore > 0.5) {
+      this.scheduleMaintenanceCheck(sensorId, 'medium', degradationScore);
+    }
+  }
+  
+  calculateDegradationScore(readings) {
+    if (readings.length < 50) return 0;
+    
+    const recent = readings.slice(-50);
+    const older = readings.slice(-100, -50);
+    
+    const recentAvg = recent.reduce((sum, r) => sum + r.value, 0) / recent.length;
+    const olderAvg = older.reduce((sum, r) => sum + r.value, 0) / older.length;
+    
+    return Math.abs(recentAvg - olderAvg) / olderAvg;
+  }
+  
+  scheduleMaintenanceCheck(sensorId, priority, score) {
+    const maintenanceAlert = {
+      id: this.generateAlertId(),
+      type: 'maintenance_required',
+      sensorId: sensorId,
+      priority: priority,
+      degradationScore: score,
+      scheduledDate: this.calculateMaintenanceDate(priority),
+      message: \`センサー \${sensorId} のメンテナンスが必要です (劣化スコア: \${score.toFixed(2)})\`
+    };
+    
+    this.alerts.push(maintenanceAlert);
+    
+    // サーバーに送信
+    this.sendMessage({
+      type: 'schedule_maintenance',
+      alert: maintenanceAlert
+    });
+  }
+  
+  realTimeAnalysis(sensorId, reading) {
+    // 効率性分析
+    const efficiency = this.calculateEfficiency(sensorId, reading);
+    
+    // 品質指標
+    const qualityMetric = this.calculateQualityMetric(sensorId, reading);
+    
+    // エネルギー消費分析
+    const energyConsumption = this.calculateEnergyConsumption(sensorId, reading);
+    
+    // 分析結果をダッシュボードに送信
+    this.sendMessage({
+      type: 'real_time_analysis',
+      sensorId: sensorId,
+      metrics: {
+        efficiency,
+        quality: qualityMetric,
+        energy: energyConsumption,
+        timestamp: Date.now()
+      }
+    });
+  }
+  
+  generateAlertId() {
+    return 'alert_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+  
+  sendMessage(message) {
+    if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+      this.websocket.send(JSON.stringify(message));
+    }
+  }
+}
+
+// 使用例
+const industrialMonitor = new IndustrialIoTMonitor();
+industrialMonitor.connect();
+
+// センサーの登録
+industrialMonitor.registerSensor('temp_machine_001', 'temperature', 'production_line_1', {
+  range: { min: -20, max: 100 },
+  accuracy: 0.1,
+  updateFrequency: 1000
+});`;
+</script>
+
+<Section title="スマートホームプラットフォーム" icon="concept">
+
+<Card title="統合デバイス管理システム" icon="info" accentColor="blue">
+
+IoT統合システムは、多様なデバイスを統一的に管理し、リアルタイムで監視・制御を行うシステムです。WebSocketを使用することで、低遅延でのデータ交換と即座の応答が可能になります。
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "デバイス層"
+        A[🌡️ 温度センサー] --> GW[🌐 IoTゲートウェイ]
+        B[💡 スマート照明] --> GW
+        C[🔒 スマートロック] --> GW
+        D[📹 セキュリティカメラ] --> GW
+        E[⚡ 電力メーター] --> GW
+        F[💨 空気品質センサー] --> GW
+        G[🎵 スマートスピーカー] --> GW
+        H[🌿 自動散水システム] --> GW
+    end
+    
+    subgraph "エッジ処理"
+        GW --> EDGE[⚡ エッジコンピューティング]
+        EDGE --> LOCAL[📊 ローカル分析]
+        LOCAL --> RULE[🔧 自動化ルール]
+        RULE --> ACT[🎯 アクション実行]
+    end
+    
+    subgraph "クラウド統合"
+        EDGE --> WS[WebSocketハブ]
+        WS --> CLOUD[☁️ クラウドプラットフォーム]
+        CLOUD --> AI[🤖 AI分析エンジン]
+        AI --> ML[📈 機械学習モデル]
+        ML --> PRED[🔮 予測エンジン]
+    end
+    
+    subgraph "ユーザーインターフェース"
+        WS --> MOBILE[📱 モバイルアプリ]
+        WS --> WEB[💻 Webダッシュボード]
+        WS --> VOICE[🗣️ 音声アシスタント]
+        WS --> WATCH[⌚ スマートウォッチ]
+    end
+    
+    subgraph "外部連携"
+        CLOUD --> WEATHER[🌤️ 気象API]
+        CLOUD --> ENERGY[⚡ 電力会社API]
+        CLOUD --> SECURITY[🛡️ セキュリティサービス]
+    end
+    
+    style GW fill:#e3f2fd
+    style EDGE fill:#e8f5e8
+    style WS fill:#f3e5f5
+    style AI fill:#fff3e0
+`} />
+
+<Card title="デバイス自動化フロー" icon="flow" accentColor="green">
+
+スマートホーム環境でのデバイス間連携と自動化システムの動作フロー：
+
+</Card>
+
+
+<Mermaid chart={iotAutomationDiagram} />
+
+
+</Section>
+
+<Section title="産業IoTシステム" icon="concept">
+
+<Card title="製造ライン監視システム" icon="info" accentColor="blue">
+
+産業IoTシステムは、製造プロセスの効率化と品質向上を目的とした高度な監視・制御システムです。以下の特徴を持ちます：
+
+- **リアルタイム製造監視**: 設備状態の即座な把握
+- **予知保全**: 機械学習による故障予測
+- **品質管理**: 異常検知と自動補正
+- **効率最適化**: 生産ラインの動的調整
+- **データ分析**: 製造データの統合分析
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "製造設備"
+        M1[🏭 製造機械1] --> IPC[🖥️ 産業PC]
+        M2[🏭 製造機械2] --> IPC
+        M3[🏭 製造機械3] --> IPC
+        S1[📊 振動センサー] --> IPC
+        S2[🌡️ 温度センサー] --> IPC
+        S3[⚡ 電流センサー] --> IPC
+    end
+    
+    subgraph "データ収集"
+        IPC --> OPC[🔗 OPC UAサーバー]
+        OPC --> MQTT[📡 MQTTブローカー]
+        MQTT --> WS[WebSocketサーバー]
+    end
+    
+    subgraph "リアルタイム処理"
+        WS --> CEP[⚡ 複合イベント処理]
+        CEP --> ANOM[🚨 異常検知]
+        ANOM --> ALERT[🔔 アラートシステム]
+        CEP --> KPI[📈 KPI計算]
+    end
+    
+    subgraph "可視化・制御"
+        WS --> SCADA[🖥️ SCADA画面]
+        WS --> MOBILE[📱 モバイル監視]
+        WS --> AR[🥽 AR保守支援]
+        ALERT --> SCADA
+        ALERT --> MOBILE
+    end
+    
+    subgraph "データストレージ"
+        KPI --> TSDB[📊 時系列DB]
+        ANOM --> EVENTDB[📋 イベントDB]
+        SCADA --> HISTDB[📚 履歴DB]
+    end
+    
+    style IPC fill:#e3f2fd
+    style OPC fill:#e8f5e8
+    style WS fill:#f3e5f5
+    style CEP fill:#fff3e0
+    style ANOM fill:#ffebee
+`} />
+
+<Card title="予知保全システム" icon="warning" accentColor="orange">
+
+機械学習を活用した予知保全システムの構成：
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "データ収集"
+        VIB[📳 振動データ] --> ML[🤖 機械学習モデル]
+        TEMP[🌡️ 温度データ] --> ML
+        CURR[⚡ 電流データ] --> ML
+        SOUND[🔊 音響データ] --> ML
+    end
+    
+    subgraph "分析処理"
+        ML --> PRED[🔮 故障予測]
+        PRED --> RISK[📊 リスク評価]
+        RISK --> RUL[⏱️ 残存寿命推定]
+    end
+    
+    subgraph "アクション"
+        RUL --> MAINT[🔧 保守計画]
+        MAINT --> SCHED[📅 スケジューリング]
+        SCHED --> TECH[👨‍🔧 技術者派遣]
+        MAINT --> PARTS[📦 部品発注]
+    end
+    
+    subgraph "通知・連携"
+        RISK --> WS[WebSocketサーバー]
+        WS --> DASH[📊 保守ダッシュボード]
+        WS --> EMAIL[📧 メール通知]
+        WS --> ERP[💼 ERPシステム]
+    end
+    
+    style ML fill:#e3f2fd
+    style PRED fill:#e8f5e8
+    style RISK fill:#fff3e0
+    style WS fill:#f3e5f5
+`} />
+
+</Section>
+
+<Section title="農業IoTシステム" icon="concept">
+
+<Card title="スマート農業プラットフォーム" icon="info" accentColor="green">
+
+農業IoTシステムは、データ駆動型農業の実現を目指すプラットフォームです：
+
+- **環境センサー**: 土壌、気象、作物の状態監視
+- **自動制御**: 散水、施肥、温度制御の自動化
+- **作物分析**: ドローン・カメラを活用した画像解析
+- **収穫予測**: AIによる収穫量・品質予測
+- **市場連携**: 需要予測と出荷計画の最適化
+
+</Card>
+
+<Mermaid chart={`
+graph TD
+    subgraph "農場センサー"
+        SOIL[🌱 土壌湿度] --> AGW[🚜 農業IoTゲートウェイ]
+        PH[🧪 pH値] --> AGW
+        LIGHT[☀️ 照度センサー] --> AGW
+        WEATHER[🌦️ 気象センサー] --> AGW
+        CAMERA[📹 作物監視カメラ] --> AGW
+        DRONE[🛸 ドローン監視] --> AGW
+    end
+    
+    subgraph "自動化システム"
+        AGW --> AUTO[🤖 自動化制御]
+        AUTO --> IRRIG[💧 自動散水]
+        AUTO --> FERT[🌿 肥料散布]
+        AUTO --> VENT[💨 温室換気]
+        AUTO --> SHADE[☂️ 遮光制御]
+    end
+    
+    subgraph "データ統合"
+        AGW --> WS[WebSocketサーバー]
+        WS --> AGRI[🌾 農業クラウド]
+        AGRI --> AI[🤖 作物AI分析]
+        AI --> YIELD[📈 収穫量予測]
+        AI --> DISEASE[🔍 病害虫検知]
+    end
+    
+    subgraph "農家向けアプリ"
+        WS --> FARMER[👨‍🌾 農家アプリ]
+        WS --> MARKET[🏪 市場連携]
+        WS --> EXPERT[👩‍🔬 専門家相談]
+    end
+    
+    subgraph "外部連携"
+        AGRI --> SATELLITE[🛰️ 衛星データ]
+        AGRI --> SUPPLY[🚚 物流システム]
+        AGRI --> FINANCE[💰 農業金融]
+    end
+    
+    style AGW fill:#e8f5e8
+    style WS fill:#f3e5f5
+    style AI fill:#fff3e0
+    style FARMER fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="都市インフラIoT" icon="concept">
+
+<Card title="スマートシティ統合プラットフォーム" icon="info" accentColor="purple">
+
+都市インフラIoTは、都市全体の効率化と市民生活の向上を目指すシステムです：
+
+- **交通最適化**: 信号制御と交通流分析
+- **環境監視**: 大気質、騒音、水質の監視
+- **エネルギー管理**: スマートグリッドと再生可能エネルギー
+- **防災・セキュリティ**: 災害予測と緊急対応
+- **市民サービス**: 公共サービスの効率化
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "交通システム"
+        TRAFFIC[🚦 信号機] --> CITY[🏙️ 都市IoTプラットフォーム]
+        PARKING[🅿️ 駐車場センサー] --> CITY
+        BUS[🚌 公共交通] --> CITY
+        BIKE[🚲 シェアサイクル] --> CITY
+    end
+    
+    subgraph "環境監視"
+        AIR[🌫️ 大気質センサー] --> CITY
+        NOISE[🔊 騒音計] --> CITY
+        WATER[💧 水質センサー] --> CITY
+        WASTE[🗑️ ゴミ箱センサー] --> CITY
+    end
+    
+    subgraph "エネルギー管理"
+        SOLAR[☀️ 太陽光発電] --> CITY
+        WIND[💨 風力発電] --> CITY
+        GRID[⚡ スマートグリッド] --> CITY
+        LED[💡 街灯制御] --> CITY
+    end
+    
+    subgraph "安全・防災"
+        CAMERA[📹 防犯カメラ] --> CITY
+        FLOOD[🌊 水位センサー] --> CITY
+        SEISMIC[📳 地震計] --> CITY
+        FIRE[🔥 火災検知] --> CITY
+    end
+    
+    CITY --> WS[WebSocketハブ]
+    
+    subgraph "市民サービス"
+        WS --> CITIZEN[📱 市民アプリ]
+        WS --> ADMIN[🏛️ 行政システム]
+        WS --> EMERGENCY[🚨 緊急対応]
+        WS --> TOURISM[🗺️ 観光案内]
+    end
+    
+    style CITY fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style CITIZEN fill:#e3f2fd
+    style EMERGENCY fill:#ffebee
+`} />
+
+</Section>
+
+<Section title="エッジコンピューティング最適化" icon="concept">
+
+<Card title="エッジ・クラウド連携アーキテクチャ" icon="info" accentColor="indigo">
+
+エッジコンピューティングは、データ処理を分散化し、レイテンシを削減する技術です：
+
+- **エッジ処理**: デバイス近くでの即座のデータ処理
+- **フォグコンピューティング**: 中間層での集約処理
+- **クラウド連携**: 高度な分析とストレージ
+- **5G対応**: 高速・低遅延通信の活用
+- **インテリジェント配信**: 適応的なデータ配信
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "エッジ層"
+        EDGE1[📱 エッジノード1] --> FOG[🌫️ フォグコンピューティング]
+        EDGE2[📱 エッジノード2] --> FOG
+        EDGE3[📱 エッジノード3] --> FOG
+        FOG --> LOCAL[💾 ローカルストレージ]
+        FOG --> PROC[⚡ リアルタイム処理]
+    end
+    
+    subgraph "ネットワーク層"
+        FOG --> 5G[📡 5G/WiFi6]
+        5G --> MESH[🕸️ メッシュネットワーク]
+        MESH --> WAN[🌐 WANゲートウェイ]
+    end
+    
+    subgraph "クラウド層"
+        WAN --> WS[WebSocketクラスター]
+        WS --> BIG[📊 ビッグデータ分析]
+        BIG --> AI[🤖 AI/MLパイプライン]
+        AI --> INSIGHT[💡 インサイト生成]
+    end
+    
+    subgraph "配信最適化"
+        INSIGHT --> CDN[🚀 コンテンツ配信]
+        CDN --> CACHE[⚡ エッジキャッシュ]
+        CACHE --> FOG
+    end
+    
+    style FOG fill:#e3f2fd
+    style 5G fill:#e8f5e8
+    style WS fill:#f3e5f5
+    style AI fill:#fff3e0
+`} />
+
+</Section>
+
+<Section title="実装例" icon="code">
+
+<UseCaseExample
+  title="スマートホーム統合システム"
+  category="Smart Home Platform"
+  description="複数のIoTデバイスを統合管理し、自動化ルールによる制御を実現するスマートホームシステムです。"
+  code={smartHomeCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "デバイス統合管理",
+    "リアルタイム状態監視",
+    "自動化ルール実行",
+    "異常検知とアラート",
+    "WebSocket配信",
+    "再接続機能"
+  ]}
+/>
+
+<UseCaseExample
+  title="産業IoT監視システム"
+  category="Industrial IoT Monitor"
+  description="産業機械の監視と予知保全を実現する高度なIoTシステムです。異常検知と劣化予測機能を含みます。"
+  code={industrialIoTCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "センサーデータ収集",
+    "異常値検出",
+    "予知保全機能",
+    "劣化スコア算出",
+    "メンテナンス計画",
+    "リアルタイム分析"
+  ]}
+/>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. デバイス管理とスケーラビリティ
+- **階層的アーキテクチャ**: エッジ・フォグ・クラウドの役割分担
+- **効率的なデータ集約**: 帯域幅とレイテンシのバランス
+- **デバイス認証**: PKIベースの強固なセキュリティ
+
+### 2. リアルタイム処理の最適化
+- **ストリーミング処理**: Apache Kafka、RabbitMQとの連携
+- **バッチ処理**: 大量データの効率的な分析
+- **キャッシュ戦略**: Redis、Memcachedでの高速アクセス
+
+### 3. 予知保全とAI連携
+- **機械学習パイプライン**: 継続的な学習と改善
+- **異常検知**: 統計的手法と深層学習の併用
+- **アラート最適化**: 偽陽性の削減と早期警告
+
+### 4. セキュリティベストプラクティス
+- **多層防御**: ネットワーク、アプリケーション、デバイス
+- **暗号化**: 通信とデータの暗号化
+- **監査ログ**: 包括的なアクセス記録
+
+### 5. 運用・保守の考慮事項
+- **監視ダッシュボード**: リアルタイム状況把握
+- **自動スケーリング**: 負荷に応じた動的調整
+- **障害対応**: 自動復旧とフェイルオーバー機能
+
+この包括的なIoT統合システムアーキテクチャにより、様々な規模と用途のIoTプロジェクトに対応できます。
+
+</Card>
+
+</Section>

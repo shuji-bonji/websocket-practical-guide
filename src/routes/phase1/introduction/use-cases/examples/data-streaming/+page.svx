@@ -5,19 +5,471 @@ description: '株価情報、スポーツスコア、ライブデータ配信の
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import { hftDiagram, performanceOptimizationDiagram } from '$lib/charts/allCharts.ts';
+  
+  const stockDataCode = `// リアルタイム株価データ配信システム
+class StockDataStreamer {
+  constructor() {
+    this.dataProviders = new Map();
+    this.subscribers = new Map();
+    this.compressionEnabled = true;
+    this.rateLimiter = new RateLimiter();
+  }
+  
+  // データプロバイダーの登録
+  registerDataProvider(exchange, provider) {
+    this.dataProviders.set(exchange, provider);
+    
+    provider.on('data', (rawData) => {
+      this.processMarketData(exchange, rawData);
+    });
+  }
+  
+  async processMarketData(exchange, rawData) {
+    try {
+      // データ検証
+      const validatedData = await this.validateData(rawData);
+      
+      // 技術指標の計算
+      const enrichedData = await this.calculateIndicators(validatedData);
+      
+      // 配信用フォーマット
+      const streamData = {
+        symbol: enrichedData.symbol,
+        price: enrichedData.price,
+        change: enrichedData.change,
+        changePercent: enrichedData.changePercent,
+        volume: enrichedData.volume,
+        marketCap: enrichedData.marketCap,
+        indicators: {
+          sma20: enrichedData.sma20,
+          rsi: enrichedData.rsi,
+          macd: enrichedData.macd
+        },
+        timestamp: Date.now(),
+        exchange
+      };
+      
+      // 購読者への配信
+      await this.distributeData(streamData);
+      
+    } catch (error) {
+      console.error('データ処理エラー:', error);
+      this.handleDataError(exchange, error);
+    }
+  }
+  
+  async distributeData(data) {
+    const symbol = data.symbol;
+    const subscribers = this.subscribers.get(symbol) || [];
+    
+    for (const subscriber of subscribers) {
+      // レート制限チェック
+      if (!this.rateLimiter.checkLimit(subscriber.userId)) {
+        continue;
+      }
+      
+      // ユーザー設定に基づくフィルタリング
+      const filteredData = this.filterDataForUser(data, subscriber.preferences);
+      
+      // データ圧縮
+      const compressedData = this.compressionEnabled ? 
+        this.compressData(filteredData) : filteredData;
+      
+      // WebSocket配信
+      try {
+        await subscriber.websocket.send(JSON.stringify({
+          type: 'market_data',
+          data: compressedData
+        }));
+        
+        this.metrics.recordDelivery(symbol, subscriber.userId);
+        
+      } catch (error) {
+        console.error('配信エラー:', error);
+        this.handleSubscriberError(subscriber, error);
+      }
+    }
+  }
+  
+  subscribe(userId, symbols, preferences, websocket) {
+    symbols.forEach(symbol => {
+      if (!this.subscribers.has(symbol)) {
+        this.subscribers.set(symbol, []);
+      }
+      
+      this.subscribers.get(symbol).push({
+        userId,
+        preferences,
+        websocket,
+        subscribedAt: Date.now()
+      });
+    });
+    
+    // 初期データの送信
+    this.sendInitialData(userId, symbols, websocket);
+  }
+  
+  calculateIndicators(data) {
+    // SMA (Simple Moving Average)
+    const sma20 = this.calculateSMA(data.symbol, 20);
+    
+    // RSI (Relative Strength Index)
+    const rsi = this.calculateRSI(data.symbol, 14);
+    
+    // MACD
+    const macd = this.calculateMACD(data.symbol);
+    
+    return {
+      ...data,
+      sma20,
+      rsi,
+      macd
+    };
+  }
+}`;
+
+  const sportDataCode = `// スポーツライブスコア配信システム
+class LiveSportsStreamer {
+  constructor() {
+    this.activeGames = new Map();
+    this.eventProcessors = new Map();
+    this.fanEngagement = new FanEngagementTracker();
+  }
+  
+  startGameStream(gameId, gameInfo) {
+    const gameStream = {
+      gameId,
+      info: gameInfo,
+      events: [],
+      subscribers: new Set(),
+      stats: {
+        totalEvents: 0,
+        peakViewers: 0,
+        engagement: {
+          reactions: 0,
+          comments: 0,
+          shares: 0
+        }
+      },
+      startTime: Date.now()
+    };
+    
+    this.activeGames.set(gameId, gameStream);
+    
+    // イベントプロセッサーの設定
+    this.setupEventProcessor(gameId);
+    
+    return gameStream;
+  }
+  
+  processGameEvent(gameId, eventData) {
+    const game = this.activeGames.get(gameId);
+    if (!game) return;
+    
+    // イベントの拡張処理
+    const enrichedEvent = {
+      ...eventData,
+      gameId,
+      timestamp: Date.now(),
+      sequence: game.stats.totalEvents++,
+      impact: this.calculateEventImpact(eventData),
+      momentum: this.calculateMomentum(gameId, eventData)
+    };
+    
+    // イベント履歴に追加
+    game.events.push(enrichedEvent);
+    
+    // 購読者への配信
+    this.broadcastEvent(game, enrichedEvent);
+    
+    // ファンエンゲージメント追跡
+    this.fanEngagement.trackEvent(gameId, enrichedEvent);
+  }
+  
+  broadcastEvent(game, event) {
+    const broadcastData = {
+      type: 'game_event',
+      gameId: game.gameId,
+      event: event,
+      gameState: {
+        score: game.info.score,
+        period: game.info.period,
+        clock: game.info.clock,
+        stats: this.getCurrentStats(game.gameId)
+      },
+      metadata: {
+        viewers: game.subscribers.size,
+        engagement: game.stats.engagement
+      }
+    };
+    
+    // WebSocket配信
+    game.subscribers.forEach(subscriber => {
+      try {
+        // ユーザープリファレンスに基づくカスタマイゼーション
+        const customizedData = this.customizeForSubscriber(
+          broadcastData, 
+          subscriber.preferences
+        );
+        
+        subscriber.websocket.send(JSON.stringify(customizedData));
+        
+      } catch (error) {
+        console.error('配信エラー:', error);
+        this.removeSubscriber(game.gameId, subscriber.userId);
+      }
+    });
+    
+    // ピーク視聴者数の更新
+    if (game.subscribers.size > game.stats.peakViewers) {
+      game.stats.peakViewers = game.subscribers.size;
+    }
+  }
+  
+  subscribeToGame(gameId, userId, preferences, websocket) {
+    const game = this.activeGames.get(gameId);
+    if (!game) {
+      throw new Error('ゲームが見つかりません');
+    }
+    
+    const subscriber = {
+      userId,
+      preferences,
+      websocket,
+      joinTime: Date.now()
+    };
+    
+    game.subscribers.add(subscriber);
+    
+    // 初期ゲーム状態の送信
+    this.sendGameSnapshot(game, subscriber);
+    
+    // エンゲージメント追跡開始
+    this.fanEngagement.trackSubscriber(gameId, userId);
+  }
+  
+  calculateEventImpact(event) {
+    const impactScores = {
+      'goal': 10,
+      'penalty': 8,
+      'yellow_card': 5,
+      'red_card': 9,
+      'substitution': 3,
+      'corner': 2,
+      'offside': 1
+    };
+    
+    return impactScores[event.type] || 1;
+  }
+  
+  calculateMomentum(gameId, event) {
+    const game = this.activeGames.get(gameId);
+    const recentEvents = game.events.slice(-10); // 直近10イベント
+    
+    // チーム別イベント重要度の合計
+    const teamMomentum = {
+      home: 0,
+      away: 0
+    };
+    
+    recentEvents.forEach(evt => {
+      const impact = evt.impact || 1;
+      if (evt.team === 'home') {
+        teamMomentum.home += impact;
+      } else if (evt.team === 'away') {
+        teamMomentum.away += impact;
+      }
+    });
+    
+    return teamMomentum;
+  }
+}`;
+
+  const iotDataCode = `// IoTデバイスデータストリーミング
+class IoTDataStreamer {
+  constructor() {
+    this.deviceStreams = new Map();
+    this.dataProcessors = new Map();
+    this.alertRules = new Map();
+    this.aggregationWindows = new Map();
+  }
+  
+  registerDevice(deviceId, deviceConfig) {
+    const stream = {
+      deviceId,
+      config: deviceConfig,
+      buffer: [],
+      lastUpdate: null,
+      status: 'active',
+      subscribers: new Set(),
+      metrics: {
+        dataPoints: 0,
+        alerts: 0,
+        uptime: 0
+      }
+    };
+    
+    this.deviceStreams.set(deviceId, stream);
+    
+    // データ処理パイプラインの設定
+    this.setupDataProcessor(deviceId, deviceConfig);
+    
+    // アラートルールの設定
+    this.setupAlertRules(deviceId, deviceConfig.alertRules || []);
+  }
+  
+  processDeviceData(deviceId, sensorData) {
+    const stream = this.deviceStreams.get(deviceId);
+    if (!stream) return;
+    
+    try {
+      // データ正規化
+      const normalizedData = this.normalizeData(sensorData, stream.config);
+      
+      // 異常値検出
+      const anomalies = this.detectAnomalies(deviceId, normalizedData);
+      
+      // 集約ウィンドウへの追加
+      this.addToAggregationWindow(deviceId, normalizedData);
+      
+      // アラートルールの評価
+      const alerts = this.evaluateAlertRules(deviceId, normalizedData);
+      
+      const processedData = {
+        deviceId,
+        timestamp: Date.now(),
+        data: normalizedData,
+        anomalies,
+        alerts,
+        aggregatedMetrics: this.getAggregatedMetrics(deviceId)
+      };
+      
+      // ストリーム更新
+      stream.buffer.push(processedData);
+      stream.lastUpdate = Date.now();
+      stream.metrics.dataPoints++;
+      
+      // バッファサイズ制限
+      if (stream.buffer.length > 1000) {
+        stream.buffer = stream.buffer.slice(-1000);
+      }
+      
+      // 購読者への配信
+      this.distributeDeviceData(stream, processedData);
+      
+      // アラートがある場合の特別配信
+      if (alerts.length > 0) {
+        this.distributeAlerts(deviceId, alerts);
+      }
+      
+    } catch (error) {
+      console.error('IoTデータ処理エラー:', error);
+      this.handleDeviceError(deviceId, error);
+    }
+  }
+  
+  distributeDeviceData(stream, data) {
+    stream.subscribers.forEach(subscriber => {
+      try {
+        // サブスクリプションフィルターの適用
+        const filteredData = this.applySubscriptionFilters(
+          data, 
+          subscriber.filters
+        );
+        
+        if (filteredData) {
+          // データ圧縮
+          const compressedData = this.compressIoTData(filteredData);
+          
+          subscriber.websocket.send(JSON.stringify({
+            type: 'iot_data',
+            deviceId: stream.deviceId,
+            data: compressedData
+          }));
+        }
+        
+      } catch (error) {
+        console.error('IoTデータ配信エラー:', error);
+        this.removeDeviceSubscriber(stream.deviceId, subscriber.id);
+      }
+    });
+  }
+  
+  detectAnomalies(deviceId, data) {
+    const stream = this.deviceStreams.get(deviceId);
+    const anomalies = [];
+    
+    // 統計的異常検出
+    Object.keys(data).forEach(sensor => {
+      const value = data[sensor];
+      const stats = this.getSensorStatistics(deviceId, sensor);
+      
+      if (stats) {
+        const zScore = Math.abs((value - stats.mean) / stats.stdDev);
+        
+        if (zScore > 3) { // 3σを超える場合
+          anomalies.push({
+            sensor,
+            value,
+            zScore,
+            threshold: 3,
+            severity: zScore > 4 ? 'critical' : 'warning'
+          });
+        }
+      }
+    });
+    
+    return anomalies;
+  }
+  
+  subscribeToDevice(deviceId, subscriberId, filters, websocket) {
+    const stream = this.deviceStreams.get(deviceId);
+    if (!stream) {
+      throw new Error('デバイスが見つかりません');
+    }
+    
+    const subscriber = {
+      id: subscriberId,
+      filters: filters || {},
+      websocket,
+      subscribeTime: Date.now()
+    };
+    
+    stream.subscribers.add(subscriber);
+    
+    // 初期データの送信（直近のバッファデータ）
+    const recentData = stream.buffer.slice(-10);
+    recentData.forEach(data => {
+      const filteredData = this.applySubscriptionFilters(data, filters);
+      if (filteredData) {
+        websocket.send(JSON.stringify({
+          type: 'iot_data_history',
+          deviceId,
+          data: filteredData
+        }));
+      }
+    });
+  }
+}`;
 </script>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Section title="金融データ配信プラットフォーム" icon="concept">
 
-# 📊 データ配信・ストリーミングシステム詳細
+<Card title="リアルタイム株価配信システム" icon="info" accentColor="blue">
 
-## 1. 金融データ配信プラットフォーム
+金融データ配信システムは、ミリ秒単位での低遅延配信が要求される高性能なWebSocketアプリケーションです。以下の要素で構成されます：
 
-### リアルタイム株価配信システム
+- **データ集約器**: 複数の取引所からのデータ統合
+- **データ検証**: リアルタイムでの整合性チェック
+- **指標計算**: 技術分析指標の動的算出
+- **配信最適化**: 購読者別のカスタマイズ配信
+- **レート制限**: 公平なデータアクセス管理
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -69,33 +521,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant EX as 取引所
-    participant AGG as データ集約器
-    participant WS as WebSocketサーバー
-    participant HFT as 高頻度取引システム
-    participant UI as ユーザーUI
-
-    Note over EX,UI: 1秒間に数千件の更新
-    
-    loop 高頻度データフィード
-        EX->>AGG: 価格更新 (1ms間隔)
-        AGG->>AGG: バッチ処理 (10ms)
-        AGG->>WS: 差分データ配信
-        
-        alt HFTクライアント
-            WS->>HFT: 即座配信 (<1ms)
-            HFT->>HFT: アルゴリズム判定
-        else 一般クライアント
-            WS->>UI: バッファ済み配信 (100ms)
-            UI->>UI: UI更新
-        end
-    end
-    
-    Note over AGG,HFT: レイテンシ最適化
-    Note over WS,UI: スループット最適化
-`} />
+<Mermaid chart={hftDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -379,31 +805,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant DS as データソース
-    participant CACHE as キャッシュ層
-    participant WS as WebSocketサーバー
-    participant CLIENT as クライアント
-
-    Note over DS,CLIENT: 目標レイテンシ < 10ms
-    
-    DS->>CACHE: データ更新 (1ms)
-    CACHE->>CACHE: 差分計算 (2ms)
-    CACHE->>WS: 変更通知 (1ms)
-    WS->>CLIENT: 即座配信 (3ms)
-    CLIENT->>CLIENT: 描画更新 (3ms)
-    
-    Note over DS,CLIENT: 合計レイテンシ: 10ms
-    
-    alt 高頻度データ
-        DS->>CACHE: バッチ更新 (5ms)
-        CACHE->>WS: 圧縮配信 (2ms)
-        WS->>CLIENT: ストリーミング (3ms)
-    end
-    
-    Note over CACHE,CLIENT: スループット優先モード
-`} />
+<Mermaid chart={performanceOptimizationDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -607,3 +1009,5 @@ class WebSocketConnectionPool {
 
 </div>
 </div>
+
+</Section>

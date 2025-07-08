@@ -5,19 +5,399 @@ description: 'トレーディング、決済、電子カルテ、遠隔医療シ
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import { ultraLowLatencyTradingDiagram, patientMonitoringDiagram } from '$lib/charts/allCharts.ts';
+  
+  const tradingCode = `// 高頻度取引システム
+class HighFrequencyTradingSystem {
+  constructor() {
+    this.marketDataFeeds = new Map();
+    this.orderManagement = new OrderManagementSystem();
+    this.riskEngine = new RiskManagementEngine();
+    this.algorithmicTraders = new Map();
+    this.positionManager = new PositionManager();
+  }
+  
+  // マーケットデータ処理
+  async processMarketData(exchange, tickData) {
+    try {
+      // データ正規化と検証
+      const normalizedData = await this.normalizeMarketData(tickData);
+      
+      // 技術指標の計算
+      const indicators = await this.calculateTechnicalIndicators(normalizedData);
+      
+      // シグナル生成
+      const signals = await this.generateTradingSignals(normalizedData, indicators);
+      
+      // リスクアセスメント
+      const riskAssessment = await this.riskEngine.assess(signals);
+      
+      // 取引実行決定
+      if (riskAssessment.approved) {
+        await this.executeTrades(signals);
+      }
+      
+      // リアルタイム配信
+      await this.broadcastMarketUpdate({
+        exchange,
+        data: normalizedData,
+        indicators,
+        signals,
+        riskMetrics: riskAssessment.metrics
+      });
+      
+    } catch (error) {
+      console.error('マーケットデータ処理エラー:', error);
+      await this.handleMarketDataError(exchange, error);
+    }
+  }
+  
+  async executeTrades(signals) {
+    for (const signal of signals) {
+      try {
+        // 注文生成
+        const order = {
+          id: generateOrderId(),
+          symbol: signal.symbol,
+          side: signal.action, // 'BUY' or 'SELL'
+          quantity: signal.quantity,
+          price: signal.targetPrice,
+          orderType: signal.orderType,
+          timeInForce: 'IOC', // Immediate or Cancel
+          timestamp: Date.now()
+        };
+        
+        // リスクチェック
+        const riskCheck = await this.riskEngine.validateOrder(order);
+        if (!riskCheck.approved) {
+          throw new Error(riskCheck.reason);
+        }
+        
+        // 注文送信
+        const execution = await this.orderManagement.submitOrder(order);
+        
+        // ポジション更新
+        await this.positionManager.updatePosition(execution);
+        
+        // 結果配信
+        await this.broadcastTradeExecution(execution);
+        
+      } catch (error) {
+        console.error('取引実行エラー:', error);
+        await this.handleTradeError(signal, error);
+      }
+    }
+  }
+  
+  async broadcastMarketUpdate(marketUpdate) {
+    const subscribers = this.getMarketDataSubscribers(marketUpdate.exchange);
+    
+    for (const subscriber of subscribers) {
+      try {
+        // ユーザー権限チェック
+        if (!this.hasMarketDataPermission(subscriber.userId, marketUpdate.exchange)) {
+          continue;
+        }
+        
+        // データフィルタリング
+        const filteredData = this.filterMarketDataForUser(
+          marketUpdate, 
+          subscriber.permissions
+        );
+        
+        // WebSocket配信
+        await subscriber.websocket.send(JSON.stringify({
+          type: 'market_update',
+          data: filteredData,
+          timestamp: Date.now()
+        }));
+        
+      } catch (error) {
+        console.error('マーケットデータ配信エラー:', error);
+        this.removeSubscriber(subscriber.userId);
+      }
+    }
+  }
+}`;
+
+  const medicalCode = `// 電子カルテシステム
+class ElectronicMedicalRecordsSystem {
+  constructor() {
+    this.patientRecords = new Map();
+    this.activeConsultations = new Map();
+    this.vitalSignsMonitors = new Map();
+    this.accessControl = new MedicalAccessControl();
+    this.auditLogger = new MedicalAuditLogger();
+  }
+  
+  // 患者データのリアルタイム更新
+  async updatePatientRecord(patientId, updateData, providerId) {
+    try {
+      // アクセス権限確認
+      const access = await this.accessControl.validateAccess(
+        providerId, 
+        patientId, 
+        'UPDATE_RECORD'
+      );
+      
+      if (!access.granted) {
+        throw new Error('アクセス権限がありません');
+      }
+      
+      // データ整合性検証
+      const validation = await this.validateMedicalData(updateData);
+      if (!validation.valid) {
+        throw new Error(validation.errors.join(', '));
+      }
+      
+      // 患者レコード更新
+      const currentRecord = this.patientRecords.get(patientId);
+      const updatedRecord = {
+        ...currentRecord,
+        ...updateData,
+        lastUpdated: Date.now(),
+        updatedBy: providerId,
+        version: currentRecord.version + 1
+      };
+      
+      this.patientRecords.set(patientId, updatedRecord);
+      
+      // 監査ログ記録
+      await this.auditLogger.logUpdate({
+        patientId,
+        providerId,
+        updateType: updateData.type,
+        timestamp: Date.now(),
+        previousVersion: currentRecord.version,
+        newVersion: updatedRecord.version
+      });
+      
+      // リアルタイム通知
+      await this.broadcastPatientUpdate(patientId, updatedRecord, providerId);
+      
+      return updatedRecord;
+      
+    } catch (error) {
+      console.error('患者レコード更新エラー:', error);
+      await this.auditLogger.logError({
+        patientId,
+        providerId,
+        error: error.message,
+        timestamp: Date.now()
+      });
+      throw error;
+    }
+  }
+  
+  // バイタルサイン監視
+  async processVitalSigns(patientId, vitalData, deviceId) {
+    try {
+      // デバイス認証
+      const deviceAuth = await this.authenticateDevice(deviceId);
+      if (!deviceAuth.valid) {
+        throw new Error('不正なデバイスです');
+      }
+      
+      // バイタルデータ正規化
+      const normalizedVitals = this.normalizeVitalSigns(vitalData);
+      
+      // 異常値検出
+      const alerts = this.detectVitalAnomalies(normalizedVitals);
+      
+      // データ保存
+      const vitalRecord = {
+        patientId,
+        deviceId,
+        vitals: normalizedVitals,
+        alerts,
+        timestamp: Date.now(),
+        quality: this.assessDataQuality(normalizedVitals)
+      };
+      
+      await this.saveVitalRecord(vitalRecord);
+      
+      // 緊急アラートの処理
+      if (alerts.some(alert => alert.severity === 'CRITICAL')) {
+        await this.triggerEmergencyAlert(patientId, alerts);
+      }
+      
+      // リアルタイム配信
+      await this.broadcastVitalUpdate(patientId, vitalRecord);
+      
+    } catch (error) {
+      console.error('バイタルサイン処理エラー:', error);
+      await this.handleVitalProcessingError(patientId, deviceId, error);
+    }
+  }
+  
+  async broadcastPatientUpdate(patientId, recordData, excludeProviderId) {
+    const authorizedProviders = await this.getAuthorizedProviders(patientId);
+    
+    for (const provider of authorizedProviders) {
+      if (provider.id === excludeProviderId) continue;
+      
+      try {
+        // アクセスレベルに応じたデータフィルタリング
+        const filteredData = this.filterMedicalDataByAccessLevel(
+          recordData, 
+          provider.accessLevel
+        );
+        
+        if (provider.websocket && provider.websocket.readyState === WebSocket.OPEN) {
+          await provider.websocket.send(JSON.stringify({
+            type: 'patient_update',
+            patientId,
+            data: filteredData,
+            timestamp: Date.now()
+          }));
+        }
+        
+      } catch (error) {
+        console.error('患者更新配信エラー:', error);
+        this.removeProviderConnection(provider.id);
+      }
+    }
+  }
+}`;
+
+  const paymentCode = `// リアルタイム決済システム
+class RealTimePaymentSystem {
+  constructor() {
+    this.pendingTransactions = new Map();
+    this.fraudDetection = new FraudDetectionEngine();
+    this.riskAssessment = new PaymentRiskEngine();
+    this.notificationService = new PaymentNotificationService();
+    this.auditTrail = new PaymentAuditTrail();
+  }
+  
+  async processPayment(paymentRequest) {
+    const transactionId = generateTransactionId();
+    
+    try {
+      // 取引記録開始
+      await this.auditTrail.startTransaction(transactionId, paymentRequest);
+      
+      // フロード検知
+      const fraudCheck = await this.fraudDetection.analyze(paymentRequest);
+      if (fraudCheck.risk === 'HIGH') {
+        throw new Error('潜在的な不正取引が検出されました');
+      }
+      
+      // リスクアセスメント
+      const riskScore = await this.riskAssessment.evaluate(paymentRequest);
+      
+      // 残高確認
+      const balanceCheck = await this.verifyAccountBalance(
+        paymentRequest.fromAccount,
+        paymentRequest.amount
+      );
+      
+      if (!balanceCheck.sufficient) {
+        throw new Error('残高不足です');
+      }
+      
+      // 取引実行
+      const transaction = {
+        id: transactionId,
+        ...paymentRequest,
+        status: 'PROCESSING',
+        riskScore,
+        timestamp: Date.now()
+      };
+      
+      this.pendingTransactions.set(transactionId, transaction);
+      
+      // リアルタイムステータス通知
+      await this.broadcastTransactionStatus(transaction);
+      
+      // 決済処理
+      const settlement = await this.settleTransaction(transaction);
+      
+      // 取引完了
+      transaction.status = 'COMPLETED';
+      transaction.settlementId = settlement.id;
+      transaction.completedAt = Date.now();
+      
+      await this.broadcastTransactionStatus(transaction);
+      
+      // 監査ログ完了
+      await this.auditTrail.completeTransaction(transactionId, transaction);
+      
+      return transaction;
+      
+    } catch (error) {
+      console.error('決済処理エラー:', error);
+      
+      // エラー状態更新
+      const failedTransaction = {
+        id: transactionId,
+        ...paymentRequest,
+        status: 'FAILED',
+        error: error.message,
+        timestamp: Date.now()
+      };
+      
+      await this.broadcastTransactionStatus(failedTransaction);
+      await this.auditTrail.failTransaction(transactionId, error);
+      
+      throw error;
+    } finally {
+      this.pendingTransactions.delete(transactionId);
+    }
+  }
+  
+  async broadcastTransactionStatus(transaction) {
+    const stakeholders = await this.getTransactionStakeholders(transaction);
+    
+    for (const stakeholder of stakeholders) {
+      try {
+        // ステークホルダーの種類に応じたデータフィルタリング
+        const filteredData = this.filterTransactionDataForStakeholder(
+          transaction,
+          stakeholder.role
+        );
+        
+        if (stakeholder.websocket && stakeholder.websocket.readyState === WebSocket.OPEN) {
+          await stakeholder.websocket.send(JSON.stringify({
+            type: 'transaction_update',
+            data: filteredData,
+            timestamp: Date.now()
+          }));
+        }
+        
+        // モバイル通知
+        if (stakeholder.pushNotificationEnabled) {
+          await this.notificationService.sendPushNotification(
+            stakeholder.userId,
+            this.createTransactionNotification(transaction)
+          );
+        }
+        
+      } catch (error) {
+        console.error('取引ステータス配信エラー:', error);
+        this.removeStakeholderConnection(stakeholder.userId);
+      }
+    }
+  }
+}`;
 </script>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Section title="金融取引システム" icon="concept">
 
-# 💰 金融・医療システム詳細
+<Card title="高頻度取引プラットフォーム" icon="info" accentColor="blue">
 
-## 1. 金融取引システム
+金融市場における高頻度取引システムは、マイクロ秒単位の低遅延でデータ処理と取引実行を行います。以下のコンポーネントで構成されます：
 
-### 高頻度取引プラットフォーム
+- **マーケットデータフィード**: 複数取引所からのリアルタイムデータ収集
+- **アルゴリズム取引**: 自動化された取引戦略の実行
+- **リスク管理**: リアルタイムリスク計算と制限
+- **約定システム**: 高速注文実行と清算
+- **監視ダッシュボード**: 取引状況のリアルタイム監視
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -77,40 +457,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant M as 市場データ
-    participant P as 価格エンジン
-    participant A as アルゴ取引
-    participant R as リスクエンジン
-    participant O as 注文システム
-    participant E as 取引所
-
-    Note over M,E: 目標遅延: 1ms以下
-    
-    M->>P: 価格更新 (10μs)
-    P->>P: 価格計算 (50μs)
-    P->>A: シグナル送信 (20μs)
-    
-    A->>A: 取引判定 (100μs)
-    A->>R: リスクチェック (50μs)
-    R->>R: ポジション確認 (30μs)
-    R->>O: 注文承認 (20μs)
-    
-    O->>E: 注文送信 (200μs)
-    E->>O: 約定通知 (300μs)
-    O->>A: 約定確認 (50μs)
-    
-    Note over M,E: 合計遅延: 830μs
-    
-    par WebSocket配信
-        P->>WebSocket: 価格配信 (並行)
-        O->>WebSocket: 約定配信 (並行)
-        WebSocket->>Trader: UI更新 (並行)
-    end
-    
-    Note over M,E: ハードウェア最適化・専用回線使用
-`} />
+<Mermaid chart={ultraLowLatencyTradingDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -217,7 +564,7 @@ graph LR
     style ANALYST fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" id="medical">
 <div class="prose max-w-none p-8">
 
 ## 3. 医療情報システム
@@ -286,41 +633,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant P as 患者
-    participant M as 医療機器
-    participant G as ゲートウェイ
-    participant W as WebSocketサーバー
-    participant N as 看護師ステーション
-    participant D as 医師
-
-    P->>M: バイタルサイン測定
-    M->>G: 生体データ送信 (1秒間隔)
-    G->>G: データ検証・正規化
-    
-    G->>W: リアルタイムデータ配信
-    W->>N: 監視画面更新
-    
-    alt 正常値の場合
-        Note over P,D: 通常監視継続
-    else 異常値検知
-        G->>W: 緊急アラート
-        W->>N: 即座通知
-        W->>D: 医師呼び出し
-        N->>W: アラート確認
-        D->>W: 対応指示
-        W->>N: 指示配信
-    else 重篤な異常
-        G->>W: 最高優先度アラート
-        W->>N: 緊急通知
-        W->>D: 緊急呼び出し
-        W->>Emergency: 緊急チーム召集
-    end
-    
-    Note over P,D: 継続的リアルタイム監視
-    Note over G,W: 患者安全最優先設計
-`} />
+<Mermaid chart={patientMonitoringDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -801,3 +1114,5 @@ class TelemedicineQualityManager {
 
 </div>
 </div>
+
+</Section>

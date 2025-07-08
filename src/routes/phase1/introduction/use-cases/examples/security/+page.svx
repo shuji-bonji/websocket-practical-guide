@@ -5,6 +5,7 @@ description: 'セキュリティ監視、侵入検知、監査ログシステム
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import { idsIpsThreatResponseDiagram, complianceMonitoringDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -72,38 +73,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant A as 攻撃者
-    participant N as ネットワーク
-    participant IDS as IDS/IPSセンサー
-    participant WS as WebSocketサーバー
-    participant SOC as SOCアナリスト
-    participant AUTO as 自動対応システム
-
-    A->>N: 悪意のあるトラフィック
-    N->>IDS: パケット監視
-    IDS->>IDS: シグネチャ照合・異常検知
-    
-    alt 既知の攻撃パターン
-        IDS->>AUTO: 即座ブロック指示
-        AUTO->>N: 自動ファイアウォール更新
-        IDS->>WS: 高優先度アラート
-        WS->>SOC: リアルタイム通知
-    else 未知の異常行動
-        IDS->>WS: 中優先度アラート
-        WS->>SOC: 分析要求通知
-        SOC->>IDS: 詳細調査指示
-        IDS->>WS: 調査結果配信
-        SOC->>AUTO: 対応策指示
-    end
-    
-    AUTO->>WS: 対応完了通知
-    WS->>SOC: 状況更新配信
-    
-    Note over A,AUTO: リアルタイム脅威対応
-    Note over IDS,SOC: 人間とAIの協調防御
-`} />
+<Mermaid chart={idsIpsThreatResponseDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -263,44 +233,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant S as システム操作
-    participant L as ログ収集
-    participant C as コンプライアンスエンジン
-    participant W as WebSocket配信
-    participant A as 監査担当者
-    participant R as 規制当局
-
-    S->>L: 操作ログ生成
-    L->>C: リアルタイムログ送信
-    C->>C: 規制要件チェック
-    
-    alt SOX法対応
-        C->>C: 財務関連操作検証
-        C->>W: SOX違反候補検知
-        W->>A: 即座アラート配信
-    else GDPR対応
-        C->>C: 個人データアクセス監視
-        C->>W: GDPR違反可能性通知
-        W->>A: プライバシー担当者通知
-    else PCI DSS対応
-        C->>C: カード情報取り扱い監視
-        C->>W: PCI違反検知
-        W->>A: セキュリティ担当者通知
-    end
-    
-    A->>C: 違反確認・調査
-    C->>W: 調査結果配信
-    W->>A: 対応状況更新
-    
-    alt 重大違反の場合
-        A->>R: 規制当局への報告
-        R->>A: 報告受理確認
-    end
-    
-    Note over S,R: 自動コンプライアンス監視
-`} />
+<Mermaid chart={complianceMonitoringDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">

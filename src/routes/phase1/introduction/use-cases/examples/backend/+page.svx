@@ -1,0 +1,50 @@
+---
+title: 'バックエンド統合システム詳細'
+description: 'マイクロサービス、API Gateway、分散アーキテクチャのWebSocket統合パターン'
+---
+
+<script>
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+</script>
+
+<Section title="バックエンド統合アーキテクチャ" icon="concept">
+
+<Card title="WebSocketバックエンドシステムの全体像" icon="info" accentColor="blue">
+
+バックエンドWebSocketシステムは、スケーラブルで高可用性を持つ分散アーキテクチャで構築されます：
+
+- **API Gateway**: WebSocket接続の統一エントリーポイント
+- **マイクロサービス**: 機能別に分離されたサービス群
+- **イベント駆動**: 非同期メッセージングによる疎結合
+- **分散ストレージ**: 高可用性データ管理
+- **ロードバランシング**: 負荷分散とフェイルオーバー
+
+</Card>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. API Gateway設計
+- **統一認証**: JWTトークンベースの認証
+- **レート制限**: 適応的な制限値設定
+- **ロードバランシング**: 健全性チェック連携
+
+### 2. マイクロサービス連携
+- **サービス発見**: 動的サービス登録
+- **回路ブレーカー**: 障害の連鎖防止
+- **分散トレーシング**: リクエストフロー追跡
+
+### 3. イベント駆動設計
+- **イベントストレージ**: 監査とリプレイ対応
+- **べき等性**: 重複イベント処理
+- **バックプレッシャー**: フロー制御
+
+この包括的なバックエンド統合アーキテクチャにより、エンタープライズレベルのWebSocketシステムを構築できます。
+
+</Card>
+
+</Section>
