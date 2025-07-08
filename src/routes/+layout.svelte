@@ -2,6 +2,8 @@
 	import '../app.css';
 	import Header from '$lib/components/layout/Header.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
+	import { highlightAll } from '$lib/utils/prism';
+	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -22,6 +24,27 @@
 			window.addEventListener('popstate', handleRouteChange);
 			return () => window.removeEventListener('popstate', handleRouteChange);
 		}
+	});
+
+	// Prism.js syntax highlighting initialization
+	onMount(() => {
+		// Highlight all code blocks on initial load
+		highlightAll();
+
+		// Re-highlight on route changes
+		const observer = new MutationObserver(() => {
+			setTimeout(() => highlightAll(), 100);
+		});
+
+		const mainContent = document.querySelector('main');
+		if (mainContent) {
+			observer.observe(mainContent, {
+				childList: true,
+				subtree: true
+			});
+		}
+
+		return () => observer.disconnect();
 	});
 </script>
 
