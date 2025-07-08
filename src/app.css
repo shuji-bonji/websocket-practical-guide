@@ -1,9 +1,9 @@
+/* Prism.js syntax highlighting */
+@import 'prismjs/themes/prism-tomorrow.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Prism.js syntax highlighting */
-@import 'prismjs/themes/prism-tomorrow.css';
 
 /* Mermaid図表の全体スタイル */
 .mermaid-container {
