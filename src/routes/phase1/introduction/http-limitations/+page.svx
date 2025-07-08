@@ -75,7 +75,7 @@ sequenceDiagram
     Note over C: ようやく新しいデータを受信
 `} />
 
-**問題点：**
+**問題点**
 - サーバーでデータが更新されても、クライアントに即座に伝えられない
 - ユーザーのアクション（ページ更新、リロード）を待つ必要がある
 - リアルタイム性が求められるアプリケーションには不適切
@@ -84,7 +84,8 @@ sequenceDiagram
 
 <Card title="HTTPの接続の都度確立によるオーバーヘッド" icon="warning" accentColor="red">
 
-HTTP/1.1では、各リクエストで接続確立と切断が繰り返されます。このオーバーヘッドを可視化してみましょう。
+HTTP/1.1では、各リクエストで接続確立と切断が繰り返されます。  
+このオーバーヘッドを可視化してみましょう。
 
 <Mermaid chart={`
 sequenceDiagram
@@ -120,7 +121,7 @@ sequenceDiagram
     C->>S: TCP ACK
 `} />
 
-**オーバーヘッドの内訳：**
+**オーバーヘッドの内訳**
 - **接続確立**：3-way handshake（3往復）
 - **データ転送**：リクエスト＋レスポンス（1往復）
 - **接続終了**：4-way handshake（4往復）
@@ -136,41 +137,12 @@ sequenceDiagram
 
 </Section>
 
-<Section title="通信パターン比較" icon="demo">
-
-<ConceptDiagram 
-  title="HTTP vs WebSocket 通信パターン比較"
-  type="timeline"
-/>
-
-</Section>
-
 <Section title="従来の解決手法とその問題点" icon="implementation">
 
 <Card title="ポーリング（Polling）" icon="warning" accentColor="orange">
 
 最も基本的なリアルタイム通信の模擬手法です。
 
-```javascript
-// 典型的なポーリング実装
-function startPolling() {
-  setInterval(async () => {
-    try {
-      const response = await fetch('/api/messages');
-      const newMessages = await response.json();
-      updateUI(newMessages);
-    } catch (error) {
-      console.error('ポーリングエラー:', error);
-    }
-  }, 5000); // 5秒ごとにリクエスト
-}
-```
-
-#### ポーリングの問題点。
-- **無駄なリクエスト**：データ更新がない場合でも定期的にリクエスト送信
-- **遅延の発生**：ポーリング間隔によりリアルタイム性が制限される
-- **サーバー負荷**：大量の不要なリクエストによるリソース消費
-- **ネットワーク帯域の浪費**：HTTPヘッダーの重複送信
 
 <Mermaid chart={`
 sequenceDiagram
@@ -187,11 +159,55 @@ sequenceDiagram
     Note over C,S: 最大5秒の遅延でユーザーに反映
 `} />
 
+
+#### ポーリングの問題点。
+- **無駄なリクエスト**：データ更新がない場合でも定期的にリクエスト送信
+- **遅延の発生**：ポーリング間隔によりリアルタイム性が制限される
+- **サーバー負荷**：大量の不要なリクエストによるリソース消費
+- **ネットワーク帯域の浪費**：HTTPヘッダーの重複送信
+
+```javascript
+// 典型的なポーリング実装
+function startPolling() {
+  setInterval(async () => {
+    try {
+      const response = await fetch('/api/messages');
+      const newMessages = await response.json();
+      updateUI(newMessages);
+    } catch (error) {
+      console.error('ポーリングエラー:', error);
+    }
+  }, 5000); // 5秒ごとにリクエスト
+}
+```
+
 </Card>
 
 <Card title="ロングポーリング（Long Polling）" icon="warning" accentColor="red">
 
 ポーリングの改良版として考案された手法。
+
+<Mermaid chart={`
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバー
+    
+    C->>S: GET /api/long-poll
+    Note over S: 接続保持・データ待機
+    
+    Note over S: データ更新発生
+    S-->>C: 200 OK (データ)
+    
+    Note left of C: 即座に再接続
+    C->>S: GET /api/long-poll
+    Note over S: 再び待機状態
+`} />
+
+
+#### ロングポーリングの制限。
+- **タイムアウト管理の複雑さ**：プロキシやファイアウォールによる接続切断
+- **スケーラビリティの問題**：サーバーでの同時接続数制限
+- **エラーハンドリングの複雑化**：接続状態の管理が困難
 
 ```javascript
 // ロングポーリング実装例
@@ -215,51 +231,11 @@ async function longPoll() {
 }
 ```
 
-#### ロングポーリングの制限。
-- **タイムアウト管理の複雑さ**：プロキシやファイアウォールによる接続切断
-- **スケーラビリティの問題**：サーバーでの同時接続数制限
-- **エラーハンドリングの複雑化**：接続状態の管理が困難
-
-<Mermaid chart={`
-sequenceDiagram
-    participant C as クライアント
-    participant S as サーバー
-    
-    C->>S: GET /api/long-poll
-    Note over S: 接続保持・データ待機
-    
-    Note over S: データ更新発生
-    S-->>C: 200 OK (データ)
-    
-    Note left of C: 即座に再接続
-    C->>S: GET /api/long-poll
-    Note over S: 再び待機状態
-`} />
-
 </Card>
 
 <Card title="Server-Sent Events (SSE)" icon="warning" accentColor="purple">
 
 HTTP上でのサーバープッシュ実現手法。
-
-```javascript
-// SSE実装例
-const eventSource = new EventSource('/api/events');
-
-eventSource.onmessage = function(event) {
-  const data = JSON.parse(event.data);
-  updateUI(data);
-};
-
-eventSource.onerror = function(event) {
-  console.error('SSEエラー:', event);
-};
-```
-
-#### SSEの制限。
-- **単方向通信**：サーバーからクライアントへのみ
-- **テキストデータのみ**：バイナリデータの送信が困難
-- **ブラウザの接続数制限**：同一ドメインへの同時接続数に制約
 
 <Mermaid chart={`
 sequenceDiagram
@@ -279,6 +255,130 @@ sequenceDiagram
     C->>S: POST /api/response (別接続)
     S-->>C: 200 OK
 `} />
+
+#### SSEの制限。
+- **単方向通信**：サーバーからクライアントへのみ
+- **テキストデータのみ**：バイナリデータの送信が困難
+- **ブラウザの接続数制限**：同一ドメインへの同時接続数に制約
+
+```javascript
+// SSE実装例
+const eventSource = new EventSource('/api/events');
+
+eventSource.onmessage = function(event) {
+  const data = JSON.parse(event.data);
+  updateUI(data);
+};
+
+eventSource.onerror = function(event) {
+  console.error('SSEエラー:', event);
+};
+```
+
+</Card>
+
+</Section>
+
+<Section title="通信パターン比較" icon="demo">
+
+<Card title="HTTP vs WebSocket 通信パターン比較" icon="compare" accentColor="blue">
+
+同じリアルタイムチャットアプリでの通信パターンを比較してみましょう。
+
+### HTTPポーリング方式
+
+<Mermaid chart={`
+sequenceDiagram
+    participant U as ユーザーA
+    participant C as クライアントA
+    participant S as サーバー
+    participant C2 as クライアントB
+    participant U2 as ユーザーB
+    
+    Note over C,C2: 定期ポーリング開始
+    
+    loop 5秒ごと
+        C->>S: GET /api/messages
+        S-->>C: 200 OK (空のレスポンス)
+        
+        C2->>S: GET /api/messages  
+        S-->>C2: 200 OK (空のレスポンス)
+    end
+    
+    U->>C: 「こんにちは！」入力
+    C->>S: POST /api/messages
+    S-->>C: 201 Created
+    
+    Note over S: メッセージが保存されたが、<br/>ユーザーBはまだ知らない
+    
+    Note over C2: 最大5秒待機...
+    
+    C2->>S: GET /api/messages
+    S-->>C2: 200 OK (新しいメッセージ)
+    C2->>U2: メッセージ表示
+    
+    Note over U2: ようやくメッセージを受信！
+`} />
+
+**HTTPポーリングの問題点：**
+- 最大5秒の遅延が発生
+- 無駄なリクエストが大量発生（空のレスポンスが多い）
+- サーバー負荷が高い（ユーザー数 × ポーリング頻度）
+- ネットワーク帯域の無駄使用（HTTPヘッダーの重複）
+
+### WebSocket方式
+
+<Mermaid chart={`
+sequenceDiagram
+    participant U as ユーザーA
+    participant C as クライアントA
+    participant S as サーバー
+    participant C2 as クライアントB
+    participant U2 as ユーザーB
+    
+    Note over C,C2: WebSocket接続確立
+    
+    C->>S: WebSocket Upgrade Request
+    S->>C: 101 Switching Protocols
+    Note over C,S: 持続接続確立
+    
+    C2->>S: WebSocket Upgrade Request
+    S->>C2: 101 Switching Protocols  
+    Note over C2,S: 持続接続確立
+    
+    Note over C,C2: ポーリング不要！いつでもメッセージ受信可能
+    
+    U->>C: 「こんにちは！」入力
+    C->>S: WebSocketメッセージ
+    
+    Note over S: 即座に他のクライアントに配信
+    S->>C2: WebSocketメッセージ
+    C2->>U2: メッセージ表示
+    
+    Note over U2: 即座にメッセージを受信！
+    
+    U2->>C2: 「ありがとう！」入力
+    C2->>S: WebSocketメッセージ
+    S->>C: WebSocketメッセージ
+    C->>U: メッセージ表示
+    
+    Note over U: 即座に返信を受信！
+`} />
+
+**WebSocketの優位性：**
+- **遅延なし**：メッセージの即時配信と受信
+- **効率的**：無駄なリクエストが発生しない
+- **低負荷**：サーバーは必要時のみ処理
+- **帯域節約**：HTTPヘッダーのオーバーヘッドがない
+
+### 数値で見る比較
+
+| 項目 | HTTPポーリング | WebSocket |
+|------|------------|----------|
+| メッセージ遅延 | 0～5秒 | \<50ms |
+| 1時間のリクエスト数 | 720回 | 0回（メッセージ数のみ） |
+| サーバー負荷 | 高（常時処理） | 低（イベント時のみ） |
+| 帯域使用量 | 高（HTTPヘッダー） | 低（フレームのみ） |
 
 </Card>
 
@@ -341,17 +441,6 @@ ws.send('Hello Server!');
 
 <Section title="実践デモ" icon="practice">
 
-### 体験してみよう
-
-同じデータ更新をHTTPポーリングとWebSocketで実装し、パフォーマンスの違いを体験してみましょう。
-
-<InteractiveDemo 
-  title="HTTP vs WebSocket パフォーマンス比較"
-  description="同じデータ更新をHTTPポーリングとWebSocketで実装し、レスポンス時間とリクエスト数を比較してみましょう。"
-  demoType="performance-comparison"
-  wsUrl="wss://echo.websocket.org"
-/>
-
 <Card title="デモで確認できること" icon="check" accentColor="green">
 
 1. **レスポンス時間の違い**：WebSocketの即応性 vs HTTPポーリングの遅延
@@ -368,6 +457,18 @@ ws.send('Hello Server!');
 5. **リアルタイム性確認**：データ更新の即時性の違いを体感
 
 </Card>
+
+### 体験してみよう！
+
+同じデータ更新をHTTPポーリングとWebSocketで実装し、パフォーマンスの違いを体験してみましょう。
+
+<InteractiveDemo 
+  title="HTTP vs WebSocket パフォーマンス比較"
+  description="同じデータ更新をHTTPポーリングとWebSocketで実装し、レスポンス時間とリクエスト数を比較してみましょう。"
+  demoType="performance-comparison"
+  wsUrl="wss://echo.websocket.org"
+/>
+
 
 </Section>
 

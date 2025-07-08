@@ -355,12 +355,17 @@
 						<div class="bg-white/10 rounded-lg p-4">
 							<div class="flex justify-between text-sm text-blue-100 mb-2">
 								<span>完了率</span>
-								<span>{Math.round((phase2Progress.completedLessons / phase2Progress.totalLessons) * 100)}%</span>
+								<span
+									>{Math.round(
+										(phase2Progress.completedLessons / phase2Progress.totalLessons) * 100
+									)}%</span
+								>
 							</div>
 							<div class="w-64 bg-white/20 rounded-full h-2">
 								<div
 									class="bg-white h-2 rounded-full transition-all duration-300"
-									style="width: {(phase2Progress.completedLessons / phase2Progress.totalLessons) * 100}%"
+									style="width: {(phase2Progress.completedLessons / phase2Progress.totalLessons) *
+										100}%"
 								></div>
 							</div>
 							<div class="text-xs text-blue-200 mt-1">
@@ -373,7 +378,11 @@
 				{#if nextLesson}
 					<div class="text-center">
 						<div class="text-blue-200 text-sm mb-2">次の推奨レッスン</div>
-						<a href={nextLesson.path} class="btn-primary bg-white text-blue-600 hover:bg-gray-50 w-full block" style="font-size: clamp(0.65rem, 2vw, 0.875rem); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+						<a
+							href={nextLesson.path}
+							class="btn-primary bg-white text-blue-600 hover:bg-gray-50 w-full block"
+							style="font-size: clamp(0.65rem, 2vw, 0.875rem); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+						>
 							{nextLesson.title}
 						</a>
 					</div>
