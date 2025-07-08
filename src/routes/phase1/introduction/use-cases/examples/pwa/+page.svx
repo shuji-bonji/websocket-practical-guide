@@ -1,0 +1,747 @@
+---
+title: 'PWA統合アーキテクチャ詳細'
+description: 'Progressive Web App統合、Service Worker連携、オフライン対応のWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import { pwaOfflineOnlineDiagram, syncConflictResolutionDiagram } from '$lib/charts/allCharts.ts';
+  
+  const serviceWorkerCode = `// Service Worker WebSocket管理
+class PWAWebSocketManager {
+  constructor() {
+    this.ws = null;
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 5;
+    this.messageQueue = [];
+  }
+  
+  connect() {
+    if (this.ws?.readyState === WebSocket.OPEN) return;
+    
+    this.ws = new WebSocket('wss://api.example.com/ws');
+    
+    this.ws.onopen = () => {
+      console.log('WebSocket connected in SW');
+      this.reconnectAttempts = 0;
+      this.flushMessageQueue();
+    };
+    
+    this.ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.handleMessage(data);
+    };
+    
+    this.ws.onclose = () => {
+      this.scheduleReconnect();
+    };
+  }
+  
+  handleMessage(data) {
+    // バックグラウンドでのメッセージ処理
+    if (data.type === 'notification') {
+      this.showNotification(data);
+    } else if (data.type === 'update') {
+      this.updateCache(data);
+    }
+  }
+  
+  showNotification(data) {
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icon-192x192.png',
+      badge: '/badge-72x72.png',
+      actions: data.actions || [],
+      tag: data.tag,
+      requireInteraction: data.urgent
+    });
+  }
+  
+  scheduleReconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('Max reconnect attempts reached');
+      return;
+    }
+    
+    const delay = Math.pow(2, this.reconnectAttempts) * 1000;
+    this.reconnectAttempts++;
+    
+    setTimeout(() => {
+      this.connect();
+    }, delay);
+  }
+  
+  flushMessageQueue() {
+    while (this.messageQueue.length > 0) {
+      const message = this.messageQueue.shift();
+      this.ws.send(JSON.stringify(message));
+    }
+  }
+}`;
+
+  const offlineDataCode = `// オフライン対応データ同期
+class OfflineDataSync {
+  constructor() {
+    this.db = new IDBDatabase('pwa-data');
+    this.syncQueue = new Map();
+    this.conflictResolver = new ConflictResolver();
+  }
+  
+  async saveData(key, data) {
+    // ローカル保存
+    await this.db.put('data', { key, data, timestamp: Date.now() });
+    
+    // オンライン時は即座同期
+    if (navigator.onLine) {
+      this.syncToServer(key, data);
+    } else {
+      // オフライン時はキューに追加
+      this.syncQueue.set(key, { data, timestamp: Date.now() });
+    }
+  }
+  
+  async syncToServer(key, data) {
+    try {
+      const response = await fetch('/api/sync', {
+        method: 'POST',
+        body: JSON.stringify({ key, data }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Sync failed');
+      }
+      
+      // 成功時はキューから削除
+      this.syncQueue.delete(key);
+    } catch (error) {
+      // 失敗時はキューに追加
+      this.syncQueue.set(key, { data, timestamp: Date.now() });
+    }
+  }
+  
+  async resolveConflicts() {
+    for (const [key, localData] of this.syncQueue) {
+      const serverData = await this.fetchServerData(key);
+      
+      if (serverData && serverData.timestamp > localData.timestamp) {
+        // サーバー側が新しい場合
+        const resolved = await this.conflictResolver.resolve(
+          localData.data, 
+          serverData.data
+        );
+        await this.saveData(key, resolved);
+      }
+    }
+  }
+  
+  async synchronizeOnReconnect() {
+    // オンライン復帰時の同期処理
+    for (const [key, queuedData] of this.syncQueue) {
+      try {
+        await this.syncToServer(key, queuedData.data);
+      } catch (error) {
+        console.error(\`Failed to sync \${key}:\`, error);
+      }
+    }
+  }
+}`;
+
+  const pushNotificationCode = `// プッシュ通知統合
+class PWAPushNotifications {
+  constructor() {
+    this.registration = null;
+    this.subscription = null;
+  }
+  
+  async initialize() {
+    // Service Worker登録
+    this.registration = await navigator.serviceWorker.register('/sw.js');
+    
+    // プッシュ通知権限要求
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      await this.subscribeToPush();
+    }
+  }
+  
+  async subscribeToPush() {
+    const vapidPublicKey = 'BEl62iUYgUivxIkv69yViEuiBIa40HI80Y...';
+    
+    this.subscription = await this.registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: this.urlBase64ToUint8Array(vapidPublicKey)
+    });
+    
+    // サーバーに登録情報送信
+    await this.sendSubscriptionToServer(this.subscription);
+  }
+  
+  async sendSubscriptionToServer(subscription) {
+    const ws = new WebSocket('wss://api.example.com/ws');
+    
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: 'subscribe',
+        subscription: subscription.toJSON()
+      }));
+    };
+  }
+  
+  urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+  
+  async handlePushEvent(event) {
+    const data = event.data?.json();
+    
+    if (data) {
+      await self.registration.showNotification(data.title, {
+        body: data.body,
+        icon: data.icon || '/icon-192x192.png',
+        badge: '/badge-72x72.png',
+        actions: data.actions,
+        tag: data.tag,
+        requireInteraction: data.requireInteraction
+      });
+    }
+  }
+}`;
+
+  const qualityControlCode = `// 適応的品質制御
+class AdaptiveQualityController {
+  constructor() {
+    this.connection = navigator.connection || navigator.mozConnection;
+    this.qualitySettings = {
+      '4g': { compression: 'medium', updateRate: 100 },
+      '3g': { compression: 'high', updateRate: 500 },
+      '2g': { compression: 'max', updateRate: 2000 }
+    };
+  }
+  
+  getOptimalSettings() {
+    const effectiveType = this.connection?.effectiveType || '4g';
+    const downlink = this.connection?.downlink || 10;
+    
+    let settings = this.qualitySettings[effectiveType];
+    
+    // 動的調整
+    if (downlink < 1) {
+      settings = { ...settings, compression: 'max', updateRate: 5000 };
+    } else if (downlink > 10) {
+      settings = { ...settings, compression: 'none', updateRate: 50 };
+    }
+    
+    return settings;
+  }
+  
+  adaptWebSocketSettings(ws) {
+    const settings = this.getOptimalSettings();
+    
+    // WebSocketサーバーに品質設定を通知
+    ws.send(JSON.stringify({
+      type: 'quality_settings',
+      compression: settings.compression,
+      updateRate: settings.updateRate
+    }));
+    
+    // 接続状態監視
+    this.connection?.addEventListener('change', () => {
+      const newSettings = this.getOptimalSettings();
+      ws.send(JSON.stringify({
+        type: 'quality_settings',
+        compression: newSettings.compression,
+        updateRate: newSettings.updateRate
+      }));
+    });
+  }
+  
+  monitorPerformance() {
+    // パフォーマンス監視
+    const observer = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      entries.forEach(entry => {
+        if (entry.name.includes('websocket')) {
+          this.adjustQualityBasedOnLatency(entry.duration);
+        }
+      });
+    });
+    
+    observer.observe({ entryTypes: ['measure'] });
+  }
+  
+  adjustQualityBasedOnLatency(latency) {
+    if (latency > 1000) {
+      // 高レイテンシ時は品質を下げる
+      this.adaptWebSocketSettings(this.ws);
+    }
+  }
+}`;
+</script>
+
+<Section title="PWA + WebSocket統合システム" icon="concept">
+
+<Card title="Service Worker連携アーキテクチャ" icon="info" accentColor="blue">
+
+PWAとWebSocketの統合により、オフライン対応のリアルタイムアプリケーションを構築できます：
+
+- **Service Worker**: バックグラウンドでの通信管理
+- **オフライン対応**: ローカルストレージとの同期
+- **プッシュ通知**: ユーザーエンゲージメントの向上
+- **キャッシュ戦略**: 効率的なデータ管理
+- **適応的配信**: ネットワーク状況に応じた最適化
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "PWAアプリケーション"
+        UI[📱 PWA UI] --> SW[🔄 Service Worker]
+        SW --> CACHE[💾 キャッシュストレージ]
+        SW --> IDB[📂 IndexedDB]
+        SW --> SYNC[🔄 Background Sync]
+    end
+    
+    subgraph "ネットワーク層"
+        UI -->|オンライン時| WS[WebSocketサーバー]
+        SW -->|バックグラウンド| WS
+        WS -->|プッシュ通知| PUSH[📲 Push Service]
+        PUSH --> SW
+    end
+    
+    subgraph "オフライン機能"
+        SW --> QUEUE[📤 送信キュー]
+        QUEUE --> RETRY[🔄 再送制御]
+        CACHE --> OFFLINE[📱 オフラインUI]
+        IDB --> HISTORY[📚 履歴管理]
+    end
+    
+    subgraph "データ同期"
+        SYNC --> CONFLICT[⚡ 競合解決]
+        CONFLICT --> MERGE[🔄 マージ処理]
+        MERGE --> WS
+    end
+    
+    subgraph "通知システム"
+        WS --> NOTIFY[🔔 Notification API]
+        NOTIFY --> BADGE[🔴 バッジ更新]
+        NOTIFY --> VIBRATE[📳 バイブレーション]
+    end
+    
+    style SW fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style SYNC fill:#fff3e0
+    style NOTIFY fill:#e3f2fd
+`} />
+
+<Card title="オフライン・オンライン状態管理" icon="flow" accentColor="green">
+
+PWAにおけるネットワーク状態の変化への対応フロー：
+
+</Card>
+
+<Mermaid chart={pwaOfflineOnlineDiagram} />
+
+</Section>
+
+<Section title="プッシュ通知統合システム" icon="concept">
+
+<Card title="マルチチャネル通知配信" icon="info" accentColor="purple">
+
+PWAとプッシュ通知の統合による包括的な通知システム：
+
+- **リアルタイム配信**: WebSocketによる即座の通知
+- **オフライン通知**: Service Workerによるプッシュ通知
+- **フォールバック**: メール・SMS による確実な配信
+- **パーソナライゼーション**: ユーザー設定に基づく配信制御
+- **分析・最適化**: 配信効果の測定と改善
+
+</Card>
+
+<Mermaid chart={`
+graph TD
+    subgraph "通知トリガー"
+        EVENT[📅 イベント発生] --> TRIGGER[⚡ 通知トリガー]
+        SCHED[⏰ スケジュール] --> TRIGGER
+        USER[👤 ユーザーアクション] --> TRIGGER
+    end
+    
+    subgraph "通知判定"
+        TRIGGER --> PREF[⚙️ 設定確認]
+        PREF --> ONLINE[🌐 オンライン状態確認]
+        ONLINE --> CHANNEL[📡 配信チャネル選択]
+    end
+    
+    subgraph "PWA配信"
+        CHANNEL -->|オンライン| WS[WebSocketサーバー]
+        WS --> PWA[📱 PWAアプリ]
+        PWA --> DISPLAY[📱 インアプリ通知]
+    end
+    
+    subgraph "プッシュ配信"
+        CHANNEL -->|オフライン| PUSH[📲 Push Service]
+        PUSH --> SW[🔄 Service Worker]
+        SW --> NOTIF[🔔 ブラウザ通知]
+        SW --> BADGE[🔴 アプリバッジ]
+    end
+    
+    subgraph "フォールバック"
+        CHANNEL -->|失敗時| EMAIL[📧 メール通知]
+        CHANNEL -->|失敗時| SMS[📱 SMS通知]
+    end
+    
+    subgraph "分析・最適化"
+        DISPLAY --> METRICS[📊 配信統計]
+        NOTIF --> METRICS
+        EMAIL --> METRICS
+        METRICS --> OPT[⚡ 配信最適化]
+    end
+    
+    style WS fill:#f3e5f5
+    style PUSH fill:#e8f5e8
+    style SW fill:#fff3e0
+    style METRICS fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="オフラインファースト設計" icon="concept">
+
+<Card title="データ同期戦略" icon="info" accentColor="indigo">
+
+オフラインファースト設計による堅牢なPWAアーキテクチャ：
+
+- **ローカルストレージ**: IndexedDBによる永続化
+- **同期エンジン**: 差分計算と競合解決
+- **結果整合性**: 最終的なデータ一貫性保証
+- **同期ポリシー**: 柔軟な同期戦略設定
+- **競合解決**: 自動・手動解決の選択
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "ローカルストレージ"
+        UI[📱 ユーザーUI] --> LOCAL[💾 ローカルDB]
+        LOCAL --> CACHE[⚡ キャッシュ層]
+        CACHE --> INDEX[📂 IndexedDB]
+    end
+    
+    subgraph "同期エンジン"
+        CACHE --> SYNC[🔄 同期エンジン]
+        SYNC --> DIFF[📊 差分計算]
+        DIFF --> CONFLICT[⚡ 競合検知]
+        CONFLICT --> RESOLVE[🔧 競合解決]
+    end
+    
+    subgraph "サーバー連携"
+        RESOLVE --> WS[WebSocketサーバー]
+        WS --> SERVER[🗄️ サーバーDB]
+        SERVER --> BACKUP[💾 バックアップ]
+    end
+    
+    subgraph "同期パターン"
+        WS --> REALTIME[⚡ リアルタイム同期]
+        WS --> BATCH[📦 バッチ同期]
+        WS --> EVENTUAL[🔄 結果整合性]
+    end
+    
+    subgraph "同期制御"
+        SYNC --> POLICY[📋 同期ポリシー]
+        POLICY --> PRIORITY[📊 優先度制御]
+        PRIORITY --> SCHEDULE[⏰ スケジューリング]
+    end
+    
+    style SYNC fill:#f3e5f5
+    style CONFLICT fill:#ffebee
+    style WS fill:#e8f5e8
+    style POLICY fill:#fff3e0
+`} />
+
+<Card title="競合解決メカニズム" icon="warning" accentColor="orange">
+
+データ同期時の競合を効率的に解決する仕組み：
+
+</Card>
+
+<Mermaid chart={syncConflictResolutionDiagram} />
+
+</Section>
+
+<Section title="PWAライフサイクル管理" icon="concept">
+
+<Card title="アプリケーション状態管理" icon="info" accentColor="teal">
+
+PWAライフサイクルに合わせたWebSocket接続管理：
+
+- **状態遷移管理**: アプリライフサイクルの追跡
+- **リソース最適化**: 状態に応じた処理制御
+- **接続維持**: 効率的なWebSocket管理
+- **バックグラウンド処理**: 最小限のリソース使用
+- **復帰時同期**: フォアグラウンド復帰時の最新化
+
+</Card>
+
+<Mermaid chart={`
+graph TD
+    subgraph "PWAライフサイクル"
+        INSTALL[📥 アプリインストール] --> ACTIVE[✅ アクティブ状態]
+        ACTIVE --> BACKGROUND[🔄 バックグラウンド]
+        BACKGROUND --> FOREGROUND[📱 フォアグラウンド]
+        FOREGROUND --> ACTIVE
+        ACTIVE --> SUSPEND[😴 サスペンド]
+        SUSPEND --> ACTIVE
+    end
+    
+    subgraph "WebSocket管理"
+        ACTIVE --> CONNECT[🔌 WebSocket接続]
+        BACKGROUND --> MAINTAIN[🔄 接続維持]
+        SUSPEND --> DISCONNECT[❌ 接続切断]
+        FOREGROUND --> RECONNECT[🔄 再接続]
+    end
+    
+    subgraph "データ管理"
+        CONNECT --> REALTIME[⚡ リアルタイム受信]
+        MAINTAIN --> HEARTBEAT[💓 ハートビート]
+        DISCONNECT --> QUEUE[📤 送信キュー]
+        RECONNECT --> SYNC[🔄 データ同期]
+    end
+    
+    subgraph "リソース最適化"
+        BACKGROUND --> THROTTLE[⏳ 処理間引き]
+        SUSPEND --> CLEANUP[🧹 リソース解放]
+        FOREGROUND --> RESUME[▶️ 処理再開]
+    end
+    
+    style CONNECT fill:#e8f5e8
+    style MAINTAIN fill:#fff3e0
+    style SYNC fill:#f3e5f5
+    style THROTTLE fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="パフォーマンス最適化" icon="concept">
+
+<Card title="キャッシュ戦略とデータ圧縮" icon="info" accentColor="amber">
+
+PWAパフォーマンス向上のための最適化戦略：
+
+- **多層キャッシュ**: メモリからCDNまでの階層化
+- **データ圧縮**: 帯域幅効率化技術
+- **適応配信**: ネットワーク状況に応じた調整
+- **プリフェッチ**: 予測的データ読み込み
+- **品質制御**: 動的な配信品質調整
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "キャッシュ階層"
+        L1[⚡ L1: メモリキャッシュ] --> L2[💾 L2: ブラウザキャッシュ]
+        L2 --> L3[📂 L3: IndexedDB]
+        L3 --> L4[🌐 L4: CDNキャッシュ]
+    end
+    
+    subgraph "データ圧縮"
+        WS[WebSocketサーバー] --> COMP[🗜️ 圧縮エンジン]
+        COMP --> GZIP[📦 Gzip圧縮]
+        COMP --> DELTA[🔄 差分圧縮]
+        COMP --> BINARY[💾 バイナリ形式]
+    end
+    
+    subgraph "配信最適化"
+        COMP --> ADAPTIVE[📊 適応配信]
+        ADAPTIVE --> BANDWIDTH[📡 帯域幅検知]
+        BANDWIDTH --> QUALITY[🎛️ 品質調整]
+        QUALITY --> PRIORITY[📊 優先度制御]
+    end
+    
+    subgraph "プリロード戦略"
+        L1 --> PREFETCH[🔮 プリフェッチ]
+        PREFETCH --> PREDICT[🤖 予測読み込み]
+        PREDICT --> CRITICAL[🎯 クリティカルパス]
+    end
+    
+    style COMP fill:#f3e5f5
+    style ADAPTIVE fill:#e8f5e8
+    style PREFETCH fill:#fff3e0
+    style CRITICAL fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="セキュリティ実装" icon="concept">
+
+<Card title="PWAセキュリティアーキテクチャ" icon="security" accentColor="red">
+
+PWAアプリケーションの包括的なセキュリティ対策：
+
+- **認証・認可**: JWTトークンベース認証
+- **通信セキュリティ**: TLS暗号化通信
+- **データ保護**: ローカルデータの暗号化
+- **完全性検証**: データ改ざん検出
+- **セキュリティ監視**: 異常アクセスの検出
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "認証・認可"
+        USER[👤 ユーザー] --> AUTH[🔐 認証システム]
+        AUTH --> JWT[🎫 JWTトークン]
+        JWT --> REFRESH[🔄 リフレッシュ]
+    end
+    
+    subgraph "通信セキュリティ"
+        JWT --> WSS[🔒 WSS (WebSocket Secure)]
+        WSS --> TLS[🛡️ TLS 1.3]
+        TLS --> CERT[📜 証明書検証]
+    end
+    
+    subgraph "データ保護"
+        WSS --> ENCRYPT[🔐 メッセージ暗号化]
+        ENCRYPT --> SIGN[✍️ デジタル署名]
+        SIGN --> INTEGRITY[🔍 完全性検証]
+    end
+    
+    subgraph "ローカルセキュリティ"
+        ENCRYPT --> STORAGE[💾 セキュアストレージ]
+        STORAGE --> KEYCHAIN[🔑 キーチェーン]
+        KEYCHAIN --> SANDBOX[📦 サンドボックス]
+    end
+    
+    subgraph "監査・監視"
+        INTEGRITY --> LOG[📋 セキュリティログ]
+        LOG --> SIEM[🚨 SIEM連携]
+        SIEM --> ALERT[🔔 セキュリティアラート]
+    end
+    
+    style AUTH fill:#f3e5f5
+    style WSS fill:#e8f5e8
+    style ENCRYPT fill:#fff3e0
+    style LOG fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="実装例" icon="code">
+
+<UseCaseExample
+  title="Service Worker WebSocket管理"
+  category="PWA Service Worker"
+  description="Service Worker内でWebSocket接続を管理し、バックグラウンドでの通信とプッシュ通知を実現します。"
+  code={serviceWorkerCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "バックグラウンド接続管理",
+    "自動再接続機能",
+    "メッセージキューイング",
+    "プッシュ通知配信",
+    "指数バックオフリトライ",
+    "キャッシュ更新"
+  ]}
+/>
+
+<UseCaseExample
+  title="オフライン対応データ同期"
+  category="Offline Data Sync"
+  description="オフライン時のデータ保存と、オンライン復帰時の同期処理を実装します。競合解決機能も含みます。"
+  code={offlineDataCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "IndexedDBローカル保存",
+    "オンライン状態検知",
+    "同期キューイング",
+    "競合解決メカニズム",
+    "タイムスタンプ管理",
+    "自動再同期"
+  ]}
+/>
+
+<UseCaseExample
+  title="プッシュ通知統合"
+  category="Push Notifications"
+  description="VAPID認証を使用したプッシュ通知システムです。WebSocketとの統合配信を実現します。"
+  code={pushNotificationCode}
+  language="javascript"
+  complexity="intermediate"
+  features={[
+    "VAPID認証対応",
+    "Service Worker連携",
+    "通知権限管理",
+    "WebSocket統合配信",
+    "Base64変換ユーティリティ",
+    "プッシュイベント処理"
+  ]}
+/>
+
+<UseCaseExample
+  title="適応的品質制御"
+  category="Adaptive Quality Control"
+  description="ネットワーク状況に応じて動的に通信品質を調整するシステムです。パフォーマンス監視機能付きです。"
+  code={qualityControlCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "ネットワーク状況検知",
+    "動的品質調整",
+    "パフォーマンス監視",
+    "レイテンシベース調整",
+    "Connection API活用",
+    "WebSocket設定最適化"
+  ]}
+/>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. Service Worker設計
+- **独立性**: メインスレッドからの独立動作
+- **永続化**: アプリ終了後も継続動作
+- **効率性**: 最小限のリソース使用
+
+### 2. オフライン対応
+- **データファースト**: ローカルデータを優先
+- **段階的同期**: 重要度に応じた同期順序
+- **競合解決**: 明確な解決ポリシー
+
+### 3. プッシュ通知最適化
+- **タイミング**: ユーザーエンゲージメント最適化
+- **フォールバック**: 複数チャネルでの確実配信
+- **パーソナライゼーション**: ユーザー設定の尊重
+
+### 4. パフォーマンス考慮事項
+- **適応的配信**: ネットワーク状況への対応
+- **キャッシュ戦略**: 効率的なデータアクセス
+- **バッテリー効率**: モバイル端末への配慮
+
+### 5. セキュリティ実装
+- **HTTPS必須**: PWAの基本要件
+- **トークン管理**: 安全な認証情報保存
+- **データ暗号化**: ローカルデータの保護
+
+この包括的なPWA統合アーキテクチャにより、オフライン対応かつ高性能なWebSocketアプリケーションを構築できます。
+
+</Card>
+
+</Section>

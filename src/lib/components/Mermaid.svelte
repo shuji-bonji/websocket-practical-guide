@@ -76,11 +76,6 @@
       const { svg } = await mermaid.render(id, chart);
       svgContent = svg;
       errorMessage = '';
-
-      // DOM更新後にスタイルを修正
-      setTimeout(() => {
-        fixMindmapStyles();
-      }, 100);
     } catch (error) {
       console.error('Mermaid rendering error:', error);
       svgContent = '';
@@ -103,11 +98,6 @@
       const { svg } = await mermaid.render(`${id}-${Date.now()}`, chart);
       svgContent = svg;
       errorMessage = '';
-
-      // // DOM更新後にスタイルを修正
-      setTimeout(() => {
-        fixMindmapStyles();
-      }, 100);
     } catch (error) {
       console.error('Mermaid rendering error:', error);
       svgContent = '';
@@ -115,53 +105,6 @@
     } finally {
       isLoading = false;
     }
-  }
-
-  // Mindmapのスタイルを直接修正する関数
-  function fixMindmapStyles() {
-    if (!isBrowser) return;
-
-    const container = document.querySelector('.mermaid-container');
-    if (!container) return;
-
-    const svg = container.querySelector('svg');
-    if (!svg) return;
-
-    // 既存のstyleタグを削除して再作成
-    const existingStyle = svg.querySelector('style');
-    if (existingStyle) {
-      existingStyle.remove();
-    }
-
-    // 新しいスタイルを追加
-    const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-    style.textContent = `
-      text {
-        fill: #ffffff !important;
-        font-weight: 400 !important;
-      }
-      .section-0 text,
-      .section-1 text,
-      .section-2 text,
-      .section-3 text,
-      .section-4 text,
-      .section-5 text,
-      .section-6 text,
-      .section-7 text,
-      .section-8 text,
-      .section-9 text,
-      .section-10 text,
-      .section-root text {
-        fill: #ffffff !important;
-        font-weight: 400 !important;
-      }
-      .mindmap-node text {
-        fill: #ffffff !important;
-        font-weight: 400 !important;
-      }
-    `;
-
-    svg.appendChild(style);
   }
 </script>
 
@@ -190,6 +133,16 @@
     background-color: #1f2937;
     border-radius: 8px;
     padding: 16px;
+  }
+
+  /* Mindmapのフォントウェイトのみを調整（色は触らない） */
+  :global(.mermaid-container .mindmap-node text) {
+    font-weight: 400 !important;
+  }
+
+  /* ルートノードは少し太めに */
+  :global(.mermaid-container .section-root text) {
+    font-weight: 500 !important;
   }
 
   :global(.mermaid-container .node rect) {

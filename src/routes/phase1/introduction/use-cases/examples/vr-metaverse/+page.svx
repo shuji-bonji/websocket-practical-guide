@@ -5,6 +5,7 @@ description: '仮想現実、拡張現実、メタバース空間のWebSocketア
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import { vrSpatialPartitioningDiagram, nftTradingDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -77,37 +78,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant U1 as ユーザー1
-    participant U2 as ユーザー2
-    participant S1 as サーバー1(区画A)
-    participant S2 as サーバー2(区画B)
-    participant LB as 負荷分散器
-    participant SM as 状態管理
-
-    Note over U1,SM: 空間移動シナリオ
-    
-    U1->>S1: 位置更新 (区画A内)
-    S1->>SM: 状態同期
-    S1->>U2: 近接ユーザーに配信
-    
-    U1->>S1: 区画境界接近
-    S1->>LB: 区画移動準備
-    LB->>S2: ハンドオーバー準備
-    
-    U1->>S1: 区画B移動
-    S1->>S2: ユーザー状態転送
-    S2->>U1: 接続切り替え完了
-    S1->>S2: 履歴データ転送
-    
-    U1->>S2: 新区画での位置更新
-    S2->>SM: 状態同期
-    S2->>U2: 区画間ユーザー配信
-    
-    Note over U1,SM: シームレス区画移動完了
-    Note over S1,S2: 負荷分散による スケーラビリティ確保
-`} />
+<Mermaid chart={vrSpatialPartitioningDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -260,7 +231,7 @@ graph TB
     style WS fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" id="metaverse">
 <div class="prose max-w-none p-8">
 
 ## 4. メタバース経済システム
@@ -321,39 +292,7 @@ graph TD
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant B as 買い手
-    participant M as マーケットプレイス
-    participant S as スマートコントラクト
-    participant E as エスクロー
-    participant Se as 売り手
-    participant W as WebSocket配信
-
-    B->>M: NFT購入オファー
-    M->>S: スマートコントラクト実行
-    S->>E: 資金エスクロー
-    E->>W: 取引開始通知
-    W->>Se: 売り手に通知
-    
-    Se->>M: オファー受諾
-    M->>S: 所有権移転実行
-    S->>S: NFT移転確認
-    S->>E: 資金リリース指示
-    
-    E->>Se: 売り手に資金送金
-    E->>M: ロイヤリティ分配
-    M->>W: 取引完了配信
-    
-    par リアルタイム更新
-        W->>B: 所有権取得通知
-        W->>Se: 売却完了通知
-        W->>Market: 市場価格更新
-    end
-    
-    Note over B,W: ブロックチェーン透明性
-    Note over S,E: スマートコントラクト自動実行
-`} />
+<Mermaid chart={nftTradingDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">

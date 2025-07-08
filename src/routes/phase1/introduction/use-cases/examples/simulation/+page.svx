@@ -5,6 +5,7 @@ description: '物理シミュレーション、ゲームエンジン、科学計
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import { distributedComputingSimulationDiagram, molecularDynamicsSimulationDiagram, wasmHighSpeedComputationDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -73,41 +74,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant C as クライアント
-    participant M as マスターサーバー
-    participant W1 as ワーカー1
-    participant W2 as ワーカー2
-    participant W3 as ワーカー3
-
-    C->>M: シミュレーション開始要求
-    M->>M: 計算タスク分割
-    
-    par 並列計算
-        M->>W1: 物理オブジェクト群A
-        M->>W2: 物理オブジェクト群B
-        M->>W3: 物理オブジェクト群C
-    end
-    
-    par 計算実行
-        W1->>W1: 物理演算実行
-        W2->>W2: 物理演算実行
-        W3->>W3: 物理演算実行
-    end
-    
-    par 結果送信
-        W1->>M: 計算結果A
-        W2->>M: 計算結果B
-        W3->>M: 計算結果C
-    end
-    
-    M->>M: 結果統合・整合性チェック
-    M->>C: 統合結果配信
-    C->>C: 描画・表示更新
-    
-    Note over C,W3: 60FPS目標での高速処理
-`} />
+<Mermaid chart={distributedComputingSimulationDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -270,40 +237,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant UI as ユーザーUI
-    participant WS as WebSocketサーバー
-    participant MD as MD計算エンジン
-    participant GPU as GPU並列処理
-    participant VIS as 可視化エンジン
-
-    UI->>WS: 分子系パラメータ設定
-    WS->>MD: 初期分子配置生成
-    MD->>GPU: 力場計算開始
-    
-    loop 分子動力学ステップ
-        GPU->>GPU: 分子間相互作用計算
-        GPU->>GPU: 運動方程式積分
-        GPU->>MD: 座標・速度更新
-        
-        alt 可視化フレーム
-            MD->>WS: 分子座標データ
-            WS->>VIS: リアルタイム描画
-            VIS->>UI: 分子構造表示更新
-        end
-        
-        alt 解析フレーム
-            MD->>WS: 熱力学量計算
-            WS->>UI: 温度・圧力・エネルギー更新
-        end
-    end
-    
-    MD->>WS: シミュレーション完了
-    WS->>UI: 最終結果・軌跡データ
-    
-    Note over UI,VIS: 原子レベルの動的挙動観察
-`} />
+<Mermaid chart={molecularDynamicsSimulationDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -415,34 +349,7 @@ graph LR
 </div>
 </div>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant JS as JavaScript
-    participant WASM as WebAssembly
-    participant MEM as 線形メモリ
-    participant WS as WebSocket
-
-    JS->>WASM: 計算パラメータ転送
-    WASM->>MEM: メモリ領域確保
-    MEM->>WASM: データ配置完了
-    
-    loop 高速計算ループ
-        WASM->>WASM: ネイティブ速度計算
-        WASM->>MEM: 中間結果書き込み
-        
-        alt 進捗報告
-            WASM->>JS: 計算進捗通知
-            JS->>WS: プログレス配信
-        end
-    end
-    
-    WASM->>MEM: 最終結果書き込み
-    MEM->>JS: 結果データ取得
-    JS->>WS: 計算完了・結果配信
-    
-    Note over JS,WS: C/C++/Rustレベルの高速計算
-    Note over MEM: ゼロコピーデータ転送
-`} />
+<Mermaid chart={wasmHighSpeedComputationDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">

@@ -186,130 +186,167 @@
     {
       title: 'Phase 2: フレーム・プロトコル (6. フレーム・プロトコル)',
       items: [
-        { href: '/phase2/frames-protocols', label: 'セクション概要', icon: 'book' },
+        {
+          href: '/phase2/frames-protocols',
+          label: 'セクション概要',
+          icon: 'book',
+          status: 'coming-soon'
+        },
         {
           href: '/phase2/frames-protocols/frame-structure',
           label: '6.1 WebSocketフレーム構造',
-          lessonId: 'phase2-frames-protocols-frame-structure'
+          lessonId: 'phase2-frames-protocols-frame-structure',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/frames-protocols/binary-data',
           label: '6.2 バイナリデータ送信',
-          lessonId: 'phase2-frames-protocols-binary-data'
+          lessonId: 'phase2-frames-protocols-binary-data',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/frames-protocols/subprotocols',
           label: '6.3 WebSocketサブプロトコルの設計',
-          lessonId: 'phase2-frames-protocols-subprotocols'
+          lessonId: 'phase2-frames-protocols-subprotocols',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/frames-protocols/graphql-ws',
           label: '6.4 GraphQL WebSocket統合',
-          lessonId: 'phase2-frames-protocols-graphql-ws'
+          lessonId: 'phase2-frames-protocols-graphql-ws',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/frames-protocols/mqtt',
           label: '6.5 MQTT over WebSocket',
-          lessonId: 'phase2-frames-protocols-mqtt'
+          lessonId: 'phase2-frames-protocols-mqtt',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/frames-protocols/custom',
           label: '6.6 カスタムプロトコル設計',
-          lessonId: 'phase2-frames-protocols-custom'
+          lessonId: 'phase2-frames-protocols-custom',
+          status: 'coming-soon'
         }
       ]
     },
     {
       title: 'Phase 2: 高度なトピック (7. 高度なトピック)',
       items: [
-        { href: '/phase2/advanced-topics', label: 'セクション概要', icon: 'book' },
+        {
+          href: '/phase2/advanced-topics',
+          label: 'セクション概要',
+          icon: 'book',
+          status: 'coming-soon'
+        },
         {
           href: '/phase2/advanced-topics/security',
           label: '7.1 セキュリティ実装',
-          lessonId: 'phase2-advanced-topics-security'
+          lessonId: 'phase2-advanced-topics-security',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/advanced-topics/pwa-integration',
           label: '7.2 PWAとWebSocketの統合',
-          lessonId: 'phase2-advanced-topics-pwa-integration'
+          lessonId: 'phase2-advanced-topics-pwa-integration',
+          status: 'coming-soon'
         },
         {
           href: '/phase2/advanced-topics/scalability',
           label: '7.3 スケーラビリティと負荷対策',
-          lessonId: 'phase2-advanced-topics-scalability'
+          lessonId: 'phase2-advanced-topics-scalability',
+          status: 'coming-soon'
         }
       ]
     },
     {
       title: 'Phase 3: テスト手法 (8. テスト手法)',
       items: [
-        { href: '/phase3/testing', label: 'セクション概要', icon: 'book' },
+        { href: '/phase3/testing', label: 'セクション概要', icon: 'book', status: 'coming-soon' },
         {
           href: '/phase3/testing/client-testing',
           label: '8.1 クライアント側テスト',
-          lessonId: 'phase3-testing-client-testing'
+          lessonId: 'phase3-testing-client-testing',
+          status: 'coming-soon'
         },
         {
           href: '/phase3/testing/server-testing',
           label: '8.2 サーバー側テスト',
-          lessonId: 'phase3-testing-server-testing'
+          lessonId: 'phase3-testing-server-testing',
+          status: 'coming-soon'
         },
         {
           href: '/phase3/testing/e2e-testing',
           label: '8.3 E2Eテスト',
-          lessonId: 'phase3-testing-e2e-testing'
+          lessonId: 'phase3-testing-e2e-testing',
+          status: 'coming-soon'
         }
       ]
     },
     {
       title: 'Phase 3: 技術比較 (9. 技術比較)',
       items: [
-        { href: '/phase3/comparison', label: 'セクション概要', icon: 'book' },
+        {
+          href: '/phase3/comparison',
+          label: 'セクション概要',
+          icon: 'book',
+          status: 'coming-soon'
+        },
         {
           href: '/phase3/comparison/alternatives',
           label: '9.1 代替技術の比較',
-          lessonId: 'phase3-comparison-alternatives'
+          lessonId: 'phase3-comparison-alternatives',
+          status: 'coming-soon'
         },
         {
           href: '/phase3/comparison/selection-criteria',
           label: '9.2 適用判断基準',
-          lessonId: 'phase3-comparison-selection-criteria'
+          lessonId: 'phase3-comparison-selection-criteria',
+          status: 'coming-soon'
         }
       ]
     },
     {
       title: 'Phase 4: 実践プロジェクト (10. 実践プロジェクト)',
       items: [
-        { href: '/phase4/projects', label: 'セクション概要', icon: 'book' },
+        { href: '/phase4/projects', label: 'セクション概要', icon: 'book', status: 'coming-soon' },
         {
           href: '/phase4/projects/chat-app',
           label: '10.1 PWA対応リアルタイムチャット',
-          lessonId: 'phase4-projects-chat-app'
+          lessonId: 'phase4-projects-chat-app',
+          status: 'coming-soon'
         },
         {
           href: '/phase4/projects/collaborative-editor',
           label: '10.2 リアルタイム共同編集システム',
-          lessonId: 'phase4-projects-collaborative-editor'
+          lessonId: 'phase4-projects-collaborative-editor',
+          status: 'coming-soon'
         }
       ]
     },
     {
       title: 'Phase 4: Socket.IO (オプション)',
       items: [
-        { href: '/phase4/socket-io', label: 'セクション概要', icon: 'book' },
+        { href: '/phase4/socket-io', label: 'セクション概要', icon: 'book', status: 'coming-soon' },
         {
           href: '/phase4/socket-io/overview',
           label: 'Socket.IO概要と活用場面',
-          lessonId: 'phase4-socket-io-overview'
+          lessonId: 'phase4-socket-io-overview',
+          status: 'coming-soon'
         }
       ]
     },
     {
       title: '応用編',
       items: [
-        { href: '/socket-io', label: 'Socket.IO（オプション）', icon: 'extension' },
-        { href: '/resources', label: '学習リソース', icon: 'library' },
-        { href: '/tools', label: 'デバッグツール', icon: 'tools' }
+        {
+          href: '/socket-io',
+          label: 'Socket.IO（オプション）',
+          icon: 'extension',
+          status: 'coming-soon'
+        },
+        { href: '/resources', label: '学習リソース', icon: 'library', status: 'coming-soon' },
+        { href: '/tools', label: 'デバッグツール', icon: 'tools', status: 'coming-soon' }
       ]
     }
   ];

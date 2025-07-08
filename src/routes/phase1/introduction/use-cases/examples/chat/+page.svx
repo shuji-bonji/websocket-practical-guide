@@ -1,0 +1,369 @@
+---
+title: 'リアルタイム通信システム詳細'
+description: 'チャット、メッセージング、音声・ビデオ通話システムのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import { chatSequenceDiagram, qualityControlDiagram, basicArchitectureDiagram, groupChatRoomDiagram, webrtcHybridDiagram, horizontalScalingDiagram } from '$lib/charts/allCharts.ts';
+  
+  const basicChatCode = `// 基本的なチャットクライアント実装
+class ChatClient {
+  constructor(serverUrl, roomId) {
+    this.serverUrl = serverUrl;
+    this.roomId = roomId;
+    this.socket = null;
+    this.messageHandlers = new Map();
+  }
+  
+  connect() {
+    this.socket = new WebSocket(this.serverUrl);
+    
+    this.socket.onopen = () => {
+      console.log('WebSocket接続が確立されました');
+      this.joinRoom(this.roomId);
+    };
+    
+    this.socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      this.handleMessage(message);
+    };
+    
+    this.socket.onerror = (error) => {
+      console.error('WebSocketエラー:', error);
+    };
+    
+    this.socket.onclose = () => {
+      console.log('WebSocket接続が閉じられました');
+      this.reconnect();
+    };
+  }
+  
+  sendMessage(text) {
+    if (this.socket.readyState === WebSocket.OPEN) {
+      const message = {
+        type: 'chat_message',
+        roomId: this.roomId,
+        text: text,
+        timestamp: Date.now()
+      };
+      
+      this.socket.send(JSON.stringify(message));
+    }
+  }
+  
+  joinRoom(roomId) {
+    const joinMessage = {
+      type: 'join_room',
+      roomId: roomId
+    };
+    
+    this.socket.send(JSON.stringify(joinMessage));
+  }
+  
+  handleMessage(message) {
+    switch (message.type) {
+      case 'chat_message':
+        this.displayMessage(message);
+        break;
+      case 'user_joined':
+        this.showUserJoined(message.userId);
+        break;
+      case 'user_left':
+        this.showUserLeft(message.userId);
+        break;
+    }
+  }
+  
+  displayMessage(message) {
+    const messageElement = document.createElement('div');
+    messageElement.innerHTML = \`
+      <div class="message">
+        <strong>\${message.userId}:</strong>
+        <span>\${message.text}</span>
+        <time>\${new Date(message.timestamp).toLocaleTimeString()}</time>
+      </div>
+    \`;
+    document.getElementById('messages').appendChild(messageElement);
+  }
+  
+  reconnect() {
+    setTimeout(() => {
+      console.log('再接続を試行します...');
+      this.connect();
+    }, 3000);
+  }
+}
+
+// 使用例
+const chat = new ChatClient('ws://localhost:8080', 'room-123');
+chat.connect();`;
+
+  const groupChatCode = `// グループチャット管理システム
+class GroupChatManager {
+  constructor() {
+    this.rooms = new Map();
+    this.userRooms = new Map();
+  }
+  
+  createRoom(roomId, options = {}) {
+    const room = {
+      id: roomId,
+      name: options.name || roomId,
+      users: new Set(),
+      messages: [],
+      maxUsers: options.maxUsers || 100,
+      isPrivate: options.isPrivate || false,
+      createdAt: Date.now()
+    };
+    
+    this.rooms.set(roomId, room);
+    return room;
+  }
+  
+  joinRoom(userId, roomId, socket) {
+    if (!this.rooms.has(roomId)) {
+      this.createRoom(roomId);
+    }
+    
+    const room = this.rooms.get(roomId);
+    
+    if (room.users.size >= room.maxUsers) {
+      throw new Error('ルームが満員です');
+    }
+    
+    room.users.add(userId);
+    
+    if (!this.userRooms.has(userId)) {
+      this.userRooms.set(userId, new Set());
+    }
+    this.userRooms.get(userId).add(roomId);
+    
+    // 他のユーザーに参加通知
+    this.broadcastToRoom(roomId, {
+      type: 'user_joined',
+      userId: userId,
+      timestamp: Date.now()
+    }, userId);
+    
+    // 現在のユーザーに既存メッセージを送信
+    const recentMessages = room.messages.slice(-50);
+    socket.send(JSON.stringify({
+      type: 'room_history',
+      roomId: roomId,
+      messages: recentMessages
+    }));
+  }
+  
+  leaveRoom(userId, roomId) {
+    const room = this.rooms.get(roomId);
+    if (room) {
+      room.users.delete(userId);
+      
+      this.broadcastToRoom(roomId, {
+        type: 'user_left',
+        userId: userId,
+        timestamp: Date.now()
+      });
+      
+      // 空のルームを削除
+      if (room.users.size === 0) {
+        this.rooms.delete(roomId);
+      }
+    }
+    
+    if (this.userRooms.has(userId)) {
+      this.userRooms.get(userId).delete(roomId);
+    }
+  }
+  
+  broadcastToRoom(roomId, message, excludeUserId = null) {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    
+    room.users.forEach(userId => {
+      if (userId !== excludeUserId) {
+        const socket = this.getUserSocket(userId);
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify(message));
+        }
+      }
+    });
+  }
+  
+  handleMessage(userId, roomId, message) {
+    const room = this.rooms.get(roomId);
+    if (!room || !room.users.has(userId)) {
+      return;
+    }
+    
+    const chatMessage = {
+      type: 'chat_message',
+      userId: userId,
+      roomId: roomId,
+      text: message.text,
+      timestamp: Date.now(),
+      messageId: this.generateMessageId()
+    };
+    
+    // メッセージを保存
+    room.messages.push(chatMessage);
+    
+    // 最新1000件のみ保持
+    if (room.messages.length > 1000) {
+      room.messages = room.messages.slice(-1000);
+    }
+    
+    // ルームの全ユーザーに配信
+    this.broadcastToRoom(roomId, chatMessage);
+  }
+  
+  generateMessageId() {
+    return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  }
+  
+  getUserSocket(userId) {
+    // 実際の実装では、ユーザーIDとWebSocketの対応を管理
+    return this.userSockets.get(userId);
+  }
+}`;
+</script>
+
+<Section title="基本アーキテクチャ" icon="concept">
+
+<Card title="リアルタイム通信システムの全体像" icon="info" accentColor="blue">
+
+チャット・メッセージングシステムは、WebSocketを活用したリアルタイム通信の代表的な実装例です。以下の要素から構成されます：
+
+- **WebSocketゲートウェイ**: 複数のクライアント接続を管理
+- **メッセージルーター**: メッセージの配信先を決定
+- **ルーム管理**: グループチャットの管理
+- **認証・認可**: ユーザー権限の管理
+- **通知エンジン**: オフライン通知の処理
+
+</Card>
+
+<Mermaid chart={basicArchitectureDiagram} />
+
+</Section>
+
+<Section title="実装例" icon="code">
+
+<UseCaseExample
+  title="基本的なチャットクライアント"
+  category="WebSocket Client"
+  description="WebSocketを使用したシンプルなチャットクライアントの実装です。接続管理、メッセージ送受信、自動再接続機能を含みます。"
+  code={basicChatCode}
+  language="javascript"
+  complexity="beginner"
+  features={[
+    "WebSocket接続の確立と管理",
+    "メッセージの送受信",
+    "自動再接続機能",
+    "ルーム参加機能",
+    "エラーハンドリング",
+    "タイムスタンプ表示"
+  ]}
+/>
+
+<UseCaseExample
+  title="グループチャット管理システム"
+  category="WebSocket Server"
+  description="複数のチャットルームを管理するサーバーサイドの実装です。ルーム管理、ユーザー管理、メッセージ配信を行います。"
+  code={groupChatCode}
+  language="javascript"
+  complexity="intermediate"
+  features={[
+    "複数チャットルームの管理",
+    "ユーザー参加・退出の処理",
+    "メッセージ履歴の保持",
+    "ブロードキャスト配信",
+    "ルーム容量制限",
+    "メッセージID生成"
+  ]}
+/>
+
+</Section>
+
+<Section title="メッセージフロー" icon="flow">
+
+<Card title="メッセージフロー詳細" icon="info" accentColor="green">
+
+実際のチャットシステムでは、以下のようなメッセージフローが発生します：
+
+</Card>
+
+
+<Mermaid chart={chatSequenceDiagram} />
+
+
+</Section>
+
+<Section title="グループチャット機能" icon="concept">
+
+<Card title="ルーム管理システム" icon="info" accentColor="purple">
+
+<Mermaid chart={groupChatRoomDiagram} />
+
+</Card>
+
+</Section>
+
+<Section title="音声・ビデオ通話システム" icon="concept">
+
+<Card title="WebRTC + WebSocket ハイブリッド構成" icon="info" accentColor="red">
+
+<Mermaid chart={webrtcHybridDiagram} />
+
+</Card>
+
+<Card title="通話品質管理" icon="warning" accentColor="orange">
+
+<Mermaid chart={qualityControlDiagram} />
+
+</Card>
+
+</Section>
+
+<Section title="スケーラビリティパターン" icon="concept">
+
+<Card title="水平スケーリング構成" icon="info" accentColor="indigo">
+
+<Mermaid chart={horizontalScalingDiagram} />
+
+</Card>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. 接続管理
+- **ハートビート/Ping-Pong**: 接続状態の定期確認
+- **自動再接続**: 切断時の透明な復旧
+- **接続プール**: 効率的なリソース管理
+
+### 2. メッセージ配信保証
+- **At-least-once配信**: メッセージ重複を許容した確実な配信
+- **Idempotency**: 重複メッセージの冪等処理
+- **オフライン配信**: 未接続時のメッセージ蓄積
+
+### 3. セキュリティ
+- **認証トークン**: JWTベースのセッション管理
+- **レート制限**: スパム・DoS攻撃対策
+- **暗号化**: WSS (WebSocket Secure) の使用
+
+### 4. 監視・運用
+- **メトリクス収集**: 接続数、メッセージレート、レスポンス時間
+- **アラート**: 異常検知とエスカレーション
+- **ログ分析**: トラブルシューティング支援
+
+この詳細なアーキテクチャにより、高品質なリアルタイム通信システムを構築できます。
+
+</Card>
+
+</Section>

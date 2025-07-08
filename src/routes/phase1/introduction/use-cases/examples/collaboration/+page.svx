@@ -1,0 +1,765 @@
+---
+title: '共同編集システム詳細'
+description: 'リアルタイム文書編集、ホワイトボード、コードレビューシステムのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  
+  const otCode = `// 操作変換 (OT) 実装
+class OperationTransform {
+  transform(op1, op2) {
+    // 操作の種類に応じた変換ロジック
+    if (op1.type === 'insert' && op2.type === 'insert') {
+      return this.transformInsertInsert(op1, op2);
+    }
+    if (op1.type === 'insert' && op2.type === 'delete') {
+      return this.transformInsertDelete(op1, op2);
+    }
+    if (op1.type === 'delete' && op2.type === 'insert') {
+      return this.transformDeleteInsert(op1, op2);
+    }
+    if (op1.type === 'delete' && op2.type === 'delete') {
+      return this.transformDeleteDelete(op1, op2);
+    }
+  }
+  
+  transformInsertInsert(op1, op2) {
+    if (op1.position <= op2.position) {
+      return [op1, { ...op2, position: op2.position + op1.length }];
+    } else {
+      return [{ ...op1, position: op1.position + op2.length }, op2];
+    }
+  }
+  
+  transformInsertDelete(op1, op2) {
+    if (op1.position <= op2.position) {
+      return [op1, { ...op2, position: op2.position + op1.length }];
+    } else if (op1.position >= op2.position + op2.length) {
+      return [{ ...op1, position: op1.position - op2.length }, op2];
+    } else {
+      // 削除範囲内への挿入
+      return [op1, { ...op2, length: op2.length + op1.length }];
+    }
+  }
+  
+  // サーバー側の実装
+  async handleOperation(clientId, operation) {
+    const transformedOp = await this.transformAgainstHistory(operation);
+    
+    // 履歴に追加
+    this.operationHistory.push({
+      id: generateId(),
+      clientId,
+      operation: transformedOp,
+      timestamp: Date.now()
+    });
+    
+    // 他のクライアントに配信
+    this.broadcastToOthers(clientId, transformedOp);
+  }
+}`;
+
+  const crdtCode = `// CRDT (Yjs) 実装例
+class YjsDocument {
+  constructor() {
+    this.doc = new Y.Doc();
+    this.text = this.doc.getText('content');
+    this.awareness = new Awareness(this.doc);
+    this.setupWebSocketProvider();
+  }
+  
+  setupWebSocketProvider() {
+    this.provider = new WebsocketProvider(
+      'ws://localhost:1234', 
+      'document-room', 
+      this.doc
+    );
+    
+    // 接続状態の監視
+    this.provider.on('status', event => {
+      console.log(event.status); // connected/disconnected
+    });
+    
+    // 同期イベント
+    this.provider.on('sync', isSynced => {
+      if (isSynced) {
+        console.log('Document synced with server');
+      }
+    });
+  }
+  
+  // テキスト操作
+  insert(index, content) {
+    this.text.insert(index, content);
+    // 自動的に他のクライアントに同期
+  }
+  
+  delete(index, length) {
+    this.text.delete(index, length);
+  }
+  
+  // カーソル位置の共有
+  updateCursorPosition(position) {
+    this.awareness.setLocalStateField('cursor', {
+      position,
+      color: this.userColor,
+      name: this.userName
+    });
+  }
+  
+  // 他ユーザーのカーソル監視
+  watchCursors(callback) {
+    this.awareness.on('change', changes => {
+      changes.added.forEach(clientId => {
+        const state = this.awareness.getStates().get(clientId);
+        callback('added', clientId, state?.cursor);
+      });
+      
+      changes.updated.forEach(clientId => {
+        const state = this.awareness.getStates().get(clientId);
+        callback('updated', clientId, state?.cursor);
+      });
+      
+      changes.removed.forEach(clientId => {
+        callback('removed', clientId, null);
+      });
+    });
+  }
+}`;
+
+  const drawingCode = `// リアルタイム描画最適化
+class OptimizedDrawing {
+  constructor() {
+    this.strokeBuffer = [];
+    this.throttleMs = 16; // 60fps
+    this.compressionRatio = 0.5;
+    this.setupThrottling();
+  }
+  
+  setupThrottling() {
+    setInterval(() => {
+      if (this.strokeBuffer.length > 0) {
+        this.sendBatchedStrokes();
+        this.strokeBuffer = [];
+      }
+    }, this.throttleMs);
+  }
+  
+  addPoint(x, y, pressure = 1.0) {
+    this.strokeBuffer.push({ x, y, pressure, timestamp: Date.now() });
+    this.renderLocally(x, y, pressure); // 即座にローカル描画
+  }
+  
+  sendBatchedStrokes() {
+    const compressed = this.compressStrokes(this.strokeBuffer);
+    
+    this.websocket.send(JSON.stringify({
+      type: 'stroke_update',
+      strokes: compressed,
+      metadata: {
+        tool: this.currentTool,
+        color: this.currentColor,
+        width: this.currentWidth
+      }
+    }));
+  }
+  
+  compressStrokes(strokes) {
+    // Douglas-Peucker アルゴリズムで点を削減
+    return this.douglasPeucker(strokes, this.compressionRatio);
+  }
+  
+  douglasPeucker(points, epsilon) {
+    if (points.length <= 2) return points;
+    
+    // 最も遠い点を見つける
+    let maxDistance = 0;
+    let maxIndex = 0;
+    
+    for (let i = 1; i < points.length - 1; i++) {
+      const distance = this.perpendicularDistance(
+        points[i], points[0], points[points.length - 1]
+      );
+      if (distance > maxDistance) {
+        maxDistance = distance;
+        maxIndex = i;
+      }
+    }
+    
+    // 閾値以下なら中間点を削除
+    if (maxDistance <= epsilon) {
+      return [points[0], points[points.length - 1]];
+    }
+    
+    // 再帰的に処理
+    const left = this.douglasPeucker(points.slice(0, maxIndex + 1), epsilon);
+    const right = this.douglasPeucker(points.slice(maxIndex), epsilon);
+    
+    return left.slice(0, -1).concat(right);
+  }
+}`;
+
+  const codeReviewCode = `// コード共同レビューシステム
+class CodeReviewSystem {
+  constructor(documentId, userId) {
+    this.documentId = documentId;
+    this.userId = userId;
+    this.websocket = null;
+    this.comments = new Map();
+    this.highlights = new Map();
+    this.connect();
+  }
+  
+  connect() {
+    this.websocket = new WebSocket('ws://localhost:8080/review');
+    
+    this.websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      this.handleMessage(message);
+    };
+  }
+  
+  // コメント追加
+  addComment(lineNumber, text, codeRange) {
+    const comment = {
+      id: generateId(),
+      userId: this.userId,
+      lineNumber,
+      text,
+      codeRange,
+      timestamp: Date.now(),
+      resolved: false
+    };
+    
+    this.websocket.send(JSON.stringify({
+      type: 'add_comment',
+      comment
+    }));
+  }
+  
+  // コードハイライト
+  highlightCode(startLine, endLine, type) {
+    const highlight = {
+      id: generateId(),
+      userId: this.userId,
+      startLine,
+      endLine,
+      type, // 'suggestion', 'issue', 'question'
+      timestamp: Date.now()
+    };
+    
+    this.websocket.send(JSON.stringify({
+      type: 'add_highlight',
+      highlight
+    }));
+  }
+  
+  // リアルタイムコード編集提案
+  suggestEdit(lineNumber, originalCode, suggestedCode) {
+    const suggestion = {
+      id: generateId(),
+      userId: this.userId,
+      lineNumber,
+      originalCode,
+      suggestedCode,
+      diff: this.createDiff(originalCode, suggestedCode),
+      timestamp: Date.now()
+    };
+    
+    this.websocket.send(JSON.stringify({
+      type: 'suggest_edit',
+      suggestion
+    }));
+  }
+  
+  // メッセージハンドリング
+  handleMessage(message) {
+    switch (message.type) {
+      case 'comment_added':
+        this.comments.set(message.comment.id, message.comment);
+        this.renderComment(message.comment);
+        break;
+        
+      case 'highlight_added':
+        this.highlights.set(message.highlight.id, message.highlight);
+        this.renderHighlight(message.highlight);
+        break;
+        
+      case 'edit_suggested':
+        this.showSuggestion(message.suggestion);
+        break;
+        
+      case 'user_cursor':
+        this.updateUserCursor(message.userId, message.position);
+        break;
+    }
+  }
+  
+  // スレッド化されたディスカッション
+  replyToComment(commentId, text) {
+    const reply = {
+      id: generateId(),
+      parentId: commentId,
+      userId: this.userId,
+      text,
+      timestamp: Date.now()
+    };
+    
+    this.websocket.send(JSON.stringify({
+      type: 'reply_comment',
+      reply
+    }));
+  }
+}`;
+</script>
+
+<Section title="リアルタイム文書編集" icon="concept">
+
+<Card title="Operational Transformation (OT) アーキテクチャ" icon="info" accentColor="blue">
+
+OTアルゴリズムは、同時編集時の競合を解決する中核技術です。以下の要素で構成されます：
+
+- **操作変換エンジン**: 競合する操作を変換して一貫性を保つ
+- **操作履歴管理**: すべての操作を時系列で記録
+- **状態同期**: クライアント間の文書状態を同期
+- **競合解決**: 同時操作の自動調整
+- **バージョン管理**: 文書の履歴とロールバック機能
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "クライアント側"
+        A[👤 編集者A] --> A1[📝 ローカルエディタ]
+        B[👤 編集者B] --> B1[📝 ローカルエディタ]
+        C[👤 編集者C] --> C1[📝 ローカルエディタ]
+    end
+    
+    A1 -->|操作送信| OT[🔄 OTサーバー]
+    B1 -->|操作送信| OT
+    C1 -->|操作送信| OT
+    
+    subgraph "サーバー側処理"
+        OT --> TR[🔀 操作変換エンジン]
+        TR --> ST[📊 状態管理]
+        ST --> HB[📚 履歴バッファ]
+        TR --> CF[⚡ 競合解決]
+    end
+    
+    OT -->|変換済み操作| A1
+    OT -->|変換済み操作| B1
+    OT -->|変換済み操作| C1
+    
+    subgraph "永続化"
+        ST --> DB[💾 文書データベース]
+        HB --> HS[📜 履歴ストレージ]
+    end
+    
+    style OT fill:#f3e5f5
+    style TR fill:#e8f5e8
+    style CF fill:#fff3e0
+    style ST fill:#e3f2fd
+`} />
+
+<Card title="操作変換の詳細フロー" icon="info" accentColor="green">
+
+操作変換により、複数ユーザーの同時編集が可能になります：
+
+</Card>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant A as 編集者A
+    participant S as OTサーバー
+    participant B as 編集者B
+    
+    Note over A,B: 初期状態: "Hello"
+    
+    A->>S: Insert(5, " World") -> "Hello World"
+    B->>S: Insert(0, "Hi ") -> "Hi Hello"
+    
+    S->>S: 競合検知・操作変換
+    Note over S: Transform: Insert(5, " World") vs Insert(0, "Hi ")
+    Note over S: 結果: Insert(8, " World") (位置調整)
+    
+    S->>A: Apply: Insert(0, "Hi ")
+    S->>B: Apply: Insert(8, " World")
+    
+    Note over A,B: 最終状態: "Hi Hello World"
+    
+    A->>A: ローカル状態更新
+    B->>B: ローカル状態更新
+`} />
+
+</Section>
+
+<Section title="CRDT システム" icon="concept">
+
+<Card title="CRDTベースの分散編集" icon="info" accentColor="purple">
+
+CRDTは競合のない分散データ構造で、自動的にマージ可能な編集を実現します：
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "編集者ノード"
+        A[👤 ノードA] --> A1[📄 CRDT状態A]
+        B[👤 ノードB] --> B1[📄 CRDT状態B]
+        C[👤 ノードC] --> C1[📄 CRDT状態C]
+    end
+    
+    A1 <-->|同期| B1
+    B1 <-->|同期| C1
+    A1 <-->|同期| C1
+    
+    subgraph "CRDT操作"
+        A1 --> OP1[🔧 挿入操作]
+        B1 --> OP2[🔧 削除操作]
+        C1 --> OP3[🔧 更新操作]
+    end
+    
+    subgraph "自動マージ"
+        OP1 --> M[🔄 自動マージ]
+        OP2 --> M
+        OP3 --> M
+        M --> CON[✅ 収束状態]
+    end
+    
+    style A1 fill:#e3f2fd
+    style B1 fill:#e8f5e8
+    style C1 fill:#fff3e0
+    style M fill:#f3e5f5
+    style CON fill:#e1f5fe
+`} />
+
+</Section>
+
+<Section title="リアルタイムホワイトボード" icon="concept" id="whiteboard">
+
+<Card title="描画データのストリーミング" icon="info" accentColor="indigo">
+
+ホワイトボードシステムは、低遅延での描画同期を実現します：
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "入力層"
+        M[🖱️ マウス/タッチ] --> C[📐 座標取得]
+        C --> S[✏️ ストローク生成]
+    end
+    
+    subgraph "処理層"
+        S --> SC[🎨 スタイル計算]
+        SC --> OPT[⚡ 最適化処理]
+        OPT --> COMP[🗜️ 圧縮]
+    end
+    
+    subgraph "配信層"
+        COMP --> WS[WebSocketサーバー]
+        WS --> BR[📡 ブロードキャスト]
+    end
+    
+    subgraph "レンダリング層"
+        BR --> R1[🖼️ レンダラー1]
+        BR --> R2[🖼️ レンダラー2]
+        BR --> R3[🖼️ レンダラーN]
+    end
+    
+    subgraph "同期管理"
+        WS --> SYNC[🔄 同期エンジン]
+        SYNC --> VS[📍 バージョン管理]
+        VS --> HIST[📚 履歴管理]
+    end
+    
+    style WS fill:#f3e5f5
+    style SYNC fill:#e8f5e8
+    style OPT fill:#fff3e0
+`} />
+
+<Card title="描画イベントの最適化" icon="success" accentColor="green">
+
+描画パフォーマンスを最適化するための手法：
+
+</Card>
+
+<Mermaid chart={`
+sequenceDiagram
+    participant U as ユーザー
+    participant C as クライアント
+    participant S as WebSocketサーバー
+    participant O as 他のクライアント
+    
+    U->>C: 描画開始
+    C->>C: ローカル描画
+    C->>S: ストローク開始イベント
+    
+    loop 描画中 (高頻度)
+        U->>C: 座標更新
+        C->>C: ローカル描画継続
+        C->>C: バッファリング (16ms間隔)
+    end
+    
+    C->>S: バッファ済み座標群
+    S->>O: 最適化済みストローク
+    O->>O: 補間レンダリング
+    
+    U->>C: 描画終了
+    C->>S: ストローク完了イベント
+    S->>O: 最終ストローク
+    
+    Note over C,O: リアルタイム描画 + 最適化配信
+`} />
+
+</Section>
+
+<Section title="コード共同レビューシステム" icon="concept">
+
+<Card title="Live Code Review アーキテクチャ" icon="info" accentColor="amber">
+
+リアルタイムコードレビューシステムの構成要素：
+
+</Card>
+
+<Mermaid chart={`
+graph TD
+    subgraph "開発者"
+        D1[👨‍💻 開発者1] --> E1[💻 エディタ1]
+        D2[👩‍💻 開発者2] --> E2[💻 エディタ2]
+        D3[👨‍💻 レビュアー] --> E3[💻 エディタ3]
+    end
+    
+    E1 --> WS[WebSocketサーバー]
+    E2 --> WS
+    E3 --> WS
+    
+    subgraph "コード管理"
+        WS --> CM[📝 コード管理]
+        CM --> DI[🔍 差分計算]
+        DI --> SY[🔄 シンタックス解析]
+        SY --> AN[📊 静的解析]
+    end
+    
+    subgraph "レビュー機能"
+        WS --> RC[💬 レビューコメント]
+        RC --> TH[🧵 スレッド管理]
+        TH --> NO[🔔 通知システム]
+    end
+    
+    subgraph "統合機能"
+        AN --> CI[🔧 CI/CD連携]
+        CI --> TEST[🧪 自動テスト]
+        TEST --> REP[📊 レポート生成]
+    end
+    
+    WS --> E1
+    WS --> E2
+    WS --> E3
+    
+    style WS fill:#f3e5f5
+    style CM fill:#e8f5e8
+    style RC fill:#fff3e0
+    style AN fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="カーソル・選択範囲の同期" icon="flow">
+
+<Card title="リアルタイム位置表示" icon="info" accentColor="teal">
+
+共同編集における視覚的フィードバックの実装：
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "ユーザーA"
+        A[👤 カーソル位置] --> A1[📍 座標計算]
+        A1 --> A2[🎨 スタイル適用]
+    end
+    
+    A2 --> WS[WebSocketサーバー]
+    
+    subgraph "位置管理"
+        WS --> PM[📐 位置マッピング]
+        PM --> CM[🔄 座標変換]
+        CM --> UM[👥 ユーザー管理]
+    end
+    
+    subgraph "ユーザーB"
+        WS --> B1[📍 座標復元]
+        B1 --> B2[👻 ゴーストカーソル]
+        B2 --> B[👤 視覚表示]
+    end
+    
+    subgraph "ユーザーC"
+        WS --> C1[📍 座標復元]
+        C1 --> C2[👻 ゴーストカーソル]
+        C2 --> C[👤 視覚表示]
+    end
+    
+    style WS fill:#f3e5f5
+    style PM fill:#e8f5e8
+    style A2 fill:#e3f2fd
+    style B2 fill:#fff3e0
+    style C2 fill:#fce4ec
+`} />
+
+</Section>
+
+<Section title="パフォーマンス最適化戦略" icon="tips">
+
+<Card title="データ圧縮・バッチング" icon="warning" accentColor="orange">
+
+大規模な共同編集を支えるパフォーマンス最適化技術：
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "クライアント最適化"
+        I[⌨️ 入力イベント] --> B[📦 バッチング]
+        B --> C[🗜️ 圧縮]
+        C --> D[🔄 差分計算]
+    end
+    
+    subgraph "ネットワーク最適化"
+        D --> RT[⏱️ レート制限]
+        RT --> PR[📊 優先度判定]
+        PR --> WS[WebSocket送信]
+    end
+    
+    subgraph "サーバー最適化"
+        WS --> DC[🔍 重複除去]
+        DC --> ME[🔄 マージ処理]
+        ME --> BC[📡 ブロードキャスト]
+    end
+    
+    subgraph "受信側最適化"
+        BC --> IN[📥 補間処理]
+        IN --> AN[🎬 アニメーション]
+        AN --> RE[🖼️ レンダリング]
+    end
+    
+    style B fill:#e3f2fd
+    style C fill:#e8f5e8
+    style RT fill:#fff3e0
+    style ME fill:#f3e5f5
+    style IN fill:#fce4ec
+`} />
+
+</Section>
+
+<Section title="実装例" icon="code">
+
+<UseCaseExample
+  title="操作変換 (OT) 実装"
+  category="Operational Transformation"
+  description="同時編集時の競合を解決するOperational Transformationアルゴリズムの実装です。挿入・削除操作の変換ロジックを含みます。"
+  code={otCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "挿入・削除操作の変換",
+    "操作履歴管理",
+    "競合解決アルゴリズム",
+    "サーバー側の同期処理",
+    "ブロードキャスト配信",
+    "一貫性保証"
+  ]}
+/>
+
+<UseCaseExample
+  title="CRDT (Yjs) 実装"
+  category="CRDT Implementation"
+  description="Yjsライブラリを使用したCRDTベースの共同編集実装です。自動マージと競合解決を実現します。"
+  code={crdtCode}
+  language="javascript"
+  complexity="intermediate"
+  features={[
+    "自動同期機能",
+    "競合のない編集",
+    "カーソル位置共有",
+    "Awareness API",
+    "接続状態管理",
+    "オフライン対応"
+  ]}
+/>
+
+<UseCaseExample
+  title="リアルタイム描画最適化"
+  category="Drawing Optimization"
+  description="ホワイトボード機能のための描画データ最適化実装です。ストローク圧縮とバッチング処理を含みます。"
+  code={drawingCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "60fpsスロットリング",
+    "Douglas-Peuckerアルゴリズム",
+    "ストローク圧縮",
+    "バッチ送信",
+    "ローカル即時描画",
+    "帯域幅最適化"
+  ]}
+/>
+
+<UseCaseExample
+  title="コード共同レビューシステム"
+  category="Code Review System"
+  description="リアルタイムコードレビュー機能の実装です。コメント、ハイライト、編集提案機能を含みます。"
+  code={codeReviewCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "インラインコメント",
+    "コードハイライト",
+    "編集提案とdiff表示",
+    "スレッド化ディスカッション",
+    "リアルタイムカーソル同期",
+    "レビューステータス管理"
+  ]}
+/>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. 操作変換 (OT) 実装
+- **変換アルゴリズムの選択**: OT vs CRDT の適切な選択
+- **履歴管理**: 操作履歴の効率的な保存と検索
+- **同期プロトコル**: 信頼性の高い同期メカニズム
+
+### 2. CRDT 実装のポイント
+- **データ構造の選択**: 用途に応じたCRDTタイプ
+- **ガベージコレクション**: 不要な履歴の削除
+- **メタデータ管理**: ユーザー情報やタイムスタンプ
+
+### 3. リアルタイム描画最適化
+- **バッファリング戦略**: 適切なバッファサイズ
+- **圧縮アルゴリズム**: 描画品質と圧縮率のバランス
+- **補間処理**: スムーズな描画再現
+
+### 4. 競合解決戦略
+- **Last Writer Wins**: 最後の書き込みが優先
+- **Timestamped Operations**: タイムスタンプベースの順序付け
+- **Consensus-based**: 複数ノードでの合意形成
+- **User Priority**: ユーザー権限に基づく優先度
+
+### 5. スケーラビリティ考慮事項
+- **シャーディング**: ドキュメント単位での分散
+- **レプリケーション**: 読み取り性能の向上
+- **キャッシング**: 頻繁にアクセスされるデータの高速化
+
+この詳細なアーキテクチャにより、スムーズで高性能な共同編集システムを構築できます。
+
+</Card>
+
+</Section>

@@ -1,0 +1,774 @@
+---
+title: '通知・アラートシステム詳細'
+description: 'リアルタイム通知、プッシュメッセージ、システム監視アラートのWebSocketアーキテクチャ'
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  import UseCaseExample from '$lib/components/UseCaseExample.svelte';
+  import Card from '$lib/components/common/Card.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import { notificationFlowDiagram, alertEscalationDiagram } from '$lib/charts/allCharts.ts';
+  
+  const preferencesCode = `// 通知設定管理
+class NotificationPreferences {
+  constructor(userId) {
+    this.userId = userId;
+    this.preferences = this.loadPreferences();
+  }
+  
+  shouldSendNotification(notificationType, timeZone) {
+    const pref = this.preferences[notificationType];
+    if (!pref.enabled) return false;
+    
+    const currentTime = new Date().toLocaleString("en-US", {timeZone});
+    const hour = new Date(currentTime).getHours();
+    
+    // 休眠時間の確認
+    if (pref.quietHours && pref.quietHours.enabled) {
+      const { start, end } = pref.quietHours;
+      if (start <= end) {
+        // 通常の時間帯 (e.g., 22:00-07:00)
+        if (hour >= start || hour < end) return false;
+      } else {
+        // 日をまたぐ時間帯 (e.g., 22:00-07:00)
+        if (hour >= start && hour < end) return false;
+      }
+    }
+    
+    // フリークエンシー制限
+    if (pref.frequency) {
+      const recentCount = this.getRecentNotificationCount(notificationType);
+      if (recentCount >= pref.frequency.maxPerHour) return false;
+    }
+    
+    return true;
+  }
+  
+  updatePreference(type, settings) {
+    this.preferences[type] = { ...this.preferences[type], ...settings };
+    this.savePreferences();
+    
+    // WebSocketでリアルタイム同期
+    this.websocket.send(JSON.stringify({
+      type: 'preference_update',
+      preferences: this.preferences
+    }));
+  }
+  
+  getChannelPreferences(notificationType) {
+    const pref = this.preferences[notificationType];
+    return {
+      email: pref.channels?.email ?? true,
+      push: pref.channels?.push ?? true,
+      inApp: pref.channels?.inApp ?? true,
+      sms: pref.channels?.sms ?? false
+    };
+  }
+}`;
+
+  const rateLimiterCode = `// 通知レート制限実装
+class NotificationRateLimiter {
+  constructor() {
+    this.userLimits = new Map(); // userId -> { count, resetTime }
+    this.globalLimit = { maxPerMinute: 1000, current: 0 };
+    this.channelLimits = {
+      email: { maxPerHour: 20 },
+      push: { maxPerMinute: 30 },
+      sms: { maxPerDay: 10 }
+    };
+  }
+  
+  async canSendNotification(userId, notificationType, channel) {
+    // ユーザー別制限チェック
+    const userLimit = this.getUserLimit(userId);
+    if (userLimit.count >= this.getLimitForType(notificationType)) {
+      await this.logRateLimitExceeded(userId, 'user_limit');
+      return false;
+    }
+    
+    // チャネル別制限チェック
+    const channelUsage = await this.getChannelUsage(userId, channel);
+    const channelLimit = this.channelLimits[channel];
+    if (channelUsage.count >= channelLimit.maxPerHour) {
+      await this.logRateLimitExceeded(userId, 'channel_limit', channel);
+      return false;
+    }
+    
+    // グローバル制限チェック
+    if (this.globalLimit.current >= this.globalLimit.maxPerMinute) {
+      await this.logRateLimitExceeded(userId, 'global_limit');
+      return false;
+    }
+    
+    return true;
+  }
+  
+  recordNotification(userId, channel) {
+    this.incrementUserCount(userId);
+    this.incrementChannelCount(userId, channel);
+    this.globalLimit.current++;
+    
+    // WebSocketでレート制限情報を配信
+    this.broadcastRateLimitStatus();
+  }
+  
+  getUserLimit(userId) {
+    if (!this.userLimits.has(userId)) {
+      this.userLimits.set(userId, {
+        count: 0,
+        resetTime: Date.now() + 3600000 // 1時間後
+      });
+    }
+    
+    const limit = this.userLimits.get(userId);
+    
+    // リセット時刻を過ぎていたらカウントをリセット
+    if (Date.now() > limit.resetTime) {
+      limit.count = 0;
+      limit.resetTime = Date.now() + 3600000;
+    }
+    
+    return limit;
+  }
+}`;
+
+  const deliveryCode = `// 高信頼性通知配信システム
+class ReliableNotificationDelivery {
+  constructor() {
+    this.pendingNotifications = new Map();
+    this.retryDelays = [1000, 5000, 15000, 60000]; // 指数バックオフ
+    this.deliveryQueue = new PriorityQueue();
+  }
+  
+  async sendWithRetry(notification, maxRetries = 3) {
+    const deliveryId = generateId();
+    
+    // 配信記録の開始
+    await this.startDeliveryTracking(deliveryId, notification);
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        // チャネル別配信
+        const result = await this.sendByChannel(notification);
+        
+        // 配信成功を記録
+        await this.recordDeliverySuccess(deliveryId, result);
+        
+        // WebSocketで配信ステータスを更新
+        this.broadcastDeliveryStatus({
+          notificationId: notification.id,
+          status: 'delivered',
+          timestamp: Date.now()
+        });
+        
+        return { success: true, attempts: attempt + 1, result };
+        
+      } catch (error) {
+        console.error('Delivery attempt ' + (attempt + 1) + ' failed:', error);
+        
+        if (attempt === maxRetries) {
+          await this.handleFailedDelivery(deliveryId, notification, error);
+          throw new Error('Failed after ' + (maxRetries + 1) + ' attempts: ' + error.message);
+        }
+        
+        // リトライ間隔を計算
+        const delay = this.calculateRetryDelay(attempt);
+        await this.sleep(delay);
+      }
+    }
+  }
+  
+  async sendByChannel(notification) {
+    const channels = notification.channels || ['push', 'inApp'];
+    const results = [];
+    
+    for (const channel of channels) {
+      try {
+        switch (channel) {
+          case 'push':
+            results.push(await this.sendPushNotification(notification));
+            break;
+          case 'email':
+            results.push(await this.sendEmailNotification(notification));
+            break;
+          case 'sms':
+            results.push(await this.sendSMSNotification(notification));
+            break;
+          case 'inApp':
+            results.push(await this.sendInAppNotification(notification));
+            break;
+          case 'websocket':
+            results.push(await this.sendWebSocketNotification(notification));
+            break;
+        }
+      } catch (error) {
+        console.error('Failed to send via ' + channel + ':', error);
+        results.push({ channel, success: false, error: error.message });
+      }
+    }
+    
+    return results;
+  }
+  
+  async sendWebSocketNotification(notification) {
+    const connections = await this.getUserConnections(notification.userId);
+    
+    if (connections.length === 0) {
+      return { channel: 'websocket', success: false, reason: 'No active connections' };
+    }
+    
+    let successCount = 0;
+    
+    for (const connection of connections) {
+      try {
+        await connection.send(JSON.stringify({
+          type: 'notification',
+          data: notification
+        }));
+        successCount++;
+      } catch (error) {
+        console.error('Failed to send to connection ' + connection.id + ':', error);
+      }
+    }
+    
+    return {
+      channel: 'websocket',
+      success: successCount > 0,
+      deliveredTo: successCount,
+      totalConnections: connections.length
+    };
+  }
+  
+  handleFailedDelivery(deliveryId, notification, error) {
+    // Dead Letter Queue への移動
+    this.moveToDeadLetterQueue(notification, error);
+    
+    // 管理者への通知
+    this.notifyAdministrators({
+      type: 'delivery_failure',
+      notification,
+      error: error.message,
+      timestamp: Date.now()
+    });
+    
+    // メトリクスの更新
+    this.metrics.recordFailure(notification.type, error);
+  }
+}`;
+
+  const metricsCode = `// リアルタイム通知メトリクス
+class NotificationMetrics {
+  constructor() {
+    this.metrics = {
+      sent: 0,
+      delivered: 0,
+      opened: 0,
+      clicked: 0,
+      failed: 0,
+      channels: {
+        push: { sent: 0, delivered: 0, failed: 0 },
+        email: { sent: 0, delivered: 0, failed: 0 },
+        sms: { sent: 0, delivered: 0, failed: 0 },
+        websocket: { sent: 0, delivered: 0, failed: 0 }
+      }
+    };
+    this.setupRealTimeReporting();
+  }
+  
+  setupRealTimeReporting() {
+    // 5秒ごとにメトリクスを配信
+    setInterval(() => {
+      this.sendMetricsUpdate();
+    }, 5000);
+    
+    // WebSocket接続監視
+    this.websocket.on('connection', (ws) => {
+      ws.on('message', (data) => {
+        const message = JSON.parse(data);
+        if (message.type === 'metrics_subscribe') {
+          this.addMetricsSubscriber(ws);
+        }
+      });
+    });
+  }
+  
+  recordEvent(eventType, metadata = {}) {
+    this.metrics[eventType]++;
+    
+    // チャネル別メトリクス
+    if (metadata.channel) {
+      this.metrics.channels[metadata.channel][eventType]++;
+    }
+    
+    // リアルタイムダッシュボードに送信
+    this.broadcastMetricUpdate({
+      type: eventType,
+      count: this.metrics[eventType],
+      channel: metadata.channel,
+      timestamp: Date.now(),
+      metadata
+    });
+    
+    // アラートチェック
+    this.checkAlertThresholds(eventType);
+  }
+  
+  async generateReport(timeRange) {
+    const report = {
+      timeRange,
+      summary: {
+        totalSent: this.metrics.sent,
+        deliveryRate: (this.metrics.delivered / this.metrics.sent * 100).toFixed(2) + '%',
+        openRate: (this.metrics.opened / this.metrics.delivered * 100).toFixed(2) + '%',
+        clickRate: (this.metrics.clicked / this.metrics.opened * 100).toFixed(2) + '%',
+        failureRate: (this.metrics.failed / this.metrics.sent * 100).toFixed(2) + '%'
+      },
+      channelPerformance: this.calculateChannelPerformance(),
+      trends: await this.calculateTrends(timeRange),
+      recommendations: this.generateRecommendations()
+    };
+    
+    return report;
+  }
+  
+  checkAlertThresholds(eventType) {
+    const thresholds = {
+      failureRate: 0.05, // 5%以上の失敗率
+      deliveryDelay: 30000 // 30秒以上の遅延
+    };
+    
+    const currentFailureRate = this.metrics.failed / this.metrics.sent;
+    
+    if (currentFailureRate > thresholds.failureRate) {
+      this.triggerAlert({
+        type: 'high_failure_rate',
+        currentRate: currentFailureRate,
+        threshold: thresholds.failureRate,
+        severity: 'critical'
+      });
+    }
+  }
+}`;
+</script>
+
+<Section title="リアルタイム通知配信システム" icon="concept">
+
+<Card title="マルチチャネル通知アーキテクチャ" icon="info" accentColor="blue">
+
+現代の通知システムは、複数の配信チャネルを統合的に管理します。以下のコンポーネントで構成されます：
+
+- **イベントコレクター**: 様々なソースからのイベントを収集
+- **ターゲティングエンジン**: 適切な受信者を特定
+- **メッセージ生成**: パーソナライズされたコンテンツ作成
+- **配信ルーター**: 最適なチャネルへのルーティング
+- **配信統計**: リアルタイムの配信状況監視
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "イベントソース"
+        A[👤 ユーザーアクション] --> E[📅 イベントコレクター]
+        B[⏰ スケジュールタスク] --> E
+        C[🚨 システムアラート] --> E
+        D[🔧 API呼び出し] --> E
+    end
+    
+    subgraph "通知エンジン"
+        E --> F[🎯 ターゲティング]
+        F --> G[📝 メッセージ生成]
+        G --> H[🔄 配信ルーター]
+    end
+    
+    subgraph "配信チャネル"
+        H -->|WebSocket| I[💻 Webブラウザ]
+        H -->|WebSocket| J[📱 PWAアプリ]
+        H -->|Push API| K[📲 モバイルアプリ]
+        H -->|WebSocket| L[🖥️ デスクトップ]
+        H -->|Email| M[📧 メール]
+        H -->|SMS| N[📱 SMS]
+    end
+    
+    subgraph "管理機能"
+        O[⚙️ 設定管理] --> F
+        P[📊 配信統計] --> H
+        Q[💾 通知履歴] --> G
+    end
+    
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style H fill:#fff3e0
+    style I fill:#e3f2fd
+    style J fill:#e1f5fe
+`} />
+
+<Card title="通知フロー詳細" icon="info" accentColor="green">
+
+通知の配信フローとユーザー状態に応じた処理：
+
+</Card>
+
+<Mermaid chart={notificationFlowDiagram} />
+
+</Section>
+
+<Section title="ユーザープリファレンス管理" icon="concept">
+
+<Card title="通知設定システム" icon="info" accentColor="purple">
+
+ユーザー中心の通知設定管理で、最適なユーザー体験を提供します：
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "ユーザー設定"
+        U[👤 ユーザー] --> S[⚙️ 設定UI]
+        S --> P1[🔔 通知種別設定]
+        S --> P2[⏰ 時間帯設定]
+        S --> P3[📱 デバイス設定]
+        S --> P4[🎯 フィルター設定]
+    end
+    
+    subgraph "設定管理"
+        P1 --> DB[💾 設定DB]
+        P2 --> DB
+        P3 --> DB
+        P4 --> DB
+        
+        DB --> C[⚡ 設定キャッシュ]
+    end
+    
+    subgraph "配信制御"
+        C --> F[🔍 フィルタリング]
+        F --> R[📊 レート制限]
+        R --> Q[⏳ キューイング]
+        Q --> D[📤 配信実行]
+    end
+    
+    style DB fill:#e8f5e8
+    style C fill:#fff3e0
+    style F fill:#f3e5f5
+    style D fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="システム監視・アラートシステム" icon="concept">
+
+<Card title="リアルタイム監視ダッシュボード" icon="info" accentColor="indigo">
+
+WebSocketを活用したリアルタイム監視システムの構成：
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "監視対象"
+        S1[🖥️ Webサーバー] --> M[📊 監視エージェント]
+        S2[💾 データベース] --> M
+        S3[🌐 ネットワーク] --> M
+        S4[🔧 アプリケーション] --> M
+    end
+    
+    subgraph "アラート処理"
+        M --> A[🚨 アラートエンジン]
+        A --> T[📏 閾値判定]
+        T --> E[⚡ エスカレーション]
+        E --> N[🔔 通知生成]
+    end
+    
+    subgraph "配信先"
+        N --> WS[WebSocketサーバー]
+        WS --> D1[💻 管理ダッシュボード]
+        WS --> D2[📱 モバイルアプリ]
+        WS --> D3[📧 メール通知]
+        WS --> D4[📲 SMS通知]
+    end
+    
+    subgraph "インシデント管理"
+        N --> I[📋 インシデント作成]
+        I --> W[🔄 ワークフロー]
+        W --> R[📝 対応記録]
+    end
+    
+    style M fill:#f3e5f5
+    style A fill:#fff3e0
+    style N fill:#e8f5e8
+    style WS fill:#e3f2fd
+`} />
+
+<Card title="アラートエスカレーション" icon="warning" accentColor="orange">
+
+重要度に応じたアラートの自動エスカレーションフロー：
+
+</Card>
+
+<Mermaid chart={alertEscalationDiagram} />
+
+</Section>
+
+<Section title="PWA統合通知システム" icon="concept">
+
+<Card title="Service Worker連携" icon="info" accentColor="pink">
+
+Progressive Web Appでの通知システム統合アーキテクチャ：
+
+</Card>
+
+<Mermaid chart={`
+graph TD
+    subgraph "PWAアプリ"
+        A[📱 PWAアプリ] --> SW[🔄 Service Worker]
+        SW --> N[🔔 Notification API]
+        SW --> B[📂 Background Sync]
+    end
+    
+    subgraph "WebSocket通信"
+        A -->|アクティブ時| WS[WebSocketサーバー]
+        WS -->|リアルタイム| A
+    end
+    
+    subgraph "プッシュ通知"
+        PS[📡 Push Service] --> SW
+        WS --> PS
+        SW --> N
+    end
+    
+    subgraph "オフライン対応"
+        SW --> C[💾 キャッシュストレージ]
+        B --> WS
+        C --> B
+    end
+    
+    subgraph "統合制御"
+        WS --> UC[🎯 統合制御]
+        PS --> UC
+        UC --> DM[📊 配信管理]
+        DM --> L[📝 ログ記録]
+    end
+    
+    style SW fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style UC fill:#fff3e0
+    style N fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="大規模配信システム" icon="concept">
+
+<Card title="スケーラブル通知配信" icon="info" accentColor="amber">
+
+大量の通知を効率的に配信するためのアーキテクチャ：
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "ロードバランサー"
+        LB[⚖️ WebSocketロードバランサー]
+    end
+    
+    subgraph "WebSocketサーバー群"
+        WS1[WebSocketサーバー1]
+        WS2[WebSocketサーバー2]
+        WS3[WebSocketサーバー3]
+        WS4[WebSocketサーバーN]
+    end
+    
+    subgraph "メッセージング基盤"
+        MQ[📡 メッセージキュー]
+        PS[📤 Pub/Subシステム]
+        BR[📊 ブローカー]
+    end
+    
+    subgraph "通知処理"
+        NE[🔔 通知エンジン群]
+        FT[🔍 フィルタリング]
+        RT[📊 レート制限]
+    end
+    
+    subgraph "永続化層"
+        DB[💾 通知履歴DB]
+        CACHE[⚡ Redisキャッシュ]
+        QUEUE[📦 遅延キュー]
+    end
+    
+    LB --> WS1
+    LB --> WS2
+    LB --> WS3
+    LB --> WS4
+    
+    WS1 --> PS
+    WS2 --> PS
+    WS3 --> PS
+    WS4 --> PS
+    
+    PS --> MQ
+    MQ --> NE
+    NE --> FT
+    FT --> RT
+    RT --> QUEUE
+    
+    NE --> CACHE
+    RT --> DB
+    
+    style LB fill:#f3e5f5
+    style PS fill:#e8f5e8
+    style NE fill:#fff3e0
+    style CACHE fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="通知分析・最適化" icon="flow">
+
+<Card title="配信効果測定" icon="info" accentColor="teal">
+
+通知パフォーマンスの測定と最適化：
+
+</Card>
+
+<Mermaid chart={`
+graph LR
+    subgraph "配信データ"
+        S[📤 送信ログ] --> A[📊 分析エンジン]
+        D[📥 配信ログ] --> A
+        O[👁️ 開封ログ] --> A
+        C[👆 クリックログ] --> A
+    end
+    
+    subgraph "分析処理"
+        A --> M[📈 メトリクス計算]
+        M --> SEG[👥 セグメント分析]
+        SEG --> OPT[⚡ 最適化提案]
+    end
+    
+    subgraph "可視化"
+        M --> DB[📊 ダッシュボード]
+        SEG --> RP[📋 レポート]
+        OPT --> AL[🚨 アラート]
+    end
+    
+    subgraph "フィードバックループ"
+        OPT --> TS[⏰ 配信時間最適化]
+        OPT --> FS[🎯 フリーケンシー最適化]
+        OPT --> CS[📝 コンテンツ最適化]
+    end
+    
+    style A fill:#f3e5f5
+    style M fill:#e8f5e8
+    style OPT fill:#fff3e0
+    style DB fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="実装例" icon="code">
+
+<UseCaseExample
+  title="通知設定管理"
+  category="Notification Preferences"
+  description="ユーザーの通知設定を管理し、適切なタイミングとチャネルで通知を配信するシステムです。"
+  code={preferencesCode}
+  language="javascript"
+  complexity="intermediate"
+  features={[
+    "休眠時間設定",
+    "フリークエンシー制限",
+    "チャネル別設定",
+    "WebSocketリアルタイム同期",
+    "タイムゾーン対応",
+    "柔軟な設定管理"
+  ]}
+/>
+
+<UseCaseExample
+  title="通知レート制限実装"
+  category="Rate Limiting"
+  description="ユーザー、チャネル、グローバルレベルでの通知レート制限を実装し、システムの安定性を保ちます。"
+  code={rateLimiterCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "ユーザー別レート制限",
+    "チャネル別制限",
+    "グローバル制限",
+    "自動リセット機能",
+    "WebSocketステータス配信",
+    "制限超過ログ"
+  ]}
+/>
+
+<UseCaseExample
+  title="高信頼性通知配信システム"
+  category="Reliable Delivery"
+  description="リトライ機能とマルチチャネル配信を備えた高信頼性通知配信システムです。"
+  code={deliveryCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "指数バックオフリトライ",
+    "マルチチャネル配信",
+    "WebSocketリアルタイム配信",
+    "Dead Letter Queue",
+    "配信ステータス追跡",
+    "障害時の管理者通知"
+  ]}
+/>
+
+<UseCaseExample
+  title="リアルタイム通知メトリクス"
+  category="Metrics & Analytics"
+  description="通知の配信状況をリアルタイムで監視し、分析・最適化を行うシステムです。"
+  code={metricsCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "リアルタイムメトリクス配信",
+    "チャネル別分析",
+    "配信率・開封率計測",
+    "アラート闾値監視",
+    "レポート生成",
+    "最適化提案"
+  ]}
+/>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. 通知設定管理
+- **柔軟な設定オプション**: 細かい通知制御
+- **タイムゾーン対応**: ユーザーの地域に応じた配信
+- **チャネル別設定**: 配信チャネルの個別制御
+
+### 2. レート制限実装
+- **多層制限**: ユーザー/チャネル/グローバル
+- **動的調整**: 負荷に応じた制限値変更
+- **公平性**: ユーザー間の公平なリソース配分
+
+### 3. 配信保証機能
+- **リトライ戦略**: 指数バックオフ
+- **フェイルオーバー**: 代替チャネルの使用
+- **Dead Letter Queue**: 失敗通知の管理
+
+### 4. リアルタイム監視メトリクス
+- **ライブダッシュボード**: WebSocketベース
+- **アラート闾値**: 異常の早期検知
+- **トレンド分析**: 配信パターンの把握
+
+### 5. スケーラビリティ考慮事項
+- **水平スケーリング**: WebSocketサーバーの分散
+- **キューイング**: バーストトラフィック対策
+- **キャッシング**: 通知テンプレートの高速化
+
+この包括的な通知システムアーキテクチャにより、高可用性でスケーラブルな通知配信を実現できます。
+
+</Card>
+
+</Section>
