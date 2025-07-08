@@ -1,8 +1,8 @@
 ---
 title: "OSI参照モデルとWebSocketの位置"
 description: "OSI 7層モデルを理解し、WebSocketがどの層で動作するかを明確に把握します"
-duration: 45
-difficulty: "beginner"
+duration: "1-1.5時間"
+difficulty: "中級"
 phase: 1
 lesson: "2.2"
 ---
@@ -17,132 +17,731 @@ lesson: "2.2"
 <LessonLayout
 	lessonId="phase1-network-tech-osi-model"
 	title="OSI参照モデルとWebSocketの位置"
-	duration="45分"
-	difficulty="beginner"
-	prerequisites={['HTTP基礎', 'ネットワーク通信の基本概念']}
+	duration="1-1.5時間"
+	difficulty="中級"
+	prerequisites={['HTTP基礎', 'ネットワーク通信の基本概念', 'TCP/WebSocket接続確立プロセス']}
 	sectionTitle="ネットワーク技術基礎"
 	nextLessonId="phase1-network-tech-http-versions"
 	nextLessonTitle="HTTP/1.1からHTTP/3までのWebSocket対応"
 	nextLessonPath="/phase1/network-tech/http-versions"
 	learningObjectives={[
-		'OSI 7層モデルの各層の役割を理解',
-		'WebSocketが動作する層を特定',
-		'Socket（トランスポート層）との違いを把握'
+		'OSI 7層モデルでのデータ送受信プロセスの完全理解',
+		'各層でのデータ形式（フレーム、パケット、セグメント）の把握',
+		'WebSocketがセッション層で動作することの技術的意味の理解',
+		'実際のWebSocket通信における各層の役割と責任の明確化'
 	]}
 >
 
 <Section title="学習内容" icon="📚">
 	<Card title="このレッスンで学ぶこと" icon="📋" accentColor="blue">
-		<p>ネットワーク通信の基礎となるOSI参照モデルを理解し、WebSocketの位置づけを明確にします。</p>
+		<p><strong>OSI参照モデル</strong>（Open Systems Interconnection Reference Model）は、国際標準化機構（ISO）が策定したネットワーク通信の7層構造モデルです。WebSocket通信がこの標準的な枠組みでどのように動作するかを詳しく学習します。</p>
 		<ul>
-			<li><strong>OSI 7層モデルの各層の役割</strong>を理解</li>
-			<li><strong>WebSocketが動作する層</strong>を特定</li>
-			<li><strong>Socket（トランスポート層）との違い</strong>を把握</li>
+			<li><strong>OSI参照モデル7層</strong>でのWebSocket通信の位置づけ</li>
+			<li><strong>送信側と受信側</strong>でのデータ変換プロセス</li>
+			<li><strong>各層でのデータ呼び名</strong>（フレーム、パケット、セグメント）</li>
+			<li><strong>WebSocketのセッション層動作</strong>の技術的意味</li>
+			<li><strong>実践的なデバッグ</strong>での層別アプローチ</li>
 		</ul>
 	</Card>
 </Section>
 
-<Section title="OSI 7層モデル概要" icon="🏗️">
-	<Card title="ネットワーク通信の階層構造" icon="📊" accentColor="green">
-		<p>OSI参照モデルは、ネットワーク通信を<strong>7つの層</strong>に分けて理解する標準的なフレームワークです。</p>
-		
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-			<div class="space-y-2">
-				<div class="bg-red-100 p-3 rounded-lg border-l-4 border-red-400">
-					<h4 class="font-semibold text-red-800">🔴 Layer 7: アプリケーション層</h4>
-					<p class="text-sm text-red-700">ユーザーアプリケーションとの直接的なインターフェース</p>
-				</div>
-				<div class="bg-orange-100 p-3 rounded-lg border-l-4 border-orange-400">
-					<h4 class="font-semibold text-orange-800">🟠 Layer 6: プレゼンテーション層</h4>
-					<p class="text-sm text-orange-700">データの暗号化、圧縮、形式変換</p>
-				</div>
-				<div class="bg-yellow-100 p-3 rounded-lg border-l-4 border-yellow-400">
-					<h4 class="font-semibold text-yellow-800">🟡 Layer 5: セッション層</h4>
-					<p class="text-sm text-yellow-700">セッションの確立、管理、終了</p>
-				</div>
-				<div class="bg-green-100 p-3 rounded-lg border-l-4 border-green-400">
-					<h4 class="font-semibold text-green-800">🟢 Layer 4: トランスポート層</h4>
-					<p class="text-sm text-green-700">信頼性のあるデータ転送の管理</p>
-				</div>
-			</div>
-			
-			<div class="space-y-2">
-				<div class="bg-blue-100 p-3 rounded-lg border-l-4 border-blue-400">
-					<h4 class="font-semibold text-blue-800">🔵 Layer 3: ネットワーク層</h4>
-					<p class="text-sm text-blue-700">パケットルーティング、アドレス管理</p>
-				</div>
-				<div class="bg-purple-100 p-3 rounded-lg border-l-4 border-purple-400">
-					<h4 class="font-semibold text-purple-800">🟣 Layer 2: データリンク層</h4>
-					<p class="text-sm text-purple-700">隣接ノード間の信頼性のあるデータ転送</p>
-				</div>
-				<div class="bg-gray-100 p-3 rounded-lg border-l-4 border-gray-400">
-					<h4 class="font-semibold text-gray-800">🟤 Layer 1: 物理層</h4>
-					<p class="text-sm text-gray-700">物理的な信号の伝送</p>
-				</div>
-			</div>
-		</div>
-	</Card>
+<Section title="OSI 7層モデルとデータフロー" icon="🏗️">
+
+<Card title="送信側：アプリケーションからネットワークへ" icon="📤" accentColor="green">
+
+送信時は**上位層から下位層**へデータが流れ、各層でヘッダーが追加されます。
+
+</Card>
+
+<div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
+<h4 class="text-lg font-semibold text-green-900 mb-4">📤 OSI参照モデル：送信側データフロー</h4>
+
+```
+アプリケーション（WebSocketメッセージ）
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 7: アプリケーション層              │ ← WebSocketフレーム作成
+│ WebSocketフレーム作成                   │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 6: プレゼンテーション層            │ ← TLS暗号化 (wss://)
+│ TLS暗号化 (wss://)                     │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 5: セッション層                   │ ← WebSocket接続管理 ⭐
+│ WebSocket接続管理                       │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 4: トランスポート層               │ ← TCPセグメント作成
+│ TCPセグメント作成                       │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 3: ネットワーク層                 │ ← IPパケット作成
+│ IPパケット作成                          │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 2: データリンク層                 │ ← Ethernetフレーム作成
+│ Ethernetフレーム作成                    │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 1: 物理層                         │ ← 電気信号として送信
+│ 電気信号として送信                      │
+└─────────────────────────────────────────┘
+            ↓
+        ネットワーク送信
+```
+
+**⭐ WebSocketはOSI参照モデルのセッション層（Layer 5）で動作**
+
+</div>
+
+<Card title="送信側データ変換の詳細" icon="📤" accentColor="green">
+
+#### 各層でのデータ変換
+
+- **Layer 7**: WebSocketメッセージ → **WebSocketフレーム**
+- **Layer 6**: 暗号化処理（wss://の場合）
+- **Layer 5**: セッション管理情報の付加
+- **Layer 4**: TCPヘッダー追加 → **TCPセグメント**
+- **Layer 3**: IPヘッダー追加 → **IPパケット**
+- **Layer 2**: Ethernetヘッダー追加 → **Ethernetフレーム**
+- **Layer 1**: 物理的な信号に変換
+
+</Card>
+
+<Card title="受信側：ネットワークからアプリケーションへ" icon="📥" accentColor="blue">
+
+受信時は**下位層から上位層**へデータが流れ、各層でヘッダーが除去されます。
+
+</Card>
+
+<div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-400">
+<h4 class="text-lg font-semibold text-blue-900 mb-4">📥 OSI参照モデル：受信側データフロー</h4>
+
+```
+      ネットワーク受信
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 1: 物理層                         │ ← 電気信号受信
+│ 電気信号受信                            │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 2: データリンク層                 │ ← Ethernetフレーム解析
+│ Ethernetフレーム解析                    │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 3: ネットワーク層                 │ ← IPパケット処理
+│ IPパケット処理                          │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 4: トランスポート層               │ ← TCPセグメント処理
+│ TCPセグメント処理                       │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 5: セッション層                   │ ← WebSocket接続維持 ⭐
+│ WebSocket接続維持                       │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 6: プレゼンテーション層            │ ← TLS復号化 (wss://)
+│ TLS復号化 (wss://)                     │
+└─────────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────────┐
+│ Layer 7: アプリケーション層              │ ← WebSocketフレーム処理
+│ WebSocketフレーム処理                   │
+└─────────────────────────────────────────┘
+            ↓
+アプリケーション（メッセージ受信）
+```
+
+**⭐ OSI参照モデルでのWebSocket処理：セッション層が中核**
+
+</div>
+
+<Card title="受信側データ復元の詳細" icon="📥" accentColor="blue">
+
+#### 各層でのデータ復元
+
+- **Layer 1**: 物理信号受信
+- **Layer 2**: **Ethernetフレーム** → IPパケット抽出
+- **Layer 3**: **IPパケット** → TCPセグメント抽出
+- **Layer 4**: **TCPセグメント** → アプリケーションデータ抽出
+- **Layer 5**: WebSocket接続状態確認
+- **Layer 6**: TLS復号化（wss://の場合）
+- **Layer 7**: **WebSocketフレーム** → メッセージ抽出
+
+</Card>
+
 </Section>
 
-<Section title="WebSocketの主要動作層" icon="🎯">
-	<Card title="Layer 5（セッション層）がメイン" icon="🌐" accentColor="yellow">
-		<p><strong>WebSocket</strong>は主に<strong>Layer 5（セッション層）</strong>で動作します。</p>
-		
-		<h4 class="font-semibold mt-4 mb-2">WebSocketの主要機能と対応層：</h4>
-		<div class="space-y-3">
-			<div class="bg-yellow-50 p-4 rounded-lg">
-				<h5 class="font-medium text-yellow-800">🟡 Layer 5: セッション層（メイン）</h5>
-				<ul class="text-sm text-yellow-700 mt-2 space-y-1">
-					<li>• 永続的接続の確立と管理</li>
-					<li>• WebSocketハンドシェイクプロトコル</li>
-					<li>• 接続状態の管理とライフサイクル</li>
-				</ul>
-			</div>
-			
-			<div class="bg-green-50 p-4 rounded-lg">
-				<h5 class="font-medium text-green-800">🟢 Layer 4: トランスポート層（基盤）</h5>
-				<ul class="text-sm text-green-700 mt-2 space-y-1">
-					<li>• TCPによる信頼性のあるデータ転送</li>
-					<li>• ポート番号による通信の識別</li>
-					<li>• フロー制御と輻輳制御</li>
-				</ul>
-			</div>
-			
-			<div class="bg-orange-50 p-4 rounded-lg">
-				<h5 class="font-medium text-orange-800">🟠 Layer 6: プレゼンテーション層（WSS）</h5>
-				<ul class="text-sm text-orange-700 mt-2 space-y-1">
-					<li>• TLS/SSL暗号化（wss://）</li>
-					<li>• データの暗号化と復号化</li>
-					<li>• 証明書ベースの認証</li>
-				</ul>
-			</div>
-		</div>
-	</Card>
+<Section title="WebSocketのセッション層動作" icon="🎯">
+
+<Card title="Layer 5（セッション層）での重要な機能" icon="🌐" accentColor="yellow">
+
+WebSocketが**セッション層で動作する**ことには深い技術的意味があります。
+
+### セッション層の核心機能
+
+**1. 持続的接続の管理**
+```javascript
+// WebSocketセッション管理の実装例
+class WebSocketSession {
+  constructor(url) {
+    this.state = 'CONNECTING';
+    this.socket = new WebSocket(url);
+    
+    // セッション層での状態管理
+    this.socket.onopen = () => {
+      this.state = 'OPEN';
+      this.startHeartbeat(); // セッション維持機能
+    };
+    
+    this.socket.onclose = () => {
+      this.state = 'CLOSED';
+      this.stopHeartbeat();
+    };
+  }
+  
+  // セッション層独自の機能
+  startHeartbeat() {
+    this.heartbeatInterval = setInterval(() => {
+      if (this.state === 'OPEN') {
+        this.socket.send(JSON.stringify({ type: 'ping' }));
+      }
+    }, 30000);
+  }
+}
+```
+
+**2. 半二重・全二重通信の制御**
+```javascript
+// セッション層での通信制御
+class WebSocketCommunicationControl {
+  constructor(socket) {
+    this.socket = socket;
+    this.sendQueue = [];
+    this.isReceiving = false;
+    this.isSending = false;
+  }
+  
+  // 全二重通信の実装
+  async sendMessage(message) {
+    this.isSending = true;
+    try {
+      this.socket.send(JSON.stringify(message));
+      // 同時に受信も可能（全二重）
+    } finally {
+      this.isSending = false;
+    }
+  }
+  
+  handleReceive(event) {
+    this.isReceiving = true;
+    const message = JSON.parse(event.data);
+    // 送信中でも受信処理が可能（全二重）
+    this.processMessage(message);
+    this.isReceiving = false;
+  }
+}
+```
+
+**3. セッション同期とエラー回復**
+```javascript
+// セッション層でのエラー回復
+class WebSocketSessionRecovery {
+  constructor(url) {
+    this.url = url;
+    this.lastMessageId = 0;
+    this.unacknowledgedMessages = new Map();
+    this.connect();
+  }
+  
+  // セッション層での自動再接続
+  async reconnect() {
+    console.log('Session layer: Attempting reconnection');
+    
+    // セッション状態の保存
+    const sessionState = {
+      lastMessageId: this.lastMessageId,
+      pendingMessages: Array.from(this.unacknowledgedMessages.values())
+    };
+    
+    this.connect();
+    
+    // セッション状態の復元
+    await this.restoreSession(sessionState);
+  }
+}
+```
+
+</Card>
+
+<Card title="他の層との連携パターン" icon="🔄" accentColor="indigo">
+
+### Layer 4（トランスポート層）との関係
+
+**TCP接続の上位にWebSocketセッション**
+
+```javascript
+// TCP (Layer 4) の基盤の上でWebSocket (Layer 5) が動作
+const tcpConnection = {
+  // Layer 4: TCP機能
+  sequenceNumber: 1000,
+  acknowledgmentNumber: 2000,
+  windowSize: 8192,
+  
+  // TCPは信頼性のあるバイトストリームを提供
+  send: (data) => { /* TCP segmentation & transmission */ },
+  receive: () => { /* TCP reassembly & ordering */ }
+};
+
+const websocketSession = {
+  // Layer 5: WebSocketセッション機能
+  connectionState: 'OPEN',
+  
+  // TCPストリームの上でWebSocketフレーミング
+  sendFrame: (message) => {
+    const frame = this.createWebSocketFrame(message);
+    tcpConnection.send(frame); // TCP層に委譲
+  },
+  
+  receiveFrame: () => {
+    const rawData = tcpConnection.receive(); // TCP層から受信
+    return this.parseWebSocketFrame(rawData);
+  }
+};
+```
+
+### Layer 6（プレゼンテーション層）との関係
+
+**TLS暗号化の位置づけ**
+
+```javascript
+// wss:// での層間連携
+const websocketWithTLS = {
+  // Layer 6: TLS暗号化
+  tlsSession: {
+    encrypt: (data) => { /* TLS encryption */ },
+    decrypt: (data) => { /* TLS decryption */ }
+  },
+  
+  // Layer 5: WebSocketセッション
+  websocketSession: {
+    sendMessage: (message) => {
+      const frame = this.createFrame(message);
+      const encryptedFrame = this.tlsSession.encrypt(frame);
+      this.tcpConnection.send(encryptedFrame);
+    }
+  }
+};
+```
+
+</Card>
+
 </Section>
 
-<Section title="まとめ" icon="📊">
-	<Card title="重要なポイント" icon="🎯" accentColor="indigo">
-		<div class="grid md:grid-cols-2 gap-4">
-			<div>
-				<h4 class="font-semibold text-indigo-800 mb-2">技術的理解</h4>
-				<ul class="space-y-1 text-sm text-indigo-700">
-					<li>✓ OSI 7層モデルの各層の役割</li>
-					<li>✓ WebSocketの主要動作層（Layer 5）</li>
-					<li>✓ Socket（Layer 4）との違い</li>
-					<li>✓ 暗号化レイヤー（Layer 6）の役割</li>
-				</ul>
-			</div>
-			<div>
-				<h4 class="font-semibold text-indigo-800 mb-2">実践的知識</h4>
-				<ul class="space-y-1 text-sm text-indigo-700">
-					<li>✓ ブラウザでの抽象化レベル</li>
-					<li>✓ 開発者の責任範囲</li>
-					<li>✓ デバッグ時の層別アプローチ</li>
-					<li>✓ セキュリティ実装の考慮点</li>
-				</ul>
-			</div>
-		</div>
-	</Card>
+<Section title="各層でのデータの呼び名と構造" icon="📦">
+
+<Card title="OSI参照モデルのLayer別データ単位" icon="🏷️" accentColor="purple">
+
+**OSI参照モデル**では、各層で扱うデータに固有の名前が付けられています。WebSocket通信を理解するには、この標準化された用語体系の理解が重要です。
+
+### OSI参照モデルでのデータ変換プロセス
+
+**OSI参照モデル**は、ネットワーク通信を7つの階層に分けて標準化したモデルです。各層には固有の役割と、扱うデータ単位が定義されています。WebSocketはこのモデルに準拠して動作するため、各層でのデータ形式を理解することが重要です。
+
+<div class="overflow-x-auto">
+<table class="min-w-full bg-white border border-gray-300">
+<thead class="bg-gray-50">
+<tr>
+<th class="px-4 py-2 border-b text-left">Layer</th>
+<th class="px-4 py-2 border-b text-left">データ単位</th>
+<th class="px-4 py-2 border-b text-left">主要ヘッダー</th>
+<th class="px-4 py-2 border-b text-left">WebSocketでの役割</th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-red-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 7</td>
+<td class="px-4 py-2 border-b">データ / メッセージ</td>
+<td class="px-4 py-2 border-b">WebSocketフレームヘッダー</td>
+<td class="px-4 py-2 border-b">アプリケーションメッセージの処理</td>
+</tr>
+<tr class="bg-orange-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 6</td>
+<td class="px-4 py-2 border-b">暗号化データ</td>
+<td class="px-4 py-2 border-b">TLS Record Header</td>
+<td class="px-4 py-2 border-b">wss://での暗号化・復号化</td>
+</tr>
+<tr class="bg-yellow-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 5</td>
+<td class="px-4 py-2 border-b">セッションデータ</td>
+<td class="px-4 py-2 border-b">セッション制御情報</td>
+<td class="px-4 py-2 border-b"><strong>WebSocketの主要動作層</strong></td>
+</tr>
+<tr class="bg-green-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 4</td>
+<td class="px-4 py-2 border-b"><strong>セグメント</strong></td>
+<td class="px-4 py-2 border-b">TCPヘッダー (20bytes)</td>
+<td class="px-4 py-2 border-b">信頼性のあるデータ転送</td>
+</tr>
+<tr class="bg-blue-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 3</td>
+<td class="px-4 py-2 border-b"><strong>パケット</strong></td>
+<td class="px-4 py-2 border-b">IPヘッダー (20bytes)</td>
+<td class="px-4 py-2 border-b">ルーティングとアドレス解決</td>
+</tr>
+<tr class="bg-purple-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 2</td>
+<td class="px-4 py-2 border-b"><strong>フレーム</strong></td>
+<td class="px-4 py-2 border-b">Ethernetヘッダー (14bytes)</td>
+<td class="px-4 py-2 border-b">物理的ネットワーク上の転送</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">Layer 1</td>
+<td class="px-4 py-2 border-b">ビット / 信号</td>
+<td class="px-4 py-2 border-b">なし</td>
+<td class="px-4 py-2 border-b">物理的信号として伝送</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+### WebSocketフレームの構造（Layer 7）
+
+```
+WebSocketフレーム構造:
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-------+-+-------------+-------------------------------+
+|F|R|R|R| opcode|M| Payload len |    Extended payload length    |
+|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
+|N|V|V|V|       |S|             |   (if payload len==126/127)   |
+| |1|2|3|       |K|             |                               |
++-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+|     Extended payload length continued, if payload len == 127  |
++ - - - - - - - - - - - - - - - +-------------------------------+
+|                               |Masking-key, if MASK set to 1  |
++-------------------------------+-------------------------------+
+| Masking-key (continued)       |          Payload Data         |
++-------------------------------- - - - - - - - - - - - - - - - +
+:                     Payload Data continued ...                :
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+|                     Payload Data continued ...                |
++---------------------------------------------------------------+
+```
+
+</Card>
+
+<Card title="実際のパケットキャプチャ例" icon="🔍" accentColor="red">
+
+### Wiresharkでの実際のWebSocket通信
+
+**Layer 2: Ethernetフレーム**
+```
+Ethernet II, Src: 00:11:22:33:44:55, Dst: aa:bb:cc:dd:ee:ff
+    Destination: aa:bb:cc:dd:ee:ff
+    Source: 00:11:22:33:44:55
+    Type: IPv4 (0x0800)
+```
+
+**Layer 3: IPパケット**
+```
+Internet Protocol Version 4
+    Version: 4
+    Header Length: 20 bytes
+    Total Length: 96
+    Protocol: TCP (6)
+    Source: 192.168.1.100
+    Destination: 203.0.113.10
+```
+
+**Layer 4: TCPセグメント**
+```
+Transmission Control Protocol
+    Source Port: 52341
+    Destination Port: 443 (https)
+    Sequence Number: 1
+    Acknowledgment Number: 1
+    Flags: PSH, ACK
+    [This is a segment of a reassembled PDU]
+```
+
+**Layer 5-7: WebSocketデータ**
+```
+WebSocket
+    1... .... = Fin: True
+    .000 .... = Reserved: 0x0
+    .... 0001 = Opcode: Text (1)
+    1... .... = Mask: True
+    .011 1110 = Payload length: 62
+    Masking-Key: 0x12345678
+    Payload: {"type":"message","content":"Hello WebSocket!"}
+```
+
+</Card>
+
+</Section>
+
+<Section title="実践的なWebSocket開発での活用" icon="🛠️">
+
+<Card title="層別デバッグアプローチ" icon="🐛" accentColor="orange">
+
+### 問題発生時の体系的調査方法
+
+**1. Layer 7（アプリケーション層）の問題**
+```javascript
+// WebSocketフレーム解析
+const debugWebSocketFrame = (event) => {
+  console.log('Layer 7 Debug:');
+  console.log('- Frame type:', event.type);
+  console.log('- Payload size:', event.data.length);
+  console.log('- Content:', event.data);
+  
+  // フレーム構造の検証
+  if (typeof event.data === 'string') {
+    try {
+      const parsed = JSON.parse(event.data);
+      console.log('- Valid JSON:', parsed);
+    } catch (e) {
+      console.log('- Invalid JSON format');
+    }
+  }
+};
+```
+
+**2. Layer 5（セッション層）の問題**
+```javascript
+// WebSocketセッション状態監視
+const debugWebSocketSession = (ws) => {
+  console.log('Layer 5 Debug:');
+  console.log('- Ready State:', ws.readyState);
+  console.log('- URL:', ws.url);
+  console.log('- Protocol:', ws.protocol);
+  console.log('- Extensions:', ws.extensions);
+  
+  // 接続状態の詳細分析
+  const states = {
+    0: 'CONNECTING',
+    1: 'OPEN', 
+    2: 'CLOSING',
+    3: 'CLOSED'
+  };
+  console.log('- State Name:', states[ws.readyState]);
+};
+```
+
+**3. Layer 4（トランスポート層）の問題**
+```javascript
+// TCP接続問題の調査（ブラウザ開発者ツール使用）
+const analyzeNetworkLayer = () => {
+  console.log('Layer 4 Debug (Check in Network tab):');
+  console.log('- TCP connection establishment time');
+  console.log('- TCP congestion window size');
+  console.log('- Retransmission count');
+  console.log('- Connection timeout values');
+};
+```
+
+**4. 総合的な診断ツール**
+```javascript
+class WebSocketLayerDiagnostics {
+  constructor(url) {
+    this.url = url;
+    this.diagnostics = {
+      layer7: { errors: [], warnings: [] },
+      layer5: { errors: [], warnings: [] },
+      layer4: { errors: [], warnings: [] }
+    };
+  }
+  
+  diagnose() {
+    const ws = new WebSocket(this.url);
+    
+    // Layer 5 診断
+    ws.onopen = () => {
+      this.diagnostics.layer5.warnings.push('Connection established');
+      this.performLayer7Tests(ws);
+    };
+    
+    ws.onerror = (error) => {
+      this.diagnostics.layer5.errors.push(`Connection error: ${error}`);
+      this.analyzeConnectionFailure();
+    };
+    
+    ws.onclose = (event) => {
+      this.diagnostics.layer5.warnings.push(
+        `Connection closed: Code ${event.code}, Reason: ${event.reason}`
+      );
+    };
+    
+    return this.diagnostics;
+  }
+  
+  performLayer7Tests(ws) {
+    // JSON形式テスト
+    try {
+      ws.send('{"test": "json"}');
+      this.diagnostics.layer7.warnings.push('JSON format test passed');
+    } catch (e) {
+      this.diagnostics.layer7.errors.push('JSON format test failed');
+    }
+    
+    // バイナリデータテスト
+    try {
+      ws.send(new ArrayBuffer(8));
+      this.diagnostics.layer7.warnings.push('Binary data test passed');
+    } catch (e) {
+      this.diagnostics.layer7.errors.push('Binary data test failed');
+    }
+  }
+}
+```
+
+</Card>
+
+<Card title="性能最適化における層の理解" icon="⚡" accentColor="green">
+
+### 各層での最適化戦略
+
+**Layer 5（セッション層）最適化**
+```javascript
+// 効率的なセッション管理
+class OptimizedWebSocketSession {
+  constructor(url) {
+    this.url = url;
+    this.messageQueue = [];
+    this.batchSize = 10;
+    this.batchTimeout = 100; // ms
+    
+    this.connect();
+    this.startBatchProcessor();
+  }
+  
+  // メッセージのバッチング（セッション層最適化）
+  sendMessage(message) {
+    this.messageQueue.push(message);
+    
+    if (this.messageQueue.length >= this.batchSize) {
+      this.processBatch();
+    }
+  }
+  
+  processBatch() {
+    if (this.messageQueue.length === 0) return;
+    
+    const batch = {
+      type: 'batch',
+      messages: this.messageQueue.splice(0, this.batchSize),
+      timestamp: Date.now()
+    };
+    
+    this.ws.send(JSON.stringify(batch));
+  }
+  
+  startBatchProcessor() {
+    setInterval(() => {
+      if (this.messageQueue.length > 0) {
+        this.processBatch();
+      }
+    }, this.batchTimeout);
+  }
+}
+```
+
+**Layer 4（トランスポート層）配慮**
+```javascript
+// TCP特性を考慮した実装
+class TCPAwareWebSocket {
+  constructor(url) {
+    this.url = url;
+    this.socket = new WebSocket(url);
+    this.setupTCPOptimizations();
+  }
+  
+  setupTCPOptimizations() {
+    // TCP Nagle Algorithm対策
+    this.sendBuffer = [];
+    this.flushInterval = setInterval(() => {
+      this.flushBuffer();
+    }, 10); // 10ms毎にフラッシュ
+  }
+  
+  send(data) {
+    // 小さなメッセージをバッファリング
+    if (data.length < 1460) { // TCP MSS以下
+      this.sendBuffer.push(data);
+    } else {
+      this.flushBuffer();
+      this.socket.send(data);
+    }
+  }
+  
+  flushBuffer() {
+    if (this.sendBuffer.length > 0) {
+      const combinedData = this.sendBuffer.join('');
+      this.socket.send(combinedData);
+      this.sendBuffer = [];
+    }
+  }
+}
+```
+
+</Card>
+
+</Section>
+
+<Section title="学習成果の確認" icon="📊">
+
+<Card title="習得した知識の総括" icon="🎯" accentColor="indigo">
+
+<div class="grid md:grid-cols-2 gap-6">
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🔬 技術的深層理解</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ OSI 7層でのデータ変換プロセス</li>
+<li>✓ 各層でのデータ呼び名（フレーム、パケット、セグメント）</li>
+<li>✓ WebSocketセッション層動作の技術的意味</li>
+<li>✓ 送信側・受信側での層間連携メカニズム</li>
+<li>✓ TLS暗号化レイヤーとの統合パターン</li>
+</ul>
+</div>
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🛠️ 実践的応用能力</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ 層別デバッグアプローチの実践</li>
+<li>✓ パフォーマンス問題の体系的分析</li>
+<li>✓ 各層での最適化戦略の選択</li>
+<li>✓ ネットワーク問題の根本原因特定</li>
+<li>✓ 統合的なWebSocketアーキテクチャ設計</li>
+</ul>
+</div>
+
+</div>
+
+#### 次のレッスンへの準備
+
+このOSI層モデルの理解は、次の「HTTP/1.1からHTTP/3までのWebSocket対応」レッスンで以下の発展的トピックの基礎となります。
+
+- **HTTP/2での多重化**：Layer 5での複数セッション管理
+- **HTTP/3のQUIC**：Layer 4でのUDP活用とWebSocket影響
+- **バージョン間互換性**：各層での後方互換性確保戦略
+
+</Card>
+
 </Section>
 
 </LessonLayout>

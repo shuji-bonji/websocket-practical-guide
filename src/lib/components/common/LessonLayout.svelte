@@ -100,7 +100,9 @@
 
 <style>
 	.lesson-layout {
-		@apply space-y-8;
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
 	}
 
 	.lesson-content {
@@ -110,19 +112,23 @@
 
 	/* Ensure proper spacing for content within layout */
 	:global(.lesson-layout .prose) {
-		@apply max-w-none;
+		max-width: none;
 	}
 
 	/* Style for learning objectives details */
 	:global(.lesson-layout details) {
-		@apply bg-blue-50 border border-blue-200 rounded-lg p-6;
+		background-color: #eff6ff;
+		border: 1px solid #dbeafe;
+		border-radius: 0.5rem;
+		padding: 1.5rem;
 	}
 
 	:global(.lesson-layout details summary h2) {
-		@apply mb-0 text-blue-900;
+		margin-bottom: 0;
+		color: #1e3a8a;
 	}
 
 	:global(.lesson-layout details[open]) {
-		@apply bg-blue-100;
+		background-color: #dbeafe;
 	}
 </style>
