@@ -1,8 +1,8 @@
 ---
 title: "HTTP/1.1からHTTP/3までのWebSocket対応"
 description: "HTTPの各バージョンにおけるWebSocket対応状況と特徴を比較し、最適な実装戦略を学習します"
-duration: 45
-difficulty: "intermediate"
+duration: "1.5-2時間"
+difficulty: "中級"
 phase: 1
 lesson: "2.3"
 ---
@@ -16,166 +16,1459 @@ lesson: "2.3"
 <LessonLayout
 	lessonId="phase1-network-tech-http-versions"
 	title="HTTP/1.1からHTTP/3までのWebSocket対応"
-	duration="45分"
-	difficulty="intermediate"
-	prerequisites={['HTTP基礎', 'OSI参照モデル', 'ネットワーク通信の基本概念']}
+	duration="1.5-2時間"
+	difficulty="中級"
+	prerequisites={['HTTP基礎', 'OSI参照モデル', 'TCP/WebSocket接続確立プロセス']}
 	sectionTitle="ネットワーク技術基礎"
 	nextLessonId="phase1-network-tech-tcp-websocket"
 	nextLessonTitle="TCPとWebSocketの関係"
 	nextLessonPath="/phase1/network-tech/tcp-websocket"
 	learningObjectives={[
-		'HTTPの各バージョンにおけるWebSocket対応状況を理解',
-		'HTTP/2での双方向通信と制限事項を把握',
-		'HTTP/3（QUIC）とWebSocketの関係を理解',
-		'各バージョンでの最適な実装戦略を習得'
+		'HTTPの各バージョンにおけるWebSocket対応状況の詳細理解',
+		'HTTP/2での双方向通信機能とWebSocketとの技術的差異の把握',
+		'HTTP/3（QUIC）プロトコルとWebSocketの統合アーキテクチャの理解',
+		'2025年現在の推奨実装戦略と将来への移行計画の策定'
 	]}
 >
 
 <Section title="学習内容" icon="📚">
 	<Card title="このレッスンで学ぶこと" icon="📋" accentColor="blue">
-		<p>HTTPの進化とWebSocketの対応状況を理解し、各バージョンでの最適な実装戦略を学習します。</p>
+		<p>HTTPプロトコルの進化とWebSocket技術の関係を深く理解し、実践的な実装戦略を習得します。</p>
 		<ul>
-			<li><strong>HTTP/1.1でのWebSocket実装</strong>とアップグレードメカニズム</li>
-			<li><strong>HTTP/2の双方向通信</strong>とWebSocketとの比較</li>
-			<li><strong>HTTP/3（QUIC）</strong>でのWebSocket over HTTP/3</li>
-			<li><strong>各バージョンでの最適な選択肢</strong>と実装戦略</li>
+			<li><strong>HTTP/1.1ベースWebSocket</strong>の詳細な実装パターン</li>
+			<li><strong>HTTP/2 Server Push vs WebSocket</strong>の技術的比較と選択基準</li>
+			<li><strong>HTTP/3（QUIC）</strong>での新しいWebSocket実装アプローチ</li>
+			<li><strong>WebTransport</strong>による次世代双方向通信の展望</li>
+			<li><strong>2025年の推奨戦略</strong>と実装ガイドライン</li>
 		</ul>
 	</Card>
 </Section>
 
-<Section title="HTTP/1.1とWebSocket" icon="🔄">
-	<Card title="WebSocketの基盤プロトコル" icon="🌐" accentColor="green">
-		<p><strong>HTTP/1.1</strong>は現在のWebSocketの基盤となる重要なプロトコルです。</p>
-		
-		<h4 class="font-semibold mt-4 mb-2">WebSocketハンドシェイク（HTTP/1.1）</h4>
-		
-		<div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
-			<div>GET /websocket HTTP/1.1</div>
-			<div>Host: example.com</div>
-			<div>Upgrade: websocket</div>
-			<div>Connection: Upgrade</div>
-			<div>Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==</div>
-			<div>Sec-WebSocket-Version: 13</div>
-		</div>
-		
-		<h4 class="font-semibold mt-4 mb-2">サーバーレスポンス</h4>
-		
-		<div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
-			<div>HTTP/1.1 101 Switching Protocols</div>
-			<div>Upgrade: websocket</div>
-			<div>Connection: Upgrade</div>
-			<div>Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</div>
-		</div>
-		
-		<div class="mt-4 p-4 bg-green-50 rounded-lg">
-			<h5 class="font-medium text-green-800">✅ HTTP/1.1の優位性</h5>
-			<ul class="text-sm text-green-700 mt-2 space-y-1">
-				<li>• 完全なWebSocket対応</li>
-				<li>• 最も安定した実装</li>
-				<li>• 幅広いブラウザサポート</li>
-				<li>• 豊富な実装例とドキュメント</li>
-			</ul>
-		</div>
-	</Card>
+<Section title="HTTP/1.1とWebSocket：基盤技術" icon="🔄">
+
+<Card title="WebSocketの根幹プロトコル" icon="🌐" accentColor="green">
+
+**HTTP/1.1**は現在のWebSocket実装の基盤となる最も重要なプロトコルです。
+
+### WebSocketハンドシェイクの詳細
+
+**クライアント側リクエスト**
+```http
+GET /chat HTTP/1.1
+Host: example.com:8080
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Version: 13
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+Origin: https://example.com
+User-Agent: Mozilla/5.0 (compatible WebSocket client)
+```
+
+**サーバー側レスポンス**
+```http
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+Sec-WebSocket-Protocol: chat
+Sec-WebSocket-Extensions: permessage-deflate
+```
+
+### HTTP/1.1 Upgradeメカニズムの実装
+
+```javascript
+// サーバー側：Node.js + ws ライブラリでの実装
+const WebSocket = require('ws');
+const http = require('http');
+
+class HTTP11WebSocketServer {
+  constructor() {
+    this.server = http.createServer();
+    this.wss = new WebSocket.Server({
+      server: this.server,
+      handleProtocols: this.handleProtocols.bind(this),
+      verifyClient: this.verifyClient.bind(this)
+    });
+    
+    this.setupHTTP11Handling();
+  }
+  
+  setupHTTP11Handling() {
+    // HTTP/1.1特有の処理
+    this.server.on('upgrade', (request, socket, head) => {
+      console.log('HTTP/1.1 Upgrade request received');
+      console.log('Headers:', request.headers);
+      
+      // WebSocketハンドシェイクの詳細ログ
+      this.logUpgradeDetails(request);
+      
+      // WebSocketサーバーにアップグレード処理を委任
+      this.wss.handleUpgrade(request, socket, head, (ws) => {
+        this.wss.emit('connection', ws, request);
+      });
+    });
+  }
+  
+  handleProtocols(protocols, request) {
+    console.log('Requested protocols:', protocols);
+    
+    // プロトコル選択ロジック
+    const supportedProtocols = ['chat', 'echo', 'binary'];
+    for (const protocol of protocols) {
+      if (supportedProtocols.includes(protocol)) {
+        return protocol;
+      }
+    }
+    
+    return false; // プロトコル拒否
+  }
+  
+  verifyClient(info) {
+    // HTTP/1.1ベースの検証
+    const { origin, secure, req } = info;
+    
+    console.log('Client verification:', {
+      origin,
+      secure,
+      userAgent: req.headers['user-agent'],
+      httpVersion: req.httpVersion
+    });
+    
+    // HTTP/1.1の詳細検証
+    if (req.httpVersion !== '1.1') {
+      console.log('Rejected: Not HTTP/1.1');
+      return false;
+    }
+    
+    return true;
+  }
+  
+  logUpgradeDetails(request) {
+    console.log('=== HTTP/1.1 WebSocket Upgrade Details ===');
+    console.log('HTTP Version:', request.httpVersion);
+    console.log('Method:', request.method);
+    console.log('URL:', request.url);
+    console.log('Upgrade header:', request.headers.upgrade);
+    console.log('Connection header:', request.headers.connection);
+    console.log('WebSocket Key:', request.headers['sec-websocket-key']);
+    console.log('WebSocket Version:', request.headers['sec-websocket-version']);
+  }
+}
+```
+
+### HTTP/1.1の技術的優位性
+
+<div class="mt-4 p-4 bg-green-50 rounded-lg">
+<h5 class="font-medium text-green-800">✅ HTTP/1.1WebSocketの強み</h5>
+<ul class="text-sm text-green-700 mt-2 space-y-1">
+<li>• **完全なWebSocket RFC 6455対応**：すべての機能を網羅</li>
+<li>• **最も安定した実装**：10年以上の実績とバグ修正</li>
+<li>• **全ブラウザサポート**：IE10以降、全モダンブラウザ対応</li>
+<li>• **豊富なライブラリ・ツール**：多言語での成熟した実装</li>
+<li>• **デバッグの容易さ**：HTTP/1.1は人間が読みやすい形式</li>
+</ul>
+</div>
+
+</Card>
+
+<Card title="HTTP/1.1 WebSocketの実装パターン" icon="⚙️" accentColor="blue">
+
+### プロダクション環境での推奨実装
+
+```javascript
+// クライアント側：堅牢なWebSocket実装
+class ProductionWebSocket {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.options = {
+      protocols: options.protocols || [],
+      reconnectInterval: options.reconnectInterval || 3000,
+      maxReconnectAttempts: options.maxReconnectAttempts || 10,
+      heartbeatInterval: options.heartbeatInterval || 30000,
+      ...options
+    };
+    
+    this.reconnectAttempts = 0;
+    this.isConnected = false;
+    this.messageQueue = [];
+    
+    this.connect();
+  }
+  
+  connect() {
+    try {
+      // HTTP/1.1ベースWebSocket接続
+      this.ws = new WebSocket(this.url, this.options.protocols);
+      
+      // HTTP/1.1固有のイベント処理
+      this.ws.onopen = this.handleOpen.bind(this);
+      this.ws.onmessage = this.handleMessage.bind(this);
+      this.ws.onclose = this.handleClose.bind(this);
+      this.ws.onerror = this.handleError.bind(this);
+      
+    } catch (error) {
+      console.error('WebSocket connection failed:', error);
+      this.scheduleReconnect();
+    }
+  }
+  
+  handleOpen(event) {
+    console.log('HTTP/1.1 WebSocket connected');
+    this.isConnected = true;
+    this.reconnectAttempts = 0;
+    
+    // HTTP/1.1接続の詳細ログ
+    console.log('Protocol selected:', this.ws.protocol);
+    console.log('Extensions:', this.ws.extensions);
+    
+    // キューに蓄積されたメッセージを送信
+    this.flushMessageQueue();
+    
+    // ハートビート開始
+    this.startHeartbeat();
+  }
+  
+  handleMessage(event) {
+    try {
+      const data = JSON.parse(event.data);
+      
+      // ハートビート応答の処理
+      if (data.type === 'pong') {
+        this.lastPongTime = Date.now();
+        return;
+      }
+      
+      // アプリケーションメッセージの処理
+      this.onMessage?.(data);
+      
+    } catch (error) {
+      console.error('Message parsing error:', error);
+    }
+  }
+  
+  handleClose(event) {
+    console.log('WebSocket connection closed:', event.code, event.reason);
+    this.isConnected = false;
+    this.stopHeartbeat();
+    
+    // HTTP/1.1特有のクローズコード処理
+    this.handleCloseCode(event.code);
+    
+    // 自動再接続
+    if (this.shouldReconnect(event.code)) {
+      this.scheduleReconnect();
+    }
+  }
+  
+  handleCloseCode(code) {
+    const closeCodes = {
+      1000: 'Normal Closure',
+      1001: 'Going Away',
+      1002: 'Protocol Error',
+      1003: 'Unsupported Data',
+      1005: 'No Status Received',
+      1006: 'Abnormal Closure',
+      1007: 'Invalid frame payload data',
+      1008: 'Policy Violation',
+      1009: 'Message Too Big',
+      1010: 'Mandatory Extension',
+      1011: 'Internal Server Error',
+      1015: 'TLS Handshake'
+    };
+    
+    console.log(`Close code ${code}: ${closeCodes[code] || 'Unknown'}`);
+  }
+  
+  startHeartbeat() {
+    this.heartbeatTimer = setInterval(() => {
+      if (this.isConnected) {
+        this.send({ type: 'ping', timestamp: Date.now() });
+      }
+    }, this.options.heartbeatInterval);
+  }
+  
+  send(data) {
+    const message = JSON.stringify(data);
+    
+    if (this.isConnected && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(message);
+    } else {
+      // 接続していない場合はキューに追加
+      this.messageQueue.push(message);
+    }
+  }
+}
+```
+
+### HTTP/1.1での高度な機能実装
+
+```javascript
+// サブプロトコル・拡張機能の活用
+class AdvancedHTTP11WebSocket {
+  constructor(url) {
+    this.url = url;
+    this.setupAdvancedFeatures();
+  }
+  
+  setupAdvancedFeatures() {
+    // 複数のサブプロトコルとの対応
+    const protocols = [
+      'chat-v1',      // テキストチャット
+      'binary-v1',    // バイナリデータ
+      'json-rpc-2.0'  // JSON-RPC
+    ];
+    
+    // 拡張機能の要求
+    // permessage-deflate: メッセージ圧縮
+    // x-webkit-deflate-frame: Safari対応
+    this.ws = new WebSocket(this.url, protocols);
+    
+    this.ws.onopen = () => {
+      console.log('Selected protocol:', this.ws.protocol);
+      console.log('Available extensions:', this.ws.extensions);
+      
+      // プロトコル別の初期化
+      this.initializeProtocol(this.ws.protocol);
+    };
+  }
+  
+  initializeProtocol(protocol) {
+    switch (protocol) {
+      case 'chat-v1':
+        this.setupChatProtocol();
+        break;
+      case 'binary-v1':
+        this.setupBinaryProtocol();
+        break;
+      case 'json-rpc-2.0':
+        this.setupJsonRpcProtocol();
+        break;
+    }
+  }
+  
+  setupChatProtocol() {
+    // チャットプロトコル固有の処理
+    this.messageHandlers = {
+      'chat.message': this.handleChatMessage.bind(this),
+      'chat.typing': this.handleTypingIndicator.bind(this),
+      'chat.user_joined': this.handleUserJoined.bind(this)
+    };
+  }
+  
+  setupBinaryProtocol() {
+    // バイナリデータ処理
+    this.ws.binaryType = 'arraybuffer';
+    this.binaryHandlers = {
+      image: this.handleImageData.bind(this),
+      audio: this.handleAudioData.bind(this),
+      file: this.handleFileTransfer.bind(this)
+    };
+  }
+  
+  // 圧縮機能の活用
+  sendCompressedMessage(data) {
+    // permessage-deflate拡張が利用可能かチェック
+    if (this.ws.extensions.includes('permessage-deflate')) {
+      // 大きなデータの場合、自動的に圧縮される
+      this.ws.send(JSON.stringify(data));
+    } else {
+      // 手動圧縮の実装
+      this.sendManuallyCompressed(data);
+    }
+  }
+}
+```
+
+</Card>
+
 </Section>
 
-<Section title="HTTP/2での双方向通信" icon="⚡">
-	<Card title="Server Push vs WebSocket" icon="🔀" accentColor="orange">
-		<p><strong>HTTP/2</strong>では新しい双方向通信機能が追加されましたが、WebSocketとは異なる特徴があります。</p>
-		
-		<div class="grid md:grid-cols-2 gap-6 my-6">
-			<div class="bg-orange-50 p-4 rounded-lg">
-				<h4 class="font-semibold text-orange-800 mb-2">🔄 HTTP/2 Server Push</h4>
-				<ul class="text-sm text-orange-700 space-y-1">
-					<li>• サーバーからクライアントへの一方向</li>
-					<li>• リクエスト/レスポンスモデル</li>
-					<li>• ブラウザでの対応が限定的</li>
-					<li>• 多くのブラウザで廃止予定</li>
-				</ul>
-			</div>
-			
-			<div class="bg-blue-50 p-4 rounded-lg">
-				<h4 class="font-semibold text-blue-800 mb-2">🌐 WebSocket over HTTP/2</h4>
-				<ul class="text-sm text-blue-700 space-y-1">
-					<li>• 真の双方向通信</li>
-					<li>• 永続的接続</li>
-					<li>• リアルタイム通信に最適</li>
-					<li>• HTTP/2上でのWebSocketサポート</li>
-				</ul>
-			</div>
-		</div>
-		
-		<div class="mt-4 p-4 bg-yellow-50 rounded-lg">
-			<h5 class="font-medium text-yellow-800">⚠️ 注意点</h5>
-			<p class="text-sm text-yellow-700 mt-2">
-				HTTP/2 Server Pushは多くのブラウザで廃止され、WebSocketが双方向通信の標準となっています。
-			</p>
-		</div>
-	</Card>
+<Section title="HTTP/2での双方向通信とWebSocket" icon="⚡">
+
+<Card title="HTTP/2 Server Push vs WebSocket：技術的比較" icon="🔀" accentColor="orange">
+
+**HTTP/2**は双方向通信機能を提供しますが、WebSocketとは根本的に異なるアプローチです。
+
+### HTTP/2 Server Pushの技術的制限
+
+```javascript
+// HTTP/2 Server Push（現在は非推奨）
+// 注意：多くのブラウザで廃止されています
+class HTTP2ServerPush {
+  constructor() {
+    // HTTP/2 Server Pushの仕組み
+    this.limitations = {
+      direction: '一方向（サーバー → クライアント）',
+      model: 'リクエスト/レスポンス',
+      state: 'ステートレス',
+      timing: 'リクエスト予測ベース'
+    };
+  }
+  
+  // HTTP/2 Server Pushの実装例
+  setupServerPush(response) {
+    // この機能は多くのブラウザで廃止済み
+    if (response.stream.pushAllowed) {
+      response.stream.pushStream({
+        ':path': '/api/updates',
+        ':method': 'GET'
+      }, (err, pushStream) => {
+        if (err) {
+          console.error('Server Push failed:', err);
+          return;
+        }
+        
+        pushStream.respond({
+          ':status': 200,
+          'content-type': 'application/json'
+        });
+        
+        pushStream.end(JSON.stringify({
+          type: 'update',
+          data: 'Server pushed data'
+        }));
+      });
+    }
+  }
+}
+```
+
+### WebSocket over HTTP/2の詳細実装
+
+```javascript
+// HTTP/2上でのWebSocket実装
+class WebSocketOverHTTP2 {
+  constructor(url) {
+    this.url = url;
+    this.http2Features = {
+      multiplexing: true,        // 多重化対応
+      headerCompression: true,   // HPACKヘッダー圧縮
+      serverPush: false,         // Server Push非使用
+      binaryFraming: true        // バイナリフレーミング
+    };
+    
+    this.connectWithHTTP2Support();
+  }
+  
+  connectWithHTTP2Support() {
+    // HTTP/2対応WebSocket接続
+    this.ws = new WebSocket(this.url);
+    
+    this.ws.onopen = () => {
+      console.log('WebSocket over HTTP/2 connected');
+      
+      // HTTP/2接続の確認
+      this.detectHTTP2Features();
+    };
+  }
+  
+  detectHTTP2Features() {
+    // ブラウザのHTTP/2サポート検証
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(registration => {
+        // Service Worker経由でHTTP/2機能を確認
+        this.checkHTTP2Protocol(registration);
+      });
+    }
+  }
+  
+  // HTTP/2の多重化機能を活用した複数WebSocket管理
+  createMultiplexedConnections() {
+    const connections = {};
+    
+    // 同一ドメインで複数のWebSocket接続
+    // HTTP/2では同一TCP接続を再利用
+    ['chat', 'notifications', 'updates'].forEach(channel => {
+      connections[channel] = new WebSocket(
+        `wss://example.com/${channel}`,
+        [`${channel}-protocol`]
+      );
+      
+      connections[channel].onopen = () => {
+        console.log(`${channel} channel established over HTTP/2`);
+      };
+    });
+    
+    return connections;
+  }
+}
+```
+
+### HTTP/2とWebSocketの比較表
+
+<div class="overflow-x-auto mt-4">
+<table class="min-w-full bg-white border border-gray-300">
+<thead class="bg-gray-50">
+<tr>
+<th class="px-4 py-2 border-b text-left">特徴</th>
+<th class="px-4 py-2 border-b text-left">HTTP/2 Server Push</th>
+<th class="px-4 py-2 border-b text-left">WebSocket over HTTP/2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-white">
+<td class="px-4 py-2 border-b font-semibold">通信方向</td>
+<td class="px-4 py-2 border-b text-red-600">一方向のみ</td>
+<td class="px-4 py-2 border-b text-green-600">完全な双方向</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">接続モデル</td>
+<td class="px-4 py-2 border-b text-orange-600">リクエスト/レスポンス</td>
+<td class="px-4 py-2 border-b text-green-600">持続的接続</td>
+</tr>
+<tr class="bg-white">
+<td class="px-4 py-2 border-b font-semibold">ブラウザサポート</td>
+<td class="px-4 py-2 border-b text-red-600">廃止済み（Chrome 106+）</td>
+<td class="px-4 py-2 border-b text-green-600">全ブラウザ対応</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">リアルタイム性</td>
+<td class="px-4 py-2 border-b text-orange-600">予測ベース</td>
+<td class="px-4 py-2 border-b text-green-600">真のリアルタイム</td>
+</tr>
+<tr class="bg-white">
+<td class="px-4 py-2 border-b font-semibold">オーバーヘッド</td>
+<td class="px-4 py-2 border-b text-orange-600">HTTPヘッダー毎回</td>
+<td class="px-4 py-2 border-b text-green-600">最小限のフレーム</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">2025年の推奨</td>
+<td class="px-4 py-2 border-b text-red-600">使用非推奨</td>
+<td class="px-4 py-2 border-b text-green-600">強く推奨</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</Card>
+
+<Card title="HTTP/2環境でのWebSocket最適化" icon="⚡" accentColor="green">
+
+### HTTP/2の利点を活用したWebSocket実装
+
+```javascript
+// HTTP/2の多重化機能を活用
+class OptimizedWebSocketHTTP2 {
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl;
+    this.channels = new Map();
+    this.setupMultiplexing();
+  }
+  
+  setupMultiplexing() {
+    // HTTP/2では同一ドメインへの複数接続が効率的
+    const channelConfigs = [
+      { name: 'realtime', path: '/ws/realtime', priority: 'high' },
+      { name: 'notifications', path: '/ws/notifications', priority: 'medium' },
+      { name: 'sync', path: '/ws/sync', priority: 'low' },
+      { name: 'telemetry', path: '/ws/telemetry', priority: 'low' }
+    ];
+    
+    channelConfigs.forEach(config => {
+      this.createChannel(config);
+    });
+  }
+  
+  createChannel(config) {
+    const ws = new WebSocket(
+      `${this.baseUrl}${config.path}`,
+      [`${config.name}-v1`]
+    );
+    
+    ws.onopen = () => {
+      console.log(`${config.name} channel ready (HTTP/2 multiplexed)`);
+      
+      // HTTP/2の優先度制御を活用
+      this.configurePriority(ws, config.priority);
+    };
+    
+    ws.onmessage = (event) => {
+      this.routeMessage(config.name, event);
+    };
+    
+    this.channels.set(config.name, {
+      socket: ws,
+      config: config,
+      messageQueue: [],
+      stats: { sent: 0, received: 0 }
+    });
+  }
+  
+  configurePriority(ws, priority) {
+    // HTTP/2ストリーム優先度の影響を考慮
+    // 実際の優先度制御はブラウザとサーバーが処理
+    const metadata = {
+      priority: priority,
+      timestamp: Date.now(),
+      http2Multiplexed: true
+    };
+    
+    ws.send(JSON.stringify({
+      type: 'channel.config',
+      metadata: metadata
+    }));
+  }
+  
+  // HTTP/2のヘッダー圧縮効果を最大化
+  sendOptimizedMessage(channel, data) {
+    const channelInfo = this.channels.get(channel);
+    if (!channelInfo) return;
+    
+    // 共通ヘッダーの最適化（HPACK圧縮効果）
+    const message = {
+      v: '1.0',                    // バージョン
+      ts: Date.now(),              // タイムスタンプ
+      id: this.generateMessageId(), // メッセージID
+      ch: channel,                 // チャネル名
+      data: data                   // ペイロード
+    };
+    
+    channelInfo.socket.send(JSON.stringify(message));
+    channelInfo.stats.sent++;
+  }
+  
+  // HTTP/2接続の統計情報
+  getConnectionStats() {
+    const stats = {
+      totalChannels: this.channels.size,
+      http2Features: {
+        multiplexing: true,
+        headerCompression: true,
+        serverPush: false // WebSocketには不要
+      },
+      channelStats: {}
+    };
+    
+    this.channels.forEach((info, name) => {
+      stats.channelStats[name] = {
+        readyState: info.socket.readyState,
+        messagesSent: info.stats.sent,
+        messagesReceived: info.stats.received,
+        priority: info.config.priority
+      };
+    });
+    
+    return stats;
+  }
+}
+```
+
+### HTTP/2環境での注意点
+
+<div class="mt-4 p-4 bg-yellow-50 rounded-lg">
+<h5 class="font-medium text-yellow-800">⚠️ HTTP/2でのWebSocket実装注意点</h5>
+<ul class="text-sm text-yellow-700 mt-2 space-y-1">
+<li>• **Server Push非使用**：WebSocketがあればServer Pushは不要</li>
+<li>• **接続多重化**：同一ドメインでの複数WebSocket接続は効率的</li>
+<li>• **ヘッダー圧縮**：HPACK圧縮の恩恵を受けるため共通ヘッダーを活用</li>
+<li>• **後方互換性**：HTTP/1.1フォールバック機能の実装が重要</li>
+</ul>
+</div>
+
+</Card>
+
 </Section>
 
-<Section title="HTTP/3（QUIC）とWebSocket" icon="🚀">
-	<Card title="次世代プロトコルでの対応" icon="🔮" accentColor="purple">
-		<p><strong>HTTP/3</strong>はQUICプロトコルベースの新しいHTTPバージョンです。</p>
-		
-		<h4 class="font-semibold mt-4 mb-2">WebSocket over HTTP/3の特徴</h4>
-		
-		<div class="space-y-3">
-			<div class="bg-purple-50 p-4 rounded-lg">
-				<h5 class="font-medium text-purple-800">🔮 WebSocket over HTTP/3</h5>
-				<ul class="text-sm text-purple-700 mt-2 space-y-1">
-					<li>• QUICによる低遅延通信</li>
-					<li>• 接続の迅速な確立</li>
-					<li>• ネットワーク切り替え時の耐性</li>
-					<li>• 0-RTTリコネクション</li>
-				</ul>
-			</div>
-			
-			<div class="bg-blue-50 p-4 rounded-lg">
-				<h5 class="font-medium text-blue-800">🌐 WebTransport</h5>
-				<ul class="text-sm text-blue-700 mt-2 space-y-1">
-					<li>• HTTP/3上での新しい双方向通信API</li>
-					<li>• DatagramとStreamのサポート</li>
-					<li>• WebSocketに代わる選択肢</li>
-					<li>• 現在実験的実装段階</li>
-				</ul>
-			</div>
-		</div>
-		
-		<div class="mt-4 p-4 bg-gray-50 rounded-lg">
-			<h5 class="font-medium text-gray-800">📊 現在の対応状況（2024年）</h5>
-			<ul class="text-sm text-gray-700 mt-2 space-y-1">
-				<li>• <strong>WebSocket over HTTP/3</strong>: 一部ブラウザで実装中</li>
-				<li>• <strong>WebTransport</strong>: Chrome/Edgeで実験的サポート</li>
-				<li>• <strong>サーバーサポート</strong>: 主要Webサーバーで対応進行中</li>
-			</ul>
-		</div>
-	</Card>
+<Section title="HTTP/3（QUIC）とWebSocket：次世代の双方向通信" icon="🚀">
+
+<Card title="HTTP/3でのWebSocket over QUIC" icon="🔮" accentColor="purple">
+
+**HTTP/3**はQUICプロトコル上で動作し、WebSocketに革新的な改良をもたらします。
+
+### QUIC上でのWebSocket実装
+
+```javascript
+// HTTP/3 (QUIC)上のWebSocket実装
+class WebSocketOverQUIC {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.quicFeatures = {
+      connectionMigration: true,    // 接続移行
+      zeroRTTReconnection: true,   // 0-RTT再接続
+      builtInTLS: true,            // TLS統合
+      multiplexing: true,          // ストリーム多重化
+      connectionLessHandshake: true // コネクションレス
+    };
+    
+    this.options = {
+      enableQUIC: true,
+      enable0RTT: options.enable0RTT !== false,
+      enableConnectionMigration: options.enableConnectionMigration !== false,
+      ...options
+    };
+    
+    this.connectWithQUIC();
+  }
+  
+  async connectWithQUIC() {
+    try {
+      // HTTP/3対応の確認
+      if (!this.isHTTP3Supported()) {
+        console.log('HTTP/3 not supported, falling back to HTTP/2');
+        return this.fallbackToHTTP2();
+      }
+      
+      // QUIC接続の確立
+      this.ws = new WebSocket(this.url, {
+        protocols: ['websocket-over-quic-v1'],
+        // HTTP/3固有のオプション（将来の実装）
+        preferredVersion: 'h3',
+        enableQUICFeatures: this.options.enableQUIC
+      });
+      
+      this.setupQUICEventHandlers();
+      
+    } catch (error) {
+      console.error('QUIC WebSocket connection failed:', error);
+      this.fallbackToHTTP2();
+    }
+  }
+  
+  setupQUICEventHandlers() {
+    this.ws.onopen = (event) => {
+      console.log('WebSocket over QUIC connected');
+      console.log('QUIC features active:', this.detectQUICFeatures());
+      
+      // 0-RTTデータの送信（再接続時）
+      if (this.has0RTTData()) {
+        this.send0RTTData();
+      }
+    };
+    
+    // QUIC固有のイベント（将来の実装）
+    this.ws.onconnectionmigration = (event) => {
+      console.log('QUIC connection migrated:', event.newPath);
+      this.handleConnectionMigration(event);
+    };
+    
+    this.ws.onnetworkchange = (event) => {
+      console.log('Network changed, QUIC adapting:', event);
+      // QUICの自動ネットワーク適応
+    };
+  }
+  
+  detectQUICFeatures() {
+    // 現在利用可能なQUIC機能の検出
+    return {
+      version: this.ws.protocol || 'unknown',
+      connectionMigration: this.ws.connectionMigrationEnabled || false,
+      zeroRTT: this.ws.zeroRTTEnabled || false,
+      congestionControl: this.ws.congestionControl || 'cubic'
+    };
+  }
+  
+  // 0-RTT再接続の実装
+  enable0RTTReconnection() {
+    // 前回のセッション情報を保存
+    this.sessionTicket = {
+      ticket: this.ws.sessionTicket,
+      timestamp: Date.now(),
+      serverParams: this.ws.serverTransportParams
+    };
+    
+    localStorage.setItem('quic-session', JSON.stringify(this.sessionTicket));
+  }
+  
+  send0RTTData() {
+    const cachedData = this.get0RTTCachedData();
+    if (cachedData && this.ws.readyState === WebSocket.CONNECTING) {
+      // 0-RTTでの即座のデータ送信
+      this.ws.send(JSON.stringify({
+        type: '0rtt-data',
+        cached: true,
+        data: cachedData
+      }));
+    }
+  }
+  
+  // 接続移行の処理
+  handleConnectionMigration(event) {
+    console.log('Migrating connection from', event.oldPath, 'to', event.newPath);
+    
+    // アプリケーション状態の保持
+    this.preserveApplicationState();
+    
+    // 新しいパスでの接続確認
+    this.validateNewConnection();
+  }
+  
+  isHTTP3Supported() {
+    // HTTP/3サポートの検出
+    if (typeof window === 'undefined') return false;
+    
+    // 現在の検出方法（2025年時点）
+    return 'serviceWorker' in navigator && 
+           'fetch' in window &&
+           window.chrome && 
+           window.chrome.loadTimes; // Chrome/Edge固有
+  }
+}
+```
+
+### QUICプロトコルの利点活用
+
+```javascript
+// QUIC固有の機能を活用したWebSocket管理
+class QUICOptimizedWebSocket {
+  constructor(url) {
+    this.url = url;
+    this.quicStats = {
+      connectionMigrations: 0,
+      zeroRTTAttempts: 0,
+      zeroRTTSuccesses: 0,
+      packetLoss: 0,
+      rttMeasurements: []
+    };
+    
+    this.setupQUICOptimizations();
+  }
+  
+  setupQUICOptimizations() {
+    // QUIC多重化ストリーム活用
+    this.streams = {
+      highPriority: this.createPriorityStream('high'),
+      normalPriority: this.createPriorityStream('normal'),
+      lowPriority: this.createPriorityStream('low'),
+      background: this.createPriorityStream('background')
+    };
+  }
+  
+  createPriorityStream(priority) {
+    const ws = new WebSocket(this.url, [`stream-${priority}-v1`]);
+    
+    ws.onopen = () => {
+      console.log(`${priority} priority stream established`);
+      
+      // QUIC固有の設定
+      this.configureQUICStream(ws, priority);
+    };
+    
+    return ws;
+  }
+  
+  configureQUICStream(ws, priority) {
+    // QUICストリーム優先度設定（将来の実装）
+    const priorityConfig = {
+      urgency: this.getPriorityUrgency(priority),
+      incremental: priority !== 'high',
+      weight: this.getPriorityWeight(priority)
+    };
+    
+    ws.send(JSON.stringify({
+      type: 'stream.config',
+      priority: priorityConfig
+    }));
+  }
+  
+  // ネットワーク変更への適応
+  handleNetworkChange() {
+    // QUICの接続移行機能を活用
+    console.log('Network change detected, QUIC will handle migration');
+    
+    // アプリケーションレベルでの準備
+    this.prepareForMigration();
+  }
+  
+  prepareForMigration() {
+    // 未送信メッセージのバックアップ
+    this.backupPendingMessages();
+    
+    // セッション状態の保存
+    this.saveSessionState();
+    
+    // 移行完了後の復元準備
+    this.prepareMigrationRecovery();
+  }
+  
+  // パフォーマンス測定
+  measureQUICPerformance() {
+    return {
+      rtt: this.measureRTT(),
+      throughput: this.measureThroughput(),
+      packetLoss: this.quicStats.packetLoss,
+      connectionMigrations: this.quicStats.connectionMigrations,
+      zeroRTTSuccessRate: this.quicStats.zeroRTTSuccesses / this.quicStats.zeroRTTAttempts
+    };
+  }
+}
+```
+
+</Card>
+
+<Card title="WebTransport：HTTP/3による新しいアプローチ" icon="🌐" accentColor="blue">
+
+**WebTransport**は、HTTP/3上での新しい双方向通信APIで、WebSocketの代替となる可能性があります。
+
+### WebTransportの実装例
+
+```javascript
+// WebTransport実装（実験的機能）
+class WebTransportConnection {
+  constructor(url) {
+    this.url = url;
+    this.transport = null;
+    this.streams = new Map();
+    this.datagrams = [];
+    
+    this.connectWebTransport();
+  }
+  
+  async connectWebTransport() {
+    try {
+      // WebTransportサポートの確認
+      if (!('WebTransport' in window)) {
+        throw new Error('WebTransport not supported');
+      }
+      
+      // WebTransport接続の確立
+      this.transport = new WebTransport(this.url);
+      
+      await this.transport.ready;
+      console.log('WebTransport connection established');
+      
+      this.setupWebTransportHandlers();
+      
+    } catch (error) {
+      console.error('WebTransport connection failed:', error);
+      console.log('Falling back to WebSocket');
+      this.fallbackToWebSocket();
+    }
+  }
+  
+  setupWebTransportHandlers() {
+    // ストリーム処理
+    this.handleIncomingStreams();
+    
+    // データグラム処理
+    this.handleIncomingDatagrams();
+    
+    // 接続状態監視
+    this.transport.closed.then(() => {
+      console.log('WebTransport connection closed');
+    }).catch(error => {
+      console.error('WebTransport connection error:', error);
+    });
+  }
+  
+  async handleIncomingStreams() {
+    const reader = this.transport.incomingBidirectionalStreams.getReader();
+    
+    while (true) {
+      try {
+        const { value: stream, done } = await reader.read();
+        if (done) break;
+        
+        console.log('New bidirectional stream received');
+        this.processIncomingStream(stream);
+        
+      } catch (error) {
+        console.error('Stream reading error:', error);
+        break;
+      }
+    }
+  }
+  
+  async handleIncomingDatagrams() {
+    const reader = this.transport.datagrams.readable.getReader();
+    
+    while (true) {
+      try {
+        const { value: datagram, done } = await reader.read();
+        if (done) break;
+        
+        console.log('Datagram received:', datagram);
+        this.processDatagram(datagram);
+        
+      } catch (error) {
+        console.error('Datagram reading error:', error);
+        break;
+      }
+    }
+  }
+  
+  // ストリームベース通信（信頼性あり）
+  async sendStreamMessage(data) {
+    try {
+      const stream = await this.transport.createBidirectionalStream();
+      const writer = stream.writable.getWriter();
+      
+      const encoder = new TextEncoder();
+      const encoded = encoder.encode(JSON.stringify(data));
+      
+      await writer.write(encoded);
+      await writer.close();
+      
+      console.log('Stream message sent');
+      
+    } catch (error) {
+      console.error('Stream sending error:', error);
+    }
+  }
+  
+  // データグラムベース通信（低遅延）
+  async sendDatagramMessage(data) {
+    try {
+      const writer = this.transport.datagrams.writable.getWriter();
+      
+      const encoder = new TextEncoder();
+      const encoded = encoder.encode(JSON.stringify(data));
+      
+      await writer.write(encoded);
+      console.log('Datagram sent');
+      
+    } catch (error) {
+      console.error('Datagram sending error:', error);
+    }
+  }
+  
+  // WebSocketフォールバック
+  fallbackToWebSocket() {
+    console.log('Initializing WebSocket fallback');
+    this.websocket = new WebSocket(this.url.replace('https://', 'wss://'));
+    
+    this.websocket.onopen = () => {
+      console.log('WebSocket fallback connected');
+    };
+    
+    this.websocket.onmessage = (event) => {
+      this.processWebSocketMessage(event.data);
+    };
+  }
+}
+```
+
+### WebTransportとWebSocketの比較
+
+<div class="overflow-x-auto mt-4">
+<table class="min-w-full bg-white border border-gray-300">
+<thead class="bg-gray-50">
+<tr>
+<th class="px-4 py-2 border-b text-left">特徴</th>
+<th class="px-4 py-2 border-b text-left">WebSocket</th>
+<th class="px-4 py-2 border-b text-left">WebTransport</th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-white">
+<td class="px-4 py-2 border-b font-semibold">基盤プロトコル</td>
+<td class="px-4 py-2 border-b">TCP上のHTTP/1.1</td>
+<td class="px-4 py-2 border-b">QUIC上のHTTP/3</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">データ配信</td>
+<td class="px-4 py-2 border-b">順序保証あり</td>
+<td class="px-4 py-2 border-b">ストリーム/データグラム選択可</td>
+</tr>
+<tr class="bg-white">
+<td class="px-4 py-2 border-b font-semibold">接続確立</td>
+<td class="px-4 py-2 border-b">TCP 3-way handshake</td>
+<td class="px-4 py-2 border-b">0-RTT可能</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">多重化</td>
+<td class="px-4 py-2 border-b">単一ストリーム</td>
+<td class="px-4 py-2 border-b">複数ストリーム並列</td>
+</tr>
+<tr class="bg-white">
+<td class="px-4 py-2 border-b font-semibold">ブラウザサポート</td>
+<td class="px-4 py-2 border-b text-green-600">全ブラウザ</td>
+<td class="px-4 py-2 border-b text-orange-600">Chrome/Edge（実験的）</td>
+</tr>
+<tr class="bg-gray-50">
+<td class="px-4 py-2 border-b font-semibold">2025年推奨</td>
+<td class="px-4 py-2 border-b text-green-600">プロダクション使用</td>
+<td class="px-4 py-2 border-b text-orange-600">実験・評価段階</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</Card>
+
 </Section>
 
-<Section title="まとめ" icon="📊">
-	<Card title="重要なポイント" icon="🎯" accentColor="indigo">
-		<div class="grid md:grid-cols-2 gap-4">
-			<div>
-				<h4 class="font-semibold text-indigo-800 mb-2">現在の実装戦略</h4>
-				<ul class="space-y-1 text-sm text-indigo-700">
-					<li>✓ HTTP/1.1ベースのWebSocketが主流</li>
-					<li>✓ HTTP/2 Server Pushは廃止傾向</li>
-					<li>✓ WebSocketが双方向通信の標準</li>
-					<li>✓ フォールバック戦略の重要性</li>
-				</ul>
-			</div>
-			<div>
-				<h4 class="font-semibold text-indigo-800 mb-2">将来への準備</h4>
-				<ul class="space-y-1 text-sm text-indigo-700">
-					<li>✓ HTTP/3でのWebSocket対応</li>
-					<li>✓ WebTransportの可能性</li>
-					<li>✓ プログレッシブ対応戦略</li>
-					<li>✓ パフォーマンス最適化</li>
-				</ul>
-			</div>
-		</div>
-	</Card>
+<Section title="2025年現在の推奨実装戦略" icon="🎯">
+
+<Card title="プロダクション環境での最適選択" icon="⚙️" accentColor="green">
+
+### 2025年の推奨アーキテクチャ
+
+```javascript
+// 2025年推奨：プログレッシブWebSocket実装
+class ProgressiveWebSocketStrategy {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.options = options;
+    
+    // プロトコルサポートの優先順位
+    this.protocolPriority = [
+      'websocket-over-http3',  // 実験的：HTTP/3対応ブラウザ
+      'websocket-over-http2',  // 推奨：HTTP/2環境
+      'websocket-over-http1.1' // 基盤：全ブラウザ対応
+    ];
+    
+    this.implementProgressiveConnection();
+  }
+  
+  async implementProgressiveConnection() {
+    // 機能検出とプロトコル選択
+    const supportedProtocol = await this.detectBestProtocol();
+    
+    switch (supportedProtocol) {
+      case 'http3':
+        await this.connectWithHTTP3();
+        break;
+      case 'http2':
+        await this.connectWithHTTP2();
+        break;
+      default:
+        await this.connectWithHTTP11();
+    }
+  }
+  
+  async detectBestProtocol() {
+    // HTTP/3サポート検出
+    if (await this.isHTTP3Available()) {
+      console.log('Using HTTP/3 for WebSocket');
+      return 'http3';
+    }
+    
+    // HTTP/2サポート検出
+    if (await this.isHTTP2Available()) {
+      console.log('Using HTTP/2 for WebSocket');
+      return 'http2';
+    }
+    
+    console.log('Using HTTP/1.1 for WebSocket');
+    return 'http1.1';
+  }
+  
+  async connectWithHTTP11() {
+    // HTTP/1.1基盤実装（最も安定）
+    this.ws = new WebSocket(this.url, this.options.protocols);
+    
+    this.ws.onopen = () => {
+      console.log('HTTP/1.1 WebSocket established');
+      this.recordProtocolUsage('http1.1');
+    };
+    
+    return this.setupStandardWebSocket();
+  }
+  
+  async connectWithHTTP2() {
+    // HTTP/2最適化実装
+    this.ws = new WebSocket(this.url, this.options.protocols);
+    
+    // HTTP/2の多重化を活用した追加接続
+    this.additionalChannels = this.setupMultiplexedChannels();
+    
+    this.ws.onopen = () => {
+      console.log('HTTP/2 WebSocket with multiplexing');
+      this.recordProtocolUsage('http2');
+    };
+    
+    return this.setupOptimizedWebSocket();
+  }
+  
+  async connectWithHTTP3() {
+    // HTTP/3実験的実装
+    try {
+      // WebTransportの試行
+      if ('WebTransport' in window) {
+        this.transport = new WebTransport(this.url);
+        await this.transport.ready;
+        console.log('WebTransport over HTTP/3 established');
+        this.recordProtocolUsage('webtransport');
+        return this.setupWebTransport();
+      }
+      
+      // 従来WebSocket over HTTP/3
+      this.ws = new WebSocket(this.url, this.options.protocols);
+      this.recordProtocolUsage('websocket-http3');
+      return this.setupQUICWebSocket();
+      
+    } catch (error) {
+      console.log('HTTP/3 failed, falling back to HTTP/2');
+      return this.connectWithHTTP2();
+    }
+  }
+  
+  // パフォーマンス監視と自動最適化
+  startPerformanceMonitoring() {
+    this.performanceMonitor = {
+      latency: [],
+      throughput: [],
+      reliability: { connected: 0, disconnected: 0 }
+    };
+    
+    setInterval(() => {
+      this.measurePerformance();
+      this.optimizeConnection();
+    }, 30000);
+  }
+  
+  measurePerformance() {
+    const metrics = {
+      timestamp: Date.now(),
+      rtt: this.measureRoundTripTime(),
+      throughput: this.calculateThroughput(),
+      protocol: this.currentProtocol
+    };
+    
+    this.performanceMonitor.latency.push(metrics.rtt);
+    this.performanceMonitor.throughput.push(metrics.throughput);
+    
+    return metrics;
+  }
+  
+  // プロトコル利用統計の収集
+  recordProtocolUsage(protocol) {
+    this.currentProtocol = protocol;
+    
+    const usage = JSON.parse(localStorage.getItem('websocket-protocol-usage') || '{}');
+    usage[protocol] = (usage[protocol] || 0) + 1;
+    usage.lastUsed = protocol;
+    usage.timestamp = Date.now();
+    
+    localStorage.setItem('websocket-protocol-usage', JSON.stringify(usage));
+  }
+}
+```
+
+### エンタープライズ環境での実装ガイド
+
+```javascript
+// エンタープライズグレードWebSocket実装
+class EnterpriseWebSocketManager {
+  constructor(config) {
+    this.config = {
+      primaryUrl: config.primaryUrl,
+      fallbackUrls: config.fallbackUrls || [],
+      healthCheckInterval: config.healthCheckInterval || 30000,
+      maxReconnectAttempts: config.maxReconnectAttempts || 10,
+      loadBalancing: config.loadBalancing || 'round-robin',
+      monitoring: config.monitoring || {},
+      ...config
+    };
+    
+    this.connectionPool = new Map();
+    this.healthStatus = new Map();
+    this.loadBalancer = new LoadBalancer(this.config.loadBalancing);
+    
+    this.initializeEnterpriseFeatures();
+  }
+  
+  initializeEnterpriseFeatures() {
+    // 複数サーバーへの接続プール
+    this.setupConnectionPool();
+    
+    // ヘルスチェックシステム
+    this.startHealthMonitoring();
+    
+    // ロードバランシング
+    this.configureLoadBalancing();
+    
+    // 監視・ログシステム
+    this.setupMonitoring();
+  }
+  
+  setupConnectionPool() {
+    const urls = [this.config.primaryUrl, ...this.config.fallbackUrls];
+    
+    urls.forEach((url, index) => {
+      const connection = new ProductionWebSocket(url, {
+        id: `connection-${index}`,
+        isPrimary: index === 0,
+        protocols: this.config.protocols,
+        autoReconnect: true
+      });
+      
+      this.connectionPool.set(url, connection);
+      this.healthStatus.set(url, { status: 'connecting', lastCheck: Date.now() });
+    });
+  }
+  
+  startHealthMonitoring() {
+    this.healthCheckTimer = setInterval(() => {
+      this.performHealthChecks();
+    }, this.config.healthCheckInterval);
+  }
+  
+  async performHealthChecks() {
+    const healthPromises = Array.from(this.connectionPool.entries()).map(
+      ([url, connection]) => this.checkConnectionHealth(url, connection)
+    );
+    
+    const results = await Promise.allSettled(healthPromises);
+    
+    results.forEach((result, index) => {
+      const url = Array.from(this.connectionPool.keys())[index];
+      if (result.status === 'fulfilled') {
+        this.healthStatus.set(url, result.value);
+      } else {
+        this.healthStatus.set(url, { 
+          status: 'unhealthy', 
+          error: result.reason,
+          lastCheck: Date.now() 
+        });
+      }
+    });
+    
+    // ヘルスステータスに基づく自動フェイルオーバー
+    this.handleHealthResults();
+  }
+  
+  // エンタープライズ監視機能
+  setupMonitoring() {
+    this.metrics = {
+      totalConnections: 0,
+      activeConnections: 0,
+      messagesSent: 0,
+      messagesReceived: 0,
+      errors: 0,
+      latencyHistory: [],
+      uptimeStart: Date.now()
+    };
+    
+    // 監視データの定期送信
+    if (this.config.monitoring.endpoint) {
+      setInterval(() => {
+        this.sendMonitoringData();
+      }, this.config.monitoring.interval || 60000);
+    }
+  }
+  
+  // セキュリティ強化
+  setupSecurityFeatures() {
+    return {
+      authentication: this.setupAuthentication(),
+      authorization: this.setupAuthorization(),
+      rateLimiting: this.setupRateLimiting(),
+      inputValidation: this.setupInputValidation(),
+      auditLogging: this.setupAuditLogging()
+    };
+  }
+  
+  // 使用統計とレポート
+  generateUsageReport() {
+    const report = {
+      timestamp: new Date().toISOString(),
+      protocol: {
+        http11: this.getProtocolUsage('http1.1'),
+        http2: this.getProtocolUsage('http2'),
+        http3: this.getProtocolUsage('http3')
+      },
+      performance: {
+        averageLatency: this.calculateAverageLatency(),
+        throughput: this.calculateThroughput(),
+        reliability: this.calculateReliability()
+      },
+      errors: this.getErrorSummary(),
+      recommendations: this.generateRecommendations()
+    };
+    
+    return report;
+  }
+}
+```
+
+</Card>
+
+<Card title="2025年の実装チェックリスト" icon="✅" accentColor="indigo">
+
+### プロダクション対応チェックリスト
+
+**基盤技術**
+- [ ] **HTTP/1.1 WebSocket**：確実な基盤実装
+- [ ] **プロトコル選択**：環境に応じた最適化
+- [ ] **フォールバック機能**：HTTP/3 → HTTP/2 → HTTP/1.1
+- [ ] **セキュリティ対応**：wss://、認証、認可
+
+**パフォーマンス最適化**
+- [ ] **HTTP/2多重化**：複数チャネル活用
+- [ ] **圧縮機能**：permessage-deflate等の活用
+- [ ] **接続プール**：複数サーバー対応
+- [ ] **ロードバランシング**：負荷分散実装
+
+**信頼性・運用**
+- [ ] **自動再接続**：ネットワーク障害対応
+- [ ] **ヘルスチェック**：接続状態監視
+- [ ] **エラーハンドリング**：包括的な例外処理
+- [ ] **監視・ログ**：運用監視システム
+
+**将来対応**
+- [ ] **HTTP/3準備**：実験的実装の評価
+- [ ] **WebTransport検証**：次世代技術の調査
+- [ ] **プロトコル統計**：使用状況の分析
+- [ ] **段階的移行計画**：新技術への移行戦略
+
+### 2025年の推奨戦略まとめ
+
+**現在（2025年）**
+1. **HTTP/1.1 WebSocket**を基盤とした確実な実装
+2. **HTTP/2環境**での多重化機能活用
+3. **プログレッシブ強化**による段階的最適化
+
+**短期（2025-2026年）**
+1. **HTTP/3対応**の実験的導入
+2. **WebTransport**の評価・検証
+3. **パフォーマンス測定**に基づく最適化
+
+**中長期（2026年以降）**
+1. **WebTransport**の本格採用検討
+2. **QUIC**による低遅延通信の活用
+3. **次世代プロトコル**への移行計画
+
+</Card>
+
+</Section>
+
+<Section title="学習成果の確認" icon="📊">
+
+<Card title="習得した知識の総括" icon="🎯" accentColor="indigo">
+
+<div class="grid md:grid-cols-2 gap-6">
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🔬 技術的理解</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ HTTP/1.1でのWebSocket Upgradeメカニズム</li>
+<li>✓ HTTP/2 Server PushとWebSocketの技術的差異</li>
+<li>✓ HTTP/3（QUIC）上でのWebSocket動作原理</li>
+<li>✓ WebTransportによる次世代双方向通信</li>
+<li>✓ 各プロトコルの性能特性と適用場面</li>
+</ul>
+</div>
+
+<div>
+<h4 class="font-semibold text-indigo-800 mb-3">🛠️ 実装能力</h4>
+<ul class="space-y-2 text-sm text-indigo-700">
+<li>✓ プログレッシブWebSocket実装</li>
+<li>✓ HTTP/2多重化機能の活用</li>
+<li>✓ プロトコル検出と自動選択</li>
+<li>✓ エンタープライズグレード運用設計</li>
+<li>✓ 将来技術への移行戦略策定</li>
+</ul>
+</div>
+
+</div>
+
+#### 実践的な価値
+
+**現在の開発における価値**
+- 最適なWebSocketプロトコル選択による性能向上
+- HTTP/2環境での効率的な実装パターン
+- エンタープライズ環境での信頼性確保
+
+**将来への準備価値**
+- HTTP/3/QUIC技術への円滑な移行準備
+- WebTransport等新技術の適切な評価能力
+- 技術進化に対応できる柔軟なアーキテクチャ設計
+
+</Card>
+
 </Section>
 
 </LessonLayout>

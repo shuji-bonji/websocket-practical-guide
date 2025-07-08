@@ -113,6 +113,15 @@ const tlsOptions = {
 
 **1. 証明書の自動更新（Let's Encrypt）**
 
+#### 実行環境
+
+```
+Node.js: 18.x 以上
+必要パッケージ: ws, https, fs, crypto
+TLS証明書: Let's Encrypt または商用CA
+実行方法: sudo node secure-websocket-server.js
+```
+
 ```javascript
 const https = require('https');
 const WebSocket = require('ws');
@@ -238,6 +247,15 @@ WebSocketはCSRFトークンを自動送信しないため、専用の対策が�
 #### CSRF対策の実装
 
 **1. CSRFトークン検証**
+
+#### 実行環境
+
+```
+Node.js: 18.x 以上
+必要パッケージ: ws, crypto, express, cookie-parser
+セッション管理: Redis または メモリストア
+実行方法: node csrf-protected-server.js
+```
 
 ```javascript
 class CSRFProtectedWebSocket {
