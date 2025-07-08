@@ -18,6 +18,67 @@
   background-color: #1f2937;
 }
 
+/* Mermaid全体のテキストスタイル - 白色に統一 */
+.mermaid-container svg text {
+  fill: #ffffff !important;
+  font-weight: 400;
+}
+
+/* Mermaid Mindmap用のテキストスタイル - 通常の太さ */
+.mermaid-container svg[id*="mindmap'"] text {
+  fill: #ffffff !important;
+  font-weight: 400;
+}
+
+/* Mermaid全体のノードスタイル - ダーク系背景に統一 */
+.mermaid-container svg .node rect,
+.mermaid-container svg .node circle,
+.mermaid-container svg .node ellipse,
+.mermaid-container svg .node polygon,
+.mermaid-container svg .node path {
+  fill: #374151 !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+}
+
+/* Mermaid Mindmap用のノードスタイル */
+.mermaid-container svg .mindmap-node {
+  fill: #374151 !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+}
+
+/* Mermaid Mindmap用のリンク・線スタイル */
+.mermaid-container svg .mindmap-link,
+.mermaid-container svg .flowchart-link,
+.mermaid-container svg .messageLine0,
+.mermaid-container svg .messageLine1,
+.mermaid-container svg .edge {
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+}
+
+/* Mermaid シーケンス図の背景 */
+.mermaid-container svg .actor {
+  fill: #374151 !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+}
+
+/* Mermaid グラフの矢印 */
+.mermaid-container svg .arrowheadPath {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Mermaid サブグラフの境界線 */
+.mermaid-container svg .cluster rect {
+  fill: #1f2937 !important;
+  stroke: #ffffff !important;
+  stroke-width: 1px !important;
+  stroke-dasharray: 5, 5 !important;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
