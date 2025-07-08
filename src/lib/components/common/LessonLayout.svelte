@@ -115,8 +115,8 @@
 		max-width: none;
 	}
 
-	/* Style for learning objectives details */
-	:global(.lesson-layout details) {
+	/* Style for learning objectives details only (exclude code collapse details) */
+	:global(.lesson-layout details:not(.group):not(.p-0)) {
 		background-color: #eff6ff;
 		border: 1px solid #dbeafe;
 		border-radius: 0.5rem;

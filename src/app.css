@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prism.js syntax highlighting */
+@import 'prismjs/themes/prism-tomorrow.css';
+
 /* Mermaid図表の全体スタイル */
 .mermaid-container {
 	@apply my-8 flex justify-center items-center;
@@ -76,4 +79,89 @@
 	details summary:hover h2::after {
 		@apply text-blue-700;
 	}
+
+	/* コードブロックのマージン・パディング調整 */
+	/* pre.language-javascript {
+		margin: 0 !important;
+		padding: 0 !important;
+	} */
+
+	/* Proseスタイルを上書きするための高特異性セレクター */
+	.prose-sm pre.language-javascript,
+	.prose pre.language-javascript {
+		margin: 0 !important;
+	}
+}
+
+/* Prism.js custom styling for better integration */
+:root {
+	--prism-background: #1e293b;
+	--prism-foreground: #f1f5f9;
+}
+
+/* Override default Prism theme for better readability */
+code[class*='language-'],
+pre[class*='language-'] {
+	background: var(--prism-background) !important;
+	color: var(--prism-foreground) !important;
+	font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+	font-size: 0.875rem !important;
+	line-height: 1.5 !important;
+}
+
+/* Token colors for better contrast */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #64748b !important;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f87171 !important;
+}
+
+.token.boolean,
+.token.number {
+	color: #fbbf24 !important;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #34d399 !important;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #60a5fa !important;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #a78bfa !important;
+}
+
+.token.keyword {
+	color: #fb7185 !important;
+	font-weight: bold !important;
+}
+
+.token.regex,
+.token.important {
+	color: #fbbf24 !important;
+	font-weight: bold !important;
 }

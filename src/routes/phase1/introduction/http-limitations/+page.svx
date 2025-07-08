@@ -160,11 +160,19 @@ sequenceDiagram
 `} />
 
 
-#### ポーリングの問題点。
+#### ポーリングの問題点
 - **無駄なリクエスト**：データ更新がない場合でも定期的にリクエスト送信
 - **遅延の発生**：ポーリング間隔によりリアルタイム性が制限される
 - **サーバー負荷**：大量の不要なリクエストによるリソース消費
 - **ネットワーク帯域の浪費**：HTTPヘッダーの重複送信
+
+<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group">
+<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
+  <span class="font-mono text-sm">典型的なポーリング実装例</span>
+  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+  </svg>
+</summary>
 
 ```javascript
 // 典型的なポーリング実装
@@ -180,6 +188,7 @@ function startPolling() {
   }, 5000); // 5秒ごとにリクエスト
 }
 ```
+</details>
 
 </Card>
 
@@ -204,10 +213,18 @@ sequenceDiagram
 `} />
 
 
-#### ロングポーリングの制限。
+#### ロングポーリングの制限
 - **タイムアウト管理の複雑さ**：プロキシやファイアウォールによる接続切断
 - **スケーラビリティの問題**：サーバーでの同時接続数制限
 - **エラーハンドリングの複雑化**：接続状態の管理が困難
+
+<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group">
+<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
+  <span class="font-mono text-sm">典型的なロングポーリング実装例</span>
+  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+  </svg>
+</summary>
 
 ```javascript
 // ロングポーリング実装例
@@ -230,6 +247,7 @@ async function longPoll() {
   }
 }
 ```
+</details>
 
 </Card>
 
@@ -256,10 +274,19 @@ sequenceDiagram
     S-->>C: 200 OK
 `} />
 
-#### SSEの制限。
+#### SSEの制限
 - **単方向通信**：サーバーからクライアントへのみ
 - **テキストデータのみ**：バイナリデータの送信が困難
 - **ブラウザの接続数制限**：同一ドメインへの同時接続数に制約
+
+
+<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group">
+<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
+  <span class="font-mono text-sm">典型的なSSE実装例</span>
+  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+  </svg>
+</summary>
 
 ```javascript
 // SSE実装例
@@ -274,6 +301,8 @@ eventSource.onerror = function(event) {
   console.error('SSEエラー:', event);
 };
 ```
+
+</details>
 
 </Card>
 
@@ -320,7 +349,7 @@ sequenceDiagram
     Note over U2: ようやくメッセージを受信！
 `} />
 
-**HTTPポーリングの問題点：**
+**HTTPポーリングの問題点**
 - 最大5秒の遅延が発生
 - 無駄なリクエストが大量発生（空のレスポンスが多い）
 - サーバー負荷が高い（ユーザー数 × ポーリング頻度）
@@ -365,7 +394,7 @@ sequenceDiagram
     Note over U: 即座に返信を受信！
 `} />
 
-**WebSocketの優位性：**
+**WebSocketの優位性**
 - **遅延なし**：メッセージの即時配信と受信
 - **効率的**：無駄なリクエストが発生しない
 - **低負荷**：サーバーは必要時のみ処理
@@ -390,6 +419,14 @@ sequenceDiagram
 
 WebSocketは接続確立後、以下の特徴を持ちます。
 
+<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group" open="false">
+<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
+  <span class="font-mono text-sm">WebSocket接続確立実装例</span>
+  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+  </svg>
+</summary>
+
 ```javascript
 // WebSocket接続確立
 const ws = new WebSocket('wss://example.com/ws');
@@ -403,7 +440,9 @@ ws.onmessage = function(event) {
 ws.send('Hello Server!');
 ```
 
-#### 優位性。
+</details>
+
+#### 優位性
 - **即座の双方向通信**：遅延なしでのデータ交換
 - **持続的接続**：一度確立すれば接続を維持
 - **オーバーヘッド最小化**：HTTPヘッダーが不要
@@ -531,3 +570,7 @@ ws.send('Hello Server!');
 
 
 </LessonLayout>
+
+<style>
+
+</style>
