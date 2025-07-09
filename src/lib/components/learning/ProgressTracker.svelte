@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   interface Props {
     lessonId: string;
@@ -141,7 +142,10 @@
     {#if showNavigation}
       <div class="mt-4 pt-4 border-t border-gray-200">
         <div class="flex justify-between">
-          <a href="/phase1" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+          <a
+            href={href('/phase1')}
+            class="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+          >
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
@@ -154,7 +158,7 @@
           </a>
 
           <a
-            href="/table-of-contents"
+            href={href('/table-of-contents')}
             class="text-sm text-gray-600 hover:text-gray-800 flex items-center"
           >
             全体目次

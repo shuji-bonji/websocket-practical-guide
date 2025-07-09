@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   let progress = $derived($progressStore);
   let phase2Progress = $derived(progress.phases[1]);
@@ -320,7 +321,7 @@
     <div class="flex items-center justify-between">
       <div class="flex-shrink-0" style="width: 60%">
         <nav class="text-blue-200 text-sm mb-4">
-          <a href="/curriculum" class="hover:text-white">カリキュラム</a>
+          <a href={href('/curriculum')} class="hover:text-white">カリキュラム</a>
           <span class="mx-2">›</span>
           <span>Phase 2</span>
         </nav>
@@ -586,7 +587,7 @@
             <p class="mb-4">
               WebSocketの実装技術を習得しました。次はPhase 3でテスト・評価を学習しましょう。
             </p>
-            <a href="/phase3" class="btn-primary">Phase 3: テスト・評価に進む</a>
+            <a href={href('/phase3')} class="btn-primary">Phase 3: テスト・評価に進む</a>
           </div>
         </div>
       {:else if nextLesson}
@@ -605,8 +606,8 @@
     {/if}
 
     <div class="mt-12 flex justify-center space-x-4">
-      <a href="/curriculum" class="btn-secondary"> カリキュラム概要に戻る </a>
-      <a href="/table-of-contents" class="btn-secondary"> 全体目次を見る </a>
+      <a href={href('/curriculum')} class="btn-secondary"> カリキュラム概要に戻る </a>
+      <a href={href('/table-of-contents')} class="btn-secondary"> 全体目次を見る </a>
     </div>
   </div>
 </section>

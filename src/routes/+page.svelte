@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   let progress = $derived($progressStore);
   let overallPercentage = $derived(
@@ -127,7 +128,7 @@
 
       <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
         <a
-          href="/curriculum"
+          href={href('/curriculum')}
           class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 bg-white hover:bg-gray-50 transition-colors duration-200"
         >
           カリキュラムを見る
@@ -141,7 +142,7 @@
         </a>
 
         <a
-          href="/phase1"
+          href={href('/phase1')}
           class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-primary-700 transition-colors duration-200"
         >
           学習を始める
@@ -196,7 +197,7 @@
         {#if nextLesson}
           <div class="mt-6">
             <p class="text-gray-600 mb-3">次の推奨レッスン:</p>
-            <a href="/phase{nextLesson.phaseNumber}" class="btn-primary">
+            <a href={href(`/phase${nextLesson.phaseNumber}`)} class="btn-primary">
               Phase {nextLesson.phaseNumber}: {nextLesson.phaseName}
             </a>
           </div>
@@ -376,11 +377,14 @@
     </p>
 
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="/table-of-contents" class="btn-primary bg-white text-primary-600 hover:bg-gray-50">
+      <a
+        href={href('/table-of-contents')}
+        class="btn-primary bg-white text-primary-600 hover:bg-gray-50"
+      >
         目次を確認する
       </a>
       <a
-        href="/curriculum"
+        href={href('/curriculum')}
         class="border-2 border-white text-white hover:bg-white hover:text-primary-600 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
       >
         詳細カリキュラム

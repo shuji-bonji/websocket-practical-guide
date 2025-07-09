@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   let progress = $derived($progressStore);
   let phase1Progress = $derived(progress.phases[0]);
@@ -373,7 +374,7 @@
     <div class="flex items-center justify-between">
       <div class="flex-shrink-0" style="width: 60%">
         <nav class="text-blue-200 text-sm mb-4">
-          <a href="/curriculum" class="hover:text-white">カリキュラム</a>
+          <a href={href('/curriculum')} class="hover:text-white">カリキュラム</a>
           <span class="mx-2">›</span>
           <span>Phase 1</span>
         </nav>
@@ -432,7 +433,7 @@
           <div class="text-center">
             <div class="text-blue-200 text-sm mb-2">次の推奨レッスン</div>
             <a
-              href={nextLesson.path}
+              href={href(nextLesson.path)}
               class="btn-primary bg-white text-blue-600 hover:bg-gray-50 w-full block"
               style="font-size: clamp(0.65rem, 2vw, 0.875rem); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
             >
@@ -513,7 +514,7 @@
                   </div>
                 </div>
               </div>
-              <a href={getLessonPath(section.lessons[0].id)} class="btn-secondary">
+              <a href={href(getLessonPath(section.lessons[0].id))} class="btn-secondary">
                 セクション開始
               </a>
             </div>
@@ -586,7 +587,7 @@
 
                   <div class="ml-6">
                     <a
-                      href={getLessonPath(lesson.id)}
+                      href={href(getLessonPath(lesson.id))}
                       class="btn-primary {isLessonCompleted(lesson.id)
                         ? 'bg-green-600 hover:bg-green-700'
                         : ''}"
@@ -639,7 +640,7 @@
             <p class="mb-4">
               WebSocketの基礎理解を習得しました。次はPhase 2で実装技術を学習しましょう。
             </p>
-            <a href="/phase2" class="btn-primary">Phase 2: 実装技術に進む</a>
+            <a href={href('/phase2')} class="btn-primary">Phase 2: 実装技術に進む</a>
           </div>
         </div>
       {:else if nextLesson}
@@ -649,7 +650,7 @@
             <p class="mb-4">
               {nextLesson.sectionTitle} の続きを学習しましょう
             </p>
-            <a href={nextLesson.path} class="btn-primary">
+            <a href={href(nextLesson.path)} class="btn-primary">
               {nextLesson.title}
             </a>
           </div>
@@ -658,8 +659,8 @@
     {/if}
 
     <div class="mt-12 flex justify-center space-x-4">
-      <a href="/curriculum" class="btn-secondary"> カリキュラム概要に戻る </a>
-      <a href="/table-of-contents" class="btn-secondary"> 全体目次を見る </a>
+      <a href={href('/curriculum')} class="btn-secondary"> カリキュラム概要に戻る </a>
+      <a href={href('/table-of-contents')} class="btn-secondary"> 全体目次を見る </a>
     </div>
   </div>
 </section>

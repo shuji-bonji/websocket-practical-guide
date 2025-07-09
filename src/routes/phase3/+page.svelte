@@ -1,4 +1,5 @@
 <script>
+  import { href } from '$lib/utils/paths';
   let selectedTab = $state('overview');
 
   const tabs = [
@@ -108,17 +109,17 @@
         <div class="quick-start">
           <h2>Quick Start</h2>
           <div class="quick-start-grid">
-            <a href="/phase3/test-environment" class="quick-start-card">
+            <a href={href('/phase3/test-environment')} class="quick-start-card">
               <div class="card-icon">⚙️</div>
               <h3>Setup Test Environment</h3>
               <p>Configure mock servers and testing infrastructure</p>
             </a>
-            <a href="/phase3/test-scenarios" class="quick-start-card">
+            <a href={href('/phase3/test-scenarios')} class="quick-start-card">
               <div class="card-icon">📋</div>
               <h3>Explore Test Scenarios</h3>
               <p>Browse and run predefined WebSocket test scenarios</p>
             </a>
-            <a href="/phase3/evaluation" class="quick-start-card">
+            <a href={href('/phase3/evaluation')} class="quick-start-card">
               <div class="card-icon">📊</div>
               <h3>Evaluate Results</h3>
               <p>Analyze test results and coverage metrics</p>
@@ -130,19 +131,19 @@
       <section class="environment-section">
         <h2>Test Environment Setup</h2>
         <p>Configure your testing environment with mock servers and testing tools.</p>
-        <a href="/phase3/test-environment" class="cta-button"> Setup Test Environment → </a>
+        <a href={href('/phase3/test-environment')} class="cta-button"> Setup Test Environment → </a>
       </section>
     {:else if selectedTab === 'scenarios'}
       <section class="scenarios-section">
         <h2>Test Scenarios</h2>
         <p>Explore comprehensive test scenarios for WebSocket applications.</p>
-        <a href="/phase3/test-scenarios" class="cta-button"> Browse Test Scenarios → </a>
+        <a href={href('/phase3/test-scenarios')} class="cta-button"> Browse Test Scenarios → </a>
       </section>
     {:else if selectedTab === 'evaluation'}
       <section class="evaluation-section">
         <h2>Test Evaluation</h2>
         <p>Analyze test results, coverage metrics, and performance data.</p>
-        <a href="/phase3/evaluation" class="cta-button"> View Evaluation Dashboard → </a>
+        <a href={href('/phase3/evaluation')} class="cta-button"> View Evaluation Dashboard → </a>
       </section>
     {/if}
   </main>

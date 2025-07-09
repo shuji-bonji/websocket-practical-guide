@@ -1,5 +1,6 @@
 <script lang="ts">
   import Card from './Card.svelte';
+  import { href } from '$lib/utils/paths';
 
   let {
     title,
@@ -185,7 +186,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {#each relatedReferences as ref, index (index)}
           <a
-            href={ref.url}
+            href={href(ref.url)}
             class="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
           >
             <div class="text-2xl">{ref.icon}</div>

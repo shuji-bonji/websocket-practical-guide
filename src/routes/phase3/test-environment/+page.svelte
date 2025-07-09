@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { href } from '$lib/utils/paths';
 
   let serverStatus = $state('stopped');
   let serverPort = $state(9999);
@@ -320,12 +321,12 @@
       <section class="quick-actions">
         <h2>Quick Actions</h2>
         <div class="actions-grid">
-          <a href="/phase3/test-environment/mock-servers" class="action-card">
+          <a href={href('/phase3/test-environment/mock-servers')} class="action-card">
             <div class="action-icon">🖥️</div>
             <h3>Mock Servers</h3>
             <p>Configure advanced mock server behaviors</p>
           </a>
-          <a href="/phase3/test-environment/protocol-testing" class="action-card">
+          <a href={href('/phase3/test-environment/protocol-testing')} class="action-card">
             <div class="action-icon">📡</div>
             <h3>Protocol Testing</h3>
             <p>Test different WebSocket subprotocols</p>

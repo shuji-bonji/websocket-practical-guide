@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   let progress = $derived($progressStore);
 
@@ -327,11 +328,14 @@
               {/if}
 
               <div class="space-y-3">
-                <a href="/phase{phase.phase}" class="btn-primary w-full text-center block">
+                <a href={href(`/phase${phase.phase}`)} class="btn-primary w-full text-center block">
                   Phase {phase.phase} 詳細を見る
                 </a>
                 {#if phase.phase === 1 || (phase.phase > 1 && getPhaseProgress(phase.phase - 1) >= 80)}
-                  <a href="/phase{phase.phase}" class="btn-secondary w-full text-center block">
+                  <a
+                    href={href(`/phase${phase.phase}`)}
+                    class="btn-secondary w-full text-center block"
+                  >
                     学習を開始
                   </a>
                 {:else}
