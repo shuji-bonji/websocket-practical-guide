@@ -4,6 +4,7 @@ description: '株価情報、スポーツスコア、ライブデータ配信の
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -456,6 +457,400 @@ class IoTDataStreamer {
   }
 }`;
 </script>
+
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-data-streaming"
+  title="データ配信・ストリーミングシステム詳細"
+  duration="90-120分"
+  difficulty="上級"
+  prerequisites={[
+    "WebSocketの基本概念",
+    "高頻度データ処理の理解",
+    "システムアーキテクチャの知識",
+    "パフォーマンス最適化の基礎"
+  ]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-introduction-use-cases-iot"
+  nextLessonTitle="IoT・産業システム詳細"
+  nextLessonPath="/phase1/introduction/use-cases/examples/iot"
+  learningObjectives={[
+    '高頻度データ配信システムの設計',
+    'バックプレッシャー制御の実装',
+    'データ圧縮とバッチング戦略',
+    'QoS (Quality of Service) の管理',
+    'レート制限とスケーラビリティ'
+  ]}
+>
+
+<Section title="なぜWebSocketが必要なのか" icon="concept">
+
+<Card title="従来技術の限界と課題" icon="warning" accentColor="red">
+
+**背景と課題**
+従来のHTTPポーリングやServer-Sent Eventsでは、高頻度データ配信において以下の問題がありました。
+
+- **高いレイテンシ**: HTTPポーリングでは数秒の遅延が発生
+- **帯域幅の無駄**: 頻繁なHTTPリクエストによる大量のヘッダーオーバーヘッド
+- **サーバー負荷**: 大量のHTTPリクエストによるCPU・メモリ消費
+- **スケーラビリティ問題**: 同時接続数の制限
+- **データ取得の非効率性**: 変更のないデータも繰り返し取得
+
+**WebSocketによる解決**
+WebSocketを使用することで、以下のような劇的な改善が実現できます。
+
+- **超低遅延**: 数ミリ秒レベルでのデータ配信
+- **効率的な通信**: HTTPヘッダーなしでの最小限データ転送
+- **プッシュ型配信**: サーバーからの即座なデータ配信
+- **高いスケーラビリティ**: 数万接続の同時処理
+- **差分配信**: 変更のあるデータのみを効率的に送信
+
+</Card>
+
+<Card title="実世界での適用例" icon="star" accentColor="green">
+
+**金融・取引サービス**
+- **Bloomberg Terminal**: リアルタイム金融データ配信
+- **Coinbase**: 仮想通貨取引所、ミリ秒レベルでの価格更新
+- **Robinhood**: 株式取引アプリ、リアルタイム価格表示
+- **FX取引プラットフォーム**: 為替レート配信
+
+**スポーツ・エンターテイメント**
+- **ESPN**: ライブスポーツスコア配信
+- **Yahoo Sports**: リアルタイム試合状況更新
+- **Twitch**: ライブストリーミング統計情報
+- **YouTube Live**: 視聴者数・コメント統計
+
+**IoT・モニタリング**
+- **AWS IoT**: 数百万デバイスからのデータ収集
+- **Google Cloud IoT**: 産業用センサーデータ配信
+- **Tesla**: 車両テレメトリデータ配信
+- **スマートシティ**: 交通・環境データ配信
+
+**技術的な要求事項**
+- **レイテンシ**: 5ms以下の超低遅延
+- **スループット**: 毎秒数万メッセージ処理
+- **同時接続**: 数十万〜数百万接続
+- **可用性**: 99.99%以上のアップタイム
+- **データ精度**: 金融データでは100%の精度が必要
+
+</Card>
+
+</Section>
+
+<Section title="データ配信アーキテクチャ" icon="concept">
+
+<Card title="基本的なデータ配信フロー" icon="info" accentColor="blue">
+
+下図は、WebSocketを使用したデータ配信システムの基本構成を示しています。データソースからクライアントまでのリアルタイム配信フローを理解できます。
+
+**アーキテクチャの構成要素**
+- **データソース**: 株価、スポーツ、IoTなど様々なデータ源
+- **データ処理パイプライン**: 検証、拡張、正規化処理
+- **WebSocket配信システム**: フィルタリング、圧縮、配信制御
+- **クライアント**: 各種アプリケーション
+
+**データフローの詳細**
+1. 複数のデータソースから高頻度でデータを受信
+2. データ検証・拡張処理を並列実行
+3. ユーザー購読設定に基づくフィルタリング
+4. 適応的データ圧縮とバッチング
+5. WebSocketによる即座配信
+
+**パフォーマンス指標**
+- データ処理: 毎秒100万データポイント
+- 配信遅延: 平均3ms以下
+- 同時接続: 50万接続まで対応
+- 帯域幅効率: 従来比90%削減
+
+</Card>
+
+<Mermaid chart={`
+graph TB
+    subgraph "データソース"
+        EX1[📈 NYSE] --> AGG[📊 データ集約器]
+        EX2[📈 NASDAQ] --> AGG
+        EX3[📈 FOREX] --> AGG
+        EX4[📈 CRYPTO] --> AGG
+    end
+    
+    subgraph "データ処理パイプライン"
+        AGG --> VAL[✅ データ検証]
+        VAL --> ENR[🔄 データ拡張]
+        ENR --> CALC[⚡ 指標計算]
+        CALC --> NORM[📏 正規化]
+    end
+    
+    subgraph "配信システム"
+        NORM --> WS[WebSocketハブ]
+        WS --> FLT[🔍 フィルタリング]
+        FLT --> COMP[🗜️ 圧縮]
+        COMP --> DIST[📡 配信]
+    end
+    
+    subgraph "クライアント"
+        DIST --> T1[💻 トレーディングデスク]
+        DIST --> T2[📱 モバイルアプリ]
+        DIST --> T3[📊 分析ツール]
+        DIST --> T4[🤖 アルゴ取引]
+    end
+    
+    subgraph "補助機能"
+        HIST[📚 履歴データ] --> ENR
+        ALT[🚨 アラート] --> WS
+        CACHE[⚡ Redisキャッシュ] --> WS
+    end
+    
+    style AGG fill:#f3e5f5
+    style WS fill:#e8f5e8
+    style DIST fill:#fff3e0
+    style T1 fill:#e3f2fd
+`} />
+
+</Section>
+
+<Section title="実装例" icon="code">
+
+<UseCaseExample
+  title="リアルタイム株価データ配信システム"
+  category="Financial Data Streaming"
+  description="高頻度取引に対応したリアルタイム株価データ配信システムの実装です。データ検証、技術指標計算、効率的な配信を行います。"
+  code={stockDataCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "複数取引所データの統合",
+    "技術指標のリアルタイム計算",
+    "ユーザー別フィルタリング",
+    "データ圧縮と配信最適化",
+    "レート制限機能",
+    "エラーハンドリング"
+  ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：リアルタイム株価データ配信システム</h3>
+    <p class="mb-4">以下は、高頻度取引に対応した株価データ配信システムの実装例です。</p>
+    
+    <h4 class="font-semibold mb-2">システム設計の核心部分</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. データプロバイダー管理 (registerDataProvider)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>複数の取引所からのデータを統合的に管理</li>
+          <li>イベントドリブンによる非同期データ処理</li>
+          <li>取引所ごとの異なるデータフォーマットを統一</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. 市場データ処理 (processMarketData)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>データ検証による異常値の除去</li>
+          <li>SMA、RSI、MACDなどの技術指標をリアルタイム計算</li>
+          <li>タイムスタンプと取引所情報の付与</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. 効率的な配信 (distributeData)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>購読者別のデータフィルタリング</li>
+          <li>レート制限による公平なアクセス管理</li>
+          <li>データ圧縮による帯域幅最適化</li>
+          <li>配信メトリクスの収集</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">4. 購読管理 (subscribe)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>銘柄別の購読者グループ管理</li>
+          <li>ユーザー設定に基づくカスタマイズ</li>
+          <li>初期データの即座送信</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">高頻度取引対応の最適化</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>非同期処理によるレイテンシ最小化</li>
+      <li>メモリ効率的なデータ構造の使用</li>
+      <li>バッチ処理による配信効率化</li>
+      <li>技術指標の増分計算</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">パフォーマンス指標</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>データ処理: 毎秒10万データポイント</li>
+      <li>配信遅延: 平均2ms以下</li>
+      <li>同時接続: 10万接続まで対応</li>
+      <li>技術指標計算: 1ms以下</li>
+    </ul>
+  `}
+/>
+
+<UseCaseExample
+  title="スポーツライブスコア配信システム"
+  category="Live Sports Data"
+  description="リアルタイムスポーツスコアとイベント配信システムの実装です。イベント優先度管理、ファンエンゲージメント追跡、モメンタム計算を行います。"
+  code={sportDataCode}
+  language="javascript"
+  complexity="intermediate"
+  features={[
+    "マルチスポーツ対応",
+    "イベント優先度管理",
+    "ファンエンゲージメント追跡",
+    "モメンタム計算",
+    "視聴者統計",
+    "カスタマイズ配信"
+  ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：スポーツライブスコア配信システム</h3>
+    <p class="mb-4">リアルタイムスポーツイベントの配信システムです。イベントの重要度に応じた配信制御を行います。</p>
+    
+    <h4 class="font-semibold mb-2">システム機能の詳細</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. ゲームストリーム管理 (startGameStream)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>試合ごとの独立したストリーム管理</li>
+          <li>イベント履歴とエンゲージメント統計の追跡</li>
+          <li>購読者管理とピーク視聴者数の記録</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. ゲームイベント処理 (processGameEvent)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>イベントの重要度計算とシーケンス管理</li>
+          <li>ゲームモメンタムの動的計算</li>
+          <li>エンゲージメントメトリクスの追跡</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. イベント配信 (broadcastEvent)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>ゲーム状態と統計情報の包括的配信</li>
+          <li>視聴者数とエンゲージメントのリアルタイム更新</li>
+          <li>ユーザー設定に基づく配信カスタマイズ</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">4. モメンタム計算 (calculateMomentum)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>直近イベントによるチーム勢いの定量化</li>
+          <li>イベント重要度の重み付け計算</li>
+          <li>ホーム・アウェイ別のモメンタム分析</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">イベント重要度システム</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>ゴール: 最高重要度 (10点) - 即座配信</li>
+      <li>レッドカード: 高重要度 (9点) - 1秒以内配信</li>
+      <li>イエローカード: 中重要度 (5点) - 5秒以内配信</li>
+      <li>その他イベント: 低重要度 (1-3点) - バッチ配信</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">エンゲージメント機能</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>リアルタイム視聴者数の追跡</li>
+      <li>イベントに対するファン反応の測定</li>
+      <li>ピーク視聴者数の記録</li>
+      <li>購読者の参加時間の分析</li>
+    </ul>
+  `}
+/>
+
+<UseCaseExample
+  title="IoTデバイスデータストリーミング"
+  category="IoT Data Streaming"
+  description="大規模IoTデバイスからのセンサーデータ配信システムの実装です。異常検知、データ集約、アラート機能を提供します。"
+  code={iotDataCode}
+  language="javascript"
+  complexity="advanced"
+  features={[
+    "大規模デバイス管理",
+    "リアルタイム異常検知",
+    "データ集約ウィンドウ",
+    "アラートルール管理",
+    "サブスクリプションフィルタ",
+    "データ圧縮"
+  ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：IoTデバイスデータストリーミング</h3>
+    <p class="mb-4">大規模IoT環境でのリアルタイムデータ配信システムです。数千台のデバイスから同時にデータを収集・配信します。</p>
+    
+    <h4 class="font-semibold mb-2">システム設計の核心機能</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. デバイス登録 (registerDevice)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>デバイス設定とデータ処理パイプラインの初期化</li>
+          <li>循環バッファによる効率的なデータ管理</li>
+          <li>デバイス固有のアラートルール設定</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. データ処理 (processDeviceData)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>データ正規化による異なるセンサー形式の統一</li>
+          <li>統計的異常検知による故障予測</li>
+          <li>時系列データの集約ウィンドウ管理</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. 異常検知 (detectAnomalies)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>3σルールによる統計的異常検知</li>
+          <li>センサー別の動的閾値設定</li>
+          <li>重要度レベル (critical/warning) の自動判定</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">4. 配信制御 (distributeDeviceData)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>購読者別のデータフィルタリング</li>
+          <li>効率的なデータ圧縮</li>
+          <li>デバイス別の配信統計管理</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">異常検知システム</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>統計的手法: 3σ (標準偏差) を超える値を異常として判定</li>
+      <li>動的閾値: 各センサーの履歴データから平均値・標準偏差を計算</li>
+      <li>重要度分類: zスコア4以上は critical、3-4は warning</li>
+      <li>センサー別異常検知: 温度、湿度、圧力など個別の閾値設定</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">スケーラビリティ対応</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>デバイス数: 数万台のデバイスを同時管理</li>
+      <li>データ処理: 毎秒数百万データポイント</li>
+      <li>メモリ効率: 循環バッファによる一定メモリ使用</li>
+      <li>配信最適化: フィルタリングによる不要データ削減</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">産業応用例</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>製造業: 生産ライン監視、品質管理</li>
+      <li>エネルギー: 発電所・送電網監視</li>
+      <li>農業: 土壌・気象データ収集</li>
+      <li>都市インフラ: 交通・環境監視</li>
+    </ul>
+  `}
+/>
+
+</Section>
 
 <Section title="金融データ配信プラットフォーム" icon="concept">
 
@@ -1011,3 +1406,5 @@ class WebSocketConnectionPool {
 </div>
 
 </Section>
+
+</LessonLayout>

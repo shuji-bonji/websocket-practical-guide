@@ -4,6 +4,7 @@ description: 'チャット、メッセージング、音声・ビデオ通話シ
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -232,17 +233,94 @@ class GroupChatManager {
 }`;
 </script>
 
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-chat"
+  title="リアルタイム通信システム詳細"
+  duration="90-120分"
+  difficulty="中級"
+  prerequisites={[
+    "WebSocketの基本概念",
+    "JavaScriptの基本知識",
+    "HTTP通信の理解",
+    "データベース基礎"
+  ]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-introduction-use-cases-collaboration"
+  nextLessonTitle="共同編集システム詳細"
+  nextLessonPath="/phase1/introduction/use-cases/examples/collaboration"
+  learningObjectives={[
+    'チャットシステムの設計と実装',
+    'メッセージ配信保証の仕組み',
+    'プレゼンス機能の実装',
+    '既読・未読管理システム',
+    'スケーラビリティの考慮'
+  ]}
+>
+
+<Section title="なぜWebSocketが必要なのか" icon="concept">
+
+<Card title="従来技術の限界と課題" icon="warning" accentColor="red">
+
+**背景と課題**
+従来のHTTPポーリングやロングポーリングでは、以下のような問題がありました。
+
+- **高いレイテンシ**: HTTPポーリングでは500ms〜数秒の遅延が発生
+- **サーバー負荷**: 不要なリクエストによる CPU・メモリ消費
+- **帯域幅の無駄**: HTTP ヘッダーのオーバーヘッドが大きい
+- **リアルタイム性の欠如**: 即座な双方向通信が困難
+- **スケーラビリティの問題**: 大量接続時のサーバー負荷増大
+
+**WebSocketによる解決**
+WebSocketを使用することで、以下のような改善が実現できます。
+
+- **超低遅延**: 平均50ms以下のメッセージ配信
+- **効率的な通信**: HTTP ヘッダーなしで最小限のデータ転送
+- **双方向リアルタイム**: サーバーからクライアントへの即座な通知
+- **高いスケーラビリティ**: 1サーバーあたり10,000〜50,000接続まで対応
+- **帯域幅削減**: 従来比80%のトラフィック削減効果
+
+</Card>
+
+<Card title="実世界での適用例" icon="star" accentColor="green">
+
+**主要サービスでの採用事例**
+
+- **Discord**: 2億5000万ユーザー、リアルタイム音声・テキストチャット
+- **Slack**: 企業チーム向け、ファイル共有とメッセージ統合
+- **LINE**: 日本で8400万ユーザー、スタンプ・通話機能
+- **WhatsApp**: 20億ユーザー、エンドツーエンド暗号化メッセージ
+- **Telegram**: 7億ユーザー、大規模グループチャット（20万人まで）
+
+**技術的な要求事項**
+- **通信速度**: 50ms以下の低遅延
+- **同時接続数**: 数千〜数万接続/サーバー
+- **データ量**: テキストメッセージ（数KB）〜メディアファイル（数MB）
+- **可用性**: 99.9%以上のアップタイム
+- **セキュリティ**: エンドツーエンド暗号化対応
+
+</Card>
+
+</Section>
+
 <Section title="基本アーキテクチャ" icon="concept">
 
 <Card title="リアルタイム通信システムの全体像" icon="info" accentColor="blue">
 
-チャット・メッセージングシステムは、WebSocketを活用したリアルタイム通信の代表的な実装例です。以下の要素から構成されます。
+下図は、WebSocketを使用したチャット・メッセージングシステムの基本構成を示しています。この図では、複数のクライアントが WebSocketサーバーを介して相互に通信する様子を表現しています。
 
-- **WebSocketゲートウェイ**: 複数のクライアント接続を管理
-- **メッセージルーター**: メッセージの配信先を決定
-- **ルーム管理**: グループチャットの管理
-- **認証・認可**: ユーザー権限の管理
+**図の構成要素**
+- **クライアント層**: 各ユーザーのWebSocketクライアント
+- **WebSocketサーバー**: 接続管理とメッセージルーティングを担当
+- **データベース**: メッセージ履歴とユーザー情報の永続化
 - **通知エンジン**: オフライン通知の処理
+- **認証システム**: ユーザー認証と権限管理
+
+**データフローの詳細**
+1. ユーザーがメッセージを送信
+2. WebSocketサーバーがメッセージを受信・検証
+3. メッセージをデータベースに保存
+4. 該当するルームの全メンバーに即座に配信
+5. オフラインユーザーには通知エンジンが処理
 
 </Card>
 
@@ -267,6 +345,64 @@ class GroupChatManager {
     "エラーハンドリング",
     "タイムスタンプ表示"
   ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：基本的なチャットクライアント</h3>
+    <p class="mb-4">以下のコードは、WebSocketを使用したチャットクライアントの実装例です。</p>
+    
+    <h4 class="font-semibold mb-2">コードの各部分の詳細説明</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. 接続管理 (connect メソッド)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>WebSocket接続の確立と各種イベントハンドラーの設定</li>
+          <li>接続成功時の自動ルーム参加処理</li>
+          <li>エラーハンドリングと自動再接続の実装</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. メッセージ送信 (sendMessage メソッド)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>接続状態の確認（readyState === WebSocket.OPEN）</li>
+          <li>メッセージの構造化（type, roomId, text, timestamp）</li>
+          <li>JSON形式での送信</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. メッセージ受信 (handleMessage メソッド)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>メッセージタイプによる分岐処理</li>
+          <li>ユーザー参加・退出イベントの処理</li>
+          <li>各種通知の表示</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">4. 自動再接続 (reconnect メソッド)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>3秒間隔での再接続試行</li>
+          <li>指数バックオフの実装推奨</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">実装上の注意点</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>WebSocket接続前のメッセージ送信防止</li>
+      <li>JSON.parse エラーハンドリング</li>
+      <li>メモリリークを防ぐためのイベントリスナー削除</li>
+      <li>XSS対策のためのメッセージサニタイズ</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">パフォーマンス最適化</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>メッセージバッファリングによる効率化</li>
+      <li>大量メッセージ時の仮想スクロール実装</li>
+      <li>画像・ファイルの遅延読み込み</li>
+    </ul>
+  `}
 />
 
 <UseCaseExample
@@ -284,6 +420,56 @@ class GroupChatManager {
     "ルーム容量制限",
     "メッセージID生成"
   ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：グループチャット管理システム</h3>
+    <p class="mb-4">以下のサーバーサイドコードは、複数のチャットルームを効率的に管理する仕組みを示しています。</p>
+    
+    <h4 class="font-semibold mb-2">主要な設計パターン</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. ルーム管理 (createRoom, joinRoom, leaveRoom)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>Map構造による効率的なルーム管理</li>
+          <li>ユーザー数制限とプライベートルーム対応</li>
+          <li>空ルームの自動削除によるメモリ効率化</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. メッセージ配信 (broadcastToRoom)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>O(n) の効率的なブロードキャスト</li>
+          <li>送信者除外機能</li>
+          <li>接続状態確認による安全な送信</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. 履歴管理 (handleMessage)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>循環バッファによる効率的なメッセージ保存</li>
+          <li>最新1000件のみ保持してメモリ使用量制限</li>
+          <li>一意なメッセージID生成</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">スケーラビリティの考慮点</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>Redis などの外部ストレージとの統合</li>
+      <li>複数サーバー間でのルーム情報共有</li>
+      <li>水平スケーリング対応</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">セキュリティ考慮事項</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>認証済みユーザーのみルーム参加許可</li>
+      <li>メッセージ内容の検証とサニタイズ</li>
+      <li>レート制限による DoS 攻撃対策</li>
+      <li>権限管理（管理者、モデレーター、一般ユーザー）</li>
+    </ul>
+  `}
 />
 
 </Section>
@@ -292,7 +478,34 @@ class GroupChatManager {
 
 <Card title="メッセージフロー詳細" icon="info" accentColor="green">
 
-実際のチャットシステムでは、以下のようなメッセージフローが発生します。
+下図は、チャットシステムにおけるメッセージの流れを時系列で示しています。この図を通じて、WebSocketを使用したリアルタイム通信の仕組みを理解できます。
+
+**フロー解説**
+
+1. **接続確立フェーズ**
+   - クライアントがWebSocketサーバーに接続
+   - 認証トークンの検証
+   - ルーム参加処理
+
+2. **メッセージ送信フェーズ**
+   - ユーザーAがメッセージを送信
+   - サーバーがメッセージを受信・検証
+   - データベースへの永続化
+
+3. **メッセージ配信フェーズ**
+   - ルーム内の全ユーザーに即座に配信
+   - 既読通知の処理
+   - オフラインユーザーへの通知キュー
+
+4. **応答フェーズ**
+   - 受信者からの既読確認
+   - 送信者への配信完了通知
+
+**実際の動作時間**
+- 接続確立: 100-200ms
+- メッセージ配信: 50ms以下
+- 既読通知: 100ms以下
+- 全体レスポンス: 200ms以下
 
 </Card>
 
@@ -336,32 +549,145 @@ class GroupChatManager {
 
 </Section>
 
+<Section title="メッセージ配信保証レベル" icon="shield">
+
+<Card title="配信保証の仕組み" icon="info" accentColor="purple">
+
+**At-most-once配信（最大1回）**
+- メッセージが重複することはないが、失われる可能性がある
+- 実装が簡単で、パフォーマンスが高い
+- リアルタイム性を重視する場合に適用
+
+**At-least-once配信（最低1回）**
+- メッセージが確実に配信されるが、重複する可能性がある
+- 確認応答（ACK）機能による信頼性向上
+- 重要なメッセージに適用
+
+**Exactly-once配信（厳密に1回）**
+- メッセージが重複せず、確実に配信される
+- 実装が複雑で、パフォーマンスが低下
+- 金融取引など、厳格な整合性が必要な場合に適用
+
+</Card>
+
+<Card title="オフライン時のメッセージ蓄積と同期" icon="sync" accentColor="orange">
+
+**オフライン対応の仕組み**
+
+1. **メッセージキューイング**
+   - サーバー側でユーザーごとにメッセージキューを管理
+   - 未配信メッセージを一時的に蓄積
+   - 接続復帰時に順次配信
+
+2. **同期処理**
+   - 最後の接続時刻を記録
+   - 復帰時に差分メッセージを一括取得
+   - インクリメンタル同期でトラフィック最適化
+
+3. **プッシュ通知連携**
+   - FCM（Firebase Cloud Messaging）やAPNs連携
+   - 重要度に応じた通知レベル設定
+   - バッジ数とプレビュー表示の管理
+
+</Card>
+
+</Section>
+
+<Section title="プレゼンス機能の実装" icon="presence">
+
+<Card title="オンライン状態表示の仕組み" icon="info" accentColor="green">
+
+**プレゼンス状態の管理**
+
+- **オンライン**: WebSocket接続が確立されている
+- **離席中**: 一定時間非アクティブ状態
+- **オフライン**: WebSocket接続が切断されている
+- **取り込み中**: ユーザーが明示的に設定した状態
+
+**実装上の考慮点**
+
+1. **状態更新の最適化**
+   - 頻繁な状態変更を避けるためのデバウンス処理
+   - 状態変更時のみ他ユーザーに通知
+   - バッチ処理による効率化
+
+2. **プライバシー保護**
+   - 状態表示の可視性制御
+   - 友達リストやグループメンバーのみに限定
+   - 匿名モードの提供
+
+3. **障害対応**
+   - 接続断時の自動オフライン設定
+   - ハートビートによる生存確認
+   - ゾンビ接続の検出と削除
+
+</Card>
+
+</Section>
+
+<Section title="既読・未読管理システム" icon="read">
+
+<Card title="既読管理の仕組み" icon="info" accentColor="blue">
+
+**既読情報の追跡**
+
+1. **メッセージ既読の記録**
+   - ユーザーごとの最終既読メッセージIDを管理
+   - 既読タイムスタンプの保存
+   - 複数デバイス間での同期
+
+2. **既読通知の配信**
+   - 送信者への既読通知
+   - グループチャットでの既読者リスト
+   - 既読率の表示
+
+3. **パフォーマンス最適化**
+   - 既読情報の効率的な保存方法
+   - 大規模グループでの既読管理
+   - キャッシュ戦略の実装
+
+**未読管理の実装**
+
+- **未読カウントの計算**: 最終既読位置から新着メッセージ数を算出
+- **通知バッジの更新**: リアルタイムでの未読数表示
+- **既読時の同期**: 複数デバイス間での未読状態同期
+
+</Card>
+
+</Section>
+
 <Section title="ベストプラクティス" icon="tips">
 
 <Card title="実装のポイント" icon="info" accentColor="blue">
 
 ### 1. 接続管理
-- **ハートビート/Ping-Pong**: 接続状態の定期確認
-- **自動再接続**: 切断時の透明な復旧
-- **接続プール**: 効率的なリソース管理
+- **ハートビート/Ping-Pong**: 30秒間隔での接続状態確認
+- **自動再接続**: 指数バックオフによる再試行（1s → 2s → 4s → 8s）
+- **接続プール**: 効率的なリソース管理と負荷分散
 
 ### 2. メッセージ配信保証
-- **At-least-once配信**: メッセージ重複を許容した確実な配信
-- **Idempotency**: 重複メッセージの冪等処理
-- **オフライン配信**: 未接続時のメッセージ蓄積
+- **At-least-once配信**: 重要なメッセージの確実な配信
+- **Idempotency**: メッセージIDによる重複処理防止
+- **オフライン配信**: 7日間のメッセージ蓄積
 
 ### 3. セキュリティ
-- **認証トークン**: JWTベースのセッション管理
-- **レート制限**: スパム・DoS攻撃対策
-- **暗号化**: WSS (WebSocket Secure) の使用
+- **認証トークン**: JWTベースのセッション管理（有効期限1時間）
+- **レート制限**: 1ユーザーあたり毎分60メッセージまで
+- **暗号化**: WSS (WebSocket Secure) + TLS 1.3の使用
 
 ### 4. 監視・運用
 - **メトリクス収集**: 接続数、メッセージレート、レスポンス時間
-- **アラート**: 異常検知とエスカレーション
-- **ログ分析**: トラブルシューティング支援
+- **アラート**: 99%ile レスポンス時間 > 100ms で通知
+- **ログ分析**: 構造化ログによるトラブルシューティング
 
-この詳細なアーキテクチャにより、高品質なリアルタイム通信システムを構築できます。
+**パフォーマンス指標**
+- **接続数**: 1サーバーあたり10,000接続まで
+- **メッセージレート**: 毎秒10,000メッセージ処理
+- **レスポンス時間**: 平均50ms以下
+- **開発工数**: 基本機能2週間、本格運用6週間
 
 </Card>
 
 </Section>
+
+</LessonLayout>

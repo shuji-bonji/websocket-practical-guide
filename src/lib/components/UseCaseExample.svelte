@@ -1,6 +1,8 @@
 <script lang="ts">
   import { highlightAll } from '$lib/utils/prism';
 
+  import type { Snippet } from 'svelte';
+
   interface Props {
     title: string;
     category: string;
@@ -9,6 +11,8 @@
     language?: string;
     complexity?: 'beginner' | 'intermediate' | 'advanced';
     features?: string[];
+    codeExplanation?: string;
+    explanation?: Snippet;
   }
 
   let {
@@ -18,11 +22,13 @@
     description,
     language = 'javascript',
     complexity = 'intermediate',
-    features = []
+    features = [],
+    codeExplanation,
+    explanation
   }: Props = $props();
 
-  let showCode = $state(false);
-  let isExpanded = $state(false);
+  type TabType = 'details' | 'code' | 'explanation';
+  let activeTab = $state<TabType>('details');
 
   const complexityColors = {
     beginner: 'bg-green-100 text-green-800',
@@ -38,7 +44,7 @@
 
   // コードが表示されたときにシンタックスハイライトを適用
   $effect(() => {
-    if (showCode) {
+    if (activeTab === 'code') {
       setTimeout(() => highlightAll(), 100);
     }
   });
@@ -79,27 +85,53 @@
       </div>
     {/if}
 
-    <!-- ボタン群 -->
-    <div class="flex flex-wrap gap-3 mb-4">
-      <button
-        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200 flex items-center"
-        onclick={() => (showCode = !showCode)}
-      >
-        <span class="mr-2">{showCode ? '📄' : '💻'}</span>
-        {showCode ? 'コードを隠す' : 'コードを表示'}
-      </button>
-
-      <button
-        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200 flex items-center"
-        onclick={() => (isExpanded = !isExpanded)}
-      >
-        <span class="mr-2">{isExpanded ? '📊' : '📈'}</span>
-        {isExpanded ? '詳細を隠す' : '詳細を表示'}
-      </button>
+    <!-- タブ -->
+    <div class="border-b border-gray-200 mb-4">
+      <nav class="-mb-px flex space-x-8">
+        <button
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab ===
+          'details'
+            ? 'border-blue-500 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+          onclick={() => (activeTab = 'details')}
+        >
+          📋 詳細表示
+        </button>
+        <button
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab ===
+          'code'
+            ? 'border-blue-500 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+          onclick={() => (activeTab = 'code')}
+        >
+          💻 コード
+        </button>
+        {#if codeExplanation || explanation}
+          <button
+            class="py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab ===
+            'explanation'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+            onclick={() => (activeTab = 'explanation')}
+          >
+            📖 コード解説
+          </button>
+        {/if}
+      </nav>
     </div>
 
-    <!-- コード表示 -->
-    {#if showCode}
+    <!-- タブコンテンツ -->
+    {#if activeTab === 'details'}
+      <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <h4 class="font-semibold text-blue-900 mb-2">📋 実装のポイント</h4>
+        <div class="text-sm text-blue-800 space-y-2">
+          <p>• <strong>接続管理:</strong> WebSocket接続の確立・維持・切断の処理</p>
+          <p>• <strong>メッセージフォーマット:</strong> JSONベースの構造化メッセージ</p>
+          <p>• <strong>エラーハンドリング:</strong> 接続エラーや通信エラーの適切な処理</p>
+          <p>• <strong>パフォーマンス:</strong> 大量のメッセージ処理と最適化</p>
+        </div>
+      </div>
+    {:else if activeTab === 'code'}
       <div class="border border-gray-200 rounded-lg overflow-hidden">
         <div
           class="bg-gray-800 text-white px-4 py-2 text-sm font-medium flex items-center justify-between"
@@ -116,17 +148,14 @@
         <pre class="language-{language} m-0 p-0"><code class="language-{language}">{code}</code
           ></pre>
       </div>
-    {/if}
-
-    <!-- 詳細情報 -->
-    {#if isExpanded}
-      <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h4 class="font-semibold text-blue-900 mb-2">📋 実装のポイント</h4>
-        <div class="text-sm text-blue-800 space-y-2">
-          <p>• <strong>接続管理:</strong> WebSocket接続の確立・維持・切断の処理</p>
-          <p>• <strong>メッセージフォーマット:</strong> JSONベースの構造化メッセージ</p>
-          <p>• <strong>エラーハンドリング:</strong> 接続エラーや通信エラーの適切な処理</p>
-          <p>• <strong>パフォーマンス:</strong> 大量のメッセージ処理と最適化</p>
+    {:else if activeTab === 'explanation' && (codeExplanation || explanation)}
+      <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div class="prose prose-sm max-w-none">
+          {#if explanation}
+            {@render explanation()}
+          {:else}
+            <p class="text-gray-600">コード解説が利用できません。</p>
+          {/if}
         </div>
       </div>
     {/if}

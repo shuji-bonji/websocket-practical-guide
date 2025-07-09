@@ -4,21 +4,42 @@ description: 'セキュリティ監視、侵入検知、監査ログシステム
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import Card from '$lib/components/common/Card.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import { idsIpsThreatResponseDiagram, complianceMonitoringDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-security"
+  title="セキュリティ・監査システム詳細"
+  duration="90-120分"
+  difficulty="上級"
+  prerequisites={[
+    "WebSocketの基本概念",
+    "セキュリティ基礎知識",
+    "システムアーキテクチャの理解"
+  ]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-introduction-use-cases-simulation"
+  nextLessonTitle="Webベースシミュレーション詳細"
+  nextLessonPath="/phase1/introduction/use-cases/examples/simulation"
+  learningObjectives={[
+    'セキュリティ監視システムのWebSocket活用',
+    '認証・アクセス制御の実装',
+    '監査ログ・コンプライアンス対応',
+    'インシデント対応自動化'
+  ]}
+>
 
-# 🛡️ セキュリティ・監査システム詳細
+<Section title="セキュリティ監視プラットフォーム" icon="implementation">
 
-## 1. セキュリティ監視プラットフォーム
+<Card title="リアルタイム脅威検知システム" icon="shield" accentColor="red">
 
-### リアルタイム脅威検知システム
+WebSocketベースのセキュリティ監視システムは、リアルタイムでの脅威検知と対応を実現します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -65,25 +86,23 @@ graph TB
     style AUDIT fill:#ffebee
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="侵入検知・防止システム (IDS/IPS)" icon="warning" accentColor="orange">
 
-### 侵入検知・防止システム (IDS/IPS)
+IDS/IPSシステムとWebSocketの統合により、リアルタイムでの脅威検知と自動対応が可能になります。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={idsIpsThreatResponseDiagram} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 2. 認証・アクセス制御システム
+<Section title="認証・アクセス制御システム" icon="implementation">
 
-### ゼロトラストアーキテクチャ
+<Card title="ゼロトラストアーキテクチャ" icon="lock" accentColor="purple">
 
-</div>
-</div>
+ゼロトラストモデルに基づく認証・アクセス制御システムの実装方法を示します。
+
+</Card>
 
 <Mermaid chart={`
 graph TD
@@ -128,13 +147,11 @@ graph TD
     style AUDIT fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="セッション管理・監視" icon="monitor" accentColor="blue">
 
-### セッション管理・監視
+WebSocketを活用したリアルタイムセッション監視システムの構築方法を説明します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -171,15 +188,15 @@ graph TB
     style TERMINATE fill:#fff3e0
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 3. 監査ログ・コンプライアンスシステム
+<Section title="監査ログ・コンプライアンスシステム" icon="implementation">
 
-### 包括的監査ログ収集
+<Card title="包括的監査ログ収集" icon="file" accentColor="green">
 
-</div>
-</div>
+企業レベルの監査ログ収集とコンプライアンス対応システムの実装を解説します。
+
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -225,25 +242,23 @@ graph TB
     style ARCHIVE fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="コンプライアンス自動化" icon="check" accentColor="teal">
 
-### コンプライアンス自動化
+GDPR、SOX法などの法規制に対応したコンプライアンス自動化システムの構築方法を示します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={complianceMonitoringDiagram} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 4. インシデント対応システム
+<Section title="インシデント対応システム" icon="implementation">
 
-### 自動インシデント対応
+<Card title="自動インシデント対応" icon="gear" accentColor="indigo">
 
-</div>
-</div>
+セキュリティインシデントの自動検知・対応システムの実装方法を説明します。
+
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -287,15 +302,15 @@ graph TB
     style LESSON fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 5. 脅威インテリジェンス統合
+<Section title="脅威インテリジェンス統合" icon="implementation">
 
-### リアルタイム脅威情報配信
+<Card title="リアルタイム脅威情報配信" icon="globe" accentColor="amber">
 
-</div>
-</div>
+外部脅威インテリジェンスとの統合による包括的なセキュリティ対策を解説します。
+
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -339,10 +354,11 @@ graph TB
     style VALIDATE fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 💡 実装のベストプラクティス
+<Section title="実装のベストプラクティス" icon="code">
+
+<Card title="セキュリティシステム実装例" icon="code" accentColor="gray">
 
 ### 1. セキュリティイベント監視
 ```javascript
@@ -742,5 +758,8 @@ class IncidentResponseAutomation {
 
 この包括的なセキュリティ・監査システムアーキテクチャにより、リアルタイムでの脅威検知と対応が可能になります。
 
-</div>
-</div>
+</Card>
+
+</Section>
+
+</LessonLayout>

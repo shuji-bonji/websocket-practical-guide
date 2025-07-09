@@ -4,21 +4,43 @@ description: '物理シミュレーション、ゲームエンジン、科学計
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import Section from '$lib/components/common/Section.svelte';
+  import Card from '$lib/components/common/Card.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import { distributedComputingSimulationDiagram, molecularDynamicsSimulationDiagram, wasmHighSpeedComputationDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-simulation"
+  title="Webベースシミュレーション詳細"
+  duration="120-150分"
+  difficulty="上級"
+  prerequisites={[
+    "WebSocketの基本概念",
+    "JavaScriptの高度な理解",
+    "WebGL・コンピュータグラフィックス基礎",
+    "WebAssemblyの基本知識"
+  ]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-network-tech"
+  nextLessonTitle="ネットワーク技術基礎"
+  nextLessonPath="/phase1/network-tech"
+  learningObjectives={[
+    '物理シミュレーションプラットフォームの構築',
+    'ゲームエンジン統合システムの実装',
+    '科学計算シミュレーションの理解',
+    'WebWorker並列計算とWASM統合'
+  ]}
+>
 
-# 🧪 Webベースシミュレーション詳細
+<Section title="物理シミュレーションプラットフォーム" icon="implementation">
 
-## 1. 物理シミュレーションプラットフォーム
+<Card title="リアルタイム物理演算システム" icon="experiment" accentColor="blue">
 
-### リアルタイム物理演算システム
+WebSocketを活用したリアルタイム物理シミュレーションシステムの実装方法を説明します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -66,25 +88,23 @@ graph TB
     style ANALYTICS fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="分散計算アーキテクチャ" icon="network" accentColor="purple">
 
-### 分散計算アーキテクチャ
+大規模シミュレーションのための分散計算アーキテクチャを解説します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={distributedComputingSimulationDiagram} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 2. ゲームエンジン統合システム
+<Section title="ゲームエンジン統合システム" icon="implementation">
 
-### マルチプレイヤーゲームエンジン
+<Card title="マルチプレイヤーゲームエンジン" icon="game" accentColor="green">
 
-</div>
-</div>
+リアルタイムマルチプレイヤーゲームエンジンの実装方法を説明します。
+
+</Card>
 
 <Mermaid chart={`
 graph TD
@@ -132,13 +152,11 @@ graph TD
     style LOD fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="ゲーム状態同期メカニズム" icon="sync" accentColor="orange">
 
-### ゲーム状態同期メカニズム
+クライアント予測とサーバー権威を組み合わせた状態同期メカニズムを解説します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={`
 graph LR
@@ -172,15 +190,15 @@ graph LR
     style LAG fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 3. 科学計算シミュレーション
+<Section title="科学計算シミュレーション" icon="implementation">
 
-### 数値流体力学 (CFD) システム
+<Card title="数値流体力学 (CFD) システム" icon="chart" accentColor="red">
 
-</div>
-</div>
+高度な数値流体力学シミュレーションシステムの実装方法を説明します。
+
+</Card>
 
 <Mermaid chart={`
 graph TB
@@ -229,25 +247,23 @@ graph TB
     style CONTROL fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="分子動力学シミュレーション" icon="molecule" accentColor="teal">
 
-### 分子動力学シミュレーション
+分子レベルでの物理シミュレーションシステムの実装方法を説明します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={molecularDynamicsSimulationDiagram} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 4. 教育・研究用シミュレーター
+<Section title="教育・研究用シミュレーター" icon="implementation">
 
-### インタラクティブ教育プラットフォーム
+<Card title="インタラクティブ教育プラットフォーム" icon="education" accentColor="indigo">
 
-</div>
-</div>
+教育用インタラクティブシミュレーションプラットフォームの実装方法を説明します。
+
+</Card>
 
 <Mermaid chart={`
 graph TD
@@ -291,15 +307,15 @@ graph TD
     style ASSESS fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 5. WebWorker並列計算
+<Section title="WebWorker並列計算" icon="implementation">
 
-### 高性能計算アーキテクチャ
+<Card title="高性能計算アーキテクチャ" icon="gear" accentColor="amber">
 
-</div>
-</div>
+WebWorkerを活用した並列計算アーキテクチャの実装方法を説明します。
+
+</Card>
 
 <Mermaid chart={`
 graph LR
@@ -341,20 +357,19 @@ graph LR
     style WS fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<Card title="WASM高速計算統合" icon="speed" accentColor="pink">
 
-### WASM高速計算統合
+WebAssemblyを活用した高速計算システムの実装方法を説明します。
 
-</div>
-</div>
+</Card>
 
 <Mermaid chart={wasmHighSpeedComputationDiagram} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</Section>
 
-## 💡 実装のベストプラクティス
+<Section title="実装のベストプラクティス" icon="code">
+
+<Card title="シミュレーションシステム実装例" icon="code" accentColor="gray">
 
 ### 1. 物理シミュレーションエンジン
 ```javascript
@@ -610,5 +625,8 @@ class RealtimeVisualization {
 
 この包括的なシミュレーションアーキテクチャにより、高性能でインタラクティブなWebベースシミュレーションシステムを構築できます。
 
-</div>
-</div>
+</Card>
+
+</Section>
+
+</LessonLayout>
