@@ -1,9 +1,10 @@
 ---
-title: 'PWA統合アーキテクチャ詳細'
+title: 'PWA・モバイルアプリケーション詳細'
 description: 'Progressive Web App統合、Service Worker連携、オフライン対応のWebSocketアーキテクチャ'
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -292,6 +293,19 @@ class AdaptiveQualityController {
   }
 }`;
 </script>
+
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-pwa"
+  title="PWA・モバイルアプリケーション詳細"
+  duration="120-150分"
+  difficulty="上級"
+  prerequisites={["WebSocketの基本概念", "PWAの理解", "Service Worker", "モバイル開発", "オフライン機能"]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-introduction-use-cases-backend"
+  nextLessonTitle="バックエンドシステム統合詳細"
+  nextLessonPath="/phase1/introduction/use-cases/examples/backend"
+  learningObjectives={["PWAでのWebSocket実装", "オフライン対応", "プッシュ通知連携", "バックグラウンド同期", "パフォーマンス最適化"]}
+>
 
 <Section title="PWA + WebSocket統合システム" icon="concept">
 
@@ -745,3 +759,5 @@ graph TB
 </Card>
 
 </Section>
+
+</LessonLayout>

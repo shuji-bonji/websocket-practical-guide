@@ -4,6 +4,7 @@ description: 'リアルタイム文書編集、ホワイトボード、コード
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -317,17 +318,104 @@ class CodeReviewSystem {
 }`;
 </script>
 
-<Section title="リアルタイム文書編集" icon="concept">
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-collaboration"
+  title="共同編集システム詳細"
+  duration="120-150分"
+  difficulty="上級"
+  prerequisites={[
+    "WebSocketの基本概念",
+    "JavaScriptの高度な理解",
+    "アルゴリズムとデータ構造",
+    "分散システムの基礎"
+  ]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-introduction-use-cases-data-streaming"
+  nextLessonTitle="データ配信・ストリーミングシステム詳細"
+  nextLessonPath="/phase1/introduction/use-cases/examples/data-streaming"
+  learningObjectives={[
+    'Operational Transformation (OT) アルゴリズムの実装',
+    'CRDT (Conflict-free Replicated Data Types) の理解',
+    'リアルタイム共同編集の仕組み',
+    '競合解決とマージ戦略',
+    'カーソル同期とプレゼンス機能'
+  ]}
+>
 
-<Card title="Operational Transformation (OT) アーキテクチャ" icon="info" accentColor="blue">
+<Section title="なぜWebSocketが必要なのか" icon="concept">
 
-OTアルゴリズムは、同時編集時の競合を解決する中核技術です。以下の要素で構成されます。
+<Card title="従来技術の限界と課題" icon="warning" accentColor="red">
 
-- **操作変換エンジン**: 競合する操作を変換して一貫性を保つ
-- **操作履歴管理**: すべての操作を時系列で記録
-- **状態同期**: クライアント間の文書状態を同期
-- **競合解決**: 同時操作の自動調整
-- **バージョン管理**: 文書の履歴とロールバック機能
+**背景と課題**
+従来のファイルロックシステムやバージョン管理システムでは、以下の問題がありました。
+
+- **競合状態の発生**: 複数ユーザーが同時編集するとファイルがロックされる
+- **編集結果の上書き**: 後から保存したユーザーが他の変更を上書き
+- **リアルタイム性の欠如**: 他ユーザーの編集状態が精々では見えない
+- **マージ競合の解決**: 手動での競合解決が必要
+- **コミュニケーションコスト**: 編集意図の共有が困難
+
+**WebSocketによる解決**
+WebSocketを使用することで、以下のような改善が実現できます。
+
+- **リアルタイム同時編集**: 複数ユーザーが同時に編集可能
+- **競合の自動解決**: OTやCRDTアルゴリズムによる自動マージ
+- **即座フィードバック**: 他ユーザーのカーソルや選択範囲をリアルタイム表示
+- **ファイルロック不要**: ロックフリーでの同時編集
+- **ユーザー体験の向上**: スムーズなコラボレーション体験
+
+</Card>
+
+<Card title="実世界での適用例" icon="star" accentColor="green">
+
+**主要サービスでの採用事例**
+
+- **Google Docs**: 3儈5000万ユーザー、リアルタイム文書編集のパイオニア
+- **Notion**: チームナレッジマネジメント、リアルタイムブロック編集
+- **Figma**: デザインツール、リアルタイムコラボレーション
+- **VS Code Live Share**: コードエディタのリアルタイム共有
+- **Miro**: ホワイトボードツール、リアルタイムビジュアルコラボレーション
+- **Confluence**: リアルタイムWiki編集、チームナレッジシェアリング
+
+**技術的な要求事項**
+- **競合解決時間**: 50ms以下での操作結果統合
+- **同時エディター数**: 1文書あたり100人までの同時編集
+- **データ一貫性**: 最終的な一貫性保証
+- **オフライン対応**: オフライン時の変更を接続復帰時に同期
+- **パフォーマンス**: 不感のない編集体験の提供
+
+</Card>
+
+</Section>
+
+<Section title="CRDTとOTアルゴリズム" icon="concept">
+
+<Card title="同時編集アルゴリズムの比較" icon="info" accentColor="blue">
+
+**Operational Transformation (OT) アルゴリズム**
+
+- **特徴**: 操作を変換して競合を解決
+- **メリット**: メモリ効率が良い、直感的な動作
+- **デメリット**: 実装が複雑、サーバーの一中集中処理が必要
+- **適用例**: Google Docs、Etherpad
+
+**CRDT (Conflict-free Replicated Data Types) アルゴリズム**
+
+- **特徴**: 競合が発生しないデータ構造
+- **メリット**: 完全な分散処理、自動マージ
+- **デメリット**: メモリ使用量が大きい、学習コストが高い
+- **適用例**: Figma、Yjs、Automerge
+
+**アルゴリズム選択のガイドライン**
+
+| 要件 | OT推奨 | CRDT推奨 |
+|------|-----------|------------|
+| **テキスト編集** | ● | ○ |
+| **構造化データ** | ○ | ● |
+| **サーバーなしP2P** | ○ | ● |
+| **高頻度更新** | ● | ○ |
+| **オフライン対応** | ○ | ● |
+| **シンプル実装** | ○ | ● |
 
 </Card>
 
@@ -673,6 +761,57 @@ graph TB
     "ブロードキャスト配信",
     "一貫性保証"
   ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：OTアルゴリズム実装</h3>
+    <p class="mb-4">以下のコードは、Operational Transformationアルゴリズムの実装例です。</p>
+    
+    <h4 class="font-semibold mb-2">コードの各部分の詳細説明</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. 操作変換ロジック (transform メソッド)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>操作タイプの組み合わせによる分岐処理</li>
+          <li>Insert vs Insert: 後の操作の位置を調整</li>
+          <li>Insert vs Delete: 削除範囲と挿入位置の関係を分析</li>
+          <li>Delete vs Delete: 重複削除の処理</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. 競合解決アルゴリズム (transformInsertInsert 等)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>位置比較による優先度決定</li>
+          <li>文字長を考慮した位置調整</li>
+          <li>削除範囲内への挿入処理</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. サーバー側の同期処理 (handleOperation メソッド)</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>履歴に基づいた操作変換</li>
+          <li>操作履歴への追加と管理</li>
+          <li>他クライアントへのブロードキャスト</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">実装上の注意点</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>操作順序の一貫性保証</li>
+      <li>メモリリークを防ぐ履歴サイズ制限</li>
+      <li>ネットワークエラー時のロールバック処理</li>
+      <li>パフォーマンス最適化のためのバッチ処理</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">セキュリティ考慮事項</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>クライアントからの操作験証</li>
+      <li>悪意のある操作のフィルタリング</li>
+      <li>レート制限によるDoS攻撃対策</li>
+    </ul>
+  `}
 />
 
 <UseCaseExample
@@ -690,6 +829,63 @@ graph TB
     "接続状態管理",
     "オフライン対応"
   ]}
+  codeExplanation={`
+    <h3 class="font-semibold text-lg mb-3">コード解説：CRDT (Yjs) 実装</h3>
+    <p class="mb-4">以下のコードは、Yjsライブラリを使用したモダンなCRDTベースの実装例です。</p>
+    
+    <h4 class="font-semibold mb-2">コードの主要機能</h4>
+    
+    <div class="space-y-4">
+      <div>
+        <h5 class="font-semibold">1. Y.Doc と WebSocket Provider</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>Y.Doc: CRDTドキュメントのコアオブジェクト</li>
+          <li>WebsocketProvider: リアルタイム同期のためのネットワークレイヤー</li>
+          <li>自動接続管理と再接続機能</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">2. テキスト操作の簡単さ</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>insert/deleteメソッドの直感的なAPI</li>
+          <li>競合解決の自動化（ユーザーは意識不要）</li>
+          <li>リアルタイムの他クライアント同期</li>
+        </ul>
+      </div>
+      
+      <div>
+        <h5 class="font-semibold">3. Awareness API でのプレゼンス情報</h5>
+        <ul class="list-disc list-inside ml-4 space-y-1">
+          <li>カーソル位置の共有</li>
+          <li>ユーザー情報のリアルタイム更新</li>
+          <li>ユーザーの参加・退出イベント検知</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h4 class="font-semibold mt-4 mb-2">CRDTの主要なメリット</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>サーバーがダウンしてもP2Pで継続動作</li>
+      <li>ネットワーク分断耐性が高い</li>
+      <li>オフライン編集と自動マージ</li>
+      <li>スケールアウトが容易</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">パフォーマンス最適化</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>デルタ同期による帯域幅節約</li>
+      <li>バイナリプロトコルの使用</li>
+      <li>ガベージコレクション機能</li>
+    </ul>
+    
+    <h4 class="font-semibold mt-4 mb-2">セキュリティ考慮事項</h4>
+    <ul class="list-disc list-inside ml-4 space-y-1">
+      <li>アクセストークンによる認証</li>
+      <li>ドキュメントレベルの権限制御</li>
+      <li>エンドツーエンド暗号化対応</li>
+    </ul>
+  `}
 />
 
 <UseCaseExample
@@ -728,38 +924,190 @@ graph TB
 
 </Section>
 
-<Section title="ベストプラクティス" icon="tips">
+<Section title="コンフリクト解決の具体的手法" icon="shield">
 
-<Card title="実装のポイント" icon="info" accentColor="blue">
+<Card title="競合解決アルゴリズム" icon="info" accentColor="purple">
 
-### 1. 操作変換 (OT) 実装
-- **変換アルゴリズムの選択**: OT vs CRDT の適切な選択
-- **履歴管理**: 操作履歴の効率的な保存と検索
-- **同期プロトコル**: 信頼性の高い同期メカニズム
+**OTによる競合解決の仕組み**
 
-### 2. CRDT 実装のポイント
-- **データ構造の選択**: 用途に応じたCRDTタイプ
-- **ガベージコレクション**: 不要な履歴の削除
-- **メタデータ管理**: ユーザー情報やタイムスタンプ
+1. **操作の種類と変換ルール**
+   - **Insert vs Insert**: 位置の調整が必要
+   - **Insert vs Delete**: 削除範囲との関係を考慮
+   - **Delete vs Delete**: 重複削除の防止
+   - **Move vs Other**: 移動操作の複雑な変換
 
-### 3. リアルタイム描画最適化
-- **バッファリング戦略**: 適切なバッファサイズ
-- **圧縮アルゴリズム**: 描画品質と圧縮率のバランス
-- **補間処理**: スムーズな描画再現
+2. **タイムスタンプベースの順序付け**
+   - Lamportタイムスタンプの使用
+   - クライアントIDでのタイブレーカー
+   - 因果関係の維持
 
-### 4. 競合解決戦略
-- **Last Writer Wins**: 最後の書き込みが優先
-- **Timestamped Operations**: タイムスタンプベースの順序付け
-- **Consensus-based**: 複数ノードでの合意形成
-- **User Priority**: ユーザー権限に基づく優先度
+3. **コンフリクト検知と解決**
+   - 同一位置への同時編集検知
+   - アルゴリズムベースの自動解決
+   - ユーザー介入が必要なケースの特定
 
-### 5. スケーラビリティ考慮事項
-- **シャーディング**: ドキュメント単位での分散
-- **レプリケーション**: 読み取り性能の向上
-- **キャッシング**: 頻繁にアクセスされるデータの高速化
+**CRDTによる競合フリーの仕組み**
 
-この詳細なアーキテクチャにより、スムーズで高性能な共同編集システムを構築できます。
+1. **数学的性質の利用**
+   - 交換法則（Commutative）
+   - 結合法則（Associative）
+   - アイデンティティ要素の存在
+
+2. **主要なCRDTタイプ**
+   - G-Set（Grow-only Set）
+   - 2P-Set（Two-Phase Set）
+   - LWW-Register（Last-Write-Wins Register）
+   - OR-Set（Observed-Remove Set）
+   - Y-Text（Yjs Text CRDT）
+
+3. **競合解決の保証**
+   - 状態の結合法則
+   - イベントの順序無関係
+   - 最終的一貫性の保証
 
 </Card>
 
 </Section>
+
+<Section title="カーソル位置の同期方法" icon="cursor">
+
+<Card title="リアルタイムカーソル同期の実装" icon="info" accentColor="teal">
+
+**カーソル位置の管理方法**
+
+1. **座標ベースの位置管理**
+   - テキスト内の絶対位置を使用
+   - 文字数ベースでのインデックス管理
+   - 複数行の文書での行・列管理
+
+2. **相対位置ベースの管理**
+   - アンカーポイントからのオフセット
+   - 文書構造を考慮した管理
+   - テキスト変更時の動的調整
+
+3. **マルチカーソルの視覚化**
+   - ユーザーごとのカラーコーディング
+   - 名前とアバターの表示
+   - カーソルのアニメーション効果
+
+**選択範囲の同期管理**
+
+1. **選択範囲の表現**
+   - 開始位置と終了位置のセット
+   - 方向性を考慮した管理
+   - 範囲の正規化処理
+
+2. **ハイライトの表示**
+   - ユーザー固有のハイライトカラー
+   - 重複選択範囲の視覚化
+   - ライブタイピングの表示
+
+3. **パフォーマンス最適化**
+   - カーソル更新のデバウンス処理
+   - 非アクティブカーソルの非表示
+   - バッチ更新によるトラフィック最適化
+
+</Card>
+
+</Section>
+
+<Section title="パフォーマンスとUXのバランス" icon="balance">
+
+<Card title="ユーザー体験と技術的性能の両立" icon="info" accentColor="orange">
+
+**レスポンシブなインタラクションの実現**
+
+1. **ローカルファースト更新**
+   - クライアントでの即座フィードバック
+   - 後からのサーバー検証と調整
+   - ユーザーのタイピングフローを阻害しない工夫
+
+2. **遅延警告とフォールバック**
+   - ネットワーク遅延の視覚化
+   - 遅延が大きい場合のユーザー通知
+   - オフラインモードへのグレースフルな移行
+
+3. **コンフリクトインジケーター**
+   - 競合発生時の視覚的フィードバック
+   - 競合解決プロセスの透明性
+   - ユーザーの理解を助けるアニメーション
+
+**パフォーマンス最適化戦略**
+
+1. **データサイズの最適化**
+   - 差分更新の送信
+   - データ圧縮アルゴリズムの適用
+   - バイナリプロトコルの使用
+
+2. **ネットワーク効率の向上**
+   - バッチ処理でのラウンドトリップ削減
+   - デバウンス・スロットリングの実装
+   - メッセージの優先度制御
+
+3. **クライアントサイドキャッシュ**
+   - ドキュメントスナップショットのキャッシュ
+   - スマートプリフェッチング
+   - ガベージコレクション戦略
+
+**パフォーマンス指標と目標値**
+
+| 指標 | 目標値 | 計測方法 |
+|------|-----------|---------------|
+| **タイピングレスポンス** | 16ms以下 | Input to Display |
+| **同期遅延** | 100ms以下 | Operation to All Clients |
+| **競合解決時間** | 50ms以下 | Conflict Detection to Resolution |
+| **メモリ使用量** | 50MB以下 | per 100KB Document |
+| **同時接続数** | 100人以上 | per Document |
+| **スループット** | 1000ops/sec | Operations per Second |
+
+**開発工数の目安**
+- 基本的なテキスト編集: 4週間
+- リッチテキスト編集: 8週間
+- フルコラボレーション機能: 12週間
+- スケール対応: +4週間
+
+</Card>
+
+</Section>
+
+<Section title="ベストプラクティス" icon="tips">
+
+<Card title="実装のポイント" icon="info" accentColor="blue">
+
+### 1. アルゴリズム選択の指針
+- **テキスト中心の編集**: OTアルゴリズムが有効
+- **構造化データの編集**: CRDTアルゴリズムが有効
+- **P2Pアプリケーション**: CRDTが適している
+- **ハイブリッドアプローチ**: 複数アルゴリズムの組み合わせ
+
+### 2. パフォーマンス最適化
+- **レイジーローディング**: 必要時のみデータを取得
+- **デルタ同期**: 全体ではなく変更部分のみを送信
+- **メモリ管理**: ガベージコレクションと古い履歴の削除
+- **キャッシュ戦略**: 頻繁アクセスデータのキャッシュ
+
+### 3. セキュリティ考慮事項
+- **オペレーション検証**: 悪意のある操作のフィルタリング
+- **アクセス制御**: ドキュメントレベルの権限管理
+- **レート制限**: スパムやDoS攻撃対策
+- **データ暗号化**: 機密文書のエンドツーエンド暗号化
+
+### 4. 監視・デバッグ
+- **コンフリクトログ**: 競合発生と解決状況のログ収集
+- **パフォーマンスメトリクス**: レイテンシ、スループットの計測
+- **デバッグツール**: 操作履歴と状態の追跡機能
+- **アラートシステム**: 異常検知と自動復旧
+
+### 5. ユーザー体験の向上
+- **プレゼンスインジケーター**: 他ユーザーの活動状況表示
+- **バージョン履歴**: 変更追跡と復元機能
+- **コメントシステム**: コラボレーションを助けるコミュニケーション機能
+- **オフラインサポート**: オフライン編集と同期機能
+
+これらのベストプラクティスにより、スケーラブルで高品質な共同編集システムを構築できます。
+
+</Card>
+
+</Section>
+
+</LessonLayout>

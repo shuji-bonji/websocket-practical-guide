@@ -6,19 +6,27 @@ description: '仮想現実、拡張現実、メタバース空間のWebSocketア
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   import { vrSpatialPartitioningDiagram, nftTradingDiagram } from '$lib/charts/allCharts.ts';
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
 </script>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-vr-metaverse"
+  title="VR・メタバース体験詳細"
+  duration="120-150分"
+  difficulty="上級"
+  prerequisites={["WebSocketの基本概念", "VR/AR技術", "3Dグラフィックス", "WebGL/WebXR", "リアルタイム通信"]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-network-tech"
+  nextLessonTitle="ネットワーク技術基礎"
+  nextLessonPath="/phase1/network-tech"
+  learningObjectives={["VR空間での同期システム", "マルチユーザー体験", "アバター同期", "3D空間データ配信", "低遅延通信"]}
+>
 
 # 🥽 VR・メタバースプラットフォーム詳細
 
 ## 1. メタバース基盤アーキテクチャ
 
 ### 分散仮想世界システム
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TB
@@ -70,25 +78,13 @@ graph TB
     style VOICE fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
-
 ### 空間分割・負荷分散
 
-</div>
-</div>
-
 <Mermaid chart={vrSpatialPartitioningDiagram} />
-
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
 
 ## 2. VR・ARインタラクション
 
 ### 没入型インタラクションシステム
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TD
@@ -134,13 +130,7 @@ graph TD
     style FOVEATED fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
-
 ### 高精度トラッキング同期
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph LR
@@ -178,15 +168,9 @@ graph LR
     style WS fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
-
 ## 3. ソーシャルVRプラットフォーム
 
 ### マルチユーザー仮想空間
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TB
@@ -231,15 +215,11 @@ graph TB
     style WS fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" id="metaverse">
-<div class="prose max-w-none p-8">
+<div id="metaverse">
 
 ## 4. メタバース経済システム
 
 ### バーチャル経済プラットフォーム
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph TD
@@ -284,25 +264,15 @@ graph TD
     style DAO fill:#e3f2fd
 `} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
-
 ### 分散型取引システム
-
-</div>
-</div>
 
 <Mermaid chart={nftTradingDiagram} />
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
+</div>
 
 ## 5. パフォーマンス最適化
 
 ### 高性能レンダリングパイプライン
-
-</div>
-</div>
 
 <Mermaid chart={`
 graph LR
@@ -339,9 +309,6 @@ graph LR
     style DLSS fill:#fff3e0
     style WS fill:#e3f2fd
 `} />
-
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-<div class="prose max-w-none p-8">
 
 ## 💡 実装のベストプラクティス
 
@@ -695,5 +662,4 @@ class SpatialAudioSystem {
 
 この包括的なVR・メタバースアーキテクチャにより、没入感のある高性能な仮想世界体験を提供できます。
 
-</div>
-</div>
+</LessonLayout>

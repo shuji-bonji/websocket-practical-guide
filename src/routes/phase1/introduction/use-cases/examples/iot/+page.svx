@@ -4,6 +4,7 @@ description: 'IoTデバイス管理、スマートホーム、産業IoTのWebSoc
 ---
 
 <script>
+  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -388,6 +389,19 @@ industrialMonitor.registerSensor('temp_machine_001', 'temperature', 'production_
   updateFrequency: 1000
 });`;
 </script>
+
+<LessonLayout
+  lessonId="phase1-introduction-use-cases-iot"
+  title="IoT・産業システム詳細"
+  duration="90-120分"
+  difficulty="中級"
+  prerequisites={["WebSocketの基本概念", "IoTデバイスの理解", "センサーデータ処理", "産業システムの基礎"]}
+  sectionTitle="WebSocket応用例"
+  nextLessonId="phase1-introduction-use-cases-finance-medical"
+  nextLessonTitle="金融・医療システム詳細"
+  nextLessonPath="/phase1/introduction/use-cases/examples/finance-medical"
+  learningObjectives={["IoTデバイス接続管理", "センサーデータ収集", "リアルタイム監視システム", "産業用プロトコル連携", "大規模デバイス管理"]}
+>
 
 <Section title="スマートホームプラットフォーム" icon="concept">
 
@@ -803,3 +817,5 @@ graph LR
 </Card>
 
 </Section>
+
+</LessonLayout>
