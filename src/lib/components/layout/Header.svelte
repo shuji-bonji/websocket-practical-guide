@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   interface Props {
     sidebarOpen?: boolean;
@@ -46,7 +47,7 @@
 
         <!-- Logo -->
         <div class="flex items-center ml-4 lg:ml-0">
-          <a href="/" class="flex items-center">
+          <a href={href('/')} class="flex items-center">
             <div class="flex items-center space-x-2">
               <!-- WebSocket icon -->
               <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">

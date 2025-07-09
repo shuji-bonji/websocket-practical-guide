@@ -7,6 +7,7 @@ description: 'WebSocketの実践的な利用例を分野別に詳しく解説し
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
+  import { href } from '$lib/utils/paths';
 </script>
 
 <ReferenceLayout
@@ -51,7 +52,7 @@ WebSocketの実践的な利用例を11の分野に分けて詳しく解説した
 
 Discord、Slack風のチャット、音声・ビデオ通話、グループメッセージング
 
-[詳細を見る →](/reference/websocket-examples/chat)
+<a href={href('/reference/websocket-examples/chat')}>詳細を見る →</a>
 
 </Card>
 
@@ -61,7 +62,7 @@ Discord、Slack風のチャット、音声・ビデオ通話、グループメ�
 
 Google Docs風編集、ホワイトボード、コードレビュー、カーソル同期
 
-[詳細を見る →](/reference/websocket-examples/collaboration)
+<a href={href('/reference/websocket-examples/collaboration')}>詳細を見る →</a>
 
 </Card>
 
@@ -71,7 +72,7 @@ Google Docs風編集、ホワイトボード、コードレビュー、カーソ
 
 株価・為替情報、スポーツスコア、ライブダッシュボード、監視システム
 
-[詳細を見る →](/reference/websocket-examples/data-streaming)
+<a href={href('/reference/websocket-examples/data-streaming')}>詳細を見る →</a>
 
 </Card>
 
@@ -81,7 +82,7 @@ Google Docs風編集、ホワイトボード、コードレビュー、カーソ
 
 証券取引、HFT、電子カルテ、遠隔医療、コンプライアンス対応
 
-[詳細を見る →](/reference/websocket-examples/finance-medical)
+<a href={href('/reference/websocket-examples/finance-medical')}>詳細を見る →</a>
 
 </Card>
 
@@ -91,7 +92,7 @@ Google Docs風編集、ホワイトボード、コードレビュー、カーソ
 
 スマートホーム、産業IoT、センサーネットワーク、リアルタイム監視
 
-[詳細を見る →](/reference/websocket-examples/iot)
+<a href={href('/reference/websocket-examples/iot')}>詳細を見る →</a>
 
 </Card>
 
@@ -101,7 +102,7 @@ Google Docs風編集、ホワイトボード、コードレビュー、カーソ
 
 プッシュ通知、緊急アラート、イベント配信、通知最適化
 
-[詳細を見る →](/reference/websocket-examples/notifications)
+<a href={href('/reference/websocket-examples/notifications')}>詳細を見る →</a>
 
 </Card>
 
@@ -111,7 +112,7 @@ Google Docs風編集、ホワイトボード、コードレビュー、カーソ
 
 マルチプレイヤーゲーム、VR空間、メタバース、アバター同期
 
-[詳細を見る →](/reference/websocket-examples/vr-metaverse)
+<a href={href('/reference/websocket-examples/vr-metaverse')}>詳細を見る →</a>
 
 </Card>
 
@@ -121,7 +122,7 @@ Google Docs風編集、ホワイトボード、コードレビュー、カーソ
 
 Service Worker連携、オフライン対応、プッシュ通知、PWA統合
 
-[詳細を見る →](/reference/websocket-examples/pwa)
+<a href={href('/reference/websocket-examples/pwa')}>詳細を見る →</a>
 
 </Card>
 
@@ -131,7 +132,7 @@ Service Worker連携、オフライン対応、プッシュ通知、PWA統合
 
 認証システム、暗号化、侵入検知、監査ログ、コンプライアンス
 
-[詳細を見る →](/reference/websocket-examples/security)
+<a href={href('/reference/websocket-examples/security')}>詳細を見る →</a>
 
 </Card>
 
@@ -141,7 +142,7 @@ Service Worker連携、オフライン対応、プッシュ通知、PWA統合
 
 マイクロサービス、API Gateway、分散システム、負荷分散
 
-[詳細を見る →](/reference/websocket-examples/backend)
+<a href={href('/reference/websocket-examples/backend')}>詳細を見る →</a>
 
 </Card>
 
@@ -151,7 +152,7 @@ Service Worker連携、オフライン対応、プッシュ通知、PWA統合
 
 物理シミュレーション、WebAssembly統合、並列計算、可視化
 
-[詳細を見る →](/reference/websocket-examples/simulation)
+<a href={href('/reference/websocket-examples/simulation')}>詳細を見る →</a>
 
 </Card>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { href } from '$lib/utils/paths';
   let selectedTab = $state('overview');
 
   const tabs = [
@@ -180,15 +181,15 @@
       <section class="deployment-section">
         <h2>Cloud Deployment Guides</h2>
         <div class="deployment-guides">
-          <a href="/phase4/deployment/vercel" class="guide-card">
+          <a href={href('/phase4/deployment/vercel')} class="guide-card">
             <h3>▲ Deploy to Vercel</h3>
             <p>Learn to deploy WebSocket apps with Vercel Functions and Edge runtime</p>
           </a>
-          <a href="/phase4/deployment/railway" class="guide-card">
+          <a href={href('/phase4/deployment/railway')} class="guide-card">
             <h3>🚂 Deploy to Railway</h3>
             <p>Full-stack deployment with persistent connections and databases</p>
           </a>
-          <a href="/phase4/deployment/aws" class="guide-card coming-soon">
+          <a href={href('/phase4/deployment/aws')} class="guide-card coming-soon">
             <h3>☁️ Deploy to AWS</h3>
             <p>Enterprise deployment with API Gateway and Lambda</p>
             <span class="coming-soon-badge">Coming Soon</span>
@@ -223,7 +224,9 @@
               </div>
 
               <div class="app-actions">
-                <a href="/phase4/apps/{app.id}" class="btn btn-primary"> View Application </a>
+                <a href={href(`/phase4/apps/${app.id}`)} class="btn btn-primary">
+                  View Application
+                </a>
                 <a
                   href="https://github.com/yourusername/websocket-practical-guide-apps/{app.id}"
                   class="btn btn-outline"
@@ -242,17 +245,17 @@
           <div class="tool-card">
             <h3>📊 Metrics & Analytics</h3>
             <p>Monitor connection counts, message rates, and performance metrics</p>
-            <a href="/phase4/monitoring/metrics" class="btn btn-primary">Setup Metrics</a>
+            <a href={href('/phase4/monitoring/metrics')} class="btn btn-primary">Setup Metrics</a>
           </div>
           <div class="tool-card">
             <h3>🚨 Error Tracking</h3>
             <p>Track and analyze WebSocket errors and connection failures</p>
-            <a href="/phase4/monitoring/errors" class="btn btn-primary">Configure Errors</a>
+            <a href={href('/phase4/monitoring/errors')} class="btn btn-primary">Configure Errors</a>
           </div>
           <div class="tool-card">
             <h3>📝 Logging</h3>
             <p>Centralized logging for WebSocket events and debugging</p>
-            <a href="/phase4/monitoring/logging" class="btn btn-primary">Setup Logging</a>
+            <a href={href('/phase4/monitoring/logging')} class="btn btn-primary">Setup Logging</a>
           </div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { progressStore, progressActions } from '$lib/stores/progress';
+  import { href } from '$lib/utils/paths';
 
   interface Props {
     open?: boolean;
@@ -508,7 +509,7 @@
                   </div>
                 {:else}
                   <a
-                    href={item.href}
+                    href={href(item.href)}
                     class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
                     item.href
                       ? 'bg-blue-100 text-blue-700 border-r-2 border-blue-500'
@@ -708,7 +709,7 @@
                     </div>
                   {:else}
                     <a
-                      href={item.href}
+                      href={href(item.href)}
                       class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
                       item.href
                         ? 'bg-blue-100 text-blue-700'

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { href } from '$lib/utils/paths';
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-gray-50">
@@ -16,13 +17,13 @@
     </p>
     <div class="space-x-4">
       <a
-        href="/"
+        href={href('/')}
         class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
       >
         トップページに戻る
       </a>
       <a
-        href="/phase1"
+        href={href('/phase1')}
         class="inline-block bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors"
       >
         Phase 1へ

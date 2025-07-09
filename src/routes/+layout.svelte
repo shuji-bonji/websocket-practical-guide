@@ -3,6 +3,7 @@
   import Header from '$lib/components/layout/Header.svelte';
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
   import { highlightAll } from '$lib/utils/prism';
+  import { href } from '$lib/utils/paths';
   import { onMount } from 'svelte';
   import type { Snippet } from 'svelte';
 
@@ -23,6 +24,17 @@
     if (typeof window !== 'undefined') {
       window.addEventListener('popstate', handleRouteChange);
       return () => window.removeEventListener('popstate', handleRouteChange);
+    }
+  });
+
+  // GitHub Pages SPA fallback handling
+  onMount(() => {
+    // Handle redirect from 404.html
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirect = urlParams.get('redirect');
+    if (redirect) {
+      const redirectPath = decodeURIComponent(redirect);
+      window.history.replaceState({}, '', redirectPath);
     }
   });
 
@@ -96,17 +108,25 @@
               クイックリンク
             </h3>
             <div class="mt-4 space-y-4">
-              <a href="/" class="text-base text-gray-600 hover:text-gray-900 block"> ホーム </a>
-              <a href="/curriculum" class="text-base text-gray-600 hover:text-gray-900 block">
+              <a href={href('/')} class="text-base text-gray-600 hover:text-gray-900 block">
+                ホーム
+              </a>
+              <a
+                href={href('/curriculum')}
+                class="text-base text-gray-600 hover:text-gray-900 block"
+              >
                 カリキュラム概要
               </a>
               <a
-                href="/table-of-contents"
+                href={href('/table-of-contents')}
                 class="text-base text-gray-600 hover:text-gray-900 block"
               >
                 学習目次
               </a>
-              <a href="/resources" class="text-base text-gray-600 hover:text-gray-900 block">
+              <a
+                href={href('/resources')}
+                class="text-base text-gray-600 hover:text-gray-900 block"
+              >
                 学習リソース
               </a>
             </div>

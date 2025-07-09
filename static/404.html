@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page Not Found - WebSocket 実践ガイド</title>
+    <script>
+      // GitHub Pages SPA fallback
+      // Store the current path and redirect to index.html
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+
+      // Redirect to index.html with the path as a query parameter
+      window.location.replace(
+        '/websocket-practical-guide/index.html?redirect=' + encodeURIComponent(path + search + hash)
+      );
+    </script>
+  </head>
+  <body>
+    <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif">
+      <h1>ページが見つかりません</h1>
+      <p>リダイレクトしています...</p>
+    </div>
+  </body>
+</html>

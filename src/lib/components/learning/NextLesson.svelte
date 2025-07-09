@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { href } from '$lib/utils/paths';
   export let nextLessonId: string;
   export let nextLessonTitle: string;
   export let nextLessonPath: string;
@@ -38,7 +39,7 @@
     </div>
 
     <div class="space-y-3">
-      <a href={nextLessonPath} class="btn-primary inline-flex items-center">
+      <a href={href(nextLessonPath)} class="btn-primary inline-flex items-center">
         次のレッスンに進む
         <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -47,7 +48,7 @@
 
       <div class="text-sm text-gray-500">
         または
-        <a href="/phase1" class="text-blue-600 hover:text-blue-800">Phase 1 概要</a>
+        <a href={href('/phase1')} class="text-blue-600 hover:text-blue-800">Phase 1 概要</a>
         に戻って他のレッスンを確認する
       </div>
     </div>

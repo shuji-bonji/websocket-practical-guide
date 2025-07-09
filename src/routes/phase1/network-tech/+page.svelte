@@ -2,6 +2,7 @@
   import WebSocketConnectionDemo from '$lib/components/phase1/WebSocketConnectionDemo.svelte';
   import { progressStore, type OverallProgress } from '$lib/stores/progress.js';
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import { href } from '$lib/utils/paths';
 
   let progressData: OverallProgress = $progressStore;
 
@@ -180,7 +181,7 @@ graph TD
                 </div>
 
                 <a
-                  href={section.path}
+                  href={href(section.path)}
                   class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
                   レッスンを開始 →
