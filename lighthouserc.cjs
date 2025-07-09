@@ -2,14 +2,14 @@ module.exports = {
   ci: {
     collect: {
       url: [
-        'http://localhost:4173/',
-        'http://localhost:4173/phase1/introduction',
-        'http://localhost:4173/phase1/websocket-states',
-        'http://localhost:4173/phase2',
-        'http://localhost:4173/phase3',
-        'http://localhost:4173/phase4'
+        'http://localhost:4173/websocket-practical-guide/',
+        'http://localhost:4173/websocket-practical-guide/phase1/introduction',
+        'http://localhost:4173/websocket-practical-guide/phase1/websocket-states',
+        'http://localhost:4173/websocket-practical-guide/phase2',
+        'http://localhost:4173/websocket-practical-guide/phase3',
+        'http://localhost:4173/websocket-practical-guide/phase4'
       ],
-      startServerCommand: 'npm run preview:ci',
+      startServerCommand: 'npm run preview',
       startServerReadyPattern: 'Local:   http://localhost:4173/',
       startServerReadyTimeout: 30000,
       numberOfRuns: 3,

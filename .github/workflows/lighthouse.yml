@@ -19,8 +19,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project for CI
-        run: npm run build:ci
+      - name: Build project
+        run: npm run build
+        env:
+          PUBLIC_BASE_PATH: '/websocket-practical-guide'
 
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@latest
