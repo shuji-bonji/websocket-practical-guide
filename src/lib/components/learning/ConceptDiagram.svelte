@@ -108,7 +108,7 @@
   <!-- 補足説明 -->
   <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
     <div class="text-sm text-blue-800">
-      <span class="font-medium">💡 ポイント：</span>
+      <span class="font-medium">💡 ポイント</span>
       WebSocketは初回のHTTPハンドシェイク後、プロトコルを「アップグレード」して持続的な双方向通信を実現します。
       これにより、リアルタイムなデータ交換が可能になります。
     </div>

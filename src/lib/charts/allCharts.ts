@@ -13,7 +13,7 @@ sequenceDiagram
     participant R as メッセージルーター
     participant D as メッセージDB
     participant B as 👤 受信者
-
+    
     A->>G: メッセージ送信
     G->>R: メッセージ検証
     R->>D: メッセージ保存
@@ -22,7 +22,7 @@ sequenceDiagram
     G->>B: リアルタイム配信
     G->>A: 送信完了通知
     
-    Note over A,B: 平均遅延 &lt; 100ms
+    Note over A,B: 平均遅延 < 100ms
     Note over D: 永続化保証
 `;
 
@@ -32,7 +32,7 @@ sequenceDiagram
     participant S as WebSocketサーバー
     participant Q as 品質監視
     participant A as 適応制御
-
+    
     C->>S: 品質統計送信
     S->>Q: 品質分析
     Q->>A: 品質低下検知
@@ -55,7 +55,7 @@ sequenceDiagram
 
     S->>G: 温度データ (25°C)
     G->>R: 条件チェック
-    R->>R: ルール評価: 温度 &gt; 24°C
+    R->>R: ルール評価: 温度 > 24°C
     R->>A: 照明調光指示
     A->>G: アクション実行確認
     G->>U: 状態変更通知
@@ -75,7 +75,7 @@ sequenceDiagram
     participant WS as WebSocketサーバー
     participant CLIENT as クライアント
 
-    Note over DS,CLIENT: 目標レイテンシ &lt; 10ms
+    Note over DS,CLIENT: 目標レイテンシ < 10ms
     
     DS->>CACHE: データ更新 (1ms)
     CACHE->>CACHE: 差分計算 (2ms)
@@ -100,7 +100,7 @@ sequenceDiagram
         AGG->>WS: 差分データ配信
         
         alt HFTクライアント
-            WS->>HFT: 即座配信 (&lt;1ms)
+            WS->>HFT: 即座配信 (< 1ms)
             HFT->>HFT: アルゴリズム判定
         else 一般クライアント
             WS->>UI: バッファ済み配信 (100ms)

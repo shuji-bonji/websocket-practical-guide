@@ -469,7 +469,7 @@
   <!-- Educational Notes -->
   <div class="mt-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
     <div class="text-sm text-indigo-800">
-      <span class="font-medium">📚 学習ポイント：</span>
+      <span class="font-medium">📚 学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• TCP 3-wayハンドシェイクによる信頼性のある接続確立</li>
         <li>• WebSocketフレームがTCP上でメッセージ境界を管理</li>

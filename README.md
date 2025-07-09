@@ -7,14 +7,14 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
 
-# WebSocket Learning Project
+# WebSocket 実践ガイド (WebSocket Practical Guide)
 
-ブラウザ標準WebSocket APIを中心としたリアルタイムWebアプリケーション学習プロジェクト。SvelteKit + TypeScript + MDsveXで構築された学習サイトです。
+ブラウザ標準WebSocket APIを中心としたリアルタイムWebアプリケーション実践ガイド。SvelteKit + TypeScript + MDsveXで構築された学習サイトです。
 
 ## 📚 プロジェクト概要
 
-- **学習目標**: ブラウザ標準WebSocket APIをマスターし、PWA対応のリアルタイムWebアプリケーションを構築する
-- **総学習時間**: 約50-60時間の構造化されたカリキュラム
+- **実践目標**: ブラウザ標準WebSocket APIをマスターし、PWA対応のリアルタイムWebアプリケーションを構築する
+- **総実践時間**: 約50-60時間の構造化された実践カリキュラム
 - **技術スタック**: SvelteKit + TypeScript + MDsveX + Vite + Prism.js
 
 ## 🛠️ 開発環境セットアップ
@@ -98,7 +98,7 @@ static/                    # 静的ファイル
 
 ### MDsveX統合
 
-MDsveXにより、Markdown内でSvelteコンポーネントを使用可能：
+MDsveXにより、Markdown内でSvelteコンポーネントを使用可能。
 
 ```markdown
 # 学習コンテンツ
@@ -122,7 +122,7 @@ MDsveXにより、Markdown内でSvelteコンポーネントを使用可能：
 
 ### ルーティング
 
-SvelteKitのfile-based routingを使用：
+SvelteKitのfile-based routingを使用。
 
 ```
 src/routes/
@@ -137,11 +137,11 @@ src/routes/
 └── +layout.svelte        # 全ページ共通レイアウト
 ```
 
-## 📖 学習コンテンツの構成
+## 📖 実践コンテンツの構成
 
-### 1. カリキュラム構造
+### 1. 実践カリキュラム構造
 
-`memo/curriculum.md` に50-60時間の体系的なカリキュラムを用意：
+`memo/curriculum.md` に50-60時間の体系的な実践カリキュラムを用意。
 
 - WebSocket入門（5-7時間）
 - ネットワーク技術（6.5-7.5時間）
@@ -151,20 +151,20 @@ src/routes/
 - テスト手法（5-6時間）
 - 実践プロジェクト（15-20時間）
 
-### 2. 学習フェーズ
+### 2. 実践フェーズ
 
-1. **Phase 1**: WebSocket API基礎
-2. **Phase 2**: RxJSパターンからSvelteストアへの移行
-3. **Phase 3**: PWA統合とプロダクション対応
-4. **Phase 4**: Socket.IO等の応用技術（オプション）
+1. **Phase 1**: WebSocket API基礎理解
+2. **Phase 2**: 実装技術とプロトコル詳細
+3. **Phase 3**: テスト・評価手法
+4. **Phase 4**: 本格的なプロダクション開発
 
-## 🎯 主な学習目標
+## 🎯 主な実践目標
 
-- **ブラウザ標準WebSocket API**の完全理解
-- SvelteKitでのリアルタイムアプリケーション構築
-- PWA + WebSocketの統合実装
-- 適切なサブプロトコル設計
-- プロダクションレベルのセキュリティ・スケーラビリティ
+- **ブラウザ標準WebSocket API**の完全マスター
+- SvelteKitでのリアルタイムアプリケーション実装
+- PWA + WebSocketの統合開発
+- 適切なサブプロトコル設計と実装
+- プロダクションレベルのセキュリティ・スケーラビリティ実現
 
 ## 🔧 技術仕様
 
@@ -194,7 +194,7 @@ src/routes/
 
 ### Phase別開発指針
 
-Phase別開発では必ず対応する環境制約を確認してください：
+Phase別開発では必ず対応する環境制約を確認してください。
 
 - **Phase 1**: GitHub Pages互換（サーバーレス）
 - **Phase 2**: ローカル開発（Docker + Node.js）

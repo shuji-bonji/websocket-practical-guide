@@ -236,7 +236,7 @@ class GroupChatManager {
 
 <Card title="リアルタイム通信システムの全体像" icon="info" accentColor="blue">
 
-チャット・メッセージングシステムは、WebSocketを活用したリアルタイム通信の代表的な実装例です。以下の要素から構成されます：
+チャット・メッセージングシステムは、WebSocketを活用したリアルタイム通信の代表的な実装例です。以下の要素から構成されます。
 
 - **WebSocketゲートウェイ**: 複数のクライアント接続を管理
 - **メッセージルーター**: メッセージの配信先を決定
@@ -292,13 +292,11 @@ class GroupChatManager {
 
 <Card title="メッセージフロー詳細" icon="info" accentColor="green">
 
-実際のチャットシステムでは、以下のようなメッセージフローが発生します：
+実際のチャットシステムでは、以下のようなメッセージフローが発生します。
 
 </Card>
 
-
 <Mermaid chart={chatSequenceDiagram} />
-
 
 </Section>
 

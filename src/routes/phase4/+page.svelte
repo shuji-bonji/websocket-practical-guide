@@ -225,7 +225,7 @@
               <div class="app-actions">
                 <a href="/phase4/apps/{app.id}" class="btn btn-primary"> View Application </a>
                 <a
-                  href="https://github.com/yourusername/websocket-learning-apps/{app.id}"
+                  href="https://github.com/yourusername/websocket-practical-guide-apps/{app.id}"
                   class="btn btn-outline"
                 >
                   Source Code

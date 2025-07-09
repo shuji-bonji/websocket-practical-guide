@@ -263,7 +263,7 @@ export class Phase1WebSocketManager {
 ### 🐳 **Docker Compose 設定**
 
 ```yaml
-# websocket-learning-apps/docker-compose.yml
+# websocket-practical-guide-apps/docker-compose.yml
 version: '3.8'
 
 services:

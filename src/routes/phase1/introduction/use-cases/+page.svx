@@ -156,6 +156,7 @@ sequenceDiagram
 
 <Mermaid chart={`
 graph TB
+    
     subgraph "クライアント側"
         A[👤 編集者A] --> A1[📝 ローカルエディタ]
         B[👤 編集者B] --> B1[📝 ローカルエディタ]
@@ -166,16 +167,16 @@ graph TB
     B1 -->|変更操作| D
     C1 -->|変更操作| D
     
-    D -->|操作の同期| A1
-    D -->|操作の同期| B1
-    D -->|操作の同期| C1
-    
     subgraph "サーバー側"
         D --> E[🔄 操作変換エンジン]
         E --> F[📚 文書状態管理]
         F --> G[💾 永続化ストレージ]
         E --> H[⚡ 競合解決システム]
     end
+    
+    D -->|操作の同期| A1
+    D -->|操作の同期| B1
+    D -->|操作の同期| C1
     
     I[🎯 カーソル位置] --> D
     D --> I
@@ -493,7 +494,7 @@ graph BT
 
 <Card title="カテゴリー別実装パターン" icon="implementation" accentColor="purple">
 
-各カテゴリーの詳細な実装例とアーキテクチャパターンを確認できます：
+各カテゴリーの詳細な実装例とアーキテクチャパターンを確認できます。
 
 ### 🔄 リアルタイム通信
 - [📱 チャット・メッセージング実装例](/phase1/introduction/use-cases/examples/chat)

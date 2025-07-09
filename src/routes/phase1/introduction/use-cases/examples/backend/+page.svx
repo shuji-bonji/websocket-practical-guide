@@ -12,7 +12,7 @@ description: 'マイクロサービス、API Gateway、分散アーキテクチ�
 
 <Card title="WebSocketバックエンドシステムの全体像" icon="info" accentColor="blue">
 
-バックエンドWebSocketシステムは、スケーラブルで高可用性を持つ分散アーキテクチャで構築されます：
+バックエンドWebSocketシステムは、スケーラブルで高可用性を持つ分散アーキテクチャで構築されます。
 
 - **API Gateway**: WebSocket接続の統一エントリーポイント
 - **マイクロサービス**: 機能別に分離されたサービス群

@@ -157,10 +157,10 @@
 </script>
 
 <svelte:head>
-  <title>カリキュラム概要 - WebSocket Learning</title>
+  <title>カリキュラム概要 - WebSocket 実践ガイド</title>
   <meta
     name="description"
-    content="ブラウザ標準WebSocket APIマスターのための50-60時間構造化カリキュラム。基礎理解から実践開発まで4つのPhaseで段階的にスキルアップ。"
+    content="ブラウザ標準WebSocket APIマスターのための50-60時間構造化実践カリキュラム。基礎理解から実践開発まで4つのPhaseで段階的にスキルアップ。"
   />
 </svelte:head>
 
@@ -168,7 +168,7 @@
 <section class="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center">
-      <h1 class="text-4xl font-bold mb-4">WebSocket Learning カリキュラム</h1>
+      <h1 class="text-4xl font-bold mb-4">WebSocket 実践ガイド カリキュラム</h1>
       <p class="text-xl text-primary-100 mb-6">
         ブラウザ標準WebSocket APIを中心とした構造化学習プログラム
       </p>

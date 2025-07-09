@@ -338,7 +338,7 @@
   <!-- Educational Notes -->
   <div class="mt-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
     <div class="text-sm text-indigo-800">
-      <span class="font-medium">📚 学習ポイント：</span>
+      <span class="font-medium">📚 学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• HTTP/1.1は現在もWebSocketの主要基盤</li>
         <li>• HTTP/2でのWebSocket対応は限定的（RFC 8441）</li>

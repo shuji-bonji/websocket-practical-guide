@@ -366,7 +366,7 @@
   <!-- Educational Notes -->
   <div class="mt-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
     <div class="text-sm text-indigo-800">
-      <span class="font-medium">📚 学習ポイント：</span>
+      <span class="font-medium">📚 学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• HTTP/1.0では毎回TCP接続の確立・切断が必要（高オーバーヘッド）</li>
         <li>• HTTP/1.1のKeep-Aliveで接続再利用が可能に（中オーバーヘッド）</li>

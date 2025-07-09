@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **WebSocket learning project** built with SvelteKit and TypeScript. The project focuses on mastering **browser-standard WebSocket API** before exploring advanced libraries like Socket.IO. It includes comprehensive documentation and aims to build PWA-compatible real-time web applications.
+This is a **WebSocket practical guide project** built with SvelteKit and TypeScript. The project focuses on mastering **browser-standard WebSocket API** before exploring advanced libraries like Socket.IO. It includes comprehensive documentation and aims to build PWA-compatible real-time web applications.
 
-### 🎯 **Core Learning Strategy: Phase-Based WebSocket Environments**
+### 🎯 **Core Practical Strategy: Phase-Based WebSocket Environments**
 
-The project implements a **4-phase learning approach** with increasingly sophisticated WebSocket communication environments:
+The project implements a **4-phase practical approach** with increasingly sophisticated WebSocket communication environments:
 
-- **Phase 1**: GitHub Pages + Public WebSocket services (immediate learning start)
-- **Phase 2**: Local Node.js servers + Docker (protocol deep-dive)
-- **Phase 3**: Test environments + Mock servers (quality assurance)
+- **Phase 1**: GitHub Pages + Public WebSocket services (immediate practical start)
+- **Phase 2**: Local Node.js servers + Docker (protocol deep-dive implementation)
+- **Phase 3**: Test environments + Mock servers (quality assurance practices)
 - **Phase 4**: Cloud deployment (Vercel/Railway) (production experience)
 
 ## Development Commands
@@ -107,7 +107,7 @@ class Phase2LearningServer {
 
 ```bash
 # When working on Phase 2 features:
-cd websocket-learning-apps/phase2-server
+cd websocket-practical-guide-apps/phase2-server
 npm install
 npm run dev  # Starts local WebSocket servers
 
@@ -184,11 +184,11 @@ class ProductionWebSocketServer {
 
 ```bash
 # Phase 4A: Chat App to Vercel
-cd websocket-learning-apps/chat-app
+cd websocket-practical-guide-apps/chat-app
 vercel --prod
 
 # Phase 4B: Collaborative Editor to Railway
-cd websocket-learning-apps/collaborative-editor
+cd websocket-practical-guide-apps/collaborative-editor
 railway up
 ```
 
@@ -479,7 +479,7 @@ function handleMessage(data: WebSocketMessage) {
 
 ## Environment Setup
 
-cd websocket-learning-apps/phase2-server
+cd websocket-practical-guide-apps/phase2-server
 npm install
 npm run dev
 
@@ -603,16 +603,16 @@ The project follows a carefully designed learning progression:
 1. **memo/curriculum.md** - Main 50-60 hour curriculum
 2. **memo/table-of-contents.md** - Complete resource index
 3. **src/routes/phase[1-4]/** - Interactive learning components
-4. **websocket-learning-apps/** - Separate repo for Phase 2-4 implementations
+4. **websocket-practical-guide-apps/** - Separate repo for Phase 2-4 implementations
 
 ### Key Implementation Files
 
 - `src/lib/stores/websocket.svelte.ts` - Svelte 5 WebSocket store
 - `src/lib/components/WebSocketDemo.svelte` - Phase 1 demo components
 - `src/lib/types/websocket.ts` - Comprehensive WebSocket type definitions
-- `websocket-learning-apps/phase2-server/` - Local development servers
-- `websocket-learning-apps/chat-app/` - Phase 4A Vercel deployment
-- `websocket-learning-apps/collaborative-editor/` - Phase 4B Railway deployment
+- `websocket-practical-guide-apps/phase2-server/` - Local development servers
+- `websocket-practical-guide-apps/chat-app/` - Phase 4A Vercel deployment
+- `websocket-practical-guide-apps/collaborative-editor/` - Phase 4B Railway deployment
 
 ### Claude Code Best Practices Summary
 

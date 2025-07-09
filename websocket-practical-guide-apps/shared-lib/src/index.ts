@@ -1,8 +1,8 @@
 /**
- * @websocket-learning/shared-lib
+ * @websocket-practical-guide/shared-lib
  *
- * Shared types and utilities for WebSocket learning applications
- * Educational progression: Phase 1 → Phase 2 → Phase 3 → Phase 4
+ * Shared types and utilities for WebSocket practical guide applications
+ * Practical progression: Phase 1 → Phase 2 → Phase 3 → Phase 4
  */
 
 // Export all types

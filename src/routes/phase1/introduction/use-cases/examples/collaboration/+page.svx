@@ -321,7 +321,7 @@ class CodeReviewSystem {
 
 <Card title="Operational Transformation (OT) アーキテクチャ" icon="info" accentColor="blue">
 
-OTアルゴリズムは、同時編集時の競合を解決する中核技術です。以下の要素で構成されます：
+OTアルゴリズムは、同時編集時の競合を解決する中核技術です。以下の要素で構成されます。
 
 - **操作変換エンジン**: 競合する操作を変換して一貫性を保つ
 - **操作履歴管理**: すべての操作を時系列で記録
@@ -367,7 +367,7 @@ graph TB
 
 <Card title="操作変換の詳細フロー" icon="info" accentColor="green">
 
-操作変換により、複数ユーザーの同時編集が可能になります：
+操作変換により、複数ユーザーの同時編集が可能になります。
 
 </Card>
 
@@ -401,7 +401,7 @@ sequenceDiagram
 
 <Card title="CRDTベースの分散編集" icon="info" accentColor="purple">
 
-CRDTは競合のない分散データ構造で、自動的にマージ可能な編集を実現します：
+CRDTは競合のない分散データ構造で、自動的にマージ可能な編集を実現します。
 
 </Card>
 
@@ -443,7 +443,7 @@ graph LR
 
 <Card title="描画データのストリーミング" icon="info" accentColor="indigo">
 
-ホワイトボードシステムは、低遅延での描画同期を実現します：
+ホワイトボードシステムは、低遅延での描画同期を実現します。
 
 </Card>
 
@@ -484,7 +484,7 @@ graph TB
 
 <Card title="描画イベントの最適化" icon="success" accentColor="green">
 
-描画パフォーマンスを最適化するための手法：
+描画パフォーマンスを最適化するための手法。
 
 </Card>
 
@@ -522,7 +522,7 @@ sequenceDiagram
 
 <Card title="Live Code Review アーキテクチャ" icon="info" accentColor="amber">
 
-リアルタイムコードレビューシステムの構成要素：
+リアルタイムコードレビューシステムの構成要素。
 
 </Card>
 
@@ -573,7 +573,7 @@ graph TD
 
 <Card title="リアルタイム位置表示" icon="info" accentColor="teal">
 
-共同編集における視覚的フィードバックの実装：
+共同編集における視覚的フィードバックの実装。
 
 </Card>
 
@@ -617,7 +617,7 @@ graph LR
 
 <Card title="データ圧縮・バッチング" icon="warning" accentColor="orange">
 
-大規模な共同編集を支えるパフォーマンス最適化技術：
+大規模な共同編集を支えるパフォーマンス最適化技術。
 
 </Card>
 

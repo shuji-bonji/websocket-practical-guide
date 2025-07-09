@@ -38,7 +38,7 @@ A production-ready WebSocket chat application built with SvelteKit and TypeScrip
 1. **Clone and install dependencies**:
 
    ```bash
-   cd websocket-learning-apps/chat-app
+   cd websocket-practical-guide-apps/chat-app
    npm install
    ```
 
