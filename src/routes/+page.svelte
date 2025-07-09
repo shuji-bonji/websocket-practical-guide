@@ -102,10 +102,10 @@
 </script>
 
 <svelte:head>
-  <title>WebSocket Learning - ブラウザ標準WebSocket APIマスター</title>
+  <title>WebSocket 実践ガイド - ブラウザ標準WebSocket APIマスター</title>
   <meta
     name="description"
-    content="ブラウザ標準WebSocket APIを中心としたリアルタイムWebアプリケーション学習サイト。50-60時間の構造化カリキュラムでPWA対応のモダンアプリ開発をマスター。"
+    content="ブラウザ標準WebSocket APIを中心としたリアルタイムWebアプリケーション実践ガイド。50-60時間の構造化カリキュラムでPWA対応のモダンアプリ開発をマスター。"
   />
 </svelte:head>
 
@@ -115,11 +115,11 @@
   <div class="relative px-4 py-24 sm:px-6 lg:px-8">
     <div class="text-center">
       <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-        WebSocket Learning
+        WebSocket 実践ガイド
       </h1>
       <p class="mx-auto mt-6 max-w-3xl text-xl text-primary-100">
         ブラウザ標準WebSocket APIを中心とした<br />
-        リアルタイムWebアプリケーション学習サイト
+        リアルタイムWebアプリケーション実践ガイド
       </p>
       <p class="mx-auto mt-4 max-w-2xl text-lg text-primary-200">
         TypeScript/JavaScript中級者向け 50-60時間の構造化カリキュラム

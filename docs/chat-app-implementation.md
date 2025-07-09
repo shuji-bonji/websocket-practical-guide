@@ -148,8 +148,8 @@ class ChatWebSocketManager {
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/websocket-learning-apps
-cd websocket-learning-apps/chat-app
+git clone https://github.com/yourusername/websocket-practical-guide-apps
+cd websocket-practical-guide-apps/chat-app
 
 # Install dependencies
 npm install

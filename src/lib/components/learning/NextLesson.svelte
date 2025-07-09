@@ -56,7 +56,7 @@
   <!-- 学習のコツ -->
   <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
     <div class="text-sm text-yellow-800">
-      <span class="font-medium">💡 学習のコツ：</span>
+      <span class="font-medium">💡 学習のコツ</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• 理解できない部分があれば、前のレッスンに戻って復習しましょう</li>
         <li>• 実際に手を動かして、コードを書いて確認することが重要です</li>

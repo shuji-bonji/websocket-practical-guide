@@ -1,5 +1,6 @@
 {
-  "name": "websocket-learning",
+  "name": "websocket-practical-guide",
+  "description": "WebSocket実践ガイド - ブラウザ標準APIで学ぶリアルタイム通信",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -45,9 +46,9 @@
     "coverage:ci": "echo 'Coverage reports generated for CI artifacts'",
     "_comment_dev": "=== 開発用ユーティリティ ===",
     "dev:clean": "npm run clean:all && npm install && npm run dev",
-    "dev:websocket": "npm run dev -- --port 5173 & node websocket-learning-apps/phase2-server/src/server.js",
+    "dev:websocket": "npm run dev -- --port 5173 & node websocket-practical-guide-apps/phase2-server/src/server.js",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:websocket-server\"",
-    "dev:websocket-server": "node websocket-learning-apps/phase2-server/src/server.js",
+    "dev:websocket-server": "node websocket-practical-guide-apps/phase2-server/src/server.js",
     "size:check": "npm run git:size && find . -name 'node_modules' -type d -exec du -sh {} \\; 2>/dev/null | head -3",
     "size:report": "echo 'Repository Analysis:' && npm run size:check && echo 'Large directories:' && find . -type d -size +50M 2>/dev/null | head -10"
   },

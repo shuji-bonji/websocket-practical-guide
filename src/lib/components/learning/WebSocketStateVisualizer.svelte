@@ -580,7 +580,7 @@
   <!-- Educational Notes -->
   <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
     <div class="text-sm text-indigo-800">
-      <span class="font-medium">📚 学習ポイント：</span>
+      <span class="font-medium">📚 学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• WebSocketの4つの状態（CONNECTING → OPEN → CLOSING → CLOSED）</li>
         <li>• 状態遷移のタイミングとイベントハンドラの関係</li>

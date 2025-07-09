@@ -641,7 +641,7 @@
         <div>
           <h4 class="font-semibold text-gray-900 mb-3">クイックスタート</h4>
           <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
-            <div>cd ../websocket-learning-apps</div>
+            <div>cd ../websocket-practical-guide-apps</div>
             <div>docker-compose up -d</div>
           </div>
         </div>

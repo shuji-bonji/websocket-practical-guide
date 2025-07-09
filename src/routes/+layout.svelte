@@ -53,7 +53,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="WebSocket Learning" />
+  <meta name="apple-mobile-web-app-title" content="WebSocket 実践ガイド" />
 </svelte:head>
 
 <div class="min-h-screen bg-gray-50">
@@ -82,10 +82,10 @@
           <!-- About -->
           <div>
             <h3 class="text-sm font-semibold text-gray-900 tracking-wide uppercase">
-              WebSocket Learning について
+              WebSocket 実践ガイド について
             </h3>
             <p class="mt-4 text-base text-gray-600">
-              ブラウザ標準WebSocket APIを中心とした リアルタイムWebアプリケーション学習サイトです。
+              ブラウザ標準WebSocket APIを中心とした リアルタイムWebアプリケーション実践ガイドです。
               TypeScript/JavaScript中級者を対象とした 50-60時間の構造化カリキュラムを提供します。
             </p>
           </div>
@@ -139,13 +139,13 @@
           <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-4">
               <p class="text-base text-gray-600">
-                © 2025 WebSocket Learning. 学習目的で作成されました。
+                © WebSocket 実践ガイド. 学習目的で作成されました。
               </p>
             </div>
 
             <div class="mt-4 md:mt-0 flex items-center space-x-6">
               <a
-                href="https://github.com/shuji-bonji/websocket-learning"
+                href="https://github.com/shuji-bonji/websocket-practical-guide"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-gray-500 hover:text-gray-900"

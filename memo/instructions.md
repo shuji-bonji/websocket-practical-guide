@@ -26,7 +26,7 @@ https://svelte.jp/docs/llms
 
 ## 実装リポジトリ（SvelteKitアプリ集）
 
-https://github.com/shuji-bonji/websocket-learning-apps
+https://github.com/shuji-bonji/websocket-practical-guide-apps
 
 実際のアプリを作る?
 
@@ -42,7 +42,7 @@ https://github.com/shuji-bonji/websocket-learning-apps
 （Angular については、今回配慮する必要はない。Svelte学習では必要だがそちらは別プロジェクトとなります。）
 
 ```
-websocket-learning-apps/
+websocket-practical-guide-apps/
 ├── chat-app/                  # 最小チャット（双方向通信）
 ├── rps-game/                  # ジャンケンゲーム（状態同期）
 ├── location-share/            # 位置共有PWA（Service Worker）

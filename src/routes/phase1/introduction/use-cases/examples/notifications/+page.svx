@@ -356,7 +356,7 @@ class NotificationMetrics {
 
 <Card title="マルチチャネル通知アーキテクチャ" icon="info" accentColor="blue">
 
-現代の通知システムは、複数の配信チャネルを統合的に管理します。以下のコンポーネントで構成されます：
+現代の通知システムは、複数の配信チャネルを統合的に管理します。以下のコンポーネントで構成されます。
 
 - **イベントコレクター**: 様々なソースからのイベントを収集
 - **ターゲティングエンジン**: 適切な受信者を特定
@@ -405,7 +405,7 @@ graph TB
 
 <Card title="通知フロー詳細" icon="info" accentColor="green">
 
-通知の配信フローとユーザー状態に応じた処理：
+通知の配信フローとユーザー状態に応じた処理。
 
 </Card>
 
@@ -417,7 +417,7 @@ graph TB
 
 <Card title="通知設定システム" icon="info" accentColor="purple">
 
-ユーザー中心の通知設定管理で、最適なユーザー体験を提供します：
+ユーザー中心の通知設定管理で、最適なユーザー体験を提供します。
 
 </Card>
 
@@ -459,7 +459,7 @@ graph LR
 
 <Card title="リアルタイム監視ダッシュボード" icon="info" accentColor="indigo">
 
-WebSocketを活用したリアルタイム監視システムの構成：
+WebSocketを活用したリアルタイム監視システムの構成。
 
 </Card>
 
@@ -501,7 +501,7 @@ graph TB
 
 <Card title="アラートエスカレーション" icon="warning" accentColor="orange">
 
-重要度に応じたアラートの自動エスカレーションフロー：
+重要度に応じたアラートの自動エスカレーションフロー。
 
 </Card>
 
@@ -513,7 +513,7 @@ graph TB
 
 <Card title="Service Worker連携" icon="info" accentColor="pink">
 
-Progressive Web Appでの通知システム統合アーキテクチャ：
+Progressive Web Appでの通知システム統合アーキテクチャ。
 
 </Card>
 
@@ -561,7 +561,7 @@ graph TD
 
 <Card title="スケーラブル通知配信" icon="info" accentColor="amber">
 
-大量の通知を効率的に配信するためのアーキテクチャ：
+大量の通知を効率的に配信するためのアーキテクチャ。
 
 </Card>
 
@@ -627,7 +627,7 @@ graph TB
 
 <Card title="配信効果測定" icon="info" accentColor="teal">
 
-通知パフォーマンスの測定と最適化：
+通知パフォーマンスの測定と最適化。
 
 </Card>
 

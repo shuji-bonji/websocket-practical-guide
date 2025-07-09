@@ -65,7 +65,7 @@
                 </svg>
               </div>
               <div class="hidden sm:block">
-                <h1 class="text-xl font-bold text-gray-900">WebSocket Learning</h1>
+                <h1 class="text-xl font-bold text-gray-900">WebSocket 実践ガイド</h1>
                 <p class="text-xs text-gray-500">リアルタイムWeb開発マスター</p>
               </div>
             </div>
@@ -100,7 +100,7 @@
         <div class="flex items-center space-x-2">
           <!-- GitHub link -->
           <a
-            href="https://github.com/shuji-bonji/websocket-learning"
+            href="https://github.com/shuji-bonji/websocket-practical-guide"
             target="_blank"
             rel="noopener noreferrer"
             class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"

@@ -659,7 +659,7 @@
   <!-- 学習ポイント -->
   <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
     <div class="text-sm text-blue-800">
-      <span class="font-medium">🎓 フェーズ1学習ポイント：</span>
+      <span class="font-medium">🎓 フェーズ1学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• 🌐 パブリックWebSocketサービスの利用</li>
         <li>• 🔄 自動フォールバック機能</li>

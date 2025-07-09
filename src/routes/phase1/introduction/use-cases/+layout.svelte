@@ -199,4 +199,21 @@
   aside::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
   }
+
+  /* メインコンテンツのオーバーフロー設定 */
+  main {
+    overflow: visible !important;
+  }
+
+  /* メインコンテンツ内のセクションカードのシャドウを確実に表示 */
+  :global(.lesson-content section.floating-card) {
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* lesson-contentのオーバーフロー設定のみ（幅は変更しない） */
+  :global(.lesson-content) {
+    overflow: visible !important;
+  }
 </style>

@@ -245,7 +245,7 @@
     <div class="text-sm text-gray-700 space-y-1">
       <p>To start Phase 2 servers locally:</p>
       <code class="block bg-gray-800 text-green-400 p-2 rounded font-mono text-xs mt-2">
-        cd ../websocket-learning-apps && docker-compose up -d
+        cd ../websocket-practical-guide-apps && docker-compose up -d
       </code>
       <p class="text-xs text-gray-600 mt-1">
         This will start all three WebSocket servers on ports 8080, 8081, and 8082

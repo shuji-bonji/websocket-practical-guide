@@ -66,7 +66,7 @@
 </script>
 
 <svelte:head>
-  <title>WebSocket入門 - Phase 1 Introduction</title>
+  <title>WebSocket入門 - Phase 1 Introduction | WebSocket 実践ガイド</title>
   <meta
     name="description"
     content="WebSocketの基本概念から実践的な利用例まで、体系的に学習するWebSocket入門セクション"
@@ -75,32 +75,35 @@
 
 <div class="min-h-screen bg-gray-50">
   <!-- ヘッダーセクション -->
-  <div class="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white">
-    <div class="max-w-6xl mx-auto px-4 py-16">
-      <div class="text-center">
+  <section class="relative overflow-hidden bg-gradient-to-r from-primary-600 to-primary-800">
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-600/90 to-primary-800/90"></div>
+    <div class="relative px-4 py-24 sm:px-6 lg:px-8">
+      <div class="max-w-6xl mx-auto text-center">
         <div
-          class="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6"
+          class="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6 text-primary-100"
         >
           🚀 Phase 1: WebSocket基礎理解
         </div>
-        <h1 class="text-4xl md:text-6xl font-bold mb-6">WebSocket入門</h1>
-        <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl mb-6">
+          WebSocket入門
+        </h1>
+        <p class="mx-auto max-w-3xl text-xl text-primary-100 mb-8">
           基本概念から実践的な利用例まで、WebSocketの全体像を理解する
         </p>
         <div class="flex flex-wrap justify-center gap-4 text-sm">
-          <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+          <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg text-primary-100">
             ⏱️ 学習時間: 約4-5時間
           </div>
-          <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+          <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg text-primary-100">
             📊 難易度: 初級
           </div>
-          <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+          <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg text-primary-100">
             🎯 4つのレッスン
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <div class="max-w-6xl mx-auto px-4 py-12">
     <!-- 学習の流れ -->

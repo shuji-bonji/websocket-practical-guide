@@ -173,14 +173,14 @@ const config = {
 
 ---
 
-## 🚀 **実践アプリケーション (websocket-learning-apps) のデプロイメント**
+## 🚀 **実践アプリケーション (websocket-practical-guide-apps) のデプロイメント**
 
 ### 🔧 **Phase 2: ローカル開発環境**
 
 #### Docker Compose デプロイメント
 
 ```yaml
-# websocket-learning-apps/docker-compose.production.yml
+# websocket-practical-guide-apps/docker-compose.production.yml
 version: '3.8'
 
 services:
@@ -384,7 +384,7 @@ npm install -g vercel
 vercel login
 
 # 3. プロジェクト初期化
-cd websocket-learning-apps/chat-app
+cd websocket-practical-guide-apps/chat-app
 vercel init
 
 # 4. 環境変数設定
@@ -660,7 +660,7 @@ npm install -g @railway/cli
 railway login
 
 # 3. プロジェクト初期化
-cd websocket-learning-apps/collaborative-editor
+cd websocket-practical-guide-apps/collaborative-editor
 railway init
 
 # 4. Redis サービス追加
@@ -870,11 +870,11 @@ jobs:
             npm run test
             npm run build
           elif [ "${{ matrix.project }}" == "chat-app" ]; then
-            cd websocket-learning-apps/chat-app
+            cd websocket-practical-guide-apps/chat-app
             npm ci
             npm run test
           elif [ "${{ matrix.project }}" == "collaborative-editor" ]; then
-            cd websocket-learning-apps/collaborative-editor
+            cd websocket-practical-guide-apps/collaborative-editor
             npm ci
             npm run test
           fi
@@ -918,7 +918,7 @@ git push origin gh-pages
 
 # 2. チャットアプリのデプロイ (Vercel)
 echo "💬 Deploying chat app to Vercel..."
-cd ../websocket-learning-apps/chat-app
+cd ../websocket-practical-guide-apps/chat-app
 npm ci
 vercel --prod --confirm
 
