@@ -9,7 +9,7 @@ module.exports = {
         'http://localhost:4173/phase3',
         'http://localhost:4173/phase4'
       ],
-      startServerCommand: 'npm run preview',
+      startServerCommand: 'npm run preview:ci',
       startServerReadyPattern: 'Local:   http://localhost:4173/',
       startServerReadyTimeout: 30000,
       numberOfRuns: 3,
