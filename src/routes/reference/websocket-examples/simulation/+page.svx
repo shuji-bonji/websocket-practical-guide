@@ -4,15 +4,16 @@ description: '物理シミュレーション、ゲームエンジン、科学計
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import { distributedComputingSimulationDiagram, molecularDynamicsSimulationDiagram, wasmHighSpeedComputationDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-simulation"
+<ReferenceLayout
+  description="物理シミュレーション、ゲームエンジン、科学計算のWebSocketアーキテクチャ"
+  referenceCategory="シミュレーション"
   title="Webベースシミュレーション詳細"
   duration="120-150分"
   difficulty="上級"
@@ -22,10 +23,7 @@ description: '物理シミュレーション、ゲームエンジン、科学計
     "WebGL・コンピュータグラフィックス基礎",
     "WebAssemblyの基本知識"
   ]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-network-tech"
-  nextLessonTitle="ネットワーク技術基礎"
-  nextLessonPath="/phase1/network-tech"
+  sectionTitle="リファレンス"
   learningObjectives={[
     '物理シミュレーションプラットフォームの構築',
     'ゲームエンジン統合システムの実装',
@@ -629,4 +627,4 @@ class RealtimeVisualization {
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

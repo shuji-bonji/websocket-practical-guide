@@ -1,5 +1,5 @@
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -348,16 +348,14 @@ class NotificationMetrics {
 }`;
 </script>
 
-<LessonLayout 
-  lessonId="phase1-introduction-use-cases-notifications"
+<ReferenceLayout
+  description="プッシュ通知、アラート配信、マルチチャネル通知のWebSocketアーキテクチャ"
+  referenceCategory="通知システム" 
   title="通知・アラートシステム詳細"
   duration="90-120分"
   difficulty="中級"
   prerequisites={["WebSocketの基本概念", "通知システムの理解", "プッシュ通知", "イベント駆動アーキテクチャ"]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-introduction-use-cases-pwa"
-  nextLessonTitle="PWA・モバイルアプリケーション詳細"
-  nextLessonPath="/phase1/introduction/use-cases/examples/pwa"
+  sectionTitle="リファレンス"
   learningObjectives={["リアルタイム通知システム", "プッシュ通知連携", "アラート優先度管理", "マルチチャネル配信", "通知の最適化"]}
 >
 
@@ -782,4 +780,4 @@ graph LR
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

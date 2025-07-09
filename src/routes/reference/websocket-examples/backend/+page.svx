@@ -4,13 +4,14 @@ description: 'マイクロサービス、API Gateway、分散アーキテクチ�
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-backend"
+<ReferenceLayout
+  description="マイクロサービス、API Gateway、分散アーキテクチャのWebSocket統合パターン"
+  referenceCategory="バックエンド"
   title="バックエンドシステム統合詳細"
   duration="90-120分"
   difficulty="中級"
@@ -21,10 +22,7 @@ description: 'マイクロサービス、API Gateway、分散アーキテクチ�
     "データベース連携",
     "マイクロサービス"
   ]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-introduction-use-cases-vr-metaverse"
-  nextLessonTitle="VR・メタバース体験詳細"
-  nextLessonPath="/phase1/introduction/use-cases/examples/vr-metaverse"
+  sectionTitle="リファレンス"
   learningObjectives={[
     "WebSocketとREST API連携",
     "マイクロサービス統合",
@@ -75,4 +73,4 @@ description: 'マイクロサービス、API Gateway、分散アーキテクチ�
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

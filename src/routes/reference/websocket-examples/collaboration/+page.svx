@@ -4,7 +4,7 @@ description: 'リアルタイム文書編集、ホワイトボード、コード
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -318,9 +318,9 @@ class CodeReviewSystem {
 }`;
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-collaboration"
+<ReferenceLayout
   title="共同編集システム詳細"
+  description="リアルタイム文書編集、ホワイトボード、コードレビューシステムのWebSocketアーキテクチャ"
   duration="120-150分"
   difficulty="上級"
   prerequisites={[
@@ -329,16 +329,18 @@ class CodeReviewSystem {
     "アルゴリズムとデータ構造",
     "分散システムの基礎"
   ]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-introduction-use-cases-data-streaming"
-  nextLessonTitle="データ配信・ストリーミングシステム詳細"
-  nextLessonPath="/phase1/introduction/use-cases/examples/data-streaming"
+  sectionTitle="リファレンス"
+  referenceCategory="共同作業"
   learningObjectives={[
     'Operational Transformation (OT) アルゴリズムの実装',
     'CRDT (Conflict-free Replicated Data Types) の理解',
     'リアルタイム共同編集の仕組み',
     '競合解決とマージ戦略',
     'カーソル同期とプレゼンス機能'
+  ]}
+  relatedReferences={[
+    { title: "リアルタイム通信システム", description: "チャット・メッセージング", icon: "💬", url: "/reference/websocket-examples/chat" },
+    { title: "VR・メタバースシステム", description: "仮想空間での協働", icon: "🥽", url: "/reference/websocket-examples/vr-metaverse" }
   ]}
 >
 
@@ -1110,4 +1112,4 @@ graph TB
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

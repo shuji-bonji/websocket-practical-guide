@@ -4,15 +4,16 @@ description: 'セキュリティ監視、侵入検知、監査ログシステム
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import { idsIpsThreatResponseDiagram, complianceMonitoringDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-security"
+<ReferenceLayout
+  description="セキュリティ監視、侵入検知、監査ログシステムのWebSocketアーキテクチャ"
+  referenceCategory="セキュリティ"
   title="セキュリティ・監査システム詳細"
   duration="90-120分"
   difficulty="上級"
@@ -21,10 +22,7 @@ description: 'セキュリティ監視、侵入検知、監査ログシステム
     "セキュリティ基礎知識",
     "システムアーキテクチャの理解"
   ]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-introduction-use-cases-simulation"
-  nextLessonTitle="Webベースシミュレーション詳細"
-  nextLessonPath="/phase1/introduction/use-cases/examples/simulation"
+  sectionTitle="リファレンス"
   learningObjectives={[
     'セキュリティ監視システムのWebSocket活用',
     '認証・アクセス制御の実装',
@@ -762,4 +760,4 @@ class IncidentResponseAutomation {
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

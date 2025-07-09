@@ -6,19 +6,17 @@ description: '仮想現実、拡張現実、メタバース空間のWebSocketア
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   import { vrSpatialPartitioningDiagram, nftTradingDiagram } from '$lib/charts/allCharts.ts';
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-vr-metaverse"
+<ReferenceLayout
+  description="仮想現実、拡張現実、メタバース空間のWebSocketアーキテクチャ"
+  referenceCategory="VR・メタバース"
   title="VR・メタバース体験詳細"
   duration="120-150分"
   difficulty="上級"
   prerequisites={["WebSocketの基本概念", "VR/AR技術", "3Dグラフィックス", "WebGL/WebXR", "リアルタイム通信"]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-network-tech"
-  nextLessonTitle="ネットワーク技術基礎"
-  nextLessonPath="/phase1/network-tech"
+  sectionTitle="リファレンス"
   learningObjectives={["VR空間での同期システム", "マルチユーザー体験", "アバター同期", "3D空間データ配信", "低遅延通信"]}
 >
 
@@ -662,4 +660,4 @@ class SpatialAudioSystem {
 
 この包括的なVR・メタバースアーキテクチャにより、没入感のある高性能な仮想世界体験を提供できます。
 
-</LessonLayout>
+</ReferenceLayout>
