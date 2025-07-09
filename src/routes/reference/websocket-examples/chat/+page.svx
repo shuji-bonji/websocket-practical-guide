@@ -4,7 +4,7 @@ description: 'チャット、メッセージング、音声・ビデオ通話シ
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -233,9 +233,9 @@ class GroupChatManager {
 }`;
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-chat"
+<ReferenceLayout
   title="リアルタイム通信システム詳細"
+  description="チャット、メッセージング、音声・ビデオ通話システムのWebSocketアーキテクチャ"
   duration="90-120分"
   difficulty="中級"
   prerequisites={[
@@ -244,16 +244,18 @@ class GroupChatManager {
     "HTTP通信の理解",
     "データベース基礎"
   ]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-introduction-use-cases-collaboration"
-  nextLessonTitle="共同編集システム詳細"
-  nextLessonPath="/phase1/introduction/use-cases/examples/collaboration"
+  sectionTitle="リファレンス"
+  referenceCategory="リアルタイム通信"
   learningObjectives={[
     'チャットシステムの設計と実装',
     'メッセージ配信保証の仕組み',
     'プレゼンス機能の実装',
     '既読・未読管理システム',
     'スケーラビリティの考慮'
+  ]}
+  relatedReferences={[
+    { title: "共同編集システム", description: "リアルタイム協働作業", icon: "📝", url: "/reference/websocket-examples/collaboration" },
+    { title: "プッシュ通知システム", description: "通知配信アーキテクチャ", icon: "🔔", url: "/reference/websocket-examples/notifications" }
   ]}
 >
 
@@ -690,4 +692,4 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

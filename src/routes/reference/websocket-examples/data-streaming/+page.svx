@@ -4,7 +4,7 @@ description: '株価情報、スポーツスコア、ライブデータ配信の
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -458,8 +458,9 @@ class IoTDataStreamer {
 }`;
 </script>
 
-<LessonLayout
-  lessonId="phase1-introduction-use-cases-data-streaming"
+<ReferenceLayout
+  description="株価情報、スポーツスコア、ライブデータ配信のWebSocketアーキテクチャ"
+  referenceCategory="データ配信"
   title="データ配信・ストリーミングシステム詳細"
   duration="90-120分"
   difficulty="上級"
@@ -469,10 +470,7 @@ class IoTDataStreamer {
     "システムアーキテクチャの知識",
     "パフォーマンス最適化の基礎"
   ]}
-  sectionTitle="WebSocket応用例"
-  nextLessonId="phase1-introduction-use-cases-iot"
-  nextLessonTitle="IoT・産業システム詳細"
-  nextLessonPath="/phase1/introduction/use-cases/examples/iot"
+  sectionTitle="リファレンス"
   learningObjectives={[
     '高頻度データ配信システムの設計',
     'バックプレッシャー制御の実装',
@@ -1407,4 +1405,4 @@ class WebSocketConnectionPool {
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

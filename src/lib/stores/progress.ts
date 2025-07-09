@@ -60,7 +60,8 @@ const defaultProgress: OverallProgress = {
         // 4. 基本操作 (4レッスン)
         { id: 'phase1-basic-operations-url-connection', completed: false },
         { id: 'phase1-basic-operations-api-implementation', completed: false },
-        { id: 'phase1-basic-operations-reconnection', completed: false }
+        { id: 'phase1-basic-operations-reconnection', completed: false },
+        { id: 'phase1-basic-operations-websocket-states', completed: false }
       ]
     },
     {

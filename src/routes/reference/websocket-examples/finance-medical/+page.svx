@@ -4,7 +4,7 @@ description: 'トレーディング、決済、電子カルテ、遠隔医療シ
 ---
 
 <script>
-  import LessonLayout from '$lib/components/common/LessonLayout.svelte';
+  import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
@@ -12,15 +12,11 @@ description: 'トレーディング、決済、電子カルテ、遠隔医療シ
   import { ultraLowLatencyTradingDiagram, patientMonitoringDiagram } from '$lib/charts/allCharts.ts';
   
   const lessonMetadata = {
-    lessonId: "phase1-introduction-use-cases-finance-medical",
     title: "金融・医療システム詳細",
     duration: "120-150分",
     difficulty: "上級",
     prerequisites: ["WebSocketの基本概念", "金融システムの理解", "医療情報システム", "セキュリティ基礎", "リアルタイム処理"],
-    sectionTitle: "WebSocket応用例",
-    nextLessonId: "phase1-introduction-use-cases-notifications",
-    nextLessonTitle: "通知・アラートシステム詳細",
-    nextLessonPath: "/phase1/introduction/use-cases/examples/notifications",
+    sectionTitle: "リファレンス",
     learningObjectives: ["金融取引システムの実装", "医療モニタリングシステム", "リアルタイム分析", "高可用性アーキテクチャ", "規制要件への対応"]
   };
 
@@ -399,7 +395,20 @@ class RealTimePaymentSystem {
 }`;
 </script>
 
-<LessonLayout {lessonMetadata}>
+<ReferenceLayout
+  title="金融・医療システム詳細"
+  description="トレーディング、決済、電子カルテ、遠隔医療システムのWebSocketアーキテクチャ"
+  duration="120-150分"
+  difficulty="上級"
+  prerequisites={["WebSocketの基本概念", "金融システムの理解", "医療情報システム", "セキュリティ基礎", "リアルタイム処理"]}
+  sectionTitle="リファレンス"
+  referenceCategory="金融・医療"
+  learningObjectives={["金融取引システムの実装", "医療モニタリングシステム", "リアルタイム分析", "高可用性アーキテクチャ", "規制要件への対応"]}
+  relatedReferences={[
+    { title: "データ配信システム", description: "高頻度データストリーミング", icon: "📊", url: "/reference/websocket-examples/data-streaming" },
+    { title: "セキュリティシステム", description: "監査・コンプライアンス", icon: "🔐", url: "/reference/websocket-examples/security" }
+  ]}
+>
 
 <Section title="金融取引システム" icon="concept">
 
@@ -1133,4 +1142,4 @@ class TelemedicineQualityManager {
 
 </Section>
 
-</LessonLayout>
+</ReferenceLayout>

@@ -146,6 +146,13 @@ sequenceDiagram
 
 </Card>
 
+<Card title="詳細な実装例" icon="book" accentColor="indigo">
+
+**さらに詳しく学ぶ**
+- [📱 チャット・メッセージング実装詳細](/reference/websocket-examples/chat)
+
+</Card>
+
 </Section>
 
 <Section title="共同編集システム" icon="implementation">
@@ -197,6 +204,13 @@ graph TB
 - **カーソル同期**: 他ユーザーの編集位置をリアルタイム表示
 - **バージョン管理**: 変更履歴の追跡と復元機能
 - **権限管理**: 編集・閲覧権限の動的制御
+
+</Card>
+
+<Card title="詳細な実装例" icon="book" accentColor="indigo">
+
+**さらに詳しく学ぶ**
+- [📝 ドキュメント共同編集の実装](/reference/websocket-examples/collaboration)
 
 </Card>
 
@@ -287,6 +301,15 @@ graph TB
 
 </Card>
 
+<Card title="詳細な実装例" icon="book" accentColor="indigo">
+
+**さらに詳しく学ぶ**
+- [📊 リアルタイムデータストリーミング](/reference/websocket-examples/data-streaming)
+- [💹 金融取引システムの実装](/reference/websocket-examples/finance-medical)
+- [🏭 IoTセンサーネットワーク](/reference/websocket-examples/iot)
+
+</Card>
+
 </Section>
 
 <Section title="通知・アラートシステム" icon="implementation">
@@ -327,6 +350,13 @@ graph TD
     style F fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style G fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
 `} />
+
+</Card>
+
+<Card title="詳細な実装例" icon="book" accentColor="indigo">
+
+**さらに詳しく学ぶ**
+- [🔔 プッシュ通知システムの実装](/reference/websocket-examples/notifications)
 
 </Card>
 
@@ -403,6 +433,14 @@ sequenceDiagram
 
 </Card>
 
+<Card title="詳細な実装例" icon="book" accentColor="indigo">
+
+**さらに詳しく学ぶ**
+- [🎮 オンラインゲームの実装](/reference/websocket-examples/vr-metaverse)
+- [🥽 VR・メタバース体験の構築](/reference/websocket-examples/vr-metaverse)
+
+</Card>
+
 </Section>
 
 <Section title="PWA統合アーキテクチャ" icon="implementation">
@@ -441,6 +479,16 @@ graph TD
     style D fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style E fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
 `} />
+
+</Card>
+
+<Card title="詳細な実装例" icon="book" accentColor="indigo">
+
+**さらに詳しく学ぶ**
+- [📱 PWA統合の実装詳細](/reference/websocket-examples/pwa)
+- [🔐 セキュリティ実装のベストプラクティス](/reference/websocket-examples/security)
+- [⚙️ バックエンドシステム統合](/reference/websocket-examples/backend)
+- [🔄 リアルタイムシミュレーション](/reference/websocket-examples/simulation)
 
 </Card>
 
@@ -497,33 +545,33 @@ graph BT
 各カテゴリーの詳細な実装例とアーキテクチャパターンを確認できます。
 
 ### 🔄 リアルタイム通信
-- [📱 チャット・メッセージング実装例](/phase1/introduction/use-cases/examples/chat)
-- [🎥 ビデオ通話・ライブ配信](/phase1/introduction/use-cases/examples/chat)
+- [📱 チャット・メッセージング実装例](/reference/websocket-examples/chat)
+- [🎥 ビデオ通話・ライブ配信](/reference/websocket-examples/chat)
 
 ### 🤝 協働作業
-- [📝 ドキュメント共同編集](/phase1/introduction/use-cases/examples/collaboration)
-- [🎨 ホワイトボード・デザインツール](/phase1/introduction/use-cases/examples/collaboration#whiteboard)
+- [📝 ドキュメント共同編集](/reference/websocket-examples/collaboration)
+- [🎨 ホワイトボード・デザインツール](/reference/websocket-examples/collaboration)
 
 ### 📊 データ配信・ストリーミング
-- [💹 金融取引システム](/phase1/introduction/use-cases/examples/finance-medical)
-- [🏥 医療データ統合](/phase1/introduction/use-cases/examples/finance-medical#medical)
-- [📈 データストリーミング](/phase1/introduction/use-cases/examples/data-streaming)
+- [💹 金融取引システム](/reference/websocket-examples/finance-medical)
+- [🏥 医療データ統合](/reference/websocket-examples/finance-medical)
+- [📈 データストリーミング](/reference/websocket-examples/data-streaming)
 
 ### 🌐 IoT・産業システム
-- [🏭 IoTセンサーネットワーク](/phase1/introduction/use-cases/examples/iot)
-- [🔔 通知システム](/phase1/introduction/use-cases/examples/notifications)
+- [🏭 IoTセンサーネットワーク](/reference/websocket-examples/iot)
+- [🔔 通知システム](/reference/websocket-examples/notifications)
 
 ### 🎮 エンターテイメント
-- [🎮 オンラインゲーム](/phase1/introduction/use-cases/examples/vr-metaverse)
-- [🥽 VR・メタバース](/phase1/introduction/use-cases/examples/vr-metaverse#metaverse)
+- [🎮 オンラインゲーム](/reference/websocket-examples/vr-metaverse)
+- [🥽 VR・メタバース](/reference/websocket-examples/vr-metaverse)
 
 ### 📱 PWA・モバイル統合
-- [📱 Progressive Web App統合](/phase1/introduction/use-cases/examples/pwa)
-- [🔐 セキュリティ実装](/phase1/introduction/use-cases/examples/security)
+- [📱 Progressive Web App統合](/reference/websocket-examples/pwa)
+- [🔐 セキュリティ実装](/reference/websocket-examples/security)
 
 ### 🖥️ バックエンド・インフラ
-- [⚙️ サーバーサイド実装](/phase1/introduction/use-cases/examples/backend)
-- [🔄 リアルタイムシミュレーション](/phase1/introduction/use-cases/examples/simulation)
+- [⚙️ サーバーサイド実装](/reference/websocket-examples/backend)
+- [🔄 リアルタイムシミュレーション](/reference/websocket-examples/simulation)
 
 </Card>
 

@@ -337,6 +337,60 @@
       ]
     },
     {
+      title: 'リファレンス',
+      items: [
+        {
+          href: '/reference/websocket-examples',
+          label: 'WebSocket利用例リファレンス',
+          icon: 'library'
+        },
+        {
+          href: '/reference/websocket-examples/chat',
+          label: '💬 チャット・メッセージング'
+        },
+        {
+          href: '/reference/websocket-examples/collaboration',
+          label: '🤝 共同編集システム'
+        },
+        {
+          href: '/reference/websocket-examples/data-streaming',
+          label: '📊 データストリーミング'
+        },
+        {
+          href: '/reference/websocket-examples/finance-medical',
+          label: '💹 金融・医療システム'
+        },
+        {
+          href: '/reference/websocket-examples/iot',
+          label: '🏭 IoT・産業システム'
+        },
+        {
+          href: '/reference/websocket-examples/notifications',
+          label: '🔔 通知・アラート'
+        },
+        {
+          href: '/reference/websocket-examples/vr-metaverse',
+          label: '🎮 VR・ゲーミング'
+        },
+        {
+          href: '/reference/websocket-examples/pwa',
+          label: '📱 PWA統合'
+        },
+        {
+          href: '/reference/websocket-examples/security',
+          label: '🔐 セキュリティ実装'
+        },
+        {
+          href: '/reference/websocket-examples/backend',
+          label: '⚙️ バックエンド統合'
+        },
+        {
+          href: '/reference/websocket-examples/simulation',
+          label: '🔄 リアルタイムシミュレーション'
+        }
+      ]
+    },
+    {
       title: '応用編',
       items: [
         {
