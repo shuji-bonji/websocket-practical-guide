@@ -86,18 +86,20 @@ graph LR
     B[👤 ユーザーB] -->|メッセージ送信| C
     D[👤 ユーザーC] -->|メッセージ送信| C
     
-    subgraph "チャットルーム"
+    subgraph "チャットシステム"
         C
-        G[🔔 通知エンジン]
+        G[🔔 通知/配信エンジン]
         H[🛡️ 認証システム]
     end
     
-    C -->|即座に配信| A
-    C -->|即座に配信| B
-    C -->|即座に配信| D
-    C -->|即座に配信| E[👤 ユーザーD]
-        
-    C --> G
+    C -->|メッセージ| G
+    G -->|リアルタイム配信| A
+    G -->|リアルタイム配信| B
+    G -->|リアルタイム配信| D
+    G -->|リアルタイム配信| E[👤 ユーザーD]
+    
+    G -->|オフライン通知| P[📱 プッシュ通知]
+    
     H --> C
     F[💾 メッセージDB] --> C
     C --> F
@@ -110,16 +112,21 @@ graph LR
     style C fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style F fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style G fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style P fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
 `} />
-
-</Card>
 
 <Card title="アーキテクチャの特徴" icon="info" accentColor="blue">
 
 - **双方向リアルタイム通信**: ユーザー間の即時メッセージ交換
+- **通知/配信エンジン**: メッセージのルーティングと配信を一元管理
+  - オンラインユーザーへのWebSocket配信
+  - オフラインユーザーへのプッシュ通知
+  - 配信の優先度制御とフィルタリング
 - **マルチキャスト配信**: 1つのメッセージを複数の受信者に同時配信
 - **永続化**: メッセージの保存と履歴管理
-- **通知連携**: オフラインユーザーへのプッシュ通知
+- **認証システム連携**: ユーザー認証と権限管理
+
+</Card>
 
 </Card>
 
@@ -187,30 +194,25 @@ sequenceDiagram
 
 <Mermaid chart={`
 graph TB
+    A[👤 編集者A] --> A1[📝 ローカルエディタ]
+    B[👤 編集者B] --> B1[📝 ローカルエディタ]
+    C[👤 編集者C] --> C1[📝 ローカルエディタ]
     
-    subgraph "クライアント側"
-        A[👤 編集者A] --> A1[📝 ローカルエディタ]
-        B[👤 編集者B] --> B1[📝 ローカルエディタ]
-        C[👤 編集者C] --> C1[📝 ローカルエディタ]
-    end
-    
-    A1 -->|変更操作| D[WebSocketサーバー]
-    B1 -->|変更操作| D
-    C1 -->|変更操作| D
+    A1 -->|変更操作<br/>カーソル位置<br/>選択範囲| D[WebSocketサーバー]
+    B1 -->|変更操作<br/>カーソル位置<br/>選択範囲| D
+    C1 -->|変更操作<br/>カーソル位置<br/>選択範囲| D
     
     subgraph "サーバー側"
         D --> E[🔄 操作変換エンジン]
         E --> F[📚 文書状態管理]
         F --> G[💾 永続化ストレージ]
         E --> H[⚡ 競合解決システム]
+        E --> I[🎯 プレゼンス管理<br/>カーソル位置・選択範囲]
     end
     
-    D -->|操作の同期| A1
-    D -->|操作の同期| B1
-    D -->|操作の同期| C1
-    
-    I[🎯 カーソル位置] --> D
-    D --> I
+    D -->|同期データ<br/>他ユーザーのカーソル| A1
+    D -->|同期データ<br/>他ユーザーのカーソル| B1
+    D -->|同期データ<br/>他ユーザーのカーソル| C1
     
     style A1 fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style B1 fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
@@ -218,6 +220,7 @@ graph TB
     style D fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style E fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style F fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style I fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
 `} />
 
 </Card>
@@ -256,7 +259,7 @@ graph TB
 - 🔔 **アラート通知**: 条件に合致した瞬間に通知を送信
 
 <Mermaid chart={`
-graph LR
+graph TB
     subgraph "データソース"
         A[📈 株式取引所] --> D[WebSocketハブ]
         B[💱 為替市場] --> D
@@ -274,9 +277,9 @@ graph LR
         F -->|リアルタイム更新| H[💻 トレーダーダッシュボード]
         F -->|リアルタイム更新| I[📱 モバイル取引アプリ]
         F -->|リアルタイム更新| J[🖥️ 分析ツール]
+        K[🔔 価格アラート] --> F
     end
     
-    K[🔔 価格アラート] --> F
     F --> K
     
     style A fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
@@ -303,7 +306,7 @@ IoTシステムでは、WebSocketがセンサーデータの収集から制御�
 - 🏠 **スマート制御**: 環境に応じた自動制御システム
 
 <Mermaid chart={`
-graph TB
+graph BT
     subgraph "IoTデバイス層"
         A[🌡️ 温度センサー] --> G[WebSocketゲートウェイ]
         B[💡 スマート照明] --> G
@@ -430,30 +433,30 @@ graph TD
 
 <Mermaid chart={`
 graph TB
-    subgraph "プレイヤー"
-        A[🎮 プレイヤー1] --> E[WebSocketゲームサーバー]
-        B[🎮 プレイヤー2] --> E
-        C[🎮 プレイヤー3] --> E
-        D[🎮 プレイヤー4] --> E
-    end
+    A[🎮 プレイヤー1]
+    B[🎮 プレイヤー2]
+    C[🎮 プレイヤー3]
+    D[🎮 プレイヤー4]
+        
+    A -->|操作入力| E[WebSocketゲームサーバー]
+    B -->|操作入力| E
+    C -->|操作入力| E
+    D -->|操作入力| E
     
-    subgraph "ゲームエンジン"
+    subgraph "ゲームサーバー"
         E --> F[🎯 ゲーム状態管理]
         F --> G[⚡ 物理演算エンジン]
         G --> H[🔄 同期エンジン]
         H --> I[🏆 ランキングシステム]
     end
     
-    E -->|リアルタイム更新| A
-    E -->|リアルタイム更新| B
-    E -->|リアルタイム更新| C
-    E -->|リアルタイム更新| D
+    H -->|リアルタイム更新| A
+    H -->|リアルタイム更新| B
+    H -->|リアルタイム更新| C
+    H -->|リアルタイム更新| D
     
-    J[💾 ゲームデータDB] --> F
-    F --> J
-    
-    K[📊 プレイヤー統計] --> I
-    I --> K
+    J[💾 ゲームデータDB] <--> F
+    K[📊 プレイヤー統計] <--> I
     
     style A fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
     style B fill:#374151,stroke:#ffffff,stroke-width:2px,color:#ffffff
