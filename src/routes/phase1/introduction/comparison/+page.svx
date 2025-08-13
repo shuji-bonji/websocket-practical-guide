@@ -37,30 +37,54 @@ difficulty: "初級"
 リアルタイム通信を実現する様々な技術の分類と特徴を理解しましょう。
 
 <Mermaid chart={`
-graph TB
-    subgraph "HTTP系技術"
-        A[通常のHTTP] --> A1[RESTful API]
-        A --> A2[AJAX/Fetch]
-        A --> A3[ポーリング]
-        A3 --> A4[ロングポーリング]
-    end
+mindmap
+  root((リアルタイム<br/>通信技術))
+    HTTP系技術
+      通常のHTTP
+        RESTful API
+        AJAX/Fetch
+      ポーリング技術
+        単純ポーリング
+        ロングポーリング
+        HTTPストリーミング
     
-    subgraph "ストリーミング系"
-        B[Server-Sent Events] --> B1[一方向ストリーム]
-        C[WebSocket] --> C1[双方向ストリーム]
-        D[WebRTC] --> D1[P2P通信]
-    end
+    ストリーミング系
+      SSE<br/>Server-Sent Events
+        一方向プッシュ
+        自動再接続
+        テキストのみ
+      WebSocket
+        双方向通信
+        低遅延
+        バイナリ対応
+      WebRTC
+        P2P通信
+        音声/ビデオ
+        データチャネル
     
-    subgraph "モダン技術"
-        E[HTTP/2 Push] --> E1[サーバープッシュ]
-        F[GraphQL Subscriptions] --> F1[型安全な購読]
-        G[gRPC Streaming] --> G1[高性能RPC]
-    end
+    モダン技術
+      HTTP/2
+        サーバープッシュ
+        多重化
+        ヘッダー圧縮
+      GraphQL
+        Subscriptions
+        型安全
+        スキーマ駆動
+      gRPC
+        双方向ストリーミング
+        Protocol Buffers
+        高性能RPC
     
-    style C fill:#e8f5e8
-    style C1 fill:#c8e6c9
-    style B fill:#fff3e0
-    style D fill:#f3e5f5
+    次世代技術
+      WebTransport
+        HTTP/3ベース
+        QUIC上で動作
+        低遅延UDP
+      WebCodecs
+        メディア処理
+        ハードウェア活用
+        効率的エンコード
 `} />
 
 </Card>
@@ -70,6 +94,10 @@ graph TB
 <Section title="技術別詳細比較" icon="implementation">
 
 <Card title="HTTP/AJAX ポーリング" icon="clock" accentColor="orange">
+
+**動作の仕組み**  
+クライアントが定期的（例：5秒ごと）にサーバーへHTTPリクエストを送信し、新しいデータがあるか確認します。  
+サーバーは各リクエストに対して即座に応答を返し、データ更新の有無に関わらず接続は都度切断されます。
 
 #### 特徴
 - **方式**: 定期的なHTTPリクエスト
@@ -99,6 +127,10 @@ setInterval(async () => {
 </Card>
 
 <Card title="Server-Sent Events (SSE)" icon="arrow" accentColor="yellow">
+
+**動作の仕組み**  
+クライアントがEventSourceで接続を開始すると、サーバーは`text/event-stream`形式で接続を維持します。  
+サーバーは任意のタイミングでデータをプッシュ配信でき、クライアントは受信専用で、送信には別のHTTPリクエストが必要です。
 
 #### 特徴
 - **方式**: HTTP上でのサーバープッシュ
@@ -141,6 +173,10 @@ app.get('/api/stream', (req, res) => {
 </Card>
 
 <Card title="WebSocket" icon="lightning" accentColor="green">
+
+**動作の仕組み**  
+HTTPハンドシェイクで接続を確立後、プロトコルをWebSocketに切り替えて双方向の持続的接続を維持します。  
+クライアント・サーバー双方から任意のタイミングでメッセージを送信でき、最小限のフレームヘッダーで低遅延通信を実現します。
 
 #### 特徴
 - **方式**: 双方向の持続的接続
@@ -189,6 +225,10 @@ wss.on('connection', (ws) => {
 
 <Card title="WebRTC" icon="video" accentColor="purple">
 
+**動作の仕組み**  
+シグナリングサーバーを介して接続情報を交換後、クライアント同士が直接P2P接続を確立します。  
+NATトラバーサル技術（STUN/TURN）を使用してファイアウォールを越え、音声・ビデオ・データを直接やり取りします。
+
 #### 特徴
 - **方式**: P2P直接通信
 - **実装難易度**: ★★★★★
@@ -218,6 +258,60 @@ dataChannel.onmessage = (event) => {
 - NAT/ファイアウォールの問題
 - 実装の複雑さ
 - ブラウザ間の互換性
+
+</Card>
+
+<Card title="GraphQL Subscriptions" icon="graph" accentColor="indigo">
+
+**動作の仕組み**  
+GraphQLスキーマでサブスクリプション型を定義し、WebSocketやSSE上でリアルタイムデータを配信します。  
+クライアントは購読したいデータのクエリを送信し、サーバーは条件に合致するデータ更新があるたびに、型安全な形式でプッシュ配信します。
+
+#### 特徴
+- **方式**: WebSocket/SSE上でのGraphQL
+- **実装難易度**: ★★★★☆
+- **リアルタイム性**: ★★★★☆
+
+**最適な使用場面:**
+- 型安全なリアルタイムAPI
+- 複雑なデータ購読パターン
+- マイクロサービス間の通信
+
+</Card>
+
+<Card title="HTTP/2 Server Push" icon="server" accentColor="teal">
+
+**動作の仕組み**  
+HTTP/2の多重化接続を利用し、クライアントがリクエストする前にサーバーが先行してリソースをプッシュ送信します。  
+単一のTCP接続上で複数のストリームを並行処理し、ヘッダー圧縮により効率的な通信を実現します。
+
+#### 特徴
+- **方式**: HTTP/2プロトコルのプッシュ機能
+- **実装難易度**: ★★★☆☆
+- **リアルタイム性**: ★★★☆☆
+
+**最適な使用場面:**
+- Webアセットの先行配信
+- APIレスポンスの最適化
+- 関連リソースの事前送信
+
+</Card>
+
+<Card title="gRPC Streaming" icon="stream" accentColor="cyan">
+
+**動作の仕組み**  
+HTTP/2上でProtocol Buffersを使用した効率的なRPC通信を実現し、4種類のストリーミングパターンをサポートします。  
+単方向・双方向のストリーミングが可能で、バイナリ形式により高速なシリアライズ・デシリアライズを実現します。
+
+#### 特徴
+- **方式**: HTTP/2上の双方向ストリーミングRPC
+- **実装難易度**: ★★★★☆
+- **リアルタイム性**: ★★★★★
+
+**最適な使用場面:**
+- マイクロサービス間通信
+- 高パフォーマンスAPI
+- 大量データのストリーミング処理
 
 </Card>
 
@@ -287,7 +381,16 @@ flowchart TD
 
 <Section title="非機能要件の考慮" icon="analysis">
 
+<div class="text-gray-700 mb-2">
+システムの非機能要件は、技術選択において機能要件と同等に重要です。  
+スケーラビリティ、セキュリティ、運用性などの観点から、適切な技術を選択する必要があります。
+</div>
+
 <Card title="スケーラビリティ要件" icon="scale" accentColor="green">
+
+**スケーラビリティの考え方**  
+同時接続数は技術選択の最も重要な指標の一つです。  
+ポーリングは接続数が増えるとサーバー負荷が急激に上昇し、WebSocketは持続的接続により効率的に多数のクライアントを扱えます。
 
 ```
 同時接続数による技術選択:
@@ -300,6 +403,10 @@ flowchart TD
 </Card>
 
 <Card title="セキュリティ・運用要件" icon="shield" accentColor="red">
+
+**セキュリティと運用の考慮点**  
+WebSocketはHTTPと異なるセキュリティモデルを持ち、認証・認可の実装に工夫が必要です。  
+運用面では、HTTP系技術の方が既存ツールやノウハウが豊富で、障害対応やデバッグが容易です。
 
 #### **セキュリティ要件**
 - **認証・認可**: WebSocketはカスタム実装が必要
@@ -316,6 +423,11 @@ flowchart TD
 </Section>
 
 <Section title="実際の選択事例" icon="case-study">
+
+<div class="text-gray-700 mb-2">
+実際のプロジェクトでどのように技術選択が行われたか、具体的な事例を通じて理解しましょう。  
+要件、制約、トレードオフを考慮した技術選択のプロセスを示します。
+</div>
 
 <Card title="事例1: チャットアプリケーション" icon="chat" accentColor="green">
 
@@ -372,6 +484,11 @@ flowchart TD
 
 <Section title="将来性と技術動向" icon="future">
 
+<div class="text-gray-700 mb-2">
+リアルタイム通信技術は絶えず進化しており、新しい標準やプロトコルが登場しています。  
+WebSocketの位置づけを理解しつつ、将来の技術動向を把握することが重要です。
+</div>
+
 <Card title="新興技術の台頭" icon="trend" accentColor="orange">
 
 #### **HTTP/3 & QUIC**
@@ -402,6 +519,10 @@ ws.onmessage = (event) => {
 
 <Card title="技術選択の将来指針" icon="compass" accentColor="blue">
 
+**今後の技術選択戦略**  
+WebSocketは成熟した技術として安定しており、当面はリアルタイム通信の中心的役割を担い続けるでしょう。  
+HTTP/3やWebTransportの普及を見据えつつ、柔軟なアーキテクチャ設計が重要です。
+
 #### **2024年以降の推奨戦略**
 1. **WebSocketを基本選択肢**として考慮
 2. **SSE**は一方向配信での第一選択
@@ -413,6 +534,11 @@ ws.onmessage = (event) => {
 </Section>
 
 <Section title="技術選択チェックリスト" icon="checklist">
+
+<div class="text-gray-700 mb-2">
+技術選択を行う前に、プロジェクトの要件を体系的に整理することが重要です。  
+以下のチェックリストを使用して、漏れなく要件を確認し、最適な技術を選択しましょう。
+</div>
 
 <Card title="プロジェクト開始前の確認項目" icon="check" accentColor="green">
 
@@ -442,6 +568,11 @@ ws.onmessage = (event) => {
 </Section>
 
 <Section title="まとめ" icon="summary">
+
+<div class="text-gray-700 mb-2">
+WebSocketと他のリアルタイム通信技術の比較を通じて、各技術の特徴と適用場面が明確になりました。  
+プロジェクトの要件に応じて適切な技術を選択し、効果的なリアルタイムシステムを構築しましょう。
+</div>
 
 <Card title="WebSocketを選ぶべき場面" icon="star" accentColor="green">
 
