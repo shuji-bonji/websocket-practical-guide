@@ -347,7 +347,7 @@
 
   :global(.lightbox-mermaid-svg svg) {
     max-width: none;
-    width: auto;
+    width: 100%;
     height: auto;
     background-color: #1f2937;
     border-radius: 8px;
