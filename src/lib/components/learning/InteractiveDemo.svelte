@@ -339,15 +339,15 @@
   function getQualityColor(quality: string): string {
     switch (quality) {
       case 'excellent':
-        return 'text-green-600';
+        return 'text-green-600 dark:text-green-400';
       case 'good':
-        return 'text-blue-600';
+        return 'text-blue-600 dark:text-blue-400';
       case 'fair':
-        return 'text-yellow-600';
+        return 'text-yellow-600 dark:text-yellow-400';
       case 'poor':
-        return 'text-red-600';
+        return 'text-red-600 dark:text-red-400';
       default:
-        return 'text-gray-600';
+        return 'text-gray-600 dark:text-gray-400';
     }
   }
 
@@ -360,11 +360,11 @@
 
   let stateColor = $derived(
     {
-      disconnected: 'text-gray-600',
-      connecting: 'text-yellow-600',
-      connected: 'text-green-600',
-      reconnecting: 'text-blue-600',
-      error: 'text-red-600'
+      disconnected: 'text-gray-600 dark:text-gray-400',
+      connecting: 'text-yellow-600 dark:text-yellow-400',
+      connected: 'text-green-600 dark:text-green-400',
+      reconnecting: 'text-blue-600 dark:text-blue-400',
+      error: 'text-red-600 dark:text-red-400'
     }[connectionState]
   );
 
@@ -383,15 +383,20 @@
   let canSend = $derived(isConnected && messageInput.trim().length > 0);
 </script>
 
-<div class="bg-white border border-gray-200 rounded-lg p-6 my-8" data-testid="websocket-demo">
+<div
+  class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 my-8"
+  data-testid="websocket-demo"
+>
   <div class="mb-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-    <p class="text-gray-600 text-sm mb-4">{description}</p>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{description}</p>
 
     <!-- Service Selection -->
     {#if availableServices.length > 1}
       <div class="mb-4">
-        <div class="block text-sm font-medium text-gray-700 mb-2">🌐 WebSocketサービス選択</div>
+        <div class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          🌐 WebSocketサービス選択
+        </div>
         <div class="flex flex-wrap gap-2">
           {#each availableServices as service (service.url)}
             <button
@@ -399,8 +404,8 @@
               onclick={() => switchService(service)}
               class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors
 								{currentService?.url === service.url
-                ? 'bg-blue-100 text-blue-800 border border-blue-300'
-                : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'}"
+                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'}"
               disabled={connectionState === 'connecting' || connectionState === 'reconnecting'}
             >
               <span class="mr-1">{getServiceIcon(service)}</span>
@@ -414,10 +419,10 @@
   </div>
 
   <!-- 接続状態表示 -->
-  <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+  <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center space-x-3">
-        <span class="text-sm font-medium text-gray-700">接続状態:</span>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">接続状態:</span>
         <span class="font-medium {stateColor}" data-connection-state={connectionState}
           >{stateText}</span
         >
@@ -429,13 +434,15 @@
           ></div>
         {/if}
         {#if currentService && isConnected}
-          <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
+          <span
+            class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full"
+          >
             {currentService.name}
           </span>
         {/if}
       </div>
 
-      <div class="flex items-center space-x-4 text-xs text-gray-500">
+      <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
         {#if connectionStartTime && isConnected}
           <span>接続時間: {formatUptime(connectionMetrics.uptime)}</span>
         {/if}
@@ -502,28 +509,42 @@
 
   <!-- メトリクス表示 -->
   {#if showMetrics}
-    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-      <h4 class="text-sm font-semibold text-blue-900 mb-3">📊 接続メトリクス</h4>
+    <div
+      class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg"
+    >
+      <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-3">📊 接続メトリクス</h4>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div class="bg-white p-3 rounded border">
-          <div class="text-lg font-bold text-blue-600">{connectionMetrics.messagesSent}</div>
-          <div class="text-gray-600">送信メッセージ</div>
+        <div
+          class="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-600"
+        >
+          <div class="text-lg font-bold text-blue-600 dark:text-blue-400">
+            {connectionMetrics.messagesSent}
+          </div>
+          <div class="text-gray-600 dark:text-gray-400">送信メッセージ</div>
         </div>
-        <div class="bg-white p-3 rounded border">
-          <div class="text-lg font-bold text-green-600">{connectionMetrics.messagesReceived}</div>
-          <div class="text-gray-600">受信メッセージ</div>
+        <div
+          class="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-600"
+        >
+          <div class="text-lg font-bold text-green-600 dark:text-green-400">
+            {connectionMetrics.messagesReceived}
+          </div>
+          <div class="text-gray-600 dark:text-gray-400">受信メッセージ</div>
         </div>
-        <div class="bg-white p-3 rounded border">
-          <div class="text-lg font-bold text-purple-600">
+        <div
+          class="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-600"
+        >
+          <div class="text-lg font-bold text-purple-600 dark:text-purple-400">
             {Math.round(connectionMetrics.averageLatency)}ms
           </div>
-          <div class="text-gray-600">平均レイテンシ</div>
+          <div class="text-gray-600 dark:text-gray-400">平均レイテンシ</div>
         </div>
-        <div class="bg-white p-3 rounded border">
+        <div
+          class="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-600"
+        >
           <div class="text-lg font-bold {getQualityColor(connectionQuality())}">
             {connectionMetrics.stabilityScore}%
           </div>
-          <div class="text-gray-600">安定性スコア</div>
+          <div class="text-gray-600 dark:text-gray-400">安定性スコア</div>
         </div>
       </div>
     </div>
@@ -531,18 +552,26 @@
 
   <!-- 教育イベント -->
   {#if showEvents && educationalEvents.length > 0}
-    <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
-      <h4 class="text-sm font-semibold text-indigo-900 mb-3">📜 WebSocketイベント</h4>
+    <div
+      class="mb-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg"
+    >
+      <h4 class="text-sm font-semibold text-indigo-900 dark:text-indigo-200 mb-3">
+        📜 WebSocketイベント
+      </h4>
       <div class="max-h-32 overflow-y-auto space-y-2">
         {#each educationalEvents.slice(-5) as event (event.id)}
-          <div class="text-xs bg-white p-2 rounded border">
+          <div
+            class="text-xs bg-white dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-600"
+          >
             <div class="flex items-center justify-between">
-              <span class="font-medium text-indigo-700">{event.type.toUpperCase()}</span>
-              <span class="text-gray-500">{formatTime(event.timestamp)}</span>
+              <span class="font-medium text-indigo-700 dark:text-indigo-300"
+                >{event.type.toUpperCase()}</span
+              >
+              <span class="text-gray-500 dark:text-gray-400">{formatTime(event.timestamp)}</span>
             </div>
-            <div class="text-gray-700 mt-1">{event.description}</div>
+            <div class="text-gray-700 dark:text-gray-300 mt-1">{event.description}</div>
             {#if event.details}
-              <div class="text-gray-500 mt-1 font-mono text-xs">
+              <div class="text-gray-500 dark:text-gray-400 mt-1 font-mono text-xs">
                 {JSON.stringify(event.details)}
               </div>
             {/if}
@@ -555,7 +584,10 @@
   <!-- メッセージ送信 -->
   {#if demoConfig.demoType === 'echo' || demoConfig.demoType === 'broadcast'}
     <div class="mb-6">
-      <label for="message-input" class="block text-sm font-medium text-gray-700 mb-2">
+      <label
+        for="message-input"
+        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      >
         💬 メッセージ送信
       </label>
       <div class="flex space-x-2">
@@ -567,7 +599,7 @@
           oncompositionstart={() => (isComposing = true)}
           oncompositionend={() => (isComposing = false)}
           placeholder="メッセージを入力してください"
-          class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+          class="flex-1 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-800"
           disabled={!isConnected}
           data-testid="message-input"
         />
@@ -596,16 +628,18 @@
   {/if}
 
   <!-- メッセージログ -->
-  <div class="border border-gray-200 rounded-md">
-    <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
-      <h4 class="text-sm font-medium text-gray-700">📝 通信ログ</h4>
-      <div class="text-xs text-gray-500">
+  <div class="border border-gray-200 dark:border-gray-700 rounded-md">
+    <div
+      class="bg-gray-50 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between"
+    >
+      <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">📝 通信ログ</h4>
+      <div class="text-xs text-gray-500 dark:text-gray-400">
         {messages.length}件 | 送信: {connectionMetrics.messagesSent} | 受信: {connectionMetrics.messagesReceived}
       </div>
     </div>
-    <div class="h-64 overflow-y-auto p-4 space-y-2">
+    <div class="h-64 overflow-y-auto p-4 space-y-2 bg-white dark:bg-gray-800">
       {#if messages.length === 0}
-        <div class="text-center text-gray-500 text-sm py-8">
+        <div class="text-center text-gray-500 dark:text-gray-400 text-sm py-8">
           <div class="text-4xl mb-2">🔗</div>
           <p>WebSocketに接続すると通信ログが表示されます</p>
           {#if currentService}
@@ -623,10 +657,10 @@
               class="max-w-xs lg:max-w-md px-3 py-2 rounded-lg text-sm {message.type === 'sent'
                 ? 'bg-blue-500 text-white'
                 : message.type === 'received'
-                  ? 'bg-green-100 text-green-800 border border-green-200'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-700'
                   : message.type === 'error'
-                    ? 'bg-red-100 text-red-800 border border-red-200'
-                    : 'bg-yellow-100 text-yellow-800 border border-yellow-200'}"
+                    ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-700'
+                    : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700'}"
             >
               <div class="flex items-center justify-between mb-1">
                 <span class="font-medium text-xs">
@@ -657,8 +691,10 @@
   </div>
 
   <!-- 学習ポイント -->
-  <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-    <div class="text-sm text-blue-800">
+  <div
+    class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg"
+  >
+    <div class="text-sm text-blue-800 dark:text-blue-200">
       <span class="font-medium">📚 学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• 🌐 パブリックWebSocketサービスの利用</li>
@@ -678,8 +714,10 @@
       </ul>
 
       {#if demoConfig.showEducationalHints && currentService}
-        <div class="mt-3 p-3 bg-white rounded border border-blue-300">
-          <div class="font-medium text-blue-900 mb-1">💡 サービス情報:</div>
+        <div
+          class="mt-3 p-3 bg-white dark:bg-gray-800 rounded border border-blue-300 dark:border-blue-600"
+        >
+          <div class="font-medium text-blue-900 dark:text-blue-200 mb-1">💡 サービス情報:</div>
           <div class="text-xs space-y-1">
             <div><strong>名前:</strong> {currentService.name}</div>
             <div><strong>信頼性:</strong> {currentService.reliability}</div>

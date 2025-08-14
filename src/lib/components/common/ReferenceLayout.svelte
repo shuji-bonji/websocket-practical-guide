@@ -17,11 +17,23 @@
   } = $props();
 
   const difficultyConfig: Record<string, { color: string; icon: string }> = {
-    初級: { color: 'bg-green-100 text-green-800', icon: '🌱' },
-    中級: { color: 'bg-yellow-100 text-yellow-800', icon: '🌿' },
-    上級: { color: 'bg-red-100 text-red-800', icon: '🌳' },
-    実践: { color: 'bg-purple-100 text-purple-800', icon: '🚀' },
-    全レベル: { color: 'bg-blue-100 text-blue-800', icon: '📚' }
+    初級: {
+      color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+      icon: '🌱'
+    },
+    中級: {
+      color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
+      icon: '🌿'
+    },
+    上級: { color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300', icon: '🌳' },
+    実践: {
+      color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
+      icon: '🚀'
+    },
+    全レベル: {
+      color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+      icon: '📚'
+    }
   };
 </script>
 
@@ -75,20 +87,25 @@
     <!-- 通常のリファレンスヘッダー -->
     <div class="mb-8">
       <div class="flex items-center gap-3 mb-4">
-        <button class="text-sm text-gray-600 hover:text-gray-900" onclick={() => history.back()}>
+        <button
+          class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+          onclick={() => history.back()}
+        >
           ← 戻る
         </button>
-        <span class="text-sm text-gray-500">{sectionTitle}</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400">{sectionTitle}</span>
         {#if referenceCategory}
-          <span class="text-sm text-gray-400">•</span>
-          <span class="text-sm text-blue-600 font-medium">{referenceCategory}</span>
+          <span class="text-sm text-gray-400 dark:text-gray-500">•</span>
+          <span class="text-sm text-blue-600 dark:text-blue-400 font-medium"
+            >{referenceCategory}</span
+          >
         {/if}
       </div>
 
-      <h1 class="text-4xl font-bold text-gray-900 mb-4">{title}</h1>
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">{title}</h1>
 
       {#if description}
-        <p class="text-lg text-gray-600 mb-6">{description}</p>
+        <p class="text-lg text-gray-600 dark:text-gray-400 mb-6">{description}</p>
       {/if}
 
       <!-- リファレンス情報 -->
@@ -98,7 +115,7 @@
             <div class="flex items-center gap-3">
               <span class="text-blue-500">🕐</span>
               <div>
-                <p class="text-sm text-gray-600">読了時間</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">読了時間</p>
                 <p class="font-semibold">{duration}</p>
               </div>
             </div>
@@ -109,7 +126,7 @@
           <div class="flex items-center gap-3">
             <span class="text-orange-500">📈</span>
             <div>
-              <p class="text-sm text-gray-600">難易度</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">難易度</p>
               <span
                 class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium {difficultyConfig[
                   difficulty
@@ -127,7 +144,7 @@
             <div class="flex items-center gap-3">
               <span class="text-purple-500">👥</span>
               <div>
-                <p class="text-sm text-gray-600">前提知識</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">前提知識</p>
                 <p class="font-semibold">{prerequisites.length}項目</p>
               </div>
             </div>
@@ -145,7 +162,7 @@
           <div class="flex flex-wrap gap-2">
             {#each prerequisites as prerequisite, index (index)}
               <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800"
+                class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300"
               >
                 {prerequisite}
               </span>
@@ -165,7 +182,7 @@
             {#each learningObjectives as objective, index (index)}
               <li class="flex items-start gap-2">
                 <span class="text-green-500 mt-0.5 flex-shrink-0">✓</span>
-                <span class="text-gray-700">{objective}</span>
+                <span class="text-gray-700 dark:text-gray-300">{objective}</span>
               </li>
             {/each}
           </ul>
@@ -175,7 +192,7 @@
   {/if}
 
   <!-- メインコンテンツ -->
-  <div class="prose prose-lg max-w-none">
+  <div class="prose prose-lg dark:prose-invert max-w-none">
     {@render children?.()}
   </div>
 

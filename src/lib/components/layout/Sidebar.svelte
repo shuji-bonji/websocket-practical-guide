@@ -449,13 +449,15 @@
 
 <!-- Desktop Sidebar -->
 <aside
-  class="hidden lg:flex lg:w-80 lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16 lg:bg-gray-50 lg:border-r lg:border-gray-200"
+  class="hidden lg:flex lg:w-80 lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16 lg:bg-gray-50 dark:lg:bg-gray-900 lg:border-r lg:border-gray-200 dark:lg:border-gray-700"
 >
   <div class="flex-1 flex flex-col overflow-y-auto">
     <nav class="flex-1 px-4 py-6 space-y-6">
       {#each navigationSections as section (section.title)}
         <div>
-          <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <h3
+            class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+          >
             {section.title}
           </h3>
           <div class="mt-2 space-y-1">
@@ -463,7 +465,7 @@
               <div class="flex items-center group">
                 {#if item.status === 'coming-soon'}
                   <div
-                    class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-not-allowed text-gray-400"
+                    class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-not-allowed text-gray-400 dark:text-gray-500"
                   >
                     {#if item.icon}
                       <svg
@@ -495,14 +497,17 @@
                             </svg>
                           </div>
                         {:else}
-                          <div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+                          <div
+                            class="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full"
+                          ></div>
                         {/if}
                       </div>
                     {/if}
 
                     <span class="truncate">{item.label}</span>
                     {#if item.status === 'coming-soon'}
-                      <span class="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded-full"
+                      <span
+                        class="ml-2 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full"
                         >準備中</span
                       >
                     {/if}
@@ -512,8 +517,8 @@
                     href={href(item.href)}
                     class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
                     item.href
-                      ? 'bg-blue-100 text-blue-700 border-r-2 border-blue-500'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
+                      ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500 dark:border-blue-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}"
                   >
                     {#if item.icon}
                       <svg
@@ -546,7 +551,9 @@
                             </svg>
                           </div>
                         {:else}
-                          <div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+                          <div
+                            class="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full"
+                          ></div>
                         {/if}
                       </div>
                     {/if}
@@ -559,7 +566,7 @@
                 {#if item.lessonId}
                   <button
                     type="button"
-                    class="ml-2 p-1 rounded-md text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                    class="ml-2 p-1 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
                     onclick={() => item.lessonId && toggleLessonCompletion(item.lessonId)}
                     title={item.lessonId && lessonCompletionMap.get(item.lessonId)
                       ? '未完了にする'
@@ -586,13 +593,13 @@
     </nav>
 
     <!-- Progress summary -->
-    <div class="p-4 bg-white border-t border-gray-200">
+    <div class="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
       <div class="space-y-3">
-        <h4 class="text-sm font-medium text-gray-900">学習進捗サマリー</h4>
+        <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">学習進捗サマリー</h4>
 
         {#each progress.phases as phase (phase.phase)}
           <div class="space-y-1">
-            <div class="flex justify-between text-xs text-gray-600">
+            <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400">
               <span>Phase {phase.phase}: {phase.name}</span>
               <span>{phase.completedLessons}/{phase.totalLessons}</span>
             </div>
@@ -605,8 +612,8 @@
           </div>
         {/each}
 
-        <div class="pt-2 border-t border-gray-100">
-          <div class="flex justify-between text-sm font-medium text-gray-900">
+        <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div class="flex justify-between text-sm font-medium text-gray-900 dark:text-gray-100">
             <span>全体進捗</span>
             <span>{Math.round((progress.completedHours / progress.totalHours) * 100)}%</span>
           </div>
@@ -630,7 +637,7 @@
     ></div>
 
     <!-- Mobile sidebar panel -->
-    <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+    <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-900">
       <div class="absolute top-0 right-0 -mr-12 pt-2">
         <button
           type="button"
@@ -653,14 +660,16 @@
         <nav class="px-4 space-y-6">
           {#each navigationSections as section (section.title)}
             <div>
-              <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <h3
+                class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >
                 {section.title}
               </h3>
               <div class="mt-2 space-y-1">
                 {#each section.items as item (item.href)}
                   {#if item.status === 'coming-soon'}
                     <div
-                      class="flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-not-allowed text-gray-400"
+                      class="flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-not-allowed text-gray-400 dark:text-gray-500"
                     >
                       {#if item.icon}
                         <svg
@@ -695,14 +704,17 @@
                               </svg>
                             </div>
                           {:else}
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+                            <div
+                              class="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full"
+                            ></div>
                           {/if}
                         </div>
                       {/if}
 
                       <span class="truncate">{item.label}</span>
                       {#if item.status === 'coming-soon'}
-                        <span class="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded-full"
+                        <span
+                          class="ml-2 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full"
                           >準備中</span
                         >
                       {/if}
@@ -712,8 +724,8 @@
                       href={href(item.href)}
                       class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
                       item.href
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}"
+                        ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}"
                       onclick={() => (open = false)}
                     >
                       {#if item.icon}
@@ -751,7 +763,9 @@
                               </svg>
                             </div>
                           {:else}
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+                            <div
+                              class="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full"
+                            ></div>
                           {/if}
                         </div>
                       {/if}

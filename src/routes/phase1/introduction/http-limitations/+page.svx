@@ -171,9 +171,9 @@ sequenceDiagram
 - **サーバー負荷**：大量の不要なリクエストによるリソース消費
 - **ネットワーク帯域の浪費**：HTTPヘッダーの重複送信
 
-<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group">
-<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
-  <span class="font-mono text-sm">典型的なポーリング実装例</span>
+<details class="my-4 p-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden group">
+<summary class="p-4 bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+  <span class="font-mono text-sm text-gray-900 dark:text-gray-100">典型的なポーリング実装例</span>
   <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
   </svg>
@@ -230,9 +230,9 @@ sequenceDiagram
 - **スケーラビリティの問題**：サーバーでの同時接続数制限
 - **エラーハンドリングの複雑化**：接続状態の管理が困難
 
-<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group">
-<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
-  <span class="font-mono text-sm">典型的なロングポーリング実装例</span>
+<details class="my-4 p-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden group">
+<summary class="p-4 bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+  <span class="font-mono text-sm text-gray-900 dark:text-gray-100">典型的なロングポーリング実装例</span>
   <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
   </svg>
@@ -299,9 +299,9 @@ sequenceDiagram
 - **ブラウザの接続数制限**：同一ドメインへの同時接続数に制約
 
 
-<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group">
-<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
-  <span class="font-mono text-sm">典型的なSSE実装例</span>
+<details class="my-4 p-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden group">
+<summary class="p-4 bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+  <span class="font-mono text-sm text-gray-900 dark:text-gray-100">典型的なSSE実装例</span>
   <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
   </svg>
@@ -444,9 +444,9 @@ sequenceDiagram
 
 WebSocketは接続確立後、以下の特徴を持ちます。
 
-<details class="my-4 p-0 border border-gray-200 rounded-lg overflow-hidden group" open="false">
-<summary class="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 flex items-center justify-between">
-  <span class="font-mono text-sm">WebSocket接続確立実装例</span>
+<details class="my-4 p-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden group" open="false">
+<summary class="p-4 bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+  <span class="font-mono text-sm text-gray-900 dark:text-gray-100">WebSocket接続確立実装例</span>
   <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
   </svg>

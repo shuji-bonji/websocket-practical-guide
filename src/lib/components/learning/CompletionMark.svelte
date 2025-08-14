@@ -26,16 +26,16 @@
 </script>
 
 <div
-  class="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg {isCompleted
-    ? 'border-green-400 bg-gradient-to-r from-green-100 to-green-50'
+  class="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border border-green-200 dark:border-green-800 rounded-lg {isCompleted
+    ? 'border-green-400 dark:border-green-600 bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-900/20'
     : ''}"
 >
   <div class="flex items-center justify-between">
     <div>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
         {isCompleted ? '✅ レッスン完了済み' : '🎉 レッスン完了'}
       </h3>
-      <p class="text-sm text-gray-600">
+      <p class="text-sm text-gray-600 dark:text-gray-300">
         {isCompleted
           ? 'このレッスンは完了済みです。未完了に戻す場合は右のボタンをクリックしてください。'
           : 'このレッスンの内容を理解できましたら、完了マークをつけて次のレッスンに進みましょう。'}

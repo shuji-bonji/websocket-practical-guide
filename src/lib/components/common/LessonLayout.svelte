@@ -70,7 +70,7 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-                <span class="text-gray-700">{objective}</span>
+                <span class="text-gray-700 dark:text-gray-300">{objective}</span>
               </li>
             {/each}
           </ul>
@@ -123,12 +123,25 @@
     padding: 1.5rem;
   }
 
+  :global(.dark .lesson-layout details:not(.group):not(.p-0)) {
+    background-color: rgb(30 58 138 / 0.2);
+    border: 1px solid rgb(30 58 138 / 0.4);
+  }
+
   :global(.lesson-layout details summary h2) {
     margin-bottom: 0;
     color: #1e3a8a;
   }
 
+  :global(.dark .lesson-layout details summary h2) {
+    color: #93c5fd;
+  }
+
   :global(.lesson-layout details[open]) {
     background-color: #dbeafe;
+  }
+
+  :global(.dark .lesson-layout details[open]) {
+    background-color: rgb(30 58 138 / 0.3);
   }
 </style>

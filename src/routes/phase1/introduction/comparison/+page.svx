@@ -381,7 +381,7 @@ flowchart TD
 
 <Section title="非機能要件の考慮" icon="analysis">
 
-<div class="text-gray-700 mb-2">
+<div class="text-gray-700 dark:text-gray-300 mb-2">
 システムの非機能要件は、技術選択において機能要件と同等に重要です。  
 スケーラビリティ、セキュリティ、運用性などの観点から、適切な技術を選択する必要があります。
 </div>
@@ -424,7 +424,7 @@ WebSocketはHTTPと異なるセキュリティモデルを持ち、認証・認�
 
 <Section title="実際の選択事例" icon="case-study">
 
-<div class="text-gray-700 mb-2">
+<div class="text-gray-700 dark:text-gray-300 mb-2">
 実際のプロジェクトでどのように技術選択が行われたか、具体的な事例を通じて理解しましょう。  
 要件、制約、トレードオフを考慮した技術選択のプロセスを示します。
 </div>
@@ -484,7 +484,7 @@ WebSocketはHTTPと異なるセキュリティモデルを持ち、認証・認�
 
 <Section title="将来性と技術動向" icon="future">
 
-<div class="text-gray-700 mb-2">
+<div class="text-gray-700 dark:text-gray-300 mb-2">
 リアルタイム通信技術は絶えず進化しており、新しい標準やプロトコルが登場しています。  
 WebSocketの位置づけを理解しつつ、将来の技術動向を把握することが重要です。
 </div>
@@ -535,7 +535,7 @@ HTTP/3やWebTransportの普及を見据えつつ、柔軟なアーキテクチ�
 
 <Section title="技術選択チェックリスト" icon="checklist">
 
-<div class="text-gray-700 mb-2">
+<div class="text-gray-700 dark:text-gray-300 mb-2">
 技術選択を行う前に、プロジェクトの要件を体系的に整理することが重要です。  
 以下のチェックリストを使用して、漏れなく要件を確認し、最適な技術を選択しましょう。
 </div>
@@ -569,7 +569,7 @@ HTTP/3やWebTransportの普及を見据えつつ、柔軟なアーキテクチ�
 
 <Section title="まとめ" icon="summary">
 
-<div class="text-gray-700 mb-2">
+<div class="text-gray-700 dark:text-gray-300 mb-2">
 WebSocketと他のリアルタイム通信技術の比較を通じて、各技術の特徴と適用場面が明確になりました。  
 プロジェクトの要件に応じて適切な技術を選択し、効果的なリアルタイムシステムを構築しましょう。
 </div>

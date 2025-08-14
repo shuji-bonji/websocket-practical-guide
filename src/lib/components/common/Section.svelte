@@ -29,9 +29,9 @@
   }
 
   const headingClasses = {
-    h2: 'text-2xl font-bold text-gray-900',
-    h3: 'text-xl font-semibold text-gray-800',
-    h4: 'text-lg font-medium text-gray-700'
+    h2: 'text-2xl font-bold text-gray-900 dark:text-gray-100',
+    h3: 'text-xl font-semibold text-gray-800 dark:text-gray-200',
+    h4: 'text-lg font-medium text-gray-700 dark:text-gray-300'
   };
 
   const underlineClasses = {
@@ -106,8 +106,18 @@
     transition: all 0.3s ease;
   }
 
+  :global(.dark) .floating-card {
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(31, 41, 55, 0.85) 100%);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
   .floating-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+  }
+
+  :global(.dark) .floating-card:hover {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
   }
 </style>

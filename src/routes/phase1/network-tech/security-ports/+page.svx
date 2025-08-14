@@ -50,29 +50,29 @@ lesson: "2.5"
 		<p>WebSocketには暗号化されていない<code>ws://</code>と、TLS暗号化された<code>wss://</code>の2つのスキームがあります。</p>
 		
 		<div class="grid md:grid-cols-2 gap-6 my-6">
-			<div class="bg-yellow-50 rounded-lg p-6 border-l-4 border-yellow-400">
-				<h4 class="text-lg font-semibold text-yellow-900 mb-3">⚠️ ws:// (非暗号化)</h4>
-				<ul class="space-y-2 text-yellow-800">
+			<div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-6 border-l-4 border-yellow-400 dark:border-yellow-600">
+				<h4 class="text-lg font-semibold text-yellow-900 dark:text-yellow-200 mb-3">⚠️ ws:// (非暗号化)</h4>
+				<ul class="space-y-2 text-yellow-800 dark:text-yellow-300">
 					<li>• <strong>ポート:</strong> 80 (HTTPと同じ)</li>
 					<li>• <strong>セキュリティ:</strong> 平文通信</li>
 					<li>• <strong>用途:</strong> 開発環境・内部ネットワーク</li>
 					<li>• <strong>プロキシ:</strong> 一般的にブロックされる</li>
 				</ul>
-				<div class="mt-4 p-3 bg-yellow-100 rounded">
-					<code class="text-sm">ws://localhost:8080/websocket</code>
+				<div class="mt-4 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded">
+					<code class="text-sm text-yellow-900 dark:text-yellow-200">ws://localhost:8080/websocket</code>
 				</div>
 			</div>
 			
-			<div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-400">
-				<h4 class="text-lg font-semibold text-green-900 mb-3">✅ wss:// (TLS暗号化)</h4>
-				<ul class="space-y-2 text-green-800">
+			<div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6 border-l-4 border-green-400 dark:border-green-600">
+				<h4 class="text-lg font-semibold text-green-900 dark:text-green-200 mb-3">✅ wss:// (TLS暗号化)</h4>
+				<ul class="space-y-2 text-green-800 dark:text-green-300">
 					<li>• <strong>ポート:</strong> 443 (HTTPSと同じ)</li>
 					<li>• <strong>セキュリティ:</strong> TLS/SSL暗号化</li>
 					<li>• <strong>用途:</strong> 本番環境・インターネット通信</li>
 					<li>• <strong>プロキシ:</strong> 一般的に許可される</li>
 				</ul>
-				<div class="mt-4 p-3 bg-green-100 rounded">
-					<code class="text-sm">wss://api.example.com/websocket</code>
+				<div class="mt-4 p-3 bg-green-100 dark:bg-green-900/30 rounded">
+					<code class="text-sm text-green-900 dark:text-green-200">wss://api.example.com/websocket</code>
 				</div>
 			</div>
 		</div>
