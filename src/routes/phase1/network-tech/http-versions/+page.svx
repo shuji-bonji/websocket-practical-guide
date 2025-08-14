@@ -160,9 +160,9 @@ class HTTP11WebSocketServer {
 
 ### HTTP/1.1の技術的優位性
 
-<div class="mt-4 p-4 bg-green-50 rounded-lg">
-<h5 class="font-medium text-green-800">✅ HTTP/1.1WebSocketの強み</h5>
-<ul class="text-sm text-green-700 mt-2 space-y-1">
+<div class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+<h5 class="font-medium text-green-800 dark:text-green-200">✅ HTTP/1.1 WebSocketの強み</h5>
+<ul class="text-sm text-green-700 dark:text-green-300 mt-2 space-y-1">
 <li>• **完全なWebSocket RFC 6455対応**：すべての機能を網羅</li>
 <li>• **最も安定した実装**：10年以上の実績とバグ修正</li>
 <li>• **全ブラウザサポート**：IE10以降、全モダンブラウザ対応</li>
@@ -499,44 +499,44 @@ class WebSocketOverHTTP2 {
 ### HTTP/2とWebSocketの比較表
 
 <div class="overflow-x-auto mt-4">
-<table class="min-w-full bg-white border border-gray-300">
-<thead class="bg-gray-50">
+<table class="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+<thead class="bg-gray-50 dark:bg-gray-700">
 <tr>
-<th class="px-4 py-2 border-b text-left">特徴</th>
-<th class="px-4 py-2 border-b text-left">HTTP/2 Server Push</th>
-<th class="px-4 py-2 border-b text-left">WebSocket over HTTP/2</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">特徴</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">HTTP/2 Server Push</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">WebSocket over HTTP/2</th>
 </tr>
 </thead>
 <tbody>
-<tr class="bg-white">
-<td class="px-4 py-2 border-b font-semibold">通信方向</td>
-<td class="px-4 py-2 border-b text-red-600">一方向のみ</td>
-<td class="px-4 py-2 border-b text-green-600">完全な双方向</td>
+<tr class="bg-white dark:bg-gray-800">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">通信方向</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-red-600 dark:text-red-400">一方向のみ</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">完全な双方向</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">接続モデル</td>
-<td class="px-4 py-2 border-b text-orange-600">リクエスト/レスポンス</td>
-<td class="px-4 py-2 border-b text-green-600">持続的接続</td>
+<tr class="bg-gray-50 dark:bg-gray-700/50">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">接続モデル</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-orange-600 dark:text-orange-400">リクエスト/レスポンス</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">持続的接続</td>
 </tr>
-<tr class="bg-white">
-<td class="px-4 py-2 border-b font-semibold">ブラウザサポート</td>
-<td class="px-4 py-2 border-b text-red-600">廃止済み（Chrome 106+）</td>
-<td class="px-4 py-2 border-b text-green-600">全ブラウザ対応</td>
+<tr class="bg-white dark:bg-gray-800">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">ブラウザサポート</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-red-600 dark:text-red-400">廃止済み（Chrome 106+）</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">全ブラウザ対応</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">リアルタイム性</td>
-<td class="px-4 py-2 border-b text-orange-600">予測ベース</td>
-<td class="px-4 py-2 border-b text-green-600">真のリアルタイム</td>
+<tr class="bg-gray-50 dark:bg-gray-700/50">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">リアルタイム性</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-orange-600 dark:text-orange-400">予測ベース</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">真のリアルタイム</td>
 </tr>
-<tr class="bg-white">
-<td class="px-4 py-2 border-b font-semibold">オーバーヘッド</td>
-<td class="px-4 py-2 border-b text-orange-600">HTTPヘッダー毎回</td>
-<td class="px-4 py-2 border-b text-green-600">最小限のフレーム</td>
+<tr class="bg-white dark:bg-gray-800">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">オーバーヘッド</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-orange-600 dark:text-orange-400">HTTPヘッダー毎回</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">最小限のフレーム</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">2025年の推奨</td>
-<td class="px-4 py-2 border-b text-red-600">使用非推奨</td>
-<td class="px-4 py-2 border-b text-green-600">強く推奨</td>
+<tr class="bg-gray-50 dark:bg-gray-700/50">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">2025年の推奨</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-red-600 dark:text-red-400">使用非推奨</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">強く推奨</td>
 </tr>
 </tbody>
 </table>
@@ -657,9 +657,9 @@ class OptimizedWebSocketHTTP2 {
 
 ### HTTP/2環境での注意点
 
-<div class="mt-4 p-4 bg-yellow-50 rounded-lg">
-<h5 class="font-medium text-yellow-800">⚠️ HTTP/2でのWebSocket実装注意点</h5>
-<ul class="text-sm text-yellow-700 mt-2 space-y-1">
+<div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+<h5 class="font-medium text-yellow-800 dark:text-yellow-200">⚠️ HTTP/2でのWebSocket実装注意点</h5>
+<ul class="text-sm text-yellow-700 dark:text-yellow-300 mt-2 space-y-1">
 <li>• **Server Push非使用**：WebSocketがあればServer Pushは不要</li>
 <li>• **接続多重化**：同一ドメインでの複数WebSocket接続は効率的</li>
 <li>• **ヘッダー圧縮**：HPACK圧縮の恩恵を受けるため共通ヘッダーを活用</li>
@@ -1042,44 +1042,44 @@ class WebTransportConnection {
 ### WebTransportとWebSocketの比較
 
 <div class="overflow-x-auto mt-4">
-<table class="min-w-full bg-white border border-gray-300">
-<thead class="bg-gray-50">
+<table class="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+<thead class="bg-gray-50 dark:bg-gray-700">
 <tr>
-<th class="px-4 py-2 border-b text-left">特徴</th>
-<th class="px-4 py-2 border-b text-left">WebSocket</th>
-<th class="px-4 py-2 border-b text-left">WebTransport</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">特徴</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">WebSocket</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">WebTransport</th>
 </tr>
 </thead>
 <tbody>
-<tr class="bg-white">
-<td class="px-4 py-2 border-b font-semibold">基盤プロトコル</td>
-<td class="px-4 py-2 border-b">TCP上のHTTP/1.1</td>
-<td class="px-4 py-2 border-b">QUIC上のHTTP/3</td>
+<tr class="bg-white dark:bg-gray-800">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">基盤プロトコル</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">TCP上のHTTP/1.1</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">QUIC上のHTTP/3</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">データ配信</td>
-<td class="px-4 py-2 border-b">順序保証あり</td>
-<td class="px-4 py-2 border-b">ストリーム/データグラム選択可</td>
+<tr class="bg-gray-50 dark:bg-gray-700/50">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">データ配信</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">順序保証あり</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">ストリーム/データグラム選択可</td>
 </tr>
-<tr class="bg-white">
-<td class="px-4 py-2 border-b font-semibold">接続確立</td>
-<td class="px-4 py-2 border-b">TCP 3-way handshake</td>
-<td class="px-4 py-2 border-b">0-RTT可能</td>
+<tr class="bg-white dark:bg-gray-800">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">接続確立</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">TCP 3-way handshake</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">0-RTT可能</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">多重化</td>
-<td class="px-4 py-2 border-b">単一ストリーム</td>
-<td class="px-4 py-2 border-b">複数ストリーム並列</td>
+<tr class="bg-gray-50 dark:bg-gray-700/50">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">多重化</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">単一ストリーム</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">複数ストリーム並列</td>
 </tr>
-<tr class="bg-white">
-<td class="px-4 py-2 border-b font-semibold">ブラウザサポート</td>
-<td class="px-4 py-2 border-b text-green-600">全ブラウザ</td>
-<td class="px-4 py-2 border-b text-orange-600">Chrome/Edge（実験的）</td>
+<tr class="bg-white dark:bg-gray-800">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">ブラウザサポート</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">全ブラウザ</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-orange-600 dark:text-orange-400">Chrome/Edge（実験的）</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">2025年推奨</td>
-<td class="px-4 py-2 border-b text-green-600">プロダクション使用</td>
-<td class="px-4 py-2 border-b text-orange-600">実験・評価段階</td>
+<tr class="bg-gray-50 dark:bg-gray-700/50">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">2025年推奨</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-400">プロダクション使用</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-orange-600 dark:text-orange-400">実験・評価段階</td>
 </tr>
 </tbody>
 </table>

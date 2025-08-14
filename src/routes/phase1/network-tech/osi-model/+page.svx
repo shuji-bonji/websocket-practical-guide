@@ -53,8 +53,8 @@ lesson: "2.2"
 
 </Card>
 
-<div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
-<h4 class="text-lg font-semibold text-green-900 mb-4">📤 OSI参照モデル：送信側データフロー</h4>
+<div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border-l-4 border-green-400 dark:border-green-600">
+<h4 class="text-lg font-semibold text-green-900 dark:text-green-200 mb-4">📤 OSI参照モデル：送信側データフロー</h4>
 
 ```
 アプリケーション（WebSocketメッセージ）
@@ -121,8 +121,8 @@ lesson: "2.2"
 
 </Card>
 
-<div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-400">
-<h4 class="text-lg font-semibold text-blue-900 mb-4">📥 OSI参照モデル：受信側データフロー</h4>
+<div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border-l-4 border-blue-400 dark:border-blue-600">
+<h4 class="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-4">📥 OSI参照モデル：受信側データフロー</h4>
 
 ```
       ネットワーク受信
@@ -362,57 +362,57 @@ const websocketWithTLS = {
 **OSI参照モデル**は、ネットワーク通信を7つの階層に分けて標準化したモデルです。各層には固有の役割と、扱うデータ単位が定義されています。WebSocketはこのモデルに準拠して動作するため、各層でのデータ形式を理解することが重要です。
 
 <div class="overflow-x-auto">
-<table class="min-w-full bg-white border border-gray-300">
-<thead class="bg-gray-50">
+<table class="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+<thead class="bg-gray-50 dark:bg-gray-700">
 <tr>
-<th class="px-4 py-2 border-b text-left">Layer</th>
-<th class="px-4 py-2 border-b text-left">データ単位</th>
-<th class="px-4 py-2 border-b text-left">主要ヘッダー</th>
-<th class="px-4 py-2 border-b text-left">WebSocketでの役割</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">Layer</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">データ単位</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">主要ヘッダー</th>
+<th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-left text-gray-900 dark:text-gray-100">WebSocketでの役割</th>
 </tr>
 </thead>
 <tbody>
-<tr class="bg-red-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 7</td>
-<td class="px-4 py-2 border-b">データ / メッセージ</td>
-<td class="px-4 py-2 border-b">WebSocketフレームヘッダー</td>
-<td class="px-4 py-2 border-b">アプリケーションメッセージの処理</td>
+<tr class="bg-red-50 dark:bg-red-900/20">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 7</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">データ / メッセージ</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">WebSocketフレームヘッダー</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">アプリケーションメッセージの処理</td>
 </tr>
-<tr class="bg-orange-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 6</td>
-<td class="px-4 py-2 border-b">暗号化データ</td>
-<td class="px-4 py-2 border-b">TLS Record Header</td>
-<td class="px-4 py-2 border-b">wss://での暗号化・復号化</td>
+<tr class="bg-orange-50 dark:bg-orange-900/20">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 6</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">暗号化データ</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">TLS Record Header</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">wss://での暗号化・復号化</td>
 </tr>
-<tr class="bg-yellow-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 5</td>
-<td class="px-4 py-2 border-b">セッションデータ</td>
-<td class="px-4 py-2 border-b">セッション制御情報</td>
-<td class="px-4 py-2 border-b"><strong>WebSocketの主要動作層</strong></td>
+<tr class="bg-yellow-50 dark:bg-yellow-900/20">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 5</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">セッションデータ</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">セッション制御情報</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"><strong>WebSocketの主要動作層</strong></td>
 </tr>
-<tr class="bg-green-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 4</td>
-<td class="px-4 py-2 border-b"><strong>セグメント</strong></td>
-<td class="px-4 py-2 border-b">TCPヘッダー (20bytes)</td>
-<td class="px-4 py-2 border-b">信頼性のあるデータ転送</td>
+<tr class="bg-green-50 dark:bg-green-900/20">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 4</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"><strong>セグメント</strong></td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">TCPヘッダー (20bytes)</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">信頼性のあるデータ転送</td>
 </tr>
-<tr class="bg-blue-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 3</td>
-<td class="px-4 py-2 border-b"><strong>パケット</strong></td>
-<td class="px-4 py-2 border-b">IPヘッダー (20bytes)</td>
-<td class="px-4 py-2 border-b">ルーティングとアドレス解決</td>
+<tr class="bg-blue-50 dark:bg-blue-900/20">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 3</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"><strong>パケット</strong></td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">IPヘッダー (20bytes)</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">ルーティングとアドレス解決</td>
 </tr>
-<tr class="bg-purple-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 2</td>
-<td class="px-4 py-2 border-b"><strong>フレーム</strong></td>
-<td class="px-4 py-2 border-b">Ethernetヘッダー (14bytes)</td>
-<td class="px-4 py-2 border-b">物理的ネットワーク上の転送</td>
+<tr class="bg-purple-50 dark:bg-purple-900/20">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 2</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"><strong>フレーム</strong></td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">Ethernetヘッダー (14bytes)</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">物理的ネットワーク上の転送</td>
 </tr>
-<tr class="bg-gray-50">
-<td class="px-4 py-2 border-b font-semibold">Layer 1</td>
-<td class="px-4 py-2 border-b">ビット / 信号</td>
-<td class="px-4 py-2 border-b">なし</td>
-<td class="px-4 py-2 border-b">物理的信号として伝送</td>
+<tr class="bg-gray-50 dark:bg-gray-700">
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 font-semibold text-gray-900 dark:text-gray-100">Layer 1</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">ビット / 信号</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">なし</td>
+<td class="px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">物理的信号として伝送</td>
 </tr>
 </tbody>
 </table>

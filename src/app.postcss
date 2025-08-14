@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Prose dark mode support for MDsveX content */
+@layer components {
+  /* Auto-apply dark mode to prose elements */
+  .dark .prose {
+    @apply prose-invert;
+  }
+
+  /* Ensure good contrast for dark mode headings */
+  .dark .prose h1 {
+    @apply text-gray-100;
+  }
+
+  .dark .prose h2 {
+    @apply text-gray-100;
+  }
+
+  .dark .prose h3 {
+    @apply text-gray-200;
+  }
+
+  .dark .prose h4,
+  .dark .prose h5,
+  .dark .prose h6 {
+    @apply text-gray-200;
+  }
+
+  /* Better readability for body text */
+  .dark .prose p {
+    @apply text-gray-300;
+  }
+
+  .dark .prose li {
+    @apply text-gray-300;
+  }
+
+  .dark .prose td,
+  .dark .prose th {
+    @apply text-gray-300;
+  }
+
+  /* Emphasis and strong text */
+  .dark .prose strong {
+    @apply text-gray-100 font-semibold;
+  }
+
+  .dark .prose em {
+    @apply text-gray-200;
+  }
+
+  /* Code blocks and inline code */
+  .dark .prose code {
+    @apply bg-gray-800 text-gray-200 border-gray-700;
+  }
+
+  .dark .prose pre {
+    @apply bg-gray-900 border-gray-700;
+  }
+
+  .dark .prose pre code {
+    @apply bg-transparent;
+  }
+
+  /* Blockquotes */
+  .dark .prose blockquote {
+    @apply text-gray-300 border-gray-600 bg-gray-800/50;
+  }
+
+  /* Links */
+  .dark .prose a {
+    @apply text-blue-400 hover:text-blue-300 underline-offset-2;
+  }
+
+  /* Lists markers */
+  .dark .prose ul > li::marker {
+    @apply text-gray-500;
+  }
+
+  .dark .prose ol > li::marker {
+    @apply text-gray-500;
+  }
+
+  /* Tables */
+  .dark .prose table {
+    @apply border-gray-700;
+  }
+
+  .dark .prose thead {
+    @apply bg-gray-800 border-gray-700;
+  }
+
+  .dark .prose tbody tr {
+    @apply border-gray-700;
+  }
+
+  /* Horizontal rules */
+  .dark .prose hr {
+    @apply border-gray-700;
+  }
+}

@@ -20,9 +20,9 @@
   let mounted = $derived(typeof window !== 'undefined');
 
   const difficultyColors = {
-    初級: 'bg-green-100 text-green-800',
-    中級: 'bg-yellow-100 text-yellow-800',
-    上級: 'bg-red-100 text-red-800'
+    初級: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+    中級: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
+    上級: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
   };
 
   function toggleCompletion() {
@@ -34,12 +34,16 @@
   }
 </script>
 
-<div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-8">
+<div
+  class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8"
+>
   <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
     <div class="flex-1">
       <!-- レッスン情報 -->
       <div class="flex items-center mb-4">
-        <div class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium mr-3">
+        <div
+          class="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1 rounded-md text-sm font-medium mr-3"
+        >
           レッスン {lessonId}
         </div>
         <span
@@ -49,19 +53,19 @@
         >
           {difficulty}
         </span>
-        <span class="ml-3 text-sm text-gray-500">{duration}</span>
+        <span class="ml-3 text-sm text-gray-500 dark:text-gray-400">{duration}</span>
       </div>
 
-      <h1 class="text-3xl font-bold text-gray-900 mb-4">{title}</h1>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">{title}</h1>
 
       <!-- 前提知識 -->
       {#if prerequisites.length > 0}
         <div class="mb-4">
-          <h3 class="text-sm font-medium text-gray-700 mb-2">📋 前提知識</h3>
+          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📋 前提知識</h3>
           <div class="flex flex-wrap gap-2">
             {#each prerequisites as prerequisite (prerequisite)}
               <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700"
+                class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
               >
                 {prerequisite}
               </span>

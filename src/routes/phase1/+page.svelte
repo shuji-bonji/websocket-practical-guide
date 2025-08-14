@@ -447,28 +447,28 @@
 </section>
 
 <!-- 学習目標と前提知識 -->
-<section class="py-12 bg-white">
+<section class="py-12 bg-white dark:bg-gray-800">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div class="card">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">🎯 学習目標</h2>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">🎯 学習目標</h2>
         <ul class="space-y-2">
           {#each phase1Data.learningGoals as goal (goal)}
             <li class="flex items-start">
               <span class="text-blue-600 mr-2 mt-1">✓</span>
-              <span class="text-gray-700">{goal}</span>
+              <span class="text-gray-700 dark:text-gray-300">{goal}</span>
             </li>
           {/each}
         </ul>
       </div>
 
       <div class="card">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">📋 前提知識</h2>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">📋 前提知識</h2>
         <ul class="space-y-2">
           {#each phase1Data.prerequisites as prerequisite (prerequisite)}
             <li class="flex items-start">
               <span class="text-gray-400 mr-2 mt-1">•</span>
-              <span class="text-gray-700">{prerequisite}</span>
+              <span class="text-gray-700 dark:text-gray-300">{prerequisite}</span>
             </li>
           {/each}
         </ul>
@@ -478,18 +478,18 @@
 </section>
 
 <!-- セクション詳細 -->
-<section class="py-16 bg-gray-50">
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-gray-900 mb-4">学習セクション</h2>
-      <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">学習セクション</h2>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
         4つのセクションで段階的にWebSocketの基礎を理解します
       </p>
     </div>
 
     <div class="space-y-8">
       {#each sections as section (section.id)}
-        <div class="card border-l-4 {section.color.split(' ')[2]} bg-white">
+        <div class="card border-l-4 {section.color.split(' ')[2]} bg-white dark:bg-gray-800">
           <div class="mb-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center">
@@ -499,7 +499,9 @@
                   {section.id}
                 </div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900">{section.title}</h3>
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                    {section.title}
+                  </h3>
                   <div class="flex items-center space-x-4 mt-1">
                     <span
                       class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {section.color}"
@@ -507,7 +509,7 @@
                       {section.duration}
                     </span>
                     {#if mounted}
-                      <span class="text-sm text-gray-500">
+                      <span class="text-sm text-gray-500 dark:text-gray-400">
                         進捗: {getSectionProgress(section.id)}%
                       </span>
                     {/if}
@@ -518,14 +520,14 @@
                 セクション開始
               </a>
             </div>
-            <p class="text-gray-600">{section.description}</p>
+            <p class="text-gray-600 dark:text-gray-400">{section.description}</p>
           </div>
 
           <!-- レッスン一覧 -->
           <div class="space-y-4">
             {#each section.lessons as lesson (lesson.id)}
               <div
-                class="bg-gray-50 rounded-lg p-6 {isLessonCompleted(lesson.id)
+                class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 {isLessonCompleted(lesson.id)
                   ? 'border-l-4 border-green-500'
                   : ''}"
               >
@@ -547,23 +549,25 @@
                       {:else}
                         <div class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3"></div>
                       {/if}
-                      <h4 class="text-lg font-semibold text-gray-900">
+                      <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {lesson.title}
                       </h4>
                       <span
-                        class="ml-3 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700"
+                        class="ml-3 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                       >
                         {lesson.duration}
                       </span>
                     </div>
-                    <p class="text-gray-600 mb-4 ml-9">{lesson.description}</p>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4 ml-9">{lesson.description}</p>
 
                     <div class="ml-9 grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <div>
-                        <h5 class="font-medium text-gray-900 mb-2">📚 学習内容</h5>
+                        <h5 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                          📚 学習内容
+                        </h5>
                         <ul class="space-y-1">
                           {#each lesson.topics as topic (topic)}
-                            <li class="text-sm text-gray-600 flex items-start">
+                            <li class="text-sm text-gray-600 dark:text-gray-400 flex items-start">
                               <span class="text-gray-400 mr-2">•</span>
                               <span>{topic}</span>
                             </li>
@@ -572,10 +576,10 @@
                       </div>
 
                       <div>
-                        <h5 class="font-medium text-gray-900 mb-2">💻 演習</h5>
+                        <h5 class="font-medium text-gray-900 dark:text-gray-100 mb-2">💻 演習</h5>
                         <ul class="space-y-1">
                           {#each lesson.exercises as exercise (exercise)}
-                            <li class="text-sm text-gray-600 flex items-start">
+                            <li class="text-sm text-gray-600 dark:text-gray-400 flex items-start">
                               <span class="text-blue-500 mr-2">▸</span>
                               <span>{exercise}</span>
                             </li>
@@ -606,13 +610,13 @@
 </section>
 
 <!-- Phase進捗と次のステップ -->
-<section class="py-16 bg-white">
+<section class="py-16 bg-white dark:bg-gray-800">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     {#if mounted && phase1Progress}
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Phase 1 進捗状況</h2>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Phase 1 進捗状況</h2>
         <div class="max-w-md mx-auto">
-          <div class="flex justify-between text-sm text-gray-600 mb-2">
+          <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
             <span>完了率</span>
             <span
               >{Math.round(
@@ -627,7 +631,7 @@
                 100}%"
             ></div>
           </div>
-          <div class="text-sm text-gray-500 mt-2">
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
             {phase1Progress.completedLessons} / {phase1Progress.totalLessons} レッスン完了
           </div>
         </div>
@@ -644,10 +648,12 @@
           </div>
         </div>
       {:else if nextLesson}
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div class="text-blue-800">
+        <div
+          class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6"
+        >
+          <div class="text-blue-800 dark:text-blue-300">
             <h3 class="text-lg font-semibold mb-2">📖 次の学習</h3>
-            <p class="mb-4">
+            <p class="mb-4 text-gray-700 dark:text-gray-300">
               {nextLesson.sectionTitle} の続きを学習しましょう
             </p>
             <a href={href(nextLesson.path)} class="btn-primary">

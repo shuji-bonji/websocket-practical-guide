@@ -21,43 +21,50 @@
       layer: 7,
       name: 'アプリケーション層',
       protocol: 'HTTP, WebSocket',
-      color: 'bg-red-100 border-red-300 text-red-800'
+      color:
+        'bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700 text-red-800 dark:text-red-300'
     },
     {
       layer: 6,
       name: 'プレゼンテーション層',
       protocol: 'TLS/SSL',
-      color: 'bg-orange-100 border-orange-300 text-orange-800'
+      color:
+        'bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-orange-800 dark:text-orange-300'
     },
     {
       layer: 5,
       name: 'セッション層',
       protocol: 'WebSocket Session',
-      color: 'bg-yellow-100 border-yellow-300 text-yellow-800'
+      color:
+        'bg-yellow-100 dark:bg-yellow-900/30 border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-300'
     },
     {
       layer: 4,
       name: 'トランスポート層',
       protocol: 'TCP',
-      color: 'bg-green-100 border-green-300 text-green-800'
+      color:
+        'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-800 dark:text-green-300'
     },
     {
       layer: 3,
       name: 'ネットワーク層',
       protocol: 'IP',
-      color: 'bg-blue-100 border-blue-300 text-blue-800'
+      color:
+        'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300'
     },
     {
       layer: 2,
       name: 'データリンク層',
       protocol: 'Ethernet',
-      color: 'bg-indigo-100 border-indigo-300 text-indigo-800'
+      color:
+        'bg-indigo-100 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700 text-indigo-800 dark:text-indigo-300'
     },
     {
       layer: 1,
       name: '物理層',
       protocol: 'Cable, WiFi',
-      color: 'bg-purple-100 border-purple-300 text-purple-800'
+      color:
+        'bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-800 dark:text-purple-300'
     }
   ];
 
@@ -167,10 +174,13 @@
   });
 </script>
 
-<div class="bg-white border border-gray-200 rounded-lg p-6" data-testid="network-diagram">
+<div
+  class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6"
+  data-testid="network-diagram"
+>
   <!-- Header -->
   <div class="mb-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
       🌐 {title || 'ネットワーク図'}
     </h3>
 
@@ -180,14 +190,14 @@
           type="button"
           onclick={startAnimation}
           disabled={animationActive}
-          class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 disabled:opacity-50"
+          class="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-900/50 disabled:opacity-50"
         >
           ▶️ アニメーション開始
         </button>
         <button
           type="button"
           onclick={resetAnimation}
-          class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+          class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
         >
           🔄 リセット
         </button>
@@ -221,34 +231,32 @@
       <div class="flex justify-between items-start mb-6">
         <div class="text-center">
           <div
-            class="w-20 h-20 bg-blue-100 border-2 border-blue-300 rounded-full flex items-center justify-center mb-2"
+            class="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-700 rounded-full flex items-center justify-center mb-2"
           >
             💻
           </div>
-          <div class="font-medium">クライアント</div>
+          <div class="font-medium text-gray-900 dark:text-gray-100">クライアント</div>
         </div>
         <div class="text-center">
           <div
-            class="w-20 h-20 bg-green-100 border-2 border-green-300 rounded-full flex items-center justify-center mb-2"
+            class="w-20 h-20 bg-green-100 dark:bg-green-900/30 border-2 border-green-300 dark:border-green-700 rounded-full flex items-center justify-center mb-2"
           >
             🖥️
           </div>
-          <div class="font-medium">サーバー</div>
+          <div class="font-medium text-gray-900 dark:text-gray-100">サーバー</div>
         </div>
       </div>
 
       <div class="space-y-4">
         {#each tcpHandshakeSteps as step (step.step)}
           <div
-            class="p-3 rounded-md border transition-all duration-300"
-            class:bg-blue-50={currentStep >= step.step}
-            class:border-blue-300={currentStep >= step.step}
-            class:bg-gray-50={currentStep < step.step}
-            class:border-gray-200={currentStep < step.step}
+            class="p-3 rounded-md border transition-all duration-300 {currentStep >= step.step
+              ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700'
+              : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'}"
           >
             <div class="flex items-center justify-between">
               <span class="font-medium">{step.step}. {step.name}</span>
-              <span class="text-sm text-gray-600">{step.description}</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">{step.description}</span>
             </div>
           </div>
         {/each}
@@ -257,14 +265,16 @@
       <!-- HTTP接続パターン -->
       <div class="grid md:grid-cols-2 gap-6">
         <!-- HTTP/1.0 -->
-        <div class="p-4 bg-red-50 border border-red-200 rounded-md">
-          <h4 class="font-medium text-red-800 mb-3">HTTP/1.0 パターン</h4>
+        <div
+          class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md"
+        >
+          <h4 class="font-medium text-red-800 dark:text-red-300 mb-3">HTTP/1.0 パターン</h4>
           <div class="space-y-2">
             {#each httpConnectionSteps.filter((s) => s.version === 'HTTP/1.0') as step (step.step)}
               <div
-                class="p-2 rounded text-sm"
-                class:bg-red-100={currentStep >= step.step}
-                class:bg-white={currentStep < step.step}
+                class="p-2 rounded text-sm {currentStep >= step.step
+                  ? 'bg-red-100 dark:bg-red-900/30'
+                  : 'bg-white dark:bg-gray-700'}"
               >
                 {step.action}: {step.description}
               </div>
@@ -273,14 +283,16 @@
         </div>
 
         <!-- HTTP/1.1 -->
-        <div class="p-4 bg-green-50 border border-green-200 rounded-md">
-          <h4 class="font-medium text-green-800 mb-3">HTTP/1.1 パターン</h4>
+        <div
+          class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md"
+        >
+          <h4 class="font-medium text-green-800 dark:text-green-300 mb-3">HTTP/1.1 パターン</h4>
           <div class="space-y-2">
             {#each httpConnectionSteps.filter((s) => s.version === 'HTTP/1.1') as step (step.step)}
               <div
-                class="p-2 rounded text-sm"
-                class:bg-green-100={currentStep >= step.step}
-                class:bg-white={currentStep < step.step}
+                class="p-2 rounded text-sm {currentStep >= step.step
+                  ? 'bg-green-100 dark:bg-green-900/30'
+                  : 'bg-white dark:bg-gray-700'}"
               >
                 {step.action}: {step.description}
               </div>
@@ -293,26 +305,25 @@
       <div class="space-y-4">
         {#each websocketUpgradeSteps as step (step.step)}
           <div
-            class="p-4 rounded-md border transition-all duration-300"
-            class:bg-blue-50={step.type === 'HTTP' && currentStep >= step.step}
-            class:border-blue-300={step.type === 'HTTP' && currentStep >= step.step}
-            class:bg-purple-50={step.type === 'WebSocket' && currentStep >= step.step}
-            class:border-purple-300={step.type === 'WebSocket' && currentStep >= step.step}
-            class:bg-gray-50={currentStep < step.step}
-            class:border-gray-200={currentStep < step.step}
+            class="p-4 rounded-md border transition-all duration-300 {step.type === 'HTTP' &&
+            currentStep >= step.step
+              ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700'
+              : step.type === 'WebSocket' && currentStep >= step.step
+                ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-700'
+                : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'}"
           >
             <div class="flex items-center justify-between">
               <span class="font-medium">
                 <span
                   class="px-2 py-1 rounded text-xs font-mono {step.type === 'HTTP'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'bg-purple-100 text-purple-800'}"
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
+                    : 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300'}"
                 >
                   {step.type}
                 </span>
                 {step.action}
               </span>
-              <span class="text-sm text-gray-600">{step.description}</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">{step.description}</span>
             </div>
           </div>
         {/each}
@@ -322,8 +333,10 @@
 
   <!-- Status Information -->
   {#if showAnimation}
-    <div class="mt-6 p-3 bg-gray-50 border border-gray-200 rounded-md">
-      <div class="text-sm">
+    <div
+      class="mt-6 p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+    >
+      <div class="text-sm text-gray-900 dark:text-gray-100">
         <span class="font-medium">現在のステップ:</span>
         <span class="ml-2">{currentStep} / {getMaxSteps()}</span>
         {#if animationActive}

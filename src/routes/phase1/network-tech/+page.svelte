@@ -66,7 +66,9 @@
   }
 
   function getStatusColor(status: 'completed' | 'pending'): string {
-    return status === 'completed' ? 'text-green-600' : 'text-gray-600';
+    return status === 'completed'
+      ? 'text-green-600 dark:text-green-400'
+      : 'text-gray-600 dark:text-gray-400';
   }
 </script>
 
@@ -75,7 +77,7 @@
   <meta name="description" content="WebSocketを理解するために必要なネットワーク技術の基礎知識" />
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <!-- ヘッダーセクション -->
   <section class="relative overflow-hidden bg-gradient-to-r from-primary-600 to-primary-800">
     <div class="absolute inset-0 bg-gradient-to-r from-primary-600/90 to-primary-800/90"></div>
@@ -110,9 +112,13 @@
   <div class="max-w-6xl mx-auto px-4 py-12">
     <!-- 学習の流れ -->
     <div class="mb-16">
-      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">学習の流れ</h2>
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
+        学習の流れ
+      </h2>
 
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 mb-8"
+      >
         <Mermaid
           chart={`
 graph TD
@@ -140,32 +146,36 @@ graph TD
 
     <!-- レッスン一覧 -->
     <div class="space-y-6">
-      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">レッスン一覧</h2>
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
+        レッスン一覧
+      </h2>
 
       {#each sections as section, index (section.id)}
         <div
-          class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+          class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
         >
           <div class="p-8">
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center gap-4 mb-4">
                   <div
-                    class="flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-xl font-bold text-lg"
+                    class="flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl font-bold text-lg"
                   >
                     {section.number}
                   </div>
                   <div>
-                    <h3 class="text-xl font-bold text-gray-900">{section.title}</h3>
-                    <p class="text-gray-600">{section.description}</p>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                      {section.title}
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">{section.description}</p>
                   </div>
                 </div>
 
                 <div class="flex flex-wrap gap-4 mb-6">
-                  <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     ⏱️ {section.duration}
                   </div>
-                  <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     📊 {section.difficulty}
                   </div>
                   {#if progressData}
@@ -191,8 +201,12 @@ graph TD
           </div>
 
           {#if index < sections.length - 1}
-            <div class="border-t border-gray-100 p-4 bg-gray-50">
-              <div class="flex items-center justify-center text-gray-400">↓ 次のレッスンへ</div>
+            <div
+              class="border-t border-gray-100 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800/50"
+            >
+              <div class="flex items-center justify-center text-gray-400 dark:text-gray-500">
+                ↓ 次のレッスンへ
+              </div>
             </div>
           {/if}
         </div>
@@ -200,13 +214,17 @@ graph TD
     </div>
 
     <!-- 学習目標 -->
-    <div class="mt-16 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">このセクションで身につくスキル</h2>
+    <div
+      class="mt-16 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8"
+    >
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+        このセクションで身につくスキル
+      </h2>
 
       <div class="grid md:grid-cols-2 gap-8">
         <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">💡 理論的理解</h3>
-          <ul class="space-y-2 text-gray-600">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">💡 理論的理解</h3>
+          <ul class="space-y-2 text-gray-600 dark:text-gray-400">
             <li class="flex items-start gap-2">
               <span class="text-green-500 mt-1">✓</span>
               WebSocketとHTTPの関係性
@@ -227,8 +245,10 @@ graph TD
         </div>
 
         <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">🛠️ 実践的スキル</h3>
-          <ul class="space-y-2 text-gray-600">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            🛠️ 実践的スキル
+          </h3>
+          <ul class="space-y-2 text-gray-600 dark:text-gray-400">
             <li class="flex items-start gap-2">
               <span class="text-green-500 mt-1">✓</span>
               プロトコルアップグレードの理解
@@ -251,9 +271,11 @@ graph TD
     </div>
 
     <!-- 実践デモ -->
-    <div class="mt-16 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">🛠️ 実践デモ</h2>
-      <p class="text-gray-600 mb-6">
+    <div
+      class="mt-16 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8"
+    >
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">🛠️ 実践デモ</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
         ネットワーク技術の理解を深めるため、実際のWebSocket接続を通してプロトコルの動作を観察してみましょう。
       </p>
 
@@ -266,18 +288,22 @@ graph TD
 
     <!-- 次のフェーズへの案内 -->
     <div
-      class="mt-16 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 border border-purple-200"
+      class="mt-16 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-8 border border-purple-200 dark:border-purple-800"
     >
       <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">🎯 次のステップ</h2>
-        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">🎯 次のステップ</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
           ネットワーク技術の基礎を理解したら、次はWebSocketプロトコルの詳細仕様について学習します。
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-          <div class="bg-white px-4 py-2 rounded-lg border border-purple-200">
+          <div
+            class="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border border-purple-200 dark:border-purple-700 text-gray-900 dark:text-gray-100"
+          >
             Phase 1-3: WebSocketプロトコル仕様（準備中）
           </div>
-          <div class="bg-white px-4 py-2 rounded-lg border border-purple-200">
+          <div
+            class="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border border-purple-200 dark:border-purple-700 text-gray-900 dark:text-gray-100"
+          >
             Phase 1-4: WebSocket API実践（準備中）
           </div>
         </div>

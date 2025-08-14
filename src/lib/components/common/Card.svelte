@@ -12,21 +12,24 @@
   let { title, icon, accentColor = 'blue', class: className = '', children }: Props = $props();
 
   const colorClasses = {
-    blue: 'border-blue-200 bg-blue-50 hover:border-blue-300',
-    green: 'border-green-200 bg-green-50 hover:border-green-300',
-    purple: 'border-purple-200 bg-purple-50 hover:border-purple-300',
-    orange: 'border-orange-200 bg-orange-50 hover:border-orange-300',
-    red: 'border-red-200 bg-red-50 hover:border-red-300',
-    gray: 'border-gray-200 bg-gray-50 hover:border-gray-300'
+    blue: 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700',
+    green:
+      'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 hover:border-green-300 dark:hover:border-green-700',
+    purple:
+      'border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-700',
+    orange:
+      'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 hover:border-orange-300 dark:hover:border-orange-700',
+    red: 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700',
+    gray: 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
   };
 
   const iconColorClasses = {
-    blue: 'text-blue-600',
-    green: 'text-green-600',
-    purple: 'text-purple-600',
-    orange: 'text-orange-600',
-    red: 'text-red-600',
-    gray: 'text-gray-600'
+    blue: 'text-blue-600 dark:text-blue-400',
+    green: 'text-green-600 dark:text-green-400',
+    purple: 'text-purple-600 dark:text-purple-400',
+    orange: 'text-orange-600 dark:text-orange-400',
+    red: 'text-red-600 dark:text-red-400',
+    gray: 'text-gray-600 dark:text-gray-400'
   };
 
   function getIcon(iconName: string) {
@@ -72,13 +75,13 @@
           </div>
         {/if}
         {#if title}
-          <h3 class="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
         {/if}
       </div>
     </div>
   {/if}
 
-  <div class="card-content prose prose-sm max-w-none p-6">
+  <div class="card-content prose prose-sm dark:prose-invert max-w-none p-6">
     {@render children()}
   </div>
 </div>
@@ -86,5 +89,9 @@
 <style>
   .card {
     background: linear-gradient(135deg, var(--tw-bg-opacity) 0%, rgba(255, 255, 255, 0.8) 100%);
+  }
+
+  :global(.dark) .card {
+    background: linear-gradient(135deg, var(--tw-bg-opacity) 0%, rgba(31, 41, 55, 0.8) 100%);
   }
 </style>

@@ -67,9 +67,11 @@
 </script>
 
 {#if mounted}
-  <div class="bg-white border border-gray-200 rounded-lg p-4 my-6">
+  <div
+    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 my-6"
+  >
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-sm font-medium text-gray-700">📊 学習進捗</h3>
+      <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">📊 学習進捗</h3>
       {#if isCompleted}
         <div class="flex items-center text-green-600 text-sm">
           <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -86,7 +88,7 @@
 
     <!-- 現在のレッスン情報 -->
     <div class="mb-4">
-      <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+      <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
         <span>現在のレッスン: {lessonId}</span>
         {#if currentLesson?.timeSpent}
           <span>学習時間: {currentLesson.timeSpent}分</span>
@@ -96,18 +98,20 @@
 
     <!-- セクション進捗 -->
     {#if sectionProgress && sectionTitle}
-      <div class="mb-4 p-3 bg-gray-50 rounded-lg">
-        <div class="flex items-center justify-between text-sm text-gray-700 mb-2">
+      <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <div
+          class="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300 mb-2"
+        >
           <span>{sectionTitle}</span>
           <span>{sectionProgress.completed}/{sectionProgress.total}</span>
         </div>
-        <div class="progress-bar h-2">
+        <div class="progress-bar h-2 bg-gray-200 dark:bg-gray-600">
           <div
             class="progress-fill h-2 rounded-full"
             style="width: {sectionProgress.percentage}%"
           ></div>
         </div>
-        <div class="text-xs text-gray-500 mt-1 text-right">
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
           {sectionProgress.percentage}% 完了
         </div>
       </div>
@@ -120,18 +124,20 @@
         : parseInt(lessonId.split('.')[0])}
       {@const phaseProgress = progress.phases[phaseNumber - 1]}
       {#if phaseProgress}
-        <div class="p-3 bg-blue-50 rounded-lg">
-          <div class="flex items-center justify-between text-sm text-blue-700 mb-2">
+        <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <div
+            class="flex items-center justify-between text-sm text-blue-700 dark:text-blue-300 mb-2"
+          >
             <span>Phase {phaseProgress.phase}: {phaseProgress.name}</span>
             <span>{phaseProgress.completedLessons}/{phaseProgress.totalLessons}</span>
           </div>
-          <div class="progress-bar h-2 bg-blue-200">
+          <div class="progress-bar h-2 bg-blue-200 dark:bg-blue-800">
             <div
               class="h-2 rounded-full bg-blue-600"
               style="width: {(phaseProgress.completedLessons / phaseProgress.totalLessons) * 100}%"
             ></div>
           </div>
-          <div class="text-xs text-blue-600 mt-1 text-right">
+          <div class="text-xs text-blue-600 dark:text-blue-400 mt-1 text-right">
             {Math.round((phaseProgress.completedLessons / phaseProgress.totalLessons) * 100)}% 完了
           </div>
         </div>
@@ -140,11 +146,11 @@
 
     <!-- ナビゲーション -->
     {#if showNavigation}
-      <div class="mt-4 pt-4 border-t border-gray-200">
+      <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
         <div class="flex justify-between">
           <a
             href={href('/phase1')}
-            class="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+            class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center"
           >
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -159,7 +165,7 @@
 
           <a
             href={href('/table-of-contents')}
-            class="text-sm text-gray-600 hover:text-gray-800 flex items-center"
+            class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 flex items-center"
           >
             全体目次
             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

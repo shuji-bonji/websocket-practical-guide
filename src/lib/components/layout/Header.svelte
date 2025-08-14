@@ -1,5 +1,6 @@
 <script lang="ts">
   import { progressStore } from '$lib/stores/progress';
+  import { themeStore } from '$lib/stores/theme.svelte';
   import { href } from '$lib/utils/paths';
 
   interface Props {
@@ -12,9 +13,14 @@
   let overallPercentage = $derived(
     Math.round((progress.completedHours / progress.totalHours) * 100)
   );
+
+  let theme = $derived(themeStore.theme);
+  let isDark = $derived(themeStore.isDark);
 </script>
 
-<header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+<header
+  class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 transition-colors"
+>
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <!-- Left side: Logo + Mobile Menu Button -->
@@ -22,7 +28,7 @@
         <!-- Mobile menu button -->
         <button
           type="button"
-          class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden"
+          class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden transition-colors"
           aria-controls="mobile-menu"
           aria-expanded="false"
           onclick={() => (sidebarOpen = !sidebarOpen)}
@@ -50,7 +56,9 @@
           <a href={href('/')} class="flex items-center">
             <div class="flex items-center space-x-2">
               <!-- WebSocket icon -->
-              <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+              <div
+                class="w-8 h-8 bg-primary-600 dark:bg-primary-500 rounded-lg flex items-center justify-center"
+              >
                 <svg
                   class="w-5 h-5 text-white"
                   fill="none"
@@ -66,8 +74,10 @@
                 </svg>
               </div>
               <div class="hidden sm:block">
-                <h1 class="text-xl font-bold text-gray-900">WebSocket 実践ガイド</h1>
-                <p class="text-xs text-gray-500">リアルタイムWeb開発マスター</p>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  WebSocket 実践ガイド
+                </h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">リアルタイムWeb開発マスター</p>
               </div>
             </div>
           </a>
@@ -79,10 +89,10 @@
         <!-- Progress indicator -->
         <div class="hidden md:flex items-center space-x-3">
           <div class="text-right">
-            <div class="text-sm font-medium text-gray-900">
+            <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
               {progress.completedHours}h / {progress.totalHours}h
             </div>
-            <div class="text-xs text-gray-500">
+            <div class="text-xs text-gray-500 dark:text-gray-400">
               Phase {progress.completedPhases + 1}/4
             </div>
           </div>
@@ -92,7 +102,7 @@
             <div class="progress-fill" style="width: {overallPercentage}%"></div>
           </div>
 
-          <div class="text-sm font-medium text-primary-600">
+          <div class="text-sm font-medium text-primary-600 dark:text-primary-400">
             {overallPercentage}%
           </div>
         </div>
@@ -104,7 +114,7 @@
             href="https://github.com/shuji-bonji/websocket-practical-guide"
             target="_blank"
             rel="noopener noreferrer"
-            class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="GitHub"
             aria-label="GitHubリポジトリを開く"
           >
@@ -115,27 +125,45 @@
             </svg>
           </a>
 
-          <!-- Settings -->
+          <!-- Dark Mode Toggle -->
           <button
             type="button"
-            class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-            title="設定"
-            aria-label="設定メニューを開く"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            title={theme === 'system' ? 'システム設定' : isDark ? 'ダークモード' : 'ライトモード'}
+            aria-label="テーマを切り替える"
+            onclick={() => themeStore.toggle()}
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
+            {#if theme === 'system'}
+              <!-- System icon -->
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            {:else if isDark}
+              <!-- Moon icon -->
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
+              </svg>
+            {:else}
+              <!-- Sun icon -->
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+            {/if}
           </button>
         </div>
       </div>
@@ -143,7 +171,7 @@
 
     <!-- Mobile progress bar -->
     <div class="md:hidden pb-3">
-      <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+      <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
         <span>学習進捗</span>
         <span>{progress.completedHours}h / {progress.totalHours}h ({overallPercentage}%)</span>
       </div>

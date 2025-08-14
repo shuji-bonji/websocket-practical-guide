@@ -209,43 +209,52 @@
   }
 </script>
 
-<div class="bg-white border border-gray-200 rounded-lg p-6" data-testid="http-connection-demo">
+<div
+  class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6"
+  data-testid="http-connection-demo"
+>
   <!-- Header -->
   <div class="mb-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">🌐 {title}</h3>
-    <p class="text-gray-600 text-sm">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">🌐 {title}</h3>
+    <p class="text-gray-600 dark:text-gray-400 text-sm">
       HTTP/1.0、HTTP/1.1、WebSocketの接続モデルの違いを体験してみましょう。
     </p>
   </div>
 
   <!-- Version Selection -->
   <div class="mb-6">
-    <span class="block text-sm font-medium text-gray-700 mb-2">プロトコルを選択:</span>
+    <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      >プロトコルを選択:</span
+    >
     <div class="flex gap-3">
       <label class="flex items-center">
         <input type="radio" bind:group={selectedVersion} value="http1.0" class="mr-2" />
-        <span class="text-sm">HTTP/1.0 (接続毎切断)</span>
+        <span class="text-sm text-gray-900 dark:text-gray-100">HTTP/1.0 (接続毎切断)</span>
       </label>
       <label class="flex items-center">
         <input type="radio" bind:group={selectedVersion} value="http1.1" class="mr-2" />
-        <span class="text-sm">HTTP/1.1 (Keep-Alive)</span>
+        <span class="text-sm text-gray-900 dark:text-gray-100">HTTP/1.1 (Keep-Alive)</span>
       </label>
       <label class="flex items-center">
         <input type="radio" bind:group={selectedVersion} value="websocket" class="mr-2" />
-        <span class="text-sm">WebSocket</span>
+        <span class="text-sm text-gray-900 dark:text-gray-100">WebSocket</span>
       </label>
     </div>
   </div>
 
   <!-- Connection Status -->
-  <div class="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
+  <div
+    class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+  >
     <div class="grid md:grid-cols-3 gap-4">
       <div>
-        <span class="text-sm font-medium text-gray-700">プロトコル:</span>
-        <span class="ml-2 font-mono text-blue-600">{getVersionName(selectedVersion)}</span>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">プロトコル:</span>
+        <span class="ml-2 font-mono text-blue-600 dark:text-blue-400"
+          >{getVersionName(selectedVersion)}</span
+        >
       </div>
       <div>
-        <span class="text-sm font-medium text-gray-700">接続状態:</span>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">接続状態:</span>
         <span class="ml-2 font-medium {getConnectionStateColor(connectionState)}">
           {connectionState === 'idle'
             ? ' 待機中'
@@ -256,12 +265,15 @@
                 : '切断済み'}
         </span>
         {#if keepAliveActive}
-          <span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Keep-Alive</span>
+          <span
+            class="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded"
+            >Keep-Alive</span
+          >
         {/if}
       </div>
       <div>
-        <span class="text-sm font-medium text-gray-700">リクエスト数:</span>
-        <span class="ml-2 font-bold text-purple-600">{requestCount}</span>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">リクエスト数:</span>
+        <span class="ml-2 font-bold text-purple-600 dark:text-purple-400">{requestCount}</span>
       </div>
     </div>
   </div>
@@ -293,20 +305,25 @@
 
   <!-- Performance Results -->
   {#if totalTime > 0}
-    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-      <h4 class="font-medium text-blue-900 mb-3">📊 パフォーマンス結果</h4>
+    <div
+      class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md"
+    >
+      <h4 class="font-medium text-blue-900 dark:text-blue-300 mb-3">📊 パフォーマンス結果</h4>
       <div class="grid md:grid-cols-3 gap-4 text-sm">
         <div>
-          <span class="font-medium">総実行時間:</span>
-          <span class="ml-2 font-bold text-blue-600">{totalTime}ms</span>
+          <span class="font-medium text-gray-900 dark:text-gray-100">総実行時間:</span>
+          <span class="ml-2 font-bold text-blue-600 dark:text-blue-400">{totalTime}ms</span>
         </div>
         <div>
-          <span class="font-medium">接続オーバーヘッド:</span>
-          <span class="ml-2 font-bold text-orange-600">{connectionOverhead}ms</span>
+          <span class="font-medium text-gray-900 dark:text-gray-100">接続オーバーヘッド:</span>
+          <span class="ml-2 font-bold text-orange-600 dark:text-orange-400"
+            >{connectionOverhead}ms</span
+          >
         </div>
         <div>
-          <span class="font-medium">1リクエスト平均:</span>
-          <span class="ml-2 font-bold text-green-600">{Math.round(totalTime / requestCount)}ms</span
+          <span class="font-medium text-gray-900 dark:text-gray-100">1リクエスト平均:</span>
+          <span class="ml-2 font-bold text-green-600 dark:text-green-400"
+            >{Math.round(totalTime / requestCount)}ms</span
           >
         </div>
       </div>
@@ -314,17 +331,20 @@
   {/if}
 
   <!-- Protocol Comparison -->
-  <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-    <h4 class="font-medium text-yellow-900 mb-3">⚡ プロトコル比較</h4>
+  <div
+    class="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md"
+  >
+    <h4 class="font-medium text-yellow-900 dark:text-yellow-300 mb-3">⚡ プロトコル比較</h4>
     <div class="grid md:grid-cols-3 gap-4 text-sm">
       {#each Object.entries(performanceResults) as [version, result] (version)}
         <div
-          class="p-3 bg-white rounded border {selectedVersion === version
+          class="p-3 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 {selectedVersion ===
+          version
             ? 'ring-2 ring-blue-400'
             : ''}"
         >
-          <div class="font-medium">{getVersionName(version)}</div>
-          <div class="text-xs text-gray-600 mt-1">
+          <div class="font-medium text-gray-900 dark:text-gray-100">{getVersionName(version)}</div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">
             <div>平均: {result.avgTime}ms</div>
             <div>接続: {result.connectionTime}ms</div>
             <div>オーバーヘッド: {result.overhead}</div>
@@ -335,19 +355,21 @@
   </div>
 
   <!-- Message Log -->
-  <div class="p-4 bg-gray-50 border border-gray-200 rounded-md">
-    <h4 class="font-medium text-gray-700 mb-3">📜 通信ログ</h4>
+  <div
+    class="p-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+  >
+    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-3">📜 通信ログ</h4>
     <div class="max-h-48 overflow-y-auto space-y-1">
       {#if messages.length === 0}
-        <div class="text-center text-gray-500 text-sm py-4">
+        <div class="text-center text-gray-500 dark:text-gray-400 text-sm py-4">
           ベンチマークを実行すると通信ログが表示されます
         </div>
       {:else}
         {#each messages.slice().reverse() as message (message.time)}
-          <div class="flex items-start space-x-2 text-sm p-2 bg-white rounded">
+          <div class="flex items-start space-x-2 text-sm p-2 bg-white dark:bg-gray-800 rounded">
             <span class="text-lg flex-shrink-0">{getMessageIcon(message.type)}</span>
             <div class="flex-1 min-w-0">
-              <span class="font-mono text-xs text-gray-500">
+              <span class="font-mono text-xs text-gray-500 dark:text-gray-400">
                 {new Date(message.time).toLocaleTimeString('ja-JP', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -355,7 +377,7 @@
                   fractionalSecondDigits: 3
                 })}
               </span>
-              <div class="text-gray-700">{message.content}</div>
+              <div class="text-gray-700 dark:text-gray-300">{message.content}</div>
             </div>
           </div>
         {/each}
@@ -364,8 +386,10 @@
   </div>
 
   <!-- Educational Notes -->
-  <div class="mt-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
-    <div class="text-sm text-indigo-800">
+  <div
+    class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-md"
+  >
+    <div class="text-sm text-indigo-800 dark:text-indigo-300">
       <span class="font-medium">📚 学習ポイント</span>
       <ul class="mt-2 space-y-1 ml-4">
         <li>• HTTP/1.0では毎回TCP接続の確立・切断が必要（高オーバーヘッド）</li>
