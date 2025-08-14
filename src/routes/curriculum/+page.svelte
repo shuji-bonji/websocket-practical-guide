@@ -196,30 +196,30 @@
 </section>
 
 <!-- 学習目標と技術スタック -->
-<section class="py-12 bg-white dark:bg-gray-800">
+<section class="py-12 theme-bg-primary">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div class="card">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">🎯 学習目標</h2>
+        <h2 class="text-2xl font-bold theme-text-primary mb-4">🎯 学習目標</h2>
         <div class="space-y-3">
           <div>
-            <span class="font-medium text-gray-700 dark:text-gray-300">対象者:</span>
-            <span class="text-gray-600 dark:text-gray-400">{curriculumOverview.targetLevel}</span>
+            <span class="font-medium theme-text-secondary">対象者:</span>
+            <span class="theme-text-secondary">{curriculumOverview.targetLevel}</span>
           </div>
           <div>
-            <span class="font-medium text-gray-700 dark:text-gray-300">最終目標:</span>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">{curriculumOverview.goal}</p>
+            <span class="font-medium theme-text-secondary">最終目標:</span>
+            <p class="theme-text-secondary mt-1">{curriculumOverview.goal}</p>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">🛠️ 技術スタック</h2>
+        <h2 class="text-2xl font-bold theme-text-primary mb-4">🛠️ 技術スタック</h2>
         <ul class="space-y-2">
           {#each curriculumOverview.techStack as tech (tech)}
             <li class="flex items-start">
               <span class="text-primary-600 mr-2">•</span>
-              <span class="text-gray-600 dark:text-gray-400">{tech}</span>
+              <span class="theme-text-secondary">{tech}</span>
             </li>
           {/each}
         </ul>
@@ -232,8 +232,8 @@
 <section class="py-16 bg-gray-50 dark:bg-gray-900">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">学習フェーズ概要</h2>
-      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold theme-text-primary mb-4">学習フェーズ概要</h2>
+      <p class="text-lg theme-text-secondary max-w-3xl mx-auto">
         4つのフェーズで段階的にWebSocket技術をマスター。基礎理解から実践的なプロジェクト開発まで体系的に学習します
       </p>
     </div>
@@ -243,7 +243,7 @@
         <div
           class="card border-l-4 {phase.color.split(' ')[2]} {phase.color.split(
             ' '
-          )[3]} bg-white dark:bg-gray-800"
+          )[3]} theme-bg-primary"
         >
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <!-- Phase Info -->
@@ -255,7 +255,7 @@
                   {phase.phase}
                 </div>
                 <div>
-                  <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <h3 class="text-2xl font-bold theme-text-primary">
                     Phase {phase.phase}: {phase.title}
                   </h3>
                   <div class="flex items-center space-x-4 mt-1">
@@ -265,28 +265,28 @@
                       {phase.duration}
                     </span>
                     {#if mounted && progress.phases[phase.phase - 1]}
-                      <span class="text-sm text-gray-500 dark:text-gray-400">
+                      <span class="text-sm theme-text-muted">
                         進捗: {getPhaseProgress(phase.phase)}%
                       </span>
                     {/if}
                   </div>
                 </div>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 mb-6">{phase.description}</p>
+              <p class="theme-text-secondary mb-6">{phase.description}</p>
 
               <!-- Sections -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {#each phase.sections as section (section.id)}
                   <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    <h4 class="font-semibold theme-text-primary mb-2">
                       {section.id}. {section.title}
                     </h4>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    <div class="text-sm theme-text-muted mb-3">
                       {section.duration}
                     </div>
                     <ul class="space-y-1">
                       {#each section.topics as topic (topic)}
-                        <li class="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                        <li class="text-sm theme-text-secondary flex items-start">
                           <span class="text-gray-400 mr-2">•</span>
                           <span>{topic}</span>
                         </li>
@@ -324,14 +324,14 @@
                       />
                     </svg>
                     <div class="absolute inset-0 flex items-center justify-center">
-                      <span class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                      <span class="text-sm font-bold theme-text-primary">
                         {Math.round(
                           (phaseProgress.completedLessons / phaseProgress.totalLessons) * 100
                         )}%
                       </span>
                     </div>
                   </div>
-                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                  <div class="text-sm theme-text-secondary">
                     {phaseProgress.completedLessons}/{phaseProgress.totalLessons} レッスン完了
                   </div>
                 </div>
@@ -349,7 +349,7 @@
                     学習を開始
                   </a>
                 {:else}
-                  <div class="text-center text-sm text-gray-500 dark:text-gray-400">
+                  <div class="text-center text-sm theme-text-muted">
                     Phase {phase.phase - 1} を80%以上完了後に開始できます
                   </div>
                 {/if}
@@ -363,10 +363,10 @@
 </section>
 
 <!-- 学習の進め方 -->
-<section class="py-16 bg-white dark:bg-gray-800">
+<section class="py-16 theme-bg-primary">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">🚀 学習の進め方</h2>
+      <h2 class="text-3xl font-bold theme-text-primary mb-4">🚀 学習の進め方</h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -376,10 +376,8 @@
         >
           <span class="text-2xl font-bold">1</span>
         </div>
-        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">基礎</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          WebSocket APIの基本概念と技術基盤を理解
-        </p>
+        <h3 class="font-semibold theme-text-primary mb-2">基礎</h3>
+        <p class="text-sm theme-text-secondary">WebSocket APIの基本概念と技術基盤を理解</p>
       </div>
 
       <div class="text-center">
@@ -388,8 +386,8 @@
         >
           <span class="text-2xl font-bold">2</span>
         </div>
-        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">実装</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">データ通信とサブプロトコル設計を習得</p>
+        <h3 class="font-semibold theme-text-primary mb-2">実装</h3>
+        <p class="text-sm theme-text-secondary">データ通信とサブプロトコル設計を習得</p>
       </div>
 
       <div class="text-center">
@@ -398,8 +396,8 @@
         >
           <span class="text-2xl font-bold">3</span>
         </div>
-        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">評価</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">テスト手法と技術選択判断を学習</p>
+        <h3 class="font-semibold theme-text-primary mb-2">評価</h3>
+        <p class="text-sm theme-text-secondary">テスト手法と技術選択判断を学習</p>
       </div>
 
       <div class="text-center">
@@ -408,8 +406,8 @@
         >
           <span class="text-2xl font-bold">4</span>
         </div>
-        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">実践</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">PWA対応のリアルタイムアプリを開発</p>
+        <h3 class="font-semibold theme-text-primary mb-2">実践</h3>
+        <p class="text-sm theme-text-secondary">PWA対応のリアルタイムアプリを開発</p>
       </div>
     </div>
 
