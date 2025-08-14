@@ -162,31 +162,31 @@
 
 <!-- Progress Overview -->
 {#if mounted && progress.completedHours > 0}
-  <section class="py-12 bg-white dark:bg-gray-800">
+  <section class="py-12 theme-bg-primary">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">あなたの学習進捗</h2>
+        <h2 class="text-2xl font-bold theme-text-primary mb-8">あなたの学習進捗</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="card text-center">
             <div class="text-3xl font-bold text-primary-600 mb-2">
               {progress.completedHours}h / {progress.totalHours}h
             </div>
-            <div class="text-gray-600 dark:text-gray-400">総学習時間</div>
+            <div class="theme-text-secondary">総学習時間</div>
           </div>
 
           <div class="card text-center">
             <div class="text-3xl font-bold text-green-600 mb-2">
               {progress.completedPhases} / {progress.totalPhases}
             </div>
-            <div class="text-gray-600 dark:text-gray-400">完了フェーズ</div>
+            <div class="theme-text-secondary">完了フェーズ</div>
           </div>
 
           <div class="card text-center">
             <div class="text-3xl font-bold text-purple-600 mb-2">
               {overallPercentage}%
             </div>
-            <div class="text-gray-600 dark:text-gray-400">全体進捗</div>
+            <div class="theme-text-secondary">全体進捗</div>
           </div>
         </div>
 
@@ -196,7 +196,7 @@
 
         {#if nextLesson}
           <div class="mt-6">
-            <p class="text-gray-600 dark:text-gray-400 mb-3">次の推奨レッスン:</p>
+            <p class="theme-text-secondary mb-3">次の推奨レッスン:</p>
             <a href={href(`/phase${nextLesson.phaseNumber}`)} class="btn-primary">
               Phase {nextLesson.phaseNumber}: {nextLesson.phaseName}
             </a>
@@ -215,8 +215,8 @@
 <section class="py-16 bg-gray-50 dark:bg-gray-900">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">学習の特徴</h2>
-      <p class="text-lg text-gray-600 dark:text-gray-400 mb-12 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold theme-text-primary mb-4">学習の特徴</h2>
+      <p class="text-lg theme-text-secondary mb-12 max-w-3xl mx-auto">
         ブラウザ標準WebSocket APIにフォーカスした実践的なカリキュラムで、
         モダンなリアルタイムWebアプリケーション開発をマスターします
       </p>
@@ -227,10 +227,10 @@
         <div class="card hover:shadow-md transition-shadow duration-200">
           <div class="text-center">
             <div class="text-4xl mb-4">{feature.icon}</div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <h3 class="text-xl font-semibold theme-text-primary mb-3">
               {feature.title}
             </h3>
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="theme-text-secondary">
               {feature.description}
             </p>
           </div>
@@ -241,11 +241,11 @@
 </section>
 
 <!-- Learning Path -->
-<section class="py-16 bg-white dark:bg-gray-800">
+<section class="py-16 theme-bg-primary">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">学習パス</h2>
-      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold theme-text-primary mb-4">学習パス</h2>
+      <p class="text-lg theme-text-secondary max-w-3xl mx-auto">
         4つのフェーズで段階的にWebSocket技術をマスター。
         基礎理解から実践的なプロジェクト開発まで体系的に学習します
       </p>
@@ -285,7 +285,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between">
               <div class="flex-1">
                 <div class="flex items-center justify-center md:justify-start mb-2">
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mr-3">
+                  <h3 class="text-xl font-semibold theme-text-primary mr-3">
                     Phase {phase.phase}: {phase.title}
                   </h3>
                   <span
@@ -294,7 +294,7 @@
                     {phase.duration}
                   </span>
                 </div>
-                <p class="text-gray-600 dark:text-gray-400">
+                <p class="theme-text-secondary">
                   {phase.description}
                 </p>
               </div>
@@ -303,10 +303,10 @@
                 {#if progress.phases[phase.phase - 1]}
                   {@const phaseProgress = progress.phases[phase.phase - 1]}
                   <div class="text-right">
-                    <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <div class="text-lg font-semibold theme-text-primary">
                       {phaseProgress.completedLessons}/{phaseProgress.totalLessons}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">レッスン完了</div>
+                    <div class="text-sm theme-text-muted">レッスン完了</div>
                     <div class="w-24 progress-bar mt-2">
                       <div
                         class="progress-fill"
@@ -330,9 +330,7 @@
 {#if mounted && recentActivities.length > 0}
   <section class="py-16 bg-gray-50 dark:bg-gray-900">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
-        最近の学習活動
-      </h2>
+      <h2 class="text-2xl font-bold theme-text-primary mb-8 text-center">最近の学習活動</h2>
 
       <div class="space-y-4">
         {#each recentActivities as activity (activity.id)}
@@ -340,11 +338,11 @@
             <div class="flex items-center">
               <div class="w-3 h-3 bg-green-500 rounded-full mr-4"></div>
               <div>
-                <div class="font-medium text-gray-900 dark:text-gray-100">
+                <div class="font-medium theme-text-primary">
                   レッスン {activity.id} を完了
                 </div>
                 {#if activity.completedAt}
-                  <div class="text-sm text-gray-500 dark:text-gray-400">
+                  <div class="text-sm theme-text-muted">
                     {activity.completedAt.toLocaleDateString('ja-JP', {
                       year: 'numeric',
                       month: 'long',

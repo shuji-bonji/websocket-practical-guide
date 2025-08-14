@@ -11,8 +11,8 @@
 
 <div class="max-w-4xl mx-auto py-8">
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">📚 学習目次</h1>
-    <p class="text-lg text-gray-600 dark:text-gray-400">
+    <h1 class="text-3xl font-bold theme-text-primary mb-4">📚 学習目次</h1>
+    <p class="text-lg theme-text-secondary">
       WebSocket学習プロジェクトの完全なカリキュラム構成と各セクションの概要です。
     </p>
   </div>
@@ -87,16 +87,14 @@
   <div
     class="mt-8 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6"
   >
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-      📊 Phase 1 学習進行状況
-    </h2>
+    <h2 class="text-xl font-semibold theme-text-primary mb-4">📊 Phase 1 学習進行状況</h2>
 
     {#if progress.phases.length > 0}
       {@const phase1 = progress.phases[0]}
       <div class="mb-4">
         <div class="flex justify-between items-center mb-2">
           <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{phase1.name}</span>
-          <span class="text-sm text-gray-600 dark:text-gray-400"
+          <span class="text-sm theme-text-secondary"
             >{phase1.completedLessons}/{phase1.totalLessons} 完了</span
           >
         </div>
@@ -109,7 +107,7 @@
       </div>
     {/if}
 
-    <div class="text-sm text-gray-600 dark:text-gray-400">
+    <div class="text-sm theme-text-secondary">
       <p>🎯 <strong>Phase 1の目標:</strong> WebSocketの基本概念理解とブラウザAPIの習得</p>
       <p>📍 <strong>現在の環境:</strong> GitHub Pages（静的サイト）+ パブリックWebSocketサービス</p>
     </div>

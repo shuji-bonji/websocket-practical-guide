@@ -29,9 +29,9 @@
   }
 
   const headingClasses = {
-    h2: 'text-2xl font-bold text-gray-900 dark:text-gray-100',
-    h3: 'text-xl font-semibold text-gray-800 dark:text-gray-200',
-    h4: 'text-lg font-medium text-gray-700 dark:text-gray-300'
+    h2: 'text-2xl font-bold theme-text-primary',
+    h3: 'text-xl font-semibold theme-text-primary',
+    h4: 'text-lg font-medium theme-text-secondary'
   };
 
   const underlineClasses = {

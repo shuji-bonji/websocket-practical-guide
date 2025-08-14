@@ -75,7 +75,7 @@
           </div>
         {/if}
         {#if title}
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+          <h3 class="text-lg font-semibold theme-text-primary">{title}</h3>
         {/if}
       </div>
     </div>
