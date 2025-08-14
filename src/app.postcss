@@ -4,6 +4,92 @@
 
 /* Prose dark mode support for MDsveX content */
 @layer components {
+  /* Common dark mode utility classes */
+  .theme-bg-primary {
+    @apply bg-white dark:bg-gray-800;
+  }
+
+  .theme-bg-secondary {
+    @apply bg-gray-50 dark:bg-gray-900;
+  }
+
+  .theme-bg-tertiary {
+    @apply bg-gray-100 dark:bg-gray-700;
+  }
+
+  .theme-text-primary {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+
+  .theme-text-secondary {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .theme-text-muted {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .theme-border-primary {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+
+  .theme-border-secondary {
+    @apply border-gray-300 dark:border-gray-600;
+  }
+
+  /* Component-level utilities */
+  .theme-card {
+    @apply theme-bg-primary theme-text-primary theme-border-primary border rounded-lg shadow-sm;
+  }
+
+  .theme-section {
+    @apply theme-bg-primary theme-text-primary;
+  }
+
+  .theme-button-primary {
+    @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white;
+  }
+
+  .theme-button-secondary {
+    @apply theme-bg-tertiary hover:bg-gray-200 dark:hover:bg-gray-600 theme-text-primary theme-border-primary border;
+  }
+
+  .theme-input {
+    @apply theme-bg-primary theme-text-primary theme-border-primary border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .theme-table {
+    @apply theme-bg-primary theme-border-primary border rounded-lg overflow-hidden;
+  }
+
+  .theme-table-header {
+    @apply bg-gray-50 dark:bg-gray-700 theme-text-primary theme-border-primary border-b;
+  }
+
+  .theme-table-row {
+    @apply theme-border-primary border-b last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700/50;
+  }
+
+  .theme-code {
+    @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 theme-border-primary border rounded px-2 py-1 text-sm font-mono;
+  }
+
+  .theme-status-success {
+    @apply text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800;
+  }
+
+  .theme-status-warning {
+    @apply text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800;
+  }
+
+  .theme-status-error {
+    @apply text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800;
+  }
+
+  .theme-status-info {
+    @apply text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800;
+  }
+
   /* Auto-apply dark mode to prose elements */
   .dark .prose {
     @apply prose-invert;
