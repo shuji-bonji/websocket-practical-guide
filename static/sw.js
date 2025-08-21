@@ -1,18 +1,22 @@
 const CACHE_NAME = 'websocket-guide-v1';
-const urlsToCache = [
-  '/websocket-practical-guide/',
-  '/websocket-practical-guide/curriculum',
-  '/websocket-practical-guide/table-of-contents',
-  '/websocket-practical-guide/resources',
-  '/websocket-practical-guide/favicon.png'
-];
+const urlsToCache = ['/websocket-practical-guide/', '/websocket-practical-guide/favicon.png'];
 
 // Install event - cache assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
+      .then((cache) => {
+        console.log('Opened cache');
+        // Try to cache each URL individually to handle errors gracefully
+        return Promise.all(
+          urlsToCache.map((url) => {
+            return cache.add(url).catch((err) => {
+              console.warn(`Failed to cache ${url}:`, err);
+            });
+          })
+        );
+      })
       .then(() => self.skipWaiting())
   );
 });
@@ -26,6 +30,7 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
@@ -47,11 +52,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
         // Check if valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
+        if (!response || response.status !== 200 || response.type === 'opaque') {
           return response;
         }
 
@@ -59,7 +69,10 @@ self.addEventListener('fetch', (event) => {
         const responseToCache = response.clone();
 
         caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+          // Only cache successful responses
+          if (response.status === 200) {
+            cache.put(event.request, responseToCache);
+          }
         });
 
         return response;
