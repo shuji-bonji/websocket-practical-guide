@@ -1,0 +1,28 @@
+{
+  "name": "WebSocket 実践ガイド",
+  "short_name": "WebSocket",
+  "description": "ブラウザ標準WebSocket APIを使用したリアルタイム通信の実践的なガイド",
+  "start_url": "/websocket-practical-guide/",
+  "scope": "/websocket-practical-guide/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/websocket-practical-guide/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/websocket-practical-guide/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "developer", "productivity"],
+  "lang": "ja",
+  "dir": "ltr"
+}
