@@ -7,7 +7,22 @@ export default defineConfig({
     include: [
       'prismjs',
       'prismjs/components/prism-typescript',
-      'prismjs/components/prism-javascript'
+      'prismjs/components/prism-javascript',
+      'mermaid'
     ]
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('mermaid')) {
+            return 'mermaid';
+          }
+          if (id.includes('prismjs')) {
+            return 'prism';
+          }
+        }
+      }
+    }
   }
 });

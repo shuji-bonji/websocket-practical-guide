@@ -52,25 +52,36 @@
     }
   });
 
-  // Prism.js syntax highlighting initialization
+  // Prism.js syntax highlighting initialization - optimized for Safari
   onMount(() => {
-    // Highlight all code blocks on initial load
-    highlightAll();
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      highlightAll();
+    });
 
-    // Re-highlight on route changes
+    // Debounced re-highlighting for route changes
+    let highlightTimeout: ReturnType<typeof setTimeout>;
     const observer = new MutationObserver(() => {
-      setTimeout(() => highlightAll(), 100);
+      clearTimeout(highlightTimeout);
+      highlightTimeout = setTimeout(() => {
+        requestAnimationFrame(() => {
+          highlightAll();
+        });
+      }, 200); // Increased delay for Safari
     });
 
     const mainContent = document.querySelector('main');
     if (mainContent) {
       observer.observe(mainContent, {
         childList: true,
-        subtree: true
+        subtree: false // Less aggressive observation
       });
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(highlightTimeout);
+    };
   });
 </script>
 
