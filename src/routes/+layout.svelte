@@ -27,6 +27,20 @@
     }
   });
 
+  // Service Worker registration
+  onMount(() => {
+    if ('serviceWorker' in navigator && typeof window !== 'undefined') {
+      navigator.serviceWorker
+        .register('/websocket-practical-guide/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered:', registration);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  });
+
   // GitHub Pages SPA fallback handling
   onMount(() => {
     // Handle redirect from 404.html
