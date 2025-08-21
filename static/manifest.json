@@ -10,13 +10,13 @@
   "background_color": "#ffffff",
   "icons": [
     {
-      "src": "/websocket-practical-guide/icon-192.png",
+      "src": "/websocket-practical-guide/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/websocket-practical-guide/icon-512.png",
+      "src": "/websocket-practical-guide/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
