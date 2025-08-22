@@ -9,7 +9,7 @@ difficulty: "初級"
   import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout
@@ -36,7 +36,7 @@ difficulty: "初級"
 
 リアルタイム通信を実現する様々な技術の分類と特徴を理解しましょう。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 mindmap
   root((リアルタイム<br/>通信技術))
     HTTP系技術
@@ -350,7 +350,7 @@ HTTP/2上でProtocol Buffersを使用した効率的なRPC通信を実現し、4
 
 プロジェクト要件に基づく技術選択の決定フローです。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 flowchart TD
     A[プロジェクト要件] --> B{リアルタイム性の要求}
     

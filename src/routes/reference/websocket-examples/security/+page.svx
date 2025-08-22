@@ -7,7 +7,7 @@ description: 'セキュリティ監視、侵入検知、監査ログシステム
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import { idsIpsThreatResponseDiagram, complianceMonitoringDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
@@ -39,7 +39,7 @@ WebSocketベースのセキュリティ監視システムは、リアルタイ�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "データ収集層"
         FIREWALL[🔥 ファイアウォール] --> SIEM[🔍 SIEM システム]
@@ -90,7 +90,7 @@ IDS/IPSシステムとWebSocketの統合により、リアルタイムでの脅�
 
 </Card>
 
-<Mermaid chart={idsIpsThreatResponseDiagram} />
+<MermaidLazyLoad chart={idsIpsThreatResponseDiagram} />
 
 </Section>
 
@@ -102,7 +102,7 @@ IDS/IPSシステムとWebSocketの統合により、リアルタイムでの脅�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "ユーザー認証"
         USER[👤 ユーザー] --> MFA[🔐 多要素認証]
@@ -151,7 +151,7 @@ WebSocketを活用したリアルタイムセッション監視システムの�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "セッション作成"
         LOGIN[🔑 ログイン] --> TOKEN[🎫 JWTトークン生成]
@@ -196,7 +196,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "ログソース"
         APP[📱 アプリケーション] --> COLLECTOR[📊 ログコレクター]
@@ -246,7 +246,7 @@ GDPR、SOX法などの法規制に対応したコンプライアンス自動化�
 
 </Card>
 
-<Mermaid chart={complianceMonitoringDiagram} />
+<MermaidLazyLoad chart={complianceMonitoringDiagram} />
 
 </Section>
 
@@ -258,7 +258,7 @@ GDPR、SOX法などの法規制に対応したコンプライアンス自動化�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "インシデント検知"
         ALERT[🚨 アラート発生] --> TRIAGE[🔍 トリアージ]
@@ -310,7 +310,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "脅威情報源"
         OSINT[🌐 OSINT] --> FEED[📡 脅威フィード]

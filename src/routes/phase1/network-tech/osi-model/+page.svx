@@ -11,7 +11,7 @@ lesson: "2.2"
 	import LessonLayout from '$lib/components/common/LessonLayout.svelte';
 	import Section from '$lib/components/common/Section.svelte';
 	import Card from '$lib/components/common/Card.svelte';
-	import Mermaid from '$lib/components/Mermaid.svelte';
+	import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout

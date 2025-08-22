@@ -5,7 +5,7 @@ description: 'リアルタイム文書編集、ホワイトボード、コード
 
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -421,7 +421,7 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "クライアント側"
         A[👤 編集者A] --> A1[📝 ローカルエディタ]
@@ -461,7 +461,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant A as 編集者A
     participant S as OTサーバー
@@ -495,7 +495,7 @@ CRDTは競合のない分散データ構造で、自動的にマージ可能な�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "編集者ノード"
         A[👤 ノードA] --> A1[📄 CRDT状態A]
@@ -537,7 +537,7 @@ graph LR
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "入力層"
         M[🖱️ マウス/タッチ] --> C[📐 座標取得]
@@ -578,7 +578,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant U as ユーザー
     participant C as クライアント
@@ -616,7 +616,7 @@ sequenceDiagram
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "開発者"
         D1[👨‍💻 開発者1] --> E1[💻 エディタ1]
@@ -667,7 +667,7 @@ graph TD
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "ユーザーA"
         A[👤 カーソル位置] --> A1[📍 座標計算]
@@ -711,7 +711,7 @@ graph LR
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "クライアント最適化"
         I[⌨️ 入力イベント] --> B[📦 バッチング]

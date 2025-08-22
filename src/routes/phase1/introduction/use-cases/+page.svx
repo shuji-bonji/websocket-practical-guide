@@ -7,7 +7,7 @@ description: 'WebSocketの11の主要利用例を視覚的な図表で理解し�
   import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout
@@ -38,7 +38,7 @@ description: 'WebSocketの11の主要利用例を視覚的な図表で理解し�
 
 WebSocketは以下の11の主要カテゴリーで活用されています。
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="high" chart={`
 mindmap
   root((WebSocket利用例))
     リアルタイム通信
@@ -80,7 +80,7 @@ WebSocketは従来のHTTP通信の「リクエスト→レスポンス」の制�
 - ❌ **HTTP**: ユーザーがページを更新しないと新しいメッセージが表示されない
 - ✅ **WebSocket**: 他のユーザーがメッセージを送信した瞬間に全員の画面に表示される
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="normal" chart={`
 graph LR
     A[👤 ユーザーA] -->|メッセージ送信| C[WebSocketサーバー]
     B[👤 ユーザーB] -->|メッセージ送信| C
@@ -142,7 +142,7 @@ graph LR
 - 👥 **参加者管理**: 通話への参加・離脱を即座に他の参加者に通知
 - 🎥 **メディア制御**: カメラ・マイクのオン/オフ状態を同期
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="normal" chart={`
 sequenceDiagram
     participant A as 👤 発信者
     participant S as WebSocketサーバー
@@ -171,7 +171,7 @@ sequenceDiagram
 <Card title="詳細な実装例" icon="book" accentColor="indigo">
 
 **さらに詳しく学ぶ**
-- [📱 チャット・メッセージング実装詳細](/reference/websocket-examples/chat)
+- [📱 チャット・メッセージング実装詳細](/websocket-practical-guide/reference/websocket-examples/chat)
 
 </Card>
 
@@ -192,7 +192,7 @@ sequenceDiagram
 - 🔄 **競合解決**: 同じ箇所への同時編集を自動的に調整
 - 👥 **プレゼンス表示**: 現在編集中のユーザーをリアルタイムで表示
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="normal" chart={`
 graph TB
     A[👤 編集者A] --> A1[📝 ローカルエディタ]
     B[👤 編集者B] --> B1[📝 ローカルエディタ]
@@ -237,7 +237,7 @@ graph TB
 <Card title="詳細な実装例" icon="book" accentColor="indigo">
 
 **さらに詳しく学ぶ**
-- [📝 ドキュメント共同編集の実装](/reference/websocket-examples/collaboration)
+- [📝 ドキュメント共同編集の実装](/websocket-practical-guide/reference/websocket-examples/collaboration)
 
 </Card>
 
@@ -258,7 +258,7 @@ graph TB
 - ⚡ **高頻度取引対応**: ミリ秒単位での価格変動に対応
 - 🔔 **アラート通知**: 条件に合致した瞬間に通知を送信
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="normal" chart={`
 graph TB
     subgraph "データソース"
         A[📈 株式取引所] --> D[WebSocketハブ]
@@ -305,7 +305,7 @@ IoTシステムでは、WebSocketがセンサーデータの収集から制御�
 - 📊 **リアルタイム監視**: 異常検知や状態変化を即座に通知
 - 🏠 **スマート制御**: 環境に応じた自動制御システム
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="low" chart={`
 graph BT
     subgraph "IoTデバイス層"
         A[🌡️ 温度センサー] --> G[WebSocketゲートウェイ]
@@ -349,9 +349,9 @@ graph BT
 <Card title="詳細な実装例" icon="book" accentColor="indigo">
 
 **さらに詳しく学ぶ**
-- [📊 リアルタイムデータストリーミング](/reference/websocket-examples/data-streaming)
-- [💹 金融取引システムの実装](/reference/websocket-examples/finance-medical)
-- [🏭 IoTセンサーネットワーク](/reference/websocket-examples/iot)
+- [📊 リアルタイムデータストリーミング](/websocket-practical-guide/reference/websocket-examples/data-streaming)
+- [💹 金融取引システムの実装](/websocket-practical-guide/reference/websocket-examples/finance-medical)
+- [🏭 IoTセンサーネットワーク](/websocket-practical-guide/reference/websocket-examples/iot)
 
 </Card>
 
@@ -372,7 +372,7 @@ graph BT
 - 📱 **マルチデバイス対応**: Web、モバイル、デスクトップ全てに統一配信
 - 📊 **配信状況追跡**: 通知の到達率や開封率をリアルタイムで監視
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="low" chart={`
 graph TD
     subgraph "通知トリガー"
         A[👤 ユーザーアクション] --> D[WebSocket通知サーバー]
@@ -410,7 +410,7 @@ graph TD
 <Card title="詳細な実装例" icon="book" accentColor="indigo">
 
 **さらに詳しく学ぶ**
-- [🔔 プッシュ通知システムの実装](/reference/websocket-examples/notifications)
+- [🔔 プッシュ通知システムの実装](/websocket-practical-guide/reference/websocket-examples/notifications)
 
 </Card>
 
@@ -431,7 +431,7 @@ graph TD
 - 🎯 **リアルタイムマッチング**: プレイヤー同士の即座なマッチング
 - 📊 **ゲーム状態管理**: スコア、ランキング、プレイヤー状態の同期
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="normal" chart={`
 graph TB
     A[🎮 プレイヤー1]
     B[🎮 プレイヤー2]
@@ -481,7 +481,7 @@ VR・メタバース空間では、WebSocketがアバターの位置、動作、
 - 🤝 **協調作業**: 仮想空間でのオブジェクト操作・共同作業
 - 🌐 **永続的世界**: 複数ユーザーが同じ仮想空間を共有
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="normal" chart={`
 sequenceDiagram
     participant A as 🥽 VRユーザーA
     participant S as WebSocketサーバー
@@ -508,8 +508,8 @@ sequenceDiagram
 <Card title="詳細な実装例" icon="book" accentColor="indigo">
 
 **さらに詳しく学ぶ**
-- [🎮 オンラインゲームの実装](/reference/websocket-examples/vr-metaverse)
-- [🥽 VR・メタバース体験の構築](/reference/websocket-examples/vr-metaverse)
+- [🎮 オンラインゲームの実装](/websocket-practical-guide/reference/websocket-examples/vr-metaverse)
+- [🥽 VR・メタバース体験の構築](/websocket-practical-guide/reference/websocket-examples/vr-metaverse)
 
 </Card>
 
@@ -530,7 +530,7 @@ PWAでは、WebSocketがService Workerと連携してオフライン時のデー
 - 📊 **バックグラウンド処理**: アプリが非アクティブでも通知・更新を継続
 - 🌐 **クロスプラットフォーム**: 同じコードベースで全プラットフォーム対応
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="low" chart={`
 graph TD
     A[📱 PWAアプリ] -->|WebSocket接続| B[WebSocketサーバー]
     A -->|オフライン時| C[🔄 Service Worker]
@@ -566,10 +566,10 @@ graph TD
 <Card title="詳細な実装例" icon="book" accentColor="indigo">
 
 **さらに詳しく学ぶ**
-- [📱 PWA統合の実装詳細](/reference/websocket-examples/pwa)
-- [🔐 セキュリティ実装のベストプラクティス](/reference/websocket-examples/security)
-- [⚙️ バックエンドシステム統合](/reference/websocket-examples/backend)
-- [🔄 リアルタイムシミュレーション](/reference/websocket-examples/simulation)
+- [📱 PWA統合の実装詳細](/websocket-practical-guide/reference/websocket-examples/pwa)
+- [🔐 セキュリティ実装のベストプラクティス](/websocket-practical-guide/reference/websocket-examples/security)
+- [⚙️ バックエンドシステム統合](/websocket-practical-guide/reference/websocket-examples/backend)
+- [🔄 リアルタイムシミュレーション](/websocket-practical-guide/reference/websocket-examples/simulation)
 
 </Card>
 
@@ -591,7 +591,7 @@ graph TD
 
 <Card title="スケーラビリティ考慮事項" icon="scale" accentColor="orange">
 
-<Mermaid chart={`
+<MermaidLazyLoad priority="low" chart={`
 graph BT
     subgraph "小規模 (~1,000接続)"
         A[シングルサーバー] --> A1[インメモリ状態管理]
@@ -626,33 +626,33 @@ graph BT
 各カテゴリーの詳細な実装例とアーキテクチャパターンを確認できます。
 
 ### 🔄 リアルタイム通信
-- [📱 チャット・メッセージング実装例](/reference/websocket-examples/chat)
-- [🎥 ビデオ通話・ライブ配信](/reference/websocket-examples/chat)
+- [📱 チャット・メッセージング実装例](/websocket-practical-guide/reference/websocket-examples/chat)
+- [🎥 ビデオ通話・ライブ配信](/websocket-practical-guide/reference/websocket-examples/chat)
 
 ### 🤝 協働作業
-- [📝 ドキュメント共同編集](/reference/websocket-examples/collaboration)
-- [🎨 ホワイトボード・デザインツール](/reference/websocket-examples/collaboration)
+- [📝 ドキュメント共同編集](/websocket-practical-guide/reference/websocket-examples/collaboration)
+- [🎨 ホワイトボード・デザインツール](/websocket-practical-guide/reference/websocket-examples/collaboration)
 
 ### 📊 データ配信・ストリーミング
-- [💹 金融取引システム](/reference/websocket-examples/finance-medical)
-- [🏥 医療データ統合](/reference/websocket-examples/finance-medical)
-- [📈 データストリーミング](/reference/websocket-examples/data-streaming)
+- [💹 金融取引システム](/websocket-practical-guide/reference/websocket-examples/finance-medical)
+- [🏥 医療データ統合](/websocket-practical-guide/reference/websocket-examples/finance-medical)
+- [📈 データストリーミング](/websocket-practical-guide/reference/websocket-examples/data-streaming)
 
 ### 🌐 IoT・産業システム
-- [🏭 IoTセンサーネットワーク](/reference/websocket-examples/iot)
-- [🔔 通知システム](/reference/websocket-examples/notifications)
+- [🏭 IoTセンサーネットワーク](/websocket-practical-guide/reference/websocket-examples/iot)
+- [🔔 通知システム](/websocket-practical-guide/reference/websocket-examples/notifications)
 
 ### 🎮 エンターテイメント
-- [🎮 オンラインゲーム](/reference/websocket-examples/vr-metaverse)
-- [🥽 VR・メタバース](/reference/websocket-examples/vr-metaverse)
+- [🎮 オンラインゲーム](/websocket-practical-guide/reference/websocket-examples/vr-metaverse)
+- [🥽 VR・メタバース](/websocket-practical-guide/reference/websocket-examples/vr-metaverse)
 
 ### 📱 PWA・モバイル統合
-- [📱 Progressive Web App統合](/reference/websocket-examples/pwa)
-- [🔐 セキュリティ実装](/reference/websocket-examples/security)
+- [📱 Progressive Web App統合](/websocket-practical-guide/reference/websocket-examples/pwa)
+- [🔐 セキュリティ実装](/websocket-practical-guide/reference/websocket-examples/security)
 
 ### 🖥️ バックエンド・インフラ
-- [⚙️ サーバーサイド実装](/reference/websocket-examples/backend)
-- [🔄 リアルタイムシミュレーション](/reference/websocket-examples/simulation)
+- [⚙️ サーバーサイド実装](/websocket-practical-guide/reference/websocket-examples/backend)
+- [🔄 リアルタイムシミュレーション](/websocket-practical-guide/reference/websocket-examples/simulation)
 
 </Card>
 

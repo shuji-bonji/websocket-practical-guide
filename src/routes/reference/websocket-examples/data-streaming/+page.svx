@@ -5,7 +5,7 @@ description: '株価情報、スポーツスコア、ライブデータ配信の
 
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -562,7 +562,7 @@ WebSocketを使用することで、以下のような劇的な改善が実現�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "データソース"
         EX1[📈 NYSE] --> AGG[📊 データ集約器]
@@ -864,7 +864,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "データソース"
         EX1[📈 NYSE] --> AGG[📊 データ集約器]
@@ -914,7 +914,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={hftDiagram} />
+<MermaidLazyLoad chart={hftDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -926,7 +926,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "データ収集"
         S1[⚽ サッカー] --> DC[📊 データコレクター]
@@ -975,7 +975,7 @@ graph TD
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "イベント分類"
         E1[⚽ ゴール] --> P1[🔴 最高優先度]
@@ -1015,7 +1015,7 @@ graph LR
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "IoTデバイス層 (数万台)"
         T1[🌡️ 温度センサー] --> GW[🌐 IoTゲートウェイ]
@@ -1060,7 +1060,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "生データ"
         RAW[📊 Raw Data] --> SIZE[💾 1MB/sec]
@@ -1100,7 +1100,7 @@ graph LR
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "コンテンツ生成"
         C1[📹 カメラ] --> ENC[🔄 エンコーダー]
@@ -1149,7 +1149,7 @@ graph TD
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "グローバル分散"
         US[🇺🇸 US Region] --> LB[⚖️ Global Load Balancer]
@@ -1198,7 +1198,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={performanceOptimizationDiagram} />
+<MermaidLazyLoad chart={performanceOptimizationDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">

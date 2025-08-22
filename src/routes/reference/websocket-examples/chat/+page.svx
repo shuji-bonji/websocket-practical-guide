@@ -5,7 +5,7 @@ description: 'チャット、メッセージング、音声・ビデオ通話シ
 
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -326,7 +326,7 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 </Card>
 
-<Mermaid chart={basicArchitectureDiagram} />
+<MermaidLazyLoad chart={basicArchitectureDiagram} />
 
 </Section>
 
@@ -511,7 +511,7 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 </Card>
 
-<Mermaid chart={chatSequenceDiagram} />
+<MermaidLazyLoad chart={chatSequenceDiagram} />
 
 </Section>
 
@@ -519,7 +519,7 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 <Card title="ルーム管理システム" icon="info" accentColor="purple">
 
-<Mermaid chart={groupChatRoomDiagram} />
+<MermaidLazyLoad chart={groupChatRoomDiagram} />
 
 </Card>
 
@@ -529,13 +529,13 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 <Card title="WebRTC + WebSocket ハイブリッド構成" icon="info" accentColor="red">
 
-<Mermaid chart={webrtcHybridDiagram} />
+<MermaidLazyLoad chart={webrtcHybridDiagram} />
 
 </Card>
 
 <Card title="通話品質管理" icon="warning" accentColor="orange">
 
-<Mermaid chart={qualityControlDiagram} />
+<MermaidLazyLoad chart={qualityControlDiagram} />
 
 </Card>
 
@@ -545,7 +545,7 @@ WebSocketを使用することで、以下のような改善が実現できま�
 
 <Card title="水平スケーリング構成" icon="info" accentColor="indigo">
 
-<Mermaid chart={horizontalScalingDiagram} />
+<MermaidLazyLoad chart={horizontalScalingDiagram} />
 
 </Card>
 

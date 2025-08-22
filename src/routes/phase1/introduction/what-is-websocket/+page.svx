@@ -11,7 +11,7 @@ difficulty: "初級"
   import Card from '$lib/components/common/Card.svelte';
   import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
   import InteractiveDemo from '$lib/components/learning/InteractiveDemo.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout
@@ -66,7 +66,7 @@ WebSocketは、これらの制限を解決します。
 
 WebSocketの通信は、以下の3つの段階で構成されます。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント<br/>(ブラウザ)
     participant S as サーバー

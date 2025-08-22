@@ -7,7 +7,7 @@ description: '物理シミュレーション、ゲームエンジン、科学計
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import { distributedComputingSimulationDiagram, molecularDynamicsSimulationDiagram, wasmHighSpeedComputationDiagram } from '$lib/charts/allCharts.ts';
 </script>
 
@@ -40,7 +40,7 @@ WebSocketを活用したリアルタイム物理シミュレーションシス�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "シミュレーション入力"
         USER[👤 ユーザー入力] --> PARAM[⚙️ パラメータ設定]
@@ -92,7 +92,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={distributedComputingSimulationDiagram} />
+<MermaidLazyLoad chart={distributedComputingSimulationDiagram} />
 
 </Section>
 
@@ -104,7 +104,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "ゲームクライアント"
         P1[🎮 プレイヤー1] --> GE1[🎯 ゲームエンジン1]
@@ -156,7 +156,7 @@ graph TD
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "クライアント予測"
         INPUT[⌨️ 入力] --> LOCAL[📱 ローカル実行]
@@ -198,7 +198,7 @@ graph LR
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "問題設定"
         DOMAIN[🏗️ 計算領域] --> MESH[📐 メッシュ生成]
@@ -251,7 +251,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={molecularDynamicsSimulationDiagram} />
+<MermaidLazyLoad chart={molecularDynamicsSimulationDiagram} />
 
 </Section>
 
@@ -263,7 +263,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "学習コンテンツ"
         PHYSICS[⚗️ 物理実験] --> EDU[🎓 教育プラットフォーム]
@@ -315,7 +315,7 @@ WebWorkerを活用した並列計算アーキテクチャの実装方法を説�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "メインスレッド"
         UI[📱 ユーザーUI] --> MAIN[🧵 メインスレッド]
@@ -361,7 +361,7 @@ WebAssemblyを活用した高速計算システムの実装方法を説明しま
 
 </Card>
 
-<Mermaid chart={wasmHighSpeedComputationDiagram} />
+<MermaidLazyLoad chart={wasmHighSpeedComputationDiagram} />
 
 </Section>
 
