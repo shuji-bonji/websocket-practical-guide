@@ -14,6 +14,24 @@
   // 現在のパスをSvelteKitのpageストアから取得
   let currentPath = $derived($page.url.pathname);
 
+  // 現在のパスがアイテムのパスと一致するかチェック
+  function isCurrentPath(itemHref: string): boolean {
+    // href() 関数でbase pathを追加した完全パスを取得
+    const fullItemPath = href(itemHref);
+
+    // トップページの特別処理
+    if (itemHref === '/') {
+      // /websocket-practical-guide または /websocket-practical-guide/ と一致
+      return currentPath === fullItemPath || currentPath === fullItemPath + '/';
+    }
+
+    // 通常のパス比較（末尾のスラッシュを考慮）
+    const normalizedCurrent = currentPath.replace(/\/$/, '');
+    const normalizedItem = fullItemPath.replace(/\/$/, '');
+
+    return normalizedCurrent === normalizedItem;
+  }
+
   // ナビゲーションアイテムの型定義
   interface NavigationItem {
     href: string;
@@ -515,8 +533,9 @@
                 {:else}
                   <a
                     href={href(item.href)}
-                    class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
-                    item.href
+                    class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {isCurrentPath(
+                      item.href
+                    )
                       ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500 dark:border-blue-400'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}"
                   >
@@ -722,8 +741,9 @@
                   {:else}
                     <a
                       href={href(item.href)}
-                      class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {currentPath ===
-                      item.href
+                      class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 {isCurrentPath(
+                        item.href
+                      )
                         ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}"
                       onclick={() => (open = false)}
