@@ -1,6 +1,6 @@
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -373,7 +373,7 @@ class NotificationMetrics {
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "イベントソース"
         A[👤 ユーザーアクション] --> E[📅 イベントコレクター]
@@ -416,7 +416,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={notificationFlowDiagram} />
+<MermaidLazyLoad chart={notificationFlowDiagram} />
 
 </Section>
 
@@ -428,7 +428,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "ユーザー設定"
         U[👤 ユーザー] --> S[⚙️ 設定UI]
@@ -470,7 +470,7 @@ WebSocketを活用したリアルタイム監視システムの構成。
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "監視対象"
         S1[🖥️ Webサーバー] --> M[📊 監視エージェント]
@@ -512,7 +512,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={alertEscalationDiagram} />
+<MermaidLazyLoad chart={alertEscalationDiagram} />
 
 </Section>
 
@@ -524,7 +524,7 @@ Progressive Web Appでの通知システム統合アーキテクチャ。
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "PWAアプリ"
         A[📱 PWAアプリ] --> SW[🔄 Service Worker]
@@ -572,7 +572,7 @@ graph TD
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "ロードバランサー"
         LB[⚖️ WebSocketロードバランサー]
@@ -638,7 +638,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "配信データ"
         S[📤 送信ログ] --> A[📊 分析エンジン]

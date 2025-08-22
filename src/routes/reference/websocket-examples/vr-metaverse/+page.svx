@@ -4,7 +4,7 @@ description: '仮想現実、拡張現実、メタバース空間のWebSocketア
 ---
 
 <script>
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import { vrSpatialPartitioningDiagram, nftTradingDiagram } from '$lib/charts/allCharts.ts';
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
 </script>
@@ -26,7 +26,7 @@ description: '仮想現実、拡張現実、メタバース空間のWebSocketア
 
 ### 分散仮想世界システム
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "ユーザー層"
         VR[🥽 VRヘッドセット] --> CLIENT[📱 メタバースクライアント]
@@ -78,13 +78,13 @@ graph TB
 
 ### 空間分割・負荷分散
 
-<Mermaid chart={vrSpatialPartitioningDiagram} />
+<MermaidLazyLoad chart={vrSpatialPartitioningDiagram} />
 
 ## 2. VR・ARインタラクション
 
 ### 没入型インタラクションシステム
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "入力デバイス"
         HMD[🥽 HMDトラッキング] --> INPUT[📊 入力統合]
@@ -130,7 +130,7 @@ graph TD
 
 ### 高精度トラッキング同期
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "センサーフュージョン"
         IMU[📊 IMUセンサー] --> FUSION[🔄 センサーフュージョン]
@@ -170,7 +170,7 @@ graph LR
 
 ### マルチユーザー仮想空間
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "仮想空間管理"
         ROOM[🏠 仮想ルーム] --> CAPACITY[👥 収容人数管理]
@@ -219,7 +219,7 @@ graph TB
 
 ### バーチャル経済プラットフォーム
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "デジタル資産"
         NFT[🎨 NFTアート] --> ASSET[📦 アセット管理]
@@ -264,7 +264,7 @@ graph TD
 
 ### 分散型取引システム
 
-<Mermaid chart={nftTradingDiagram} />
+<MermaidLazyLoad chart={nftTradingDiagram} />
 
 </div>
 
@@ -272,7 +272,7 @@ graph TD
 
 ### 高性能レンダリングパイプライン
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "レンダリング最適化"
         SCENE[🎬 シーン管理] --> CULLING[👁️ フラスタムカリング]

@@ -5,7 +5,7 @@ description: 'Progressive Web App統合、Service Worker連携、オフライン
 
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -319,7 +319,7 @@ PWAとWebSocketの統合により、オフライン対応のリアルタイム�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "PWAアプリケーション"
         UI[📱 PWA UI] --> SW[🔄 Service Worker]
@@ -366,7 +366,7 @@ PWAにおけるネットワーク状態の変化への対応フロー。
 
 </Card>
 
-<Mermaid chart={pwaOfflineOnlineDiagram} />
+<MermaidLazyLoad chart={pwaOfflineOnlineDiagram} />
 
 </Section>
 
@@ -384,7 +384,7 @@ PWAとプッシュ通知の統合による包括的な通知システム。
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "通知トリガー"
         EVENT[📅 イベント発生] --> TRIGGER[⚡ 通知トリガー]
@@ -445,7 +445,7 @@ graph TD
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "ローカルストレージ"
         UI[📱 ユーザーUI] --> LOCAL[💾 ローカルDB]
@@ -490,7 +490,7 @@ graph LR
 
 </Card>
 
-<Mermaid chart={syncConflictResolutionDiagram} />
+<MermaidLazyLoad chart={syncConflictResolutionDiagram} />
 
 </Section>
 
@@ -508,7 +508,7 @@ PWAライフサイクルに合わせたWebSocket接続管理。
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "PWAライフサイクル"
         INSTALL[📥 アプリインストール] --> ACTIVE[✅ アクティブ状態]
@@ -561,7 +561,7 @@ PWAパフォーマンス向上のための最適化戦略。
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "キャッシュ階層"
         L1[⚡ L1: メモリキャッシュ] --> L2[💾 L2: ブラウザキャッシュ]
@@ -611,7 +611,7 @@ PWAアプリケーションの包括的なセキュリティ対策。
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "認証・認可"
         USER[👤 ユーザー] --> AUTH[🔐 認証システム]

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { progressStore, type OverallProgress } from '$lib/stores/progress.js';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import { href } from '$lib/utils/paths';
 
   let progressData: OverallProgress = $progressStore;
@@ -116,7 +116,7 @@
       <div
         class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 mb-8"
       >
-        <Mermaid
+        <MermaidLazyLoad
           chart={`
 graph TD
     A[1.1 WebSocketとは何か] --> B[1.2 HTTPの限界と優位性]

@@ -5,7 +5,7 @@ description: 'トレーディング、決済、電子カルテ、遠隔医療シ
 
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -424,7 +424,7 @@ class RealTimePaymentSystem {
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "市場データフィード"
         NYSE[📈 NYSE] --> MDF[📊 マーケットデータフィード]
@@ -482,7 +482,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={ultraLowLatencyTradingDiagram} />
+<MermaidLazyLoad chart={ultraLowLatencyTradingDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -494,7 +494,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "決済手段"
         CARD[💳 クレジットカード] --> GATEWAY[🌐 決済ゲートウェイ]
@@ -550,7 +550,7 @@ graph TD
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "取引データ"
         TRANSACTION[💳 取引データ] --> FEATURES[📊 特徴量抽出]
@@ -599,7 +599,7 @@ graph LR
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "医療データ入力"
         EMR[📋 電子カルテ] --> CLINICAL[🩺 診療データ]
@@ -658,7 +658,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={patientMonitoringDiagram} />
+<MermaidLazyLoad chart={patientMonitoringDiagram} />
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 <div class="prose max-w-none p-8">
@@ -670,7 +670,7 @@ graph TB
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "患者側"
         PATIENT[👤 患者] --> DEVICE[📱 患者デバイス]
@@ -730,7 +730,7 @@ graph TD
 </div>
 </div>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "医療データ入力"
         SYMPTOMS[🩺 症状データ] --> AI[🤖 医療AIエンジン]

@@ -5,7 +5,7 @@ description: 'IoTデバイス管理、スマートホーム、産業IoTのWebSoc
 
 <script>
   import ReferenceLayout from '$lib/components/common/ReferenceLayout.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
   import UseCaseExample from '$lib/components/UseCaseExample.svelte';
   import Card from '$lib/components/common/Card.svelte';
   import Section from '$lib/components/common/Section.svelte';
@@ -409,7 +409,7 @@ IoT統合システムは、多様なデバイスを統一的に管理し、リ�
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "デバイス層"
         A[🌡️ 温度センサー] --> GW[🌐 IoTゲートウェイ]
@@ -463,7 +463,7 @@ graph TB
 </Card>
 
 
-<Mermaid chart={iotAutomationDiagram} />
+<MermaidLazyLoad chart={iotAutomationDiagram} />
 
 
 </Section>
@@ -482,7 +482,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "製造設備"
         M1[🏭 製造機械1] --> IPC[🖥️ 産業PC]
@@ -533,7 +533,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "データ収集"
         VIB[📳 振動データ] --> ML[🤖 機械学習モデル]
@@ -584,7 +584,7 @@ graph LR
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TD
     subgraph "農場センサー"
         SOIL[🌱 土壌湿度] --> AGW[🚜 農業IoTゲートウェイ]
@@ -645,7 +645,7 @@ graph TD
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph TB
     subgraph "交通システム"
         TRAFFIC[🚦 信号機] --> CITY[🏙️ 都市IoTプラットフォーム]
@@ -706,7 +706,7 @@ graph TB
 
 </Card>
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 graph LR
     subgraph "エッジ層"
         EDGE1[📱 エッジノード1] --> FOG[🌫️ フォグコンピューティング]

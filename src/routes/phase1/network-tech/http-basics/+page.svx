@@ -13,7 +13,7 @@ lesson: "2.1"
   import Card from '$lib/components/common/Card.svelte';
   import NetworkDiagram from '$lib/components/learning/NetworkDiagram.svelte';
   import HTTPConnectionDemo from '$lib/components/learning/HTTPConnectionDemo.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout
@@ -58,7 +58,7 @@ Connection: Upgrade
 
 HTTP/1.0では、**1つのリクエスト・レスポンスごとに TCP接続を確立・切断**していました。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as Client
     participant S as Server
@@ -97,7 +97,7 @@ sequenceDiagram
 
 HTTP/1.1では**持続的接続（Keep-Alive）**がデフォルトになりました。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as Client
     participant S as Server

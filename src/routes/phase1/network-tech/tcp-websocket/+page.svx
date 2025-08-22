@@ -9,7 +9,7 @@ difficulty: "中級"
   import LessonLayout from '$lib/components/common/LessonLayout.svelte';
   import Section from '$lib/components/common/Section.svelte';
   import Card from '$lib/components/common/Card.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout
@@ -37,7 +37,7 @@ difficulty: "中級"
 
 WebSocket接続を理解するには、まずその基盤となるTCP接続確立の詳細を理解する必要があります。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant S as サーバー
@@ -70,7 +70,7 @@ sequenceDiagram
 
 WebSocket接続確立は、TCP接続の上で行われる多段階プロセスです。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant P as プロキシ
@@ -108,7 +108,7 @@ sequenceDiagram
 
 ネットワーク通信には2つの基本的なモデルがあり、WebSocketとHTTPではそれぞれ異なるアプローチを採用しています。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 flowchart TD
     subgraph "Hop-by-Hop通信（従来のHTTP）"
         C1[クライアント] -->|個別接続| P1[プロキシ]
@@ -259,7 +259,7 @@ class WebSocketEndToEnd {
 
 企業環境などで一般的なプロキシサーバーを通した通信の違いを見てみましょう。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant P as プロキシサーバー

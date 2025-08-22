@@ -11,7 +11,7 @@ difficulty: "初級"
   import Card from '$lib/components/common/Card.svelte';
   import ConceptDiagram from '$lib/components/learning/ConceptDiagram.svelte';
   import InteractiveDemo from '$lib/components/learning/InteractiveDemo.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
+  import MermaidLazyLoad from '$lib/components/MermaidLazyLoad.svelte';
 </script>
 
 <LessonLayout
@@ -54,7 +54,7 @@ HTTPは**リクエスト・レスポンス型プロトコル**として設計さ
 
 HTTPでは、サーバーからクライアントへの能動的な通信ができません。この制約を図で確認してみましょう。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant S as サーバー
@@ -87,7 +87,7 @@ sequenceDiagram
 HTTP/1.1では、各リクエストで接続確立と切断が繰り返されます。  
 このオーバーヘッドを可視化してみましょう。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant S as サーバー
@@ -149,7 +149,7 @@ sequenceDiagram
 3. クライアントは一定時間待機後、再度リクエストを送信
 4. このサイクルを繰り返すことでデータ更新を検知
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant S as サーバー
@@ -208,7 +208,7 @@ function startPolling() {
 4. クライアントはレスポンス受信後、即座に次のリクエストを送信
 5. サーバーは再び接続を保持し、次のデータ更新を待機
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant S as サーバー
@@ -274,7 +274,7 @@ HTTP上でのサーバープッシュ実現手法。サーバーからクライ�
 4. クライアントからサーバーへの送信は別のHTTPリクエストが必要
 5. 接続が切れた場合、自動的に再接続を試行
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant C as クライアント
     participant S as サーバー
@@ -338,7 +338,7 @@ eventSource.onerror = function(event) {
 **動作の流れ**：各クライアントが独立して5秒ごとにサーバーにメッセージを確認しに行きます。  
 新しいメッセージがあるかどうかに関わらず、定期的にリクエストを送信し続けるため、ユーザーBがメッセージを受信するまでに最大5秒の遅延が発生します。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant U as ユーザーA
     participant C as クライアントA
@@ -382,7 +382,7 @@ sequenceDiagram
 **動作の流れ**：初回のハンドシェイク後、双方向の接続が維持されます。  
 サーバーは新しいメッセージを受信すると、即座に他のクライアントにプッシュ配信するため、リアルタイムでメッセージが届きます。ポーリングのような定期的なリクエストは不要です。
 
-<Mermaid chart={`
+<MermaidLazyLoad chart={`
 sequenceDiagram
     participant U as ユーザーA
     participant C as クライアントA
