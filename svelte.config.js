@@ -3,8 +3,6 @@ import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import mdsvexConfig from './mdsvex.config.js';
 
-const dev = process.env.NODE_ENV === 'development';
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   // Consult https://svelte.dev/docs/kit/integrations
@@ -20,7 +18,7 @@ const config = {
       strict: true
     }),
     paths: {
-      base: dev ? '' : '/websocket-practical-guide'
+      base: '/websocket-practical-guide'
     },
     prerender: {
       handleHttpError: ({ path, referrer, message }) => {

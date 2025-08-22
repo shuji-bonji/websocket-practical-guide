@@ -27,11 +27,12 @@
     }
   });
 
-  // Service Worker registration
+  // Service Worker registration (production only)
   onMount(() => {
-    if ('serviceWorker' in navigator && typeof window !== 'undefined') {
+    // Only register service worker in production (after build)
+    if ('serviceWorker' in navigator && typeof window !== 'undefined' && import.meta.env.PROD) {
       navigator.serviceWorker
-        .register('/websocket-practical-guide/sw.js')
+        .register(href('/sw.js'))
         .then((registration) => {
           console.log('Service Worker registered:', registration);
         })
