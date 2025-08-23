@@ -20,6 +20,7 @@
   let isLoading = $state<boolean>(true);
   let isVisible = $state<boolean>(false);
   let container = $state<HTMLDivElement>();
+  let fromCache = $state<boolean>(false);
 
   // Lightbox状態管理
   let isLightboxOpen = $state(false);
@@ -85,6 +86,40 @@
     if (!isVisible || !chart) return;
 
     try {
+      // Try to get from Service Worker cache first
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        const channel = new MessageChannel();
+
+        const cachePromise = new Promise<boolean>((resolve) => {
+          channel.port1.onmessage = (event) => {
+            if (event.data.type === 'CACHED_SVG' && event.data.fromCache) {
+              console.log('📦 Mermaid SVG loaded from cache');
+              svgContent = event.data.svg;
+              fromCache = true;
+              isLoading = false;
+              resolve(true);
+            } else {
+              console.log('🔄 Cache miss, will render new SVG');
+              resolve(false);
+            }
+          };
+        });
+
+        navigator.serviceWorker.controller.postMessage(
+          { type: 'GET_CACHED_SVG', data: { chartContent: chart } },
+          [channel.port2]
+        );
+
+        const cached = await Promise.race([
+          cachePromise,
+          new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 100))
+        ]);
+
+        if (cached) {
+          return;
+        }
+      }
+
       // Use shared initialization promise
       if (typeof window !== 'undefined' && window.__mermaidInitPromise) {
         mermaidInstance = await window.__mermaidInitPromise;
@@ -101,6 +136,21 @@
       const { svg } = await mermaidInstance.render(`${id}-${Date.now()}`, chart);
       svgContent = svg;
       errorMessage = '';
+
+      // Cache the rendered SVG
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        console.log('💾 Saving SVG to cache');
+        const channel = new MessageChannel();
+        channel.port1.onmessage = (event) => {
+          if (event.data.type === 'CACHE_RESULT' && event.data.success) {
+            console.log('✅ SVG cached successfully with ID:', event.data.id);
+          }
+        };
+        navigator.serviceWorker.controller.postMessage(
+          { type: 'CACHE_MERMAID_SVG', data: { chartContent: chart, svg } },
+          [channel.port2]
+        );
+      }
     } catch (error) {
       console.error('Mermaid rendering error:', error);
       errorMessage = `図表の表示に失敗しました`;
@@ -201,6 +251,15 @@
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html svgContent}
       </div>
+
+      {#if fromCache}
+        <span
+          class="absolute top-3 left-3 text-green-500 text-xs bg-gray-800 px-2 py-1 rounded"
+          title="キャッシュから読み込みました"
+        >
+          ⚡ Cached
+        </span>
+      {/if}
 
       <!-- 拡大ボタン -->
       <button
