@@ -1,0 +1,19 @@
+{
+  "section": "1.6",
+  "title": "Security Model",
+  "source": {
+    "text": "This section is non-normative.\n\nThe WebSocket Protocol uses the origin model used by web browsers to restrict which web pages can contact a WebSocket server when the WebSocket Protocol is used from a web page. Naturally, when the WebSocket Protocol is used by a dedicated client directly (i.e., not from a web page through a web browser), the origin model is not useful, as the client can provide any arbitrary origin string.\n\nThis protocol is intended to fail to establish a connection with servers of pre-existing protocols like SMTP [RFC5321] and HTTP, while allowing HTTP servers to opt-in to supporting this protocol if desired. This is achieved by having a strict and elaborate handshake and by limiting the data that can be inserted into the connection before the handshake is finished (thus limiting how much the server can be influenced).\n\nIt is similarly intended to fail to establish a connection when data from other protocols, especially HTTP, is sent to a WebSocket server, for example, as might happen if an HTML \"form\" were submitted to a WebSocket server. This is primarily achieved by requiring that the server prove that it read the handshake, which it can only do if the handshake contains the appropriate parts, which can only be sent by a WebSocket client. In particular, at the time of writing of this specification, fields starting with |Sec-| cannot be set by an attacker from a web browser using only HTML and JavaScript APIs such as XMLHttpRequest [XMLHttpRequest].",
+    "language": "en"
+  },
+  "translation": {
+    "text": "このセクションは非規範的である。\n\nWebSocketプロトコルは、WebページからWebSocketプロトコルを使用する際に、どのWebページがWebSocketサーバに接続できるかを制限するために、Webブラウザが使用するオリジンモデルを使用する。当然ながら、WebSocketプロトコルが専用クライアントによって直接使用される場合（つまり、Webブラウザを通じてWebページからではなく）、クライアントは任意のオリジン文字列を提供できるため、オリジンモデルは有用ではない。\n\nこのプロトコルは、HTTPサーバが希望する場合にこのプロトコルのサポートをオプトインすることを許可しながら、SMTP [RFC5321]やHTTPのような既存プロトコルのサーバとの接続確立に失敗することを意図している。これは、厳格で精巧なハンドシェイクを持ち、ハンドシェイクが完了する前に接続に挿入できるデータを制限することで達成される（したがって、サーバが影響を受ける程度を制限する）。\n\n同様に、他のプロトコル、特にHTTPからのデータがWebSocketサーバに送信された場合、例えばHTMLの「フォーム」がWebSocketサーバに送信された場合のように、接続確立に失敗することも意図している。これは主に、サーバがハンドシェイクを読んだことを証明することを要求することで達成される。これはハンドシェイクに適切な部分が含まれている場合にのみ可能であり、それはWebSocketクライアントによってのみ送信できる。特に、この仕様の執筆時点では、|Sec-|で始まるフィールドは、XMLHttpRequest [XMLHttpRequest]などのHTMLおよびJavaScript APIのみを使用するWebブラウザからは攻撃者によって設定できない。",
+    "language": "ja"
+  },
+  "evaluation": {
+    "method": "sentence-level-sampling",
+    "note": "Technical security content accurately translated.",
+    "passed": true
+  },
+  "iterations": 1,
+  "completedAt": "2026-01-17"
+}

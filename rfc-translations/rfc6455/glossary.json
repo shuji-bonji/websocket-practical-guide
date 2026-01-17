@@ -1,0 +1,97 @@
+{
+  "metadata": {
+    "rfc": "RFC 6455",
+    "version": "1.0",
+    "lastUpdated": "2026-01-17"
+  },
+  "terms": {
+    "WebSocket Protocol": {
+      "ja": "WebSocketプロトコル",
+      "note": "固有名詞として大文字維持"
+    },
+    "two-way communication": {
+      "ja": "双方向通信",
+      "note": ""
+    },
+    "untrusted code": {
+      "ja": "信頼されていないコード",
+      "note": ""
+    },
+    "controlled environment": {
+      "ja": "制御された環境",
+      "note": ""
+    },
+    "remote host": {
+      "ja": "リモートホスト",
+      "note": ""
+    },
+    "opted-in": {
+      "ja": "許可した",
+      "note": "文脈により「受け入れた」も可"
+    },
+    "security model": {
+      "ja": "セキュリティモデル",
+      "note": ""
+    },
+    "origin-based security model": {
+      "ja": "オリジンベースのセキュリティモデル",
+      "note": ""
+    },
+    "web browser": {
+      "ja": "Webブラウザ",
+      "note": "Webは大文字"
+    },
+    "opening handshake": {
+      "ja": "オープニングハンドシェイク",
+      "note": "中黒なし"
+    },
+    "closing handshake": {
+      "ja": "クロージングハンドシェイク",
+      "note": "中黒なし"
+    },
+    "message framing": {
+      "ja": "メッセージフレーミング",
+      "note": ""
+    },
+    "layered over TCP": {
+      "ja": "TCP上に階層化されている",
+      "note": ""
+    },
+    "browser-based application": {
+      "ja": "ブラウザベースのアプリケーション",
+      "note": ""
+    },
+    "HTTP connection": {
+      "ja": "HTTP接続",
+      "note": ""
+    },
+    "long polling": {
+      "ja": "ロングポーリング",
+      "note": "「長いポーリング」は不可"
+    },
+    "client": {
+      "ja": "クライアント",
+      "note": ""
+    },
+    "server": {
+      "ja": "サーバ",
+      "note": "「サーバー」ではなく「サーバ」"
+    },
+    "protocol": {
+      "ja": "プロトコル",
+      "note": ""
+    },
+    "frame": {
+      "ja": "フレーム",
+      "note": ""
+    },
+    "connection": {
+      "ja": "接続",
+      "note": "文脈により「コネクション」も可"
+    },
+    "subprotocol": {
+      "ja": "サブプロトコル",
+      "note": ""
+    }
+  }
+}

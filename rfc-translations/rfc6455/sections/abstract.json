@@ -1,0 +1,24 @@
+{
+  "section": "abstract",
+  "source": {
+    "text": "The WebSocket Protocol enables two-way communication between a client running untrusted code in a controlled environment to a remote host that has opted-in to communications from that code. The security model used for this is the origin-based security model commonly used by web browsers. The protocol consists of an opening handshake followed by basic message framing, layered over TCP. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers that does not rely on opening multiple HTTP connections (e.g., using XMLHttpRequest or <iframe>s and long polling).",
+    "language": "en"
+  },
+  "translation": {
+    "text": "WebSocketプロトコルは、制御された環境内で信頼されていないコードを実行するクライアントと、そのコードからの通信を許可したリモートホストとの間での双方向通信を可能にする。このプロトコルで使用されるセキュリティモデルは、Webブラウザで一般的に使用されているオリジンベースのセキュリティモデルである。本プロトコルは、オープニングハンドシェイクと、それに続く基本的なメッセージフレーミングで構成され、TCP上に階層化されている。この技術の目的は、サーバとの双方向通信を必要とするブラウザベースのアプリケーションに対して、複数のHTTP接続を開くこと（例：XMLHttpRequestや<iframe>とロングポーリングの使用）に依存しないメカニズムを提供することである。",
+    "language": "ja"
+  },
+  "evaluation": {
+    "score": 0.8,
+    "errors": [],
+    "summary": "Good quality (score: 0.800) with 0 error(s) detected.",
+    "targetScore": 0.8,
+    "passed": true
+  },
+  "iterations": 15,
+  "completedAt": "2026-01-17",
+  "tools": {
+    "translation": "DeepL (initial) + manual refinement",
+    "evaluation": "xCOMET"
+  }
+}

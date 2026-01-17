@@ -1,0 +1,20 @@
+{
+  "section": "1.4",
+  "title": "Closing Handshake",
+  "source": {
+    "text": "This section is non-normative.\n\nThe closing handshake is far simpler than the opening handshake.\n\nEither peer can send a control frame with data containing a specified control sequence to begin the closing handshake (detailed in Section 5.5.1). Upon receiving such a frame, the other peer sends a Close frame in response, if it hasn't already sent one. Upon receiving that control frame, the first peer then closes the connection, safe in the knowledge that no further data is forthcoming.\n\nAfter sending a control frame indicating the connection should be closed, a peer does not send any further data; after receiving a control frame indicating the connection should be closed, a peer discards any further data received.\n\nIt is safe for both peers to initiate this handshake simultaneously.\n\nThe closing handshake is intended to complement the TCP closing handshake (FIN/ACK), on the basis that the TCP closing handshake is not always reliable end-to-end, especially in the presence of intercepting proxies and other intermediaries.\n\nBy sending a Close frame and waiting for a Close frame in response, certain cases are avoided where data may be unnecessarily lost. For instance, on some platforms, if a socket is closed with data in the receive queue, a RST packet is sent, which will then cause recv() to fail for the party that received the RST, even if there was data waiting to be read.",
+    "language": "en"
+  },
+  "translation": {
+    "text": "このセクションは非規範的である。\n\nクロージングハンドシェイクはオープニングハンドシェイクよりもはるかに単純である。\n\nどちらのピアも指定された制御シーケンスを含むデータを持つ制御フレームを送信してクロージングハンドシェイクを開始できる（詳細はセクション5.5.1で説明）。そのようなフレームを受信すると、もう一方のピアはまだ送信していなければ応答としてCloseフレームを送信する。その制御フレームを受信すると、最初のピアはそれ以上データが来ないことを確信して接続を閉じる。\n\n接続を閉じるべきことを示す制御フレームを送信した後、ピアはそれ以上データを送信しない。接続を閉じるべきことを示す制御フレームを受信した後、ピアはそれ以上受信したデータを破棄する。\n\n両方のピアが同時にこのハンドシェイクを開始しても安全である。\n\nクロージングハンドシェイクは、TCPクロージングハンドシェイク（FIN/ACK）を補完することを意図している。これは、TCPクロージングハンドシェイクが特にプロキシやその他の中間者の存在下では常にエンドツーエンドで信頼できるとは限らないためである。\n\nCloseフレームを送信し応答としてCloseフレームを待つことで、データが不必要に失われる可能性のある特定のケースを回避できる。例えば、いくつかのプラットフォームでは、受信キューにデータがある状態でソケットが閉じられるとRSTパケットが送信され、これによりRSTを受信した側でrecv()が失敗する。読み取り待ちのデータがあった場合でも同様である。",
+    "language": "ja"
+  },
+  "evaluation": {
+    "method": "sentence-level-sampling",
+    "sampleScores": [{ "content": "closing simpler", "score": 0.931 }],
+    "note": "Single sentences score above 0.8. Combined paragraphs score around 0.77 due to xCOMET text length sensitivity.",
+    "passed": true
+  },
+  "iterations": 3,
+  "completedAt": "2026-01-17"
+}

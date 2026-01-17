@@ -1,0 +1,18 @@
+{
+  "section": "1.8",
+  "title": "Establishing a Connection",
+  "source": {
+    "text": "This section is non-normative.\n\nWhen a connection is to be made to a port that is shared by an HTTP server (a situation that is quite likely to occur with traffic to ports 80 and 443), the connection will appear to the HTTP server to be a regular GET request with an Upgrade offer. In relatively simple setups with just one IP address and a single server for all traffic to a single hostname, this might allow a practical way for systems based on the WebSocket Protocol to be deployed. In more elaborate setups (e.g., with load balancers and multiple servers), a dedicated set of hosts for WebSocket connections separate from the HTTP servers is probably easier to manage. At the time of writing of this specification, it should be noted that connections on ports 80 and 443 have significantly different success rates, with connections on port 443 being significantly more likely to succeed, though this may change with time.",
+    "language": "en"
+  },
+  "translation": {
+    "text": "このセクションは非規範的である。\n\nHTTPサーバが共有するポートに接続する場合（ポート80および443へのトラフィックで発生する可能性が高い状況）、HTTPサーバからはUpgradeオファーを伴う通常のGETリクエストに見える。1つのIPアドレスのみで、単一のホスト名へのすべてのトラフィックに1つのサーバを使用する比較的単純なセットアップでは、WebSocketプロトコルに基づくシステムの実用的な展開方法となる可能性がある。より複雑なセットアップ（例：ロードバランサと複数のサーバを使用する場合）では、HTTPサーバとは別にWebSocket接続専用のホストセットを用意する方が管理しやすい可能性が高い。この仕様の執筆時点では、ポート80と443での接続の成功率は大きく異なり、ポート443での接続の方が成功する可能性が大幅に高いことに注意すべきである。ただし、これは時間とともに変化する可能性がある。",
+    "language": "ja"
+  },
+  "evaluation": {
+    "method": "sentence-level-sampling",
+    "passed": true
+  },
+  "iterations": 1,
+  "completedAt": "2026-01-17"
+}

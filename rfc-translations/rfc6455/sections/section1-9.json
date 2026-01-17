@@ -1,0 +1,19 @@
+{
+  "section": "1.9",
+  "title": "Subprotocols Using the WebSocket Protocol",
+  "source": {
+    "text": "This section is non-normative.\n\nThe client can request that the server use a specific subprotocol by including the |Sec-WebSocket-Protocol| field in its handshake. If it is specified, the server needs to include the same field and one of the selected subprotocol values in its response for the connection to be established.\n\nThese subprotocol names should be registered as per Section 11.5. To avoid potential collisions, it is recommended to use names that contain the ASCII version of the domain name of the subprotocol's originator. For example, if Example Corporation were to create a Chat subprotocol to be implemented by many servers around the Web, they could name it \"chat.example.com\". If the Example Organization called their competing subprotocol \"chat.example.org\", then the two subprotocols could be implemented by servers simultaneously, with the server dynamically selecting which subprotocol to use based on the value sent by the client.\n\nSubprotocols can be versioned in backward-incompatible ways by changing the subprotocol name, e.g., going from \"bookings.example.net\" to \"v2.bookings.example.net\". These subprotocols would be considered completely separate by WebSocket clients. Backward-compatible versioning can be implemented by reusing the same subprotocol string but carefully designing the actual subprotocol to support this kind of extensibility.",
+    "language": "en"
+  },
+  "translation": {
+    "text": "このセクションは非規範的である。\n\nクライアントはハンドシェイクに|Sec-WebSocket-Protocol|フィールドを含めることでサーバに特定のサブプロトコルの使用を要求できる。指定された場合、接続を確立するために、サーバは同じフィールドと選択されたサブプロトコル値の1つを応答に含める必要がある。\n\nこれらのサブプロトコル名はセクション11.5に従って登録されるべきである。潜在的な衝突を避けるために、サブプロトコルの発信元のドメイン名のASCIIバージョンを含む名前を使用することが推奨される。例えば、Example CorporationがWeb上の多くのサーバで実装されるChatサブプロトコルを作成する場合、「chat.example.com」と名付けることができる。Example Organizationが競合するサブプロトコルを「chat.example.org」と呼んだ場合、2つのサブプロトコルはサーバによって同時に実装でき、サーバはクライアントから送信された値に基づいてどのサブプロトコルを使用するかを動的に選択する。\n\nサブプロトコルはサブプロトコル名を変更することで後方互換性のない方法でバージョン管理できる。例えば「bookings.example.net」から「v2.bookings.example.net」への変更である。これらのサブプロトコルはWebSocketクライアントから完全に別物とみなされる。後方互換性のあるバージョニングは、同じサブプロトコル文字列を再利用しながら、このような拡張性をサポートするよう実際のサブプロトコルを慎重に設計することで実装できる。",
+    "language": "ja"
+  },
+  "evaluation": {
+    "method": "sentence-level-sampling",
+    "sampleScores": [{ "content": "subprotocol request", "score": 0.876 }],
+    "passed": true
+  },
+  "iterations": 1,
+  "completedAt": "2026-01-17"
+}
