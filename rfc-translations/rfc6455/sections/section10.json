@@ -1,0 +1,85 @@
+{
+  "section": "10",
+  "title": "Security Considerations",
+  "title_ja": "セキュリティに関する考慮事項",
+  "translatedAt": "2026-01-21",
+  "paragraphs": [
+    {
+      "id": "10-intro",
+      "source": "This section describes some security considerations applicable to the WebSocket Protocol. Specific security considerations are described in subsections of this section.",
+      "translation": "本セクションでは、WebSocketプロトコルに適用されるセキュリティ上の考慮事項について説明する。具体的なセキュリティ考慮事項は、本セクションのサブセクションで説明する。",
+      "score": 0.961,
+      "iterations": 1
+    }
+  ],
+  "subsections": [
+    {
+      "section": "10.1",
+      "title": "Non-Browser Clients",
+      "title_ja": "ブラウザ以外のクライアント"
+    },
+    {
+      "section": "10.2",
+      "title": "Origin Considerations",
+      "title_ja": "オリジンに関する考慮事項",
+      "paragraphs": [
+        {
+          "id": "10.2-p1",
+          "source": "Servers that are not intended to process input from any web page but only for certain sites SHOULD verify the |Origin| field is an origin they expect. If the origin indicated is unacceptable to the server, then it SHOULD respond to the WebSocket handshake with a reply containing HTTP 403 Forbidden status code.",
+          "translation": "どのWebページからの入力も処理することを意図しておらず、特定のサイトのみを対象としているサーバは、|Origin|フィールドが期待するオリジンであることを検証すべきである（SHOULD）。示されたオリジンがサーバにとって受け入れられない場合、HTTP 403 Forbiddenステータスコードを含む応答でWebSocketハンドシェイクに応答すべきである（SHOULD）。",
+          "score": 0.748,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
+    },
+    {
+      "section": "10.3",
+      "title": "Attacks On Infrastructure (Masking)",
+      "title_ja": "インフラストラクチャへの攻撃（マスキング）"
+    },
+    {
+      "section": "10.4",
+      "title": "Implementation-Specific Limits",
+      "title_ja": "実装固有の制限"
+    },
+    {
+      "section": "10.5",
+      "title": "WebSocket Client Authentication",
+      "title_ja": "WebSocketクライアント認証"
+    },
+    {
+      "section": "10.6",
+      "title": "Connection Confidentiality and Integrity",
+      "title_ja": "接続の機密性と完全性",
+      "paragraphs": [
+        {
+          "id": "10.6-p1",
+          "source": "Connection confidentiality and integrity is provided by running the WebSocket Protocol over TLS (wss URIs). WebSocket implementations MUST support TLS and SHOULD employ it when communicating with their peers.",
+          "translation": "接続の機密性と完全性は、TLS上でWebSocketプロトコルを実行することで提供される（wss URI）。WebSocket実装はTLSをサポートしなければならず（MUST）、ピアとの通信時にはTLSを使用すべきである（SHOULD）。",
+          "score": 0.756,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
+    },
+    {
+      "section": "10.7",
+      "title": "Handling of Invalid Data",
+      "title_ja": "無効なデータの処理",
+      "paragraphs": [
+        {
+          "id": "10.7-p1",
+          "source": "Incoming data MUST always be validated by both clients and servers. If, at any time, an endpoint is faced with data that it does not understand or that violates some criteria by which the endpoint determines safety of input, or when the endpoint sees an opening handshake that does not correspond to the values it is expecting, the endpoint MAY drop the TCP connection.",
+          "translation": "受信データは常にクライアントとサーバの両方で検証されなければならない（MUST）。エンドポイントが理解できないデータ、またはエンドポイントが入力の安全性を判断する基準に違反するデータに直面した場合、または期待する値と一致しないオープニングハンドシェイクを確認した場合、エンドポイントはTCP接続を切断してもよい（MAY）。",
+          "score": 0.779,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.811,
+  "status": "partial",
+  "note": "主要な段落のみ翻訳。詳細は別途翻訳が必要"
+}

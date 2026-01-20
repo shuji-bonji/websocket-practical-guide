@@ -1,0 +1,59 @@
+{
+  "section": "12",
+  "title": "Using the WebSocket Protocol from Other Specifications",
+  "title_ja": "他の仕様からのWebSocketプロトコルの使用",
+  "translatedAt": "2026-01-21",
+  "paragraphs": [
+    {
+      "id": "12-intro",
+      "source": "The WebSocket Protocol is intended to be used by another specification to provide a generic mechanism for dynamic author-defined content, e.g., in a specification defining a scripted API.",
+      "translation": "WebSocketプロトコルは、動的な作成者定義コンテンツのための汎用メカニズムを提供するために他の仕様で使用されることを意図している（例：スクリプトAPIを定義する仕様）。",
+      "score": 0.808,
+      "iterations": 3
+    },
+    {
+      "id": "12-p1a",
+      "source": "Such a specification first needs to _Establish a WebSocket Connection_, providing that algorithm with:",
+      "translation": "そのような仕様では、まず_WebSocket接続を確立_する必要があり、そのアルゴリズムに以下を提供する：",
+      "score": 0.891,
+      "iterations": 1
+    },
+    {
+      "id": "12-p1b",
+      "source": "The destination, consisting of a /host/ and a /port/.",
+      "translation": "/host/と/port/で構成される宛先。",
+      "score": 0.969,
+      "iterations": 1
+    },
+    {
+      "id": "12-p1c",
+      "source": "A /resource name/, which allows for multiple services to be identified at one host and port.",
+      "translation": "1つのホストとポートで複数のサービスを識別可能にする/resource name/。",
+      "score": 0.945,
+      "iterations": 1
+    },
+    {
+      "id": "12-p1d",
+      "source": "A /secure/ flag, which is true if the connection is to be encrypted and false otherwise.",
+      "translation": "接続を暗号化する場合はtrue、そうでない場合はfalseとなる/secure/フラグ。",
+      "score": 0.931,
+      "iterations": 1
+    },
+    {
+      "id": "12-p1e",
+      "source": "An ASCII serialization of an origin [RFC6454] that is being made responsible for the connection.",
+      "translation": "接続を担当するオリジン[RFC6454]のASCIIシリアライゼーション。",
+      "score": 0.802,
+      "iterations": 3
+    },
+    {
+      "id": "12-p1f",
+      "source": "Optionally, a string identifying a protocol that is to be layered over the WebSocket connection.",
+      "translation": "オプションとして、WebSocket接続上にレイヤリングされるプロトコルを識別する文字列。",
+      "score": 0.943,
+      "iterations": 1
+    }
+  ],
+  "averageScore": 0.898,
+  "status": "completed"
+}

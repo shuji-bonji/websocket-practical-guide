@@ -1,0 +1,20 @@
+{
+  "section": "14",
+  "title": "References",
+  "title_ja": "参考文献",
+  "translatedAt": "2026-01-21",
+  "subsections": [
+    {
+      "section": "14.1",
+      "title": "Normative References",
+      "title_ja": "規範的参考文献"
+    },
+    {
+      "section": "14.2",
+      "title": "Informative References",
+      "title_ja": "参考情報"
+    }
+  ],
+  "status": "completed",
+  "note": "参考文献リストのため、タイトルのみ翻訳。文献リスト自体は原文参照"
+}

@@ -1,0 +1,105 @@
+{
+  "section": "11",
+  "title": "IANA Considerations",
+  "title_ja": "IANAに関する考慮事項",
+  "translatedAt": "2026-01-21",
+  "note": "IANA登録情報が中心のため、主要な説明段落のみ翻訳",
+  "subsections": [
+    {
+      "section": "11.1",
+      "title": "Registration of New URI Schemes",
+      "title_ja": "新しいURIスキームの登録",
+      "subsections": [
+        {
+          "section": "11.1.1",
+          "title": "Registration of \"ws\" Scheme",
+          "title_ja": "「ws」スキームの登録"
+        },
+        {
+          "section": "11.1.2",
+          "title": "Registration of \"wss\" Scheme",
+          "title_ja": "「wss」スキームの登録"
+        }
+      ]
+    },
+    {
+      "section": "11.2",
+      "title": "Registration of the \"WebSocket\" HTTP Upgrade Keyword",
+      "title_ja": "「WebSocket」HTTP Upgradeキーワードの登録"
+    },
+    {
+      "section": "11.3",
+      "title": "Registration of New HTTP Header Fields",
+      "title_ja": "新しいHTTPヘッダフィールドの登録",
+      "subsections": [
+        {
+          "section": "11.3.1",
+          "title": "Sec-WebSocket-Key",
+          "title_ja": "Sec-WebSocket-Key",
+          "paragraphs": [
+            {
+              "id": "11.3.1-p1",
+              "source": "The |Sec-WebSocket-Key| header field is used in the WebSocket opening handshake. It is sent from the client to the server to provide part of the information used by the server to prove that it received a valid WebSocket opening handshake. This helps ensure that the server does not accept connections from non-WebSocket clients (e.g., HTTP clients) that are being abused to send data to unsuspecting WebSocket servers.",
+              "translation": "|Sec-WebSocket-Key|ヘッダフィールドはWebSocketオープニングハンドシェイクで使用される。クライアントからサーバへ送信され、サーバが有効なWebSocketオープニングハンドシェイクを受信したことを証明するために使用される情報の一部を提供する。これにより、悪用されて無防備なWebSocketサーバへデータを送信しようとする非WebSocketクライアント（HTTPクライアントなど）からの接続をサーバが受け入れないことが保証される。",
+              "score": 0.856,
+              "iterations": 1
+            }
+          ]
+        },
+        {
+          "section": "11.3.2",
+          "title": "Sec-WebSocket-Extensions",
+          "title_ja": "Sec-WebSocket-Extensions"
+        },
+        {
+          "section": "11.3.3",
+          "title": "Sec-WebSocket-Accept",
+          "title_ja": "Sec-WebSocket-Accept"
+        },
+        {
+          "section": "11.3.4",
+          "title": "Sec-WebSocket-Protocol",
+          "title_ja": "Sec-WebSocket-Protocol"
+        },
+        {
+          "section": "11.3.5",
+          "title": "Sec-WebSocket-Version",
+          "title_ja": "Sec-WebSocket-Version"
+        }
+      ]
+    },
+    {
+      "section": "11.4",
+      "title": "WebSocket Extension Name Registry",
+      "title_ja": "WebSocket拡張名レジストリ"
+    },
+    {
+      "section": "11.5",
+      "title": "WebSocket Subprotocol Name Registry",
+      "title_ja": "WebSocketサブプロトコル名レジストリ"
+    },
+    {
+      "section": "11.6",
+      "title": "WebSocket Version Number Registry",
+      "title_ja": "WebSocketバージョン番号レジストリ"
+    },
+    {
+      "section": "11.7",
+      "title": "WebSocket Close Code Number Registry",
+      "title_ja": "WebSocketクローズコード番号レジストリ"
+    },
+    {
+      "section": "11.8",
+      "title": "WebSocket Opcode Registry",
+      "title_ja": "WebSocketオペコードレジストリ"
+    },
+    {
+      "section": "11.9",
+      "title": "WebSocket Framing Header Bits Registry",
+      "title_ja": "WebSocketフレーミングヘッダビットレジストリ"
+    }
+  ],
+  "averageScore": 0.856,
+  "status": "partial",
+  "note_detail": "IANA登録の定型情報が多いため、主要な説明段落のみ翻訳。詳細な登録テーブルは原文参照"
+}

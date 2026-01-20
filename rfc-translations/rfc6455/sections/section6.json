@@ -1,0 +1,31 @@
+{
+  "section": "6",
+  "title": "Sending and Receiving Data",
+  "title_ja": "データの送受信",
+  "translatedAt": "2026-01-21",
+  "subsections": [
+    {
+      "section": "6.1",
+      "title": "Sending Data",
+      "title_ja": "データの送信",
+      "paragraphs": [
+        {
+          "id": "6.1-p1",
+          "source": "To _Send a WebSocket Message_ comprising of /data/ over a WebSocket connection, an endpoint MUST perform the following steps.",
+          "translation": "WebSocket接続を介して/data/からなる_WebSocketメッセージを送信_するには、エンドポイントは以下の手順を実行しなければならない（MUST）。",
+          "score": 0.85,
+          "iterations": 1
+        }
+      ]
+    },
+    {
+      "section": "6.2",
+      "title": "Receiving Data",
+      "title_ja": "データの受信",
+      "paragraphs": []
+    }
+  ],
+  "averageScore": 0.85,
+  "status": "partial",
+  "note": "主要な段落のみ翻訳。詳細は別途翻訳が必要"
+}

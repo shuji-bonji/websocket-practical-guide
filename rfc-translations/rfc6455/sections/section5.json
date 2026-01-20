@@ -1,0 +1,118 @@
+{
+  "section": "5",
+  "title": "Data Framing",
+  "title_ja": "データフレーミング",
+  "translatedAt": "2026-01-21",
+  "subsections": [
+    {
+      "section": "5.1",
+      "title": "Overview",
+      "title_ja": "概要",
+      "paragraphs": [
+        {
+          "id": "5.1-p1a",
+          "source": "In the WebSocket Protocol, data is transmitted using a sequence of frames.",
+          "translation": "WebSocketプロトコルでは、データはフレームのシーケンスを使用して送信される。",
+          "score": 0.931,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p1b",
+          "source": "To avoid confusing network intermediaries (such as intercepting proxies) and for security reasons that are further discussed in Section 10.3, a client MUST mask all frames that it sends to the server (see Section 5.3 for further details).",
+          "translation": "ネットワーク中継者（傍受プロキシなど）を混乱させないため、およびセクション10.3で詳述するセキュリティ上の理由から、クライアントはサーバに送信するすべてのフレームをマスクしなければならない（MUST）（詳細はセクション5.3参照）。",
+          "score": 0.75,
+          "iterations": 2,
+          "needs_review": true
+        },
+        {
+          "id": "5.1-p1c",
+          "source": "(Note that masking is done whether or not the WebSocket Protocol is running over TLS.)",
+          "translation": "（WebSocketプロトコルがTLS上で動作しているかどうかに関わらず、マスキングは行われることに注意。）",
+          "score": 0.85,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p1d",
+          "source": "The server MUST close the connection upon receiving a frame that is not masked.",
+          "translation": "サーバはマスクされていないフレームを受信した場合、接続を閉じなければならない（MUST）。",
+          "score": 0.85,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p1e",
+          "source": "In this case, a server MAY send a Close frame with a status code of 1002 (protocol error) as defined in Section 7.4.1.",
+          "translation": "この場合、サーバはセクション7.4.1で定義されているステータスコード1002（プロトコルエラー）のCloseフレームを送信してもよい（MAY）。",
+          "score": 0.85,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p1f",
+          "source": "A server MUST NOT mask any frames that it sends to the client.",
+          "translation": "サーバはクライアントに送信するフレームをマスクしてはならない（MUST NOT）。",
+          "score": 0.90,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p1g",
+          "source": "A client MUST close a connection if it detects a masked frame.",
+          "translation": "クライアントはマスクされたフレームを検出した場合、接続を閉じなければならない（MUST）。",
+          "score": 0.88,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p1h",
+          "source": "In this case, it MAY use the status code 1002 (protocol error) as defined in Section 7.4.1. (These rules might be relaxed in a future specification.)",
+          "translation": "この場合、セクション7.4.1で定義されているステータスコード1002（プロトコルエラー）を使用してもよい（MAY）。（これらのルールは将来の仕様で緩和される可能性がある。）",
+          "score": 0.85,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p2",
+          "source": "The base framing protocol defines a frame type with an opcode, a payload length, and designated locations for \"Extension data\" and \"Application data\", which together define the \"Payload data\". Certain bits and opcodes are reserved for future expansion of the protocol.",
+          "translation": "ベースフレーミングプロトコルは、オペコード、ペイロード長、「拡張データ」と「アプリケーションデータ」の指定位置を持つフレームタイプを定義し、これらを合わせて「ペイロードデータ」を定義する。特定のビットとオペコードは将来のプロトコル拡張のために予約されている。",
+          "score": 0.835,
+          "iterations": 1
+        },
+        {
+          "id": "5.1-p3",
+          "source": "A data frame MAY be transmitted by either the client or the server at any time after opening handshake completion and before that endpoint has sent a Close frame (Section 5.5.1).",
+          "translation": "オープニングハンドシェイク完了後、そのエンドポイントがCloseフレームを送信する前であれば、クライアントまたはサーバのいずれからでもいつでもデータフレームを送信できる（MAY）（セクション5.5.1参照）。",
+          "score": 0.587,
+          "iterations": 2,
+          "needs_review": true
+        }
+      ]
+    },
+    {
+      "section": "5.2",
+      "title": "Base Framing Protocol",
+      "title_ja": "ベースフレーミングプロトコル",
+      "paragraphs": [
+        {
+          "id": "5.2-p1",
+          "source": "This wire format for the data transfer part is described by the ABNF [RFC5234] given in detail in this section.",
+          "translation": "データ転送部分のワイヤフォーマットは、本セクションで詳述するABNF [RFC5234]により記述される。",
+          "score": 0.941,
+          "iterations": 1
+        },
+        {
+          "id": "5.2-p2",
+          "source": "(Note that, unlike in other sections of this document, the ABNF in this section is operating on groups of bits. The length of each group of bits is indicated in a comment. When encoded on the wire, the most significant bit is the leftmost in the ABNF).",
+          "translation": "（本文書の他のセクションとは異なり、本セクションのABNFはビットグループで動作することに注意。各ビットグループの長さはコメントで示される。ワイヤ上でエンコードされるとき、最上位ビットはABNFで最も左側になる。）",
+          "score": 0.80,
+          "iterations": 1
+        },
+        {
+          "id": "5.2-p3",
+          "source": "A high-level overview of the framing is given in the following figure. In a case of conflict between the figure below and the ABNF specified later in this section, the figure is authoritative.",
+          "translation": "フレーミングの高レベルな概要は以下の図に示される。以下の図と本セクションで後述するABNFの間に矛盾がある場合は、図が優先する。",
+          "score": 0.85,
+          "iterations": 1
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.84,
+  "status": "partial",
+  "note": "5.1-5.2のみ完了。5.3-5.8は別途翻訳が必要"
+}

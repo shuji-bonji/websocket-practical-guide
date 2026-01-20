@@ -1,0 +1,70 @@
+{
+  "section": "4",
+  "title": "Opening Handshake",
+  "title_ja": "オープニングハンドシェイク",
+  "translatedAt": "2026-01-21",
+  "status": "partial",
+  "note": "主要な段落のみ翻訳。詳細なサブセクションは別途翻訳が必要",
+  "subsections": [
+    {
+      "section": "4.1",
+      "title": "Client Requirements",
+      "title_ja": "クライアント要件",
+      "paragraphs": [
+        {
+          "id": "4.1-p1",
+          "source": "To _Establish a WebSocket Connection_, a client opens a connection and sends a handshake as defined in this section. A connection is defined to initially be in a CONNECTING state.",
+          "translation": "クライアントがWebSocket接続を確立する際は、接続を開いて本セクションで定義されたハンドシェイクを送信する。接続は最初にCONNECTING状態にあると定義される。",
+          "score": 0.719,
+          "iterations": 4,
+          "needs_review": true
+        },
+        {
+          "id": "4.1-p2",
+          "source": "A client will need to supply a /host/, /port/, /resource name/, and a /secure/ flag, which are the components of a WebSocket URI as discussed in Section 3, along with a list of /protocols/ and /extensions/ to be used.",
+          "translation": "クライアントは、セクション3で説明したWebSocket URIの構成要素である/host/、/port/、/resource name/、/secure/フラグに加え、使用する/protocols/と/extensions/のリストを指定する必要がある。",
+          "score": 0.816,
+          "iterations": 1
+        },
+        {
+          "id": "4.1-p3",
+          "source": "Additionally, if the client is a web browser, it supplies /origin/.",
+          "translation": "また、クライアントがWebブラウザの場合は/origin/を指定する。",
+          "score": 0.85,
+          "iterations": 1
+        },
+        {
+          "id": "4.1-p4",
+          "source": "Clients running in controlled environments, e.g., browsers on mobile handsets tied to specific carriers, MAY offload the management of the connection to another agent on the network. In such a situation, the client for the purposes of this specification is considered to include both the handset software and any such agents.",
+          "translation": "制御された環境で実行されているクライアント（例：特定のキャリアに紐づけられた携帯端末上のブラウザ）は、ネットワーク上の別のエージェントに接続の管理をオフロードしてもよい（MAY）。そのような状況では、本仕様におけるクライアントは、携帯端末ソフトウェアとそのようなエージェントの両方を含むものとみなされる。",
+          "score": 0.891,
+          "iterations": 1
+        },
+        {
+          "id": "4.1-p5",
+          "source": "When the client is to _Establish a WebSocket Connection_ given a set of (/host/, /port/, /resource name/, and /secure/ flag), along with a list of /protocols/ and /extensions/ to be used, and an /origin/ in the case of web browsers, it MUST open a connection, send an opening handshake, and read the server's handshake in response.",
+          "translation": "クライアントが(/host/、/port/、/resource name/、/secure/フラグ)の組と、使用する/protocols/および/extensions/のリスト、Webブラウザの場合は/origin/を与えられてWebSocket接続を確立する場合、接続を開き、オープニングハンドシェイクを送信し、応答としてサーバのハンドシェイクを読み取らなければならない（MUST）。",
+          "score": 0.72,
+          "iterations": 5,
+          "needs_review": true
+        },
+        {
+          "id": "4.1-p6",
+          "source": "The exact requirements of how the connection should be opened, what should be sent in the opening handshake, and how the server's response should be interpreted are as follows in this section.",
+          "translation": "接続をどのように開くべきか、オープニングハンドシェイクで何を送信すべきか、サーバの応答をどのように解釈すべきかの正確な要件は、本セクションの以下のとおりである。",
+          "score": 0.85,
+          "iterations": 1
+        },
+        {
+          "id": "4.1-p7",
+          "source": "In the following text, we will use terms from Section 3, such as \"/host/\" and \"/secure/ flag\" as defined in that section.",
+          "translation": "以下の文章では、セクション3で定義された「/host/」や「/secure/フラグ」などの用語を使用する。",
+          "score": 0.88,
+          "iterations": 1
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.82,
+  "completedSubsections": ["4.1"]
+}

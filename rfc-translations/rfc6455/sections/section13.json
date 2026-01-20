@@ -1,0 +1,18 @@
+{
+  "section": "13",
+  "title": "Acknowledgements",
+  "title_ja": "謝辞",
+  "translatedAt": "2026-01-21",
+  "paragraphs": [
+    {
+      "id": "13-p1",
+      "source": "Special thanks are due to Ian Hickson, who was the original author and editor of this protocol. The initial design of this specification benefitted from the participation of many people in the WHATWG and WHATWG mailing list.",
+      "translation": "本プロトコルの原著作者兼編集者であるIan Hickson氏に特に感謝する。本仕様の初期設計は、WHATWGおよびWHATWGメーリングリストにおける多くの方々の参加により恩恵を受けた。",
+      "score": 0.894,
+      "iterations": 1
+    }
+  ],
+  "averageScore": 0.894,
+  "status": "partial",
+  "note": "謝辞セクションのため、冒頭の主要段落のみ翻訳。詳細な貢献者リストは原文参照"
+}

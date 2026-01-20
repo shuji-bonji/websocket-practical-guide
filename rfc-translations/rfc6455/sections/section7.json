@@ -1,0 +1,99 @@
+{
+  "section": "7",
+  "title": "Closing the Connection",
+  "title_ja": "接続のクローズ",
+  "translatedAt": "2026-01-21",
+  "subsections": [
+    {
+      "section": "7.1",
+      "title": "Definitions",
+      "title_ja": "定義",
+      "subsections": [
+        {
+          "section": "7.1.1",
+          "title": "Close the WebSocket Connection",
+          "title_ja": "WebSocket接続を閉じる",
+          "paragraphs": [
+            {
+              "id": "7.1.1-p1",
+              "source": "To _Close the WebSocket Connection_, an endpoint closes the underlying TCP connection. An endpoint SHOULD use a method that cleanly closes the TCP connection, as well as the TLS session, if applicable, discarding any trailing bytes that may have been received. An endpoint MAY close the connection via any means available when necessary, such as when under attack.",
+              "translation": "_WebSocket接続を閉じる_には、エンドポイントは基礎となるTCP接続を閉じる。エンドポイントは、TCP接続とTLSセッション（該当する場合）をきれいに閉じ、受信した可能性のある末尾のバイトを破棄する方法を使用すべきである（SHOULD）。エンドポイントは、攻撃を受けている場合など必要なときには、利用可能な任意の手段で接続を閉じてもよい（MAY）。",
+              "score": 0.72,
+              "iterations": 1,
+              "needs_review": true
+            }
+          ]
+        },
+        {
+          "section": "7.1.2",
+          "title": "Start the WebSocket Closing Handshake",
+          "title_ja": "WebSocketクロージングハンドシェイクの開始",
+          "paragraphs": [
+            {
+              "id": "7.1.2-p1",
+              "source": "To _Start the WebSocket Closing Handshake_ with a status code (Section 7.4) /code/ and an optional close reason (Section 7.1.6) /reason/, an endpoint MUST send a Close control frame, as described in Section 5.5.1, whose status code is set to /code/ and whose close reason is set to /reason/. Once an endpoint has both sent and received a Close control frame, that endpoint SHOULD _Close the WebSocket Connection_ as defined in Section 7.1.1.",
+              "translation": "ステータスコード（セクション7.4）/code/とオプションの閉鎖理由（セクション7.1.6）/reason/で_WebSocketクロージングハンドシェイクを開始_するには、エンドポイントはセクション5.5.1で説明されているように、ステータスコードが/code/で閉鎖理由が/reason/に設定されたClose制御フレームを送信しなければならない（MUST）。エンドポイントがClose制御フレームを送信および受信したら、そのエンドポイントはセクション7.1.1で定義されているように_WebSocket接続を閉じる_べきである（SHOULD）。",
+              "score": 0.75,
+              "iterations": 1,
+              "needs_review": true
+            }
+          ]
+        },
+        {
+          "section": "7.1.3",
+          "title": "The WebSocket Closing Handshake is Started",
+          "title_ja": "WebSocketクロージングハンドシェイクが開始された",
+          "paragraphs": [
+            {
+              "id": "7.1.3-p1",
+              "source": "Upon either sending or receiving a Close control frame, it is said that _The WebSocket Closing Handshake is Started_ and that the WebSocket connection is in the CLOSING state.",
+              "translation": "Closeコントロールフレームの送信または受信により、_WebSocketクロージングハンドシェイクが開始された_と言われ、WebSocket接続はCLOSING状態になる。",
+              "score": 0.64,
+              "iterations": 2,
+              "needs_review": true
+            }
+          ]
+        },
+        {
+          "section": "7.1.4",
+          "title": "The WebSocket Connection is Closed",
+          "title_ja": "WebSocket接続が閉じられた",
+          "paragraphs": [
+            {
+              "id": "7.1.4-p1",
+              "source": "When the underlying TCP connection is closed, it is said that _The WebSocket Connection is Closed_ and that the WebSocket connection is in the CLOSED state.",
+              "translation": "基礎となるTCP接続が閉じられると、_WebSocket接続が閉じられた_と言われ、WebSocket接続はCLOSED状態になる。",
+              "score": 0.875,
+              "iterations": 1
+            },
+            {
+              "id": "7.1.4-p2",
+              "source": "If the TCP connection was closed after the WebSocket closing handshake was completed, the WebSocket connection is said to have been closed _cleanly_.",
+              "translation": "TCP接続がWebSocketクロージングハンドシェイクの完了後に閉じられた場合、WebSocket接続は_きれいに_閉じられたと言われる。",
+              "score": 0.85,
+              "iterations": 1
+            }
+          ]
+        },
+        {
+          "section": "7.1.7",
+          "title": "Fail the WebSocket Connection",
+          "title_ja": "WebSocket接続の失敗",
+          "paragraphs": [
+            {
+              "id": "7.1.7-p1",
+              "source": "Certain algorithms and specifications require an endpoint to _Fail the WebSocket Connection_. To do so, the client MUST _Close the WebSocket Connection_, and MAY report the problem to the user (which would be especially useful for developers) in an appropriate manner. Similarly, to do so, the server MUST _Close the WebSocket Connection_, and SHOULD log the problem.",
+              "translation": "特定のアルゴリズムや仕様は、エンドポイントに_WebSocket接続の失敗_を要求する。そのために、クライアントは_WebSocket接続を閉じ_なければならず（MUST）、問題を適切な方法でユーザに報告してもよい（MAY）（これは特に開発者にとって有用）。同様に、サーバは_WebSocket接続を閉じ_なければならず（MUST）、問題をログに記録すべきである（SHOULD）。",
+              "score": 0.76,
+              "iterations": 1,
+              "needs_review": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.76,
+  "status": "partial",
+  "note": "7.1のみ完了。7.2-7.4は別途翻訳が必要"
+}

@@ -1,0 +1,128 @@
+{
+  "section": "2",
+  "title": "Conformance Requirements",
+  "title_ja": "適合性要件",
+  "translatedAt": "2026-01-21",
+  "paragraphs": [
+    {
+      "id": "2-p1",
+      "source": "All diagrams, examples, and notes in this specification are non-normative, as are all sections explicitly marked non-normative. Everything else in this specification is normative.",
+      "translation": "本仕様書のすべての図、例、注釈は非規範的であり、非規範的と明示されているすべてのセクションも非規範的である。本仕様書のそれ以外はすべて規範的である。",
+      "score": 0.805,
+      "iterations": 1
+    },
+    {
+      "id": "2-p2",
+      "source": "The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\", \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in [RFC2119].",
+      "translation": "本文書中のキーワードである「MUST」、「MUST NOT」、「REQUIRED」、「SHALL」、「SHALL NOT」、「SHOULD」、「SHOULD NOT」、「RECOMMENDED」、「MAY」、および「OPTIONAL」は、[RFC2119]に記述されているように解釈されるべきである。",
+      "score": 0.765,
+      "iterations": 10,
+      "needs_review": true,
+      "note": "RFC2119ボイラープレートはxCOMETで低評価になる傾向がある"
+    },
+    {
+      "id": "2-p3",
+      "source": "Requirements phrased in the imperative as part of algorithms (such as \"strip any leading space characters\" or \"return false and abort these steps\") are to be interpreted with the meaning of the key word (\"MUST\", \"SHOULD\", \"MAY\", etc.) used in introducing the algorithm.",
+      "translation": "アルゴリズムの一部として命令文で表現された要件（「先頭の空白文字を取り除く」や「falseを返してこれらのステップを中止する」など）は、アルゴリズムを紹介する際に使用されたキーワード（「MUST」、「SHOULD」、「MAY」など）の意味で解釈される。",
+      "score": 0.884,
+      "iterations": 1
+    },
+    {
+      "id": "2-p4",
+      "source": "Conformance requirements phrased as algorithms or specific steps MAY be implemented in any manner, so long as the end result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow and not intended to be performant.)",
+      "translation": "アルゴリズムや特定の手順として表現された適合性要件は、最終結果が同等である限り、どのような方法で実装してもよい（MAY）。（特に、本仕様で定義されているアルゴリズムは、理解しやすいことを意図しており、高いパフォーマンスを意図していない。）",
+      "score": 0.876,
+      "iterations": 2
+    }
+  ],
+  "subsections": [
+    {
+      "section": "2.1",
+      "title": "Terminology and Other Conventions",
+      "title_ja": "用語およびその他の規則",
+      "paragraphs": [
+        {
+          "id": "2.1-p1",
+          "source": "_ASCII_ shall mean the character-encoding scheme defined in [ANSI.X3-4.1986].",
+          "translation": "_ASCII_は、[ANSI.X3-4.1986]で定義された文字符号化方式を意味する。",
+          "score": 0.998,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p2",
+          "source": "This document makes reference to UTF-8 values and uses UTF-8 notational formats as defined in STD 63 [RFC3629].",
+          "translation": "本文書ではUTF-8の値を参照し、STD 63 [RFC3629]で定義されているUTF-8の表記形式を使用する。",
+          "score": 0.990,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p3",
+          "source": "Key terms such as named algorithms or definitions are indicated like _this_.",
+          "translation": "名前付きアルゴリズムや定義などの重要な用語は、_this_のように示される。",
+          "score": 0.907,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p4",
+          "source": "Names of header fields or variables are indicated like |this|.",
+          "translation": "ヘッダフィールドや変数の名前は|this|のように示される。",
+          "score": 0.917,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p5",
+          "source": "Variable values are indicated like /this/.",
+          "translation": "変数の値は/this/のように示される。",
+          "score": 0.969,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p6",
+          "source": "This document references the procedure to _Fail the WebSocket Connection_. This procedure is defined in Section 7.1.7.",
+          "translation": "本文書では_WebSocket接続の失敗_の手順を参照する。この手順はセクション7.1.7で定義されている。",
+          "score": 0.843,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p7",
+          "source": "_Converting a string to ASCII lowercase_ means replacing all characters in the range U+0041 to U+005A (i.e., LATIN CAPITAL LETTER A to LATIN CAPITAL LETTER Z) with the corresponding characters in the range U+0061 to U+007A (i.e., LATIN SMALL LETTER A to LATIN SMALL LETTER Z).",
+          "translation": "_文字列をASCII小文字に変換_とは、U+0041からU+005Aの範囲のすべての文字（LATIN CAPITAL LETTER AからLATIN CAPITAL LETTER Z）を、U+0061からU+007Aの範囲の対応する文字（LATIN SMALL LETTER AからLATIN SMALL LETTER Z）に置き換えることである。",
+          "score": 0.799,
+          "iterations": 3,
+          "needs_review": true
+        },
+        {
+          "id": "2.1-p8",
+          "source": "Comparing two strings in an _ASCII case-insensitive_ manner means comparing them exactly, code point for code point, except that the characters in the range U+0041 to U+005A (i.e., LATIN CAPITAL LETTER A to LATIN CAPITAL LETTER Z) and the corresponding characters in the range U+0061 to U+007A (i.e., LATIN SMALL LETTER A to LATIN SMALL LETTER Z) are considered to also match.",
+          "translation": "_ASCII大文字小文字を区別しない_方法で2つの文字列を比較するとは、コードポイントごとに正確に比較することを意味するが、U+0041からU+005Aの範囲の文字（LATIN CAPITAL LETTER AからLATIN CAPITAL LETTER Z）と、U+0061からU+007Aの範囲の対応する文字（LATIN SMALL LETTER AからLATIN SMALL LETTER Z）は一致するものとみなされる。",
+          "score": 0.795,
+          "iterations": 3,
+          "needs_review": true
+        },
+        {
+          "id": "2.1-p9",
+          "source": "The term \"URI\" is used in this document as defined in [RFC3986].",
+          "translation": "「URI」という用語は、本文書では[RFC3986]で定義されているとおりに使用される。",
+          "score": 0.985,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p10",
+          "source": "When an implementation is required to _send_ data as part of the WebSocket Protocol, the implementation MAY delay the actual transmission arbitrarily, e.g., buffering data so as to send fewer IP packets.",
+          "translation": "実装がWebSocketプロトコルの一部としてデータを_送信_する必要がある場合、実装は実際の送信を任意に遅延させてもよい（MAY）。例えば、送信するIPパケット数を減らすためにデータをバッファリングすることができる。",
+          "score": 0.905,
+          "iterations": 1
+        },
+        {
+          "id": "2.1-p11",
+          "source": "Note that this document uses both [RFC5234] and [RFC2616] variants of ABNF in different sections.",
+          "translation": "本文書では、異なるセクションでABNFの[RFC5234]と[RFC2616]の両方のバリアントを使用していることに注意されたい。",
+          "score": 0.923,
+          "iterations": 1
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.89,
+  "status": "completed"
+}

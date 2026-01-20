@@ -1,0 +1,24 @@
+{
+  "section": "8",
+  "title": "Error Handling",
+  "title_ja": "エラー処理",
+  "translatedAt": "2026-01-21",
+  "subsections": [
+    {
+      "section": "8.1",
+      "title": "Handling Errors in UTF-8-Encoded Data",
+      "title_ja": "UTF-8エンコードデータのエラー処理",
+      "paragraphs": [
+        {
+          "id": "8.1-p1",
+          "source": "When an endpoint is to interpret a byte stream as UTF-8 but finds that the byte stream is not, in fact, a valid UTF-8 stream, that endpoint MUST _Fail the WebSocket Connection_. This rule applies both during the opening handshake and during subsequent data exchange.",
+          "translation": "エンドポイントがバイトストリームをUTF-8として解釈する際に、そのバイトストリームが実際には有効なUTF-8ストリームではないことが判明した場合、そのエンドポイントは_WebSocket接続を失敗_させなければならない（MUST）。この規則はオープニングハンドシェイク中とその後のデータ交換中の両方に適用される。",
+          "score": 0.821,
+          "iterations": 2
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.821,
+  "status": "completed"
+}

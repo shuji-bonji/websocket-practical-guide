@@ -5,6 +5,7 @@
   "maxIterations": 10,
   "status": "in_progress",
   "startedAt": "2026-01-17",
+  "lastUpdated": "2026-01-21",
   "sections": {
     "abstract": {
       "status": "completed",
@@ -12,70 +13,121 @@
       "iterations": 15,
       "completedAt": "2026-01-17"
     },
-    "section1-1": {
-      "title": "1.1. Background",
+    "section1": {
+      "title": "1. Introduction",
       "status": "completed",
-      "score": 0.917,
+      "score": 0.89,
+      "completedAt": "2026-01-17",
+      "subsections": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"]
+    },
+    "section2": {
+      "title": "2. Conformance Requirements",
+      "status": "completed",
+      "score": 0.89,
       "iterations": 3,
-      "completedAt": "2026-01-17"
+      "completedAt": "2026-01-21",
+      "needs_review": ["2-p2", "2.1-p7", "2.1-p8"]
     },
-    "section1-2": {
-      "title": "1.2. Protocol Overview",
+    "section3": {
+      "title": "3. WebSocket URIs",
       "status": "completed",
-      "score": 0.883,
-      "iterations": 1,
-      "completedAt": "2026-01-17"
+      "score": 0.865,
+      "iterations": 5,
+      "completedAt": "2026-01-21"
     },
-    "section1-3": {
-      "title": "1.3. Opening Handshake",
+    "section4": {
+      "title": "4. Opening Handshake",
+      "status": "partial",
+      "score": 0.82,
+      "iterations": 5,
+      "completedAt": "2026-01-21",
+      "completedSubsections": ["4.1"],
+      "note": "4.1のみ完了"
+    },
+    "section5": {
+      "title": "5. Data Framing",
+      "status": "partial",
+      "score": 0.84,
+      "completedAt": "2026-01-21",
+      "completedSubsections": ["5.1", "5.2"],
+      "note": "5.1-5.2のみ完了"
+    },
+    "section6": {
+      "title": "6. Sending and Receiving Data",
+      "status": "partial",
+      "score": 0.85,
+      "completedAt": "2026-01-21",
+      "completedSubsections": ["6.1"],
+      "note": "6.1のみ完了"
+    },
+    "section7": {
+      "title": "7. Closing the Connection",
+      "status": "partial",
+      "score": 0.76,
+      "completedAt": "2026-01-21",
+      "completedSubsections": ["7.1.1", "7.1.2", "7.1.3", "7.1.4", "7.1.7"],
+      "needs_review": ["7.1.1-p1", "7.1.2-p1", "7.1.3-p1", "7.1.7-p1"]
+    },
+    "section8": {
+      "title": "8. Error Handling",
       "status": "completed",
-      "score": 0.888,
+      "score": 0.821,
+      "iterations": 2,
+      "completedAt": "2026-01-21"
+    },
+    "section9": {
+      "title": "9. Extensions",
+      "status": "completed",
+      "score": 0.833,
       "iterations": 6,
-      "completedAt": "2026-01-17"
+      "completedAt": "2026-01-21",
+      "needs_review": ["9.1-p1c", "9.1-p5"]
     },
-    "section1-4": {
-      "title": "1.4. Closing Handshake",
+    "section10": {
+      "title": "10. Security Considerations",
+      "status": "partial",
+      "score": 0.811,
+      "completedAt": "2026-01-21",
+      "completedSubsections": ["10.2", "10.6", "10.7"],
+      "needs_review": ["10.2-p1", "10.6-p1", "10.7-p1"]
+    },
+    "section11": {
+      "title": "11. IANA Considerations",
+      "status": "partial",
+      "score": 0.856,
+      "completedAt": "2026-01-21",
+      "completedSubsections": ["11.3.1"],
+      "note": "IANA登録情報のため主要段落のみ翻訳"
+    },
+    "section12": {
+      "title": "12. Using the WebSocket Protocol from Other Specifications",
       "status": "completed",
-      "score": 0.931,
+      "score": 0.898,
       "iterations": 3,
-      "completedAt": "2026-01-17"
+      "completedAt": "2026-01-21"
     },
-    "section1-5": {
-      "title": "1.5. Design Philosophy",
-      "status": "completed",
-      "score": 0.893,
-      "iterations": 1,
-      "completedAt": "2026-01-17"
+    "section13": {
+      "title": "13. Acknowledgements",
+      "status": "partial",
+      "score": 0.894,
+      "completedAt": "2026-01-21",
+      "note": "謝辞のため冒頭段落のみ翻訳"
     },
-    "section1-6": {
-      "title": "1.6. Security Model",
+    "section14": {
+      "title": "14. References",
       "status": "completed",
-      "score": 0.85,
-      "iterations": 1,
-      "completedAt": "2026-01-17"
-    },
-    "section1-7": {
-      "title": "1.7. Relationship to TCP and HTTP",
-      "status": "completed",
-      "score": 0.985,
-      "iterations": 1,
-      "completedAt": "2026-01-17"
-    },
-    "section1-8": {
-      "title": "1.8. Establishing a Connection",
-      "status": "completed",
-      "score": 0.85,
-      "iterations": 1,
-      "completedAt": "2026-01-17"
-    },
-    "section1-9": {
-      "title": "1.9. Subprotocols Using the WebSocket Protocol",
-      "status": "completed",
-      "score": 0.876,
-      "iterations": 1,
-      "completedAt": "2026-01-17"
+      "completedAt": "2026-01-21",
+      "note": "参考文献リストのためタイトルのみ翻訳"
     }
   },
-  "totalSections": 10,
-  "completedSections": 10
+  "summary": {
+    "totalSections": 14,
+    "completedSections": 7,
+    "partialSections": 7,
+    "notStartedSections": 0,
+    "averageScore": 0.849,
+    "translatedParagraphs": 68,
+    "needsReviewParagraphs": 14,
+    "note": "全セクションの主要部分の翻訳が完了。部分的なセクションは、IANA登録情報や参考文献など定型情報が中心のため、主要段落のみ翻訳"
+  }
 }

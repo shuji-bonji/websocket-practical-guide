@@ -1,0 +1,149 @@
+{
+  "section": "9",
+  "title": "Extensions",
+  "title_ja": "拡張",
+  "translatedAt": "2026-01-21",
+  "paragraphs": [
+    {
+      "id": "9-intro",
+      "source": "WebSocket clients MAY request extensions to this specification, and WebSocket servers MAY accept some or all extensions requested by the client. A server MUST NOT respond with any extension not requested by the client. If extension parameters are included in negotiations between the client and the server, those parameters MUST be chosen in accordance with the specification of the extension to which the parameters apply.",
+      "translation": "WebSocketクライアントは本仕様への拡張を要求してもよい（MAY）。また、WebSocketサーバはクライアントが要求した拡張の一部またはすべてを受け入れてもよい（MAY）。サーバはクライアントが要求していない拡張で応答してはならない（MUST NOT）。クライアントとサーバ間のネゴシエーションに拡張パラメータが含まれる場合、それらのパラメータは該当する拡張の仕様に従って選択されなければならない（MUST）。",
+      "score": 0.824,
+      "iterations": 1
+    }
+  ],
+  "subsections": [
+    {
+      "section": "9.1",
+      "title": "Negotiating Extensions",
+      "title_ja": "拡張のネゴシエーション",
+      "paragraphs": [
+        {
+          "id": "9.1-p1a",
+          "source": "A client requests extensions by including a |Sec-WebSocket-Extensions| header field, which follows the normal rules for HTTP header fields (see [RFC2616], Section 4.2) and the value of the header field is defined by the following ABNF [RFC2616].",
+          "translation": "クライアントは|Sec-WebSocket-Extensions|ヘッダフィールドを含めることにより拡張を要求する。このヘッダフィールドはHTTPヘッダフィールドの通常の規則に従う（[RFC2616]セクション4.2参照）。ヘッダフィールドの値は以下のABNF [RFC2616]により定義される。",
+          "score": 0.813,
+          "iterations": 2
+        },
+        {
+          "id": "9.1-p1b",
+          "source": "Note that this section is using ABNF syntax/rules from [RFC2616], including the \"implied *LWS rule\".",
+          "translation": "本セクションでは「暗黙の*LWS規則」を含む[RFC2616]のABNF構文と規則を使用していることに注意。",
+          "score": 0.817,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p1c",
+          "source": "If a value is received by either the client or the server during negotiation that does not conform to the ABNF below, the recipient of such malformed data MUST immediately _Fail the WebSocket Connection_.",
+          "translation": "ネゴシエーション中に、以下のABNFに適合しない値をクライアントまたはサーバが受信した場合、そのような不正なデータの受信者は直ちに_WebSocket接続を失敗_させなければならない（MUST）。",
+          "score": 0.774,
+          "iterations": 5,
+          "needs_review": true
+        },
+        {
+          "id": "9.1-p2",
+          "source": "Note that like other HTTP header fields, this header field MAY be split or combined across multiple lines.",
+          "translation": "他のHTTPヘッダフィールドと同様に、このヘッダフィールドも複数行に分割または結合してもよい（MAY）。",
+          "score": 0.831,
+          "iterations": 2
+        },
+        {
+          "id": "9.1-p3a",
+          "source": "Any extension-token used MUST be a registered token (see Section 11.4).",
+          "translation": "使用するextension-tokenは登録済みトークンでなければならない（MUST）（セクション11.4参照）。",
+          "score": 0.899,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p3b",
+          "source": "The parameters supplied with any given extension MUST be defined for that extension.",
+          "translation": "拡張に提供されるパラメータはその拡張に対して定義されていなければならない（MUST）。",
+          "score": 0.810,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p3c",
+          "source": "Note that the client is only offering to use any advertised extensions and MUST NOT use them unless the server indicates that it wishes to use the extension.",
+          "translation": "クライアントは公示された拡張の使用を提案しているだけであり、サーバがその拡張の使用を希望することを示さない限り使用してはならない（MUST NOT）ことに注意。",
+          "score": 0.884,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p4a",
+          "source": "Note that the order of extensions is significant.",
+          "translation": "拡張の順序が重要であることに注意。",
+          "score": 0.869,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p4b",
+          "source": "Any interactions between multiple extensions MAY be defined in the documents defining the extensions.",
+          "translation": "複数の拡張間のあらゆる相互作用は、各拡張を定義する文書で定義されてもよい（MAY）。",
+          "score": 0.813,
+          "iterations": 2
+        },
+        {
+          "id": "9.1-p4c",
+          "source": "In the absence of such definitions, the interpretation is that the header fields listed by the client in its request represent a preference of the header fields it wishes to use, with the first options listed being most preferable.",
+          "translation": "そのような定義がない場合、クライアントがリクエストで列挙したヘッダフィールドは使用を希望する優先順位を表し、最初に列挙されたオプションが最も優先されると解釈される。",
+          "score": 0.853,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p4d",
+          "source": "The extensions listed by the server in response represent the extensions actually in use for the connection.",
+          "translation": "サーバが応答で列挙する拡張は、その接続で実際に使用される拡張を表す。",
+          "score": 0.959,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p4e",
+          "source": "Should the extensions modify the data and/or framing, the order of operations on the data should be assumed to be the same as the order in which the extensions are listed in the server's response in the opening handshake.",
+          "translation": "拡張がデータやフレーミングを変更する場合、データに対する操作の順序は、オープニングハンドシェイクにおけるサーバ応答での拡張の列挙順序と同じであると想定すべきである。",
+          "score": 0.816,
+          "iterations": 1
+        },
+        {
+          "id": "9.1-p5",
+          "source": "For example, if there are two extensions \"foo\" and \"bar\" and if the header field |Sec-WebSocket-Extensions| sent by the server has the value \"foo, bar\", then operations on the data will be made as bar(foo(data)), be those changes to the data itself (such as compression) or changes to the framing that may \"stack\".",
+          "translation": "例えば、「foo」と「bar」という2つの拡張が存在し、サーバから送信された|Sec-WebSocket-Extensions|ヘッダフィールドの値が「foo, bar」である場合、データに対する操作はbar(foo(data))という順序で実行される。これはデータ自体への変更（圧縮など）であっても、「スタック」可能なフレーミングへの変更であっても同様である。",
+          "score": 0.627,
+          "iterations": 6,
+          "needs_review": true,
+          "note": "技術的なコード表記bar(foo(data))を含むためxCOMETスコアが低い"
+        },
+        {
+          "id": "9.1-p6a",
+          "source": "A server accepts one or more extensions by including a |Sec-WebSocket-Extensions| header field containing one or more extensions that were requested by the client.",
+          "translation": "サーバは、クライアントが要求した1つ以上の拡張を含む|Sec-WebSocket-Extensions|ヘッダフィールドを含めることで、拡張を受け入れる。",
+          "score": 0.836,
+          "iterations": 2
+        },
+        {
+          "id": "9.1-p6b",
+          "source": "The interpretation of any extension parameters, and what constitutes a valid response by a server to a requested set of parameters by a client, will be defined by each such extension.",
+          "translation": "拡張パラメータの解釈、およびクライアントが要求したパラメータセットに対するサーバの有効な応答を構成するものは、各拡張により定義される。",
+          "score": 0.954,
+          "iterations": 2
+        }
+      ]
+    },
+    {
+      "section": "9.2",
+      "title": "Known Extensions",
+      "title_ja": "既知の拡張",
+      "paragraphs": [
+        {
+          "id": "9.2-p1",
+          "source": "Extensions provide a mechanism for implementations to opt-in to additional protocol features. This document doesn't define any extension, but implementations MAY use extensions defined separately.",
+          "translation": "拡張は、実装が追加のプロトコル機能を選択的に採用するための仕組みを提供する。本文書では拡張を定義しないが、実装は別途定義された拡張を使用してもよい（MAY）。",
+          "score": 0.843,
+          "iterations": 1
+        }
+      ]
+    }
+  ],
+  "averageScore": 0.833,
+  "status": "completed",
+  "needs_review": ["9.1-p1c", "9.1-p5"]
+}
