@@ -22,13 +22,24 @@
 
   // Local state
   let messageInput = $state('');
-  let connectionConfig = {
+
+  // Connection config as state - will be updated when props change
+  let connectionConfig = $state({
     url,
     protocols,
     enableAutoReconnect: true,
     maxReconnectAttempts: 5,
     reconnectDelay: 3000
-  };
+  });
+
+  // Sync connectionConfig with prop changes (fixes state_referenced_locally warning)
+  $effect(() => {
+    // Only update if url or protocols props change and not connected
+    if (!wsStore.isConnected) {
+      connectionConfig.url = url;
+      connectionConfig.protocols = protocols;
+    }
+  });
 
   // RxJS subscriptions
   let subscriptions: Subscription[] = [];

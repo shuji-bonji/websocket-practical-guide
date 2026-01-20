@@ -27,10 +27,10 @@
     }
   });
 
-  // Service Worker registration (production only)
+  // Consolidated onMount for browser-only initialization
   onMount(() => {
-    // Only register service worker in production (after build)
-    if ('serviceWorker' in navigator && typeof window !== 'undefined' && import.meta.env.PROD) {
+    // 1. Service Worker registration (production only)
+    if ('serviceWorker' in navigator && import.meta.env.PROD) {
       navigator.serviceWorker
         .register(href('/sw.js'))
         .then((registration) => {
@@ -40,22 +40,16 @@
           console.error('Service Worker registration failed:', error);
         });
     }
-  });
 
-  // GitHub Pages SPA fallback handling
-  onMount(() => {
-    // Handle redirect from 404.html
+    // 2. GitHub Pages SPA fallback handling
     const urlParams = new URLSearchParams(window.location.search);
     const redirect = urlParams.get('redirect');
     if (redirect) {
       const redirectPath = decodeURIComponent(redirect);
       window.history.replaceState({}, '', redirectPath);
     }
-  });
 
-  // Prism.js syntax highlighting initialization - optimized for Safari
-  onMount(() => {
-    // Use requestAnimationFrame for better performance
+    // 3. Prism.js syntax highlighting initialization - optimized for Safari
     requestAnimationFrame(() => {
       highlightAll();
     });

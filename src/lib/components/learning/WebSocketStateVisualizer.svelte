@@ -46,6 +46,16 @@
   let demoStep = $state(0);
   let demoInterval = $state<ReturnType<typeof setTimeout> | null>(null);
 
+  // Sync isAutoDemo with autoDemo prop changes (fixes state_referenced_locally warning)
+  // Track previous autoDemo value to detect prop changes
+  let prevAutoDemo = $state(autoDemo);
+  $effect(() => {
+    if (autoDemo !== prevAutoDemo) {
+      isAutoDemo = autoDemo;
+      prevAutoDemo = autoDemo;
+    }
+  });
+
   // Connection metrics for visualization
   let connectionMetrics = $state<Phase1ConnectionMetrics>({
     messagesSent: 0,

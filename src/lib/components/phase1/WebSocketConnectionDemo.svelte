@@ -85,7 +85,9 @@
     };
   });
 
-  // Update states from manager
+  // Update states from manager via polling
+  // Note: This intentionally updates $state variables within $effect for WebSocket state synchronization.
+  // The manager doesn't expose reactive state, so polling is required.
   $effect(() => {
     if (!manager) return;
 
