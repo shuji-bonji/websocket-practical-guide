@@ -58,7 +58,7 @@
           "id": "9.1-p3b",
           "source": "The parameters supplied with any given extension MUST be defined for that extension.",
           "translation": "拡張に提供されるパラメータはその拡張に対して定義されていなければならない（MUST）。",
-          "score": 0.810,
+          "score": 0.81,
           "iterations": 1
         },
         {

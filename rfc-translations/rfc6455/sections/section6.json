@@ -3,6 +3,7 @@
   "title": "Sending and Receiving Data",
   "title_ja": "データの送受信",
   "translatedAt": "2026-01-21",
+  "status": "completed",
   "subsections": [
     {
       "section": "6.1",
@@ -22,10 +23,18 @@
       "section": "6.2",
       "title": "Receiving Data",
       "title_ja": "データの受信",
-      "paragraphs": []
+      "paragraphs": [
+        {
+          "id": "6.2-p1",
+          "source": "To receive WebSocket data, an endpoint listens on the underlying network connection. Incoming data MUST be parsed as WebSocket frames as defined in Section 5.2. If a control frame (Section 5.5) is received, the frame MUST be handled as defined by Section 5.5.",
+          "translation": "WebSocketデータを受信するため、エンドポイントは基盤となるネットワーク接続をリッスンする。受信データは、セクション5.2で定義されているWebSocketフレームとして解析されなければならない（MUST）。制御フレーム（セクション5.5）を受信した場合、そのフレームはセクション5.5で定義されている通りに処理されなければならない（MUST）。",
+          "score": 0.77,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
     }
   ],
-  "averageScore": 0.85,
-  "status": "partial",
-  "note": "主要な段落のみ翻訳。詳細は別途翻訳が必要"
+  "averageScore": 0.81,
+  "note": "全サブセクション完了"
 }

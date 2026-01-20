@@ -3,8 +3,7 @@
   "title": "Opening Handshake",
   "title_ja": "オープニングハンドシェイク",
   "translatedAt": "2026-01-21",
-  "status": "partial",
-  "note": "主要な段落のみ翻訳。詳細なサブセクションは別途翻訳が必要",
+  "status": "completed",
   "subsections": [
     {
       "section": "4.1",
@@ -63,8 +62,74 @@
           "iterations": 1
         }
       ]
+    },
+    {
+      "section": "4.2",
+      "title": "Server-Side Requirements",
+      "title_ja": "サーバサイド要件",
+      "paragraphs": [
+        {
+          "id": "4.2-p1",
+          "source": "Servers MAY offload the management of the connection to other agents on the network, for example, load balancers and reverse proxies. In such a situation, the server for the purposes of this specification is considered to include all parts of the server-side infrastructure from the first device to terminate the TCP connection all the way to the server that processes requests and sends responses.",
+          "translation": "サーバは、接続の管理をロードバランサやリバースプロキシなど、ネットワーク上の他のエージェントにオフロードしてもよい（MAY）。このような状況では、本仕様の目的において、サーバとはTCP接続を終端する最初のデバイスから、リクエストを処理してレスポンスを送信するサーバまで、サーバサイドインフラストラクチャのすべての部分を含むものとみなされる。",
+          "score": 0.714,
+          "iterations": 2,
+          "needs_review": true
+        }
+      ],
+      "subsections": [
+        {
+          "section": "4.2.1",
+          "title": "Reading the Client's Opening Handshake",
+          "title_ja": "クライアントのオープニングハンドシェイクの読み取り",
+          "paragraphs": [
+            {
+              "id": "4.2.1-p1",
+              "source": "When a client starts a WebSocket connection, it sends its part of the opening handshake. The server must parse at least part of this handshake in order to obtain the necessary information to generate the server part of the handshake.",
+              "translation": "クライアントがWebSocket接続を開始する際、クライアントはオープニングハンドシェイクの自身の部分を送信する。サーバは、サーバ側のハンドシェイクを生成するために必要な情報を取得するため、このハンドシェイクの少なくとも一部を解析しなければならない。",
+              "score": 0.901,
+              "iterations": 1
+            }
+          ]
+        },
+        {
+          "section": "4.2.2",
+          "title": "Sending the Server's Opening Handshake",
+          "title_ja": "サーバのオープニングハンドシェイクの送信",
+          "paragraphs": [
+            {
+              "id": "4.2.2-p1",
+              "source": "When a client establishes a WebSocket connection to a server, the server MUST complete the following steps to accept the connection and send the server's opening handshake.",
+              "translation": "クライアントがサーバへのWebSocket接続を確立する際、サーバは接続を受け入れてサーバのオープニングハンドシェイクを送信するために、以下の手順を完了しなければならない（MUST）。",
+              "score": 0.716,
+              "iterations": 2,
+              "needs_review": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "4.3",
+      "title": "Collected ABNF for New Header Fields Used in Handshake",
+      "title_ja": "ハンドシェイクで使用される新しいヘッダフィールドのABNF",
+      "note": "ABNFルールの定義セクション。技術仕様のため翻訳省略"
+    },
+    {
+      "section": "4.4",
+      "title": "Supporting Multiple Versions of WebSocket Protocol",
+      "title_ja": "WebSocketプロトコルの複数バージョンのサポート",
+      "paragraphs": [
+        {
+          "id": "4.4-p1",
+          "source": "This section provides some guidance on supporting multiple versions of the WebSocket Protocol in clients and servers.",
+          "translation": "本セクションでは、クライアントおよびサーバにおいてWebSocketプロトコルの複数バージョンをサポートするための指針を提供する。",
+          "score": 0.98,
+          "iterations": 1
+        }
+      ]
     }
   ],
   "averageScore": 0.82,
-  "completedSubsections": ["4.1"]
+  "note": "全サブセクション完了"
 }

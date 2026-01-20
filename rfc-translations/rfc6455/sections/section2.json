@@ -52,7 +52,7 @@
           "id": "2.1-p2",
           "source": "This document makes reference to UTF-8 values and uses UTF-8 notational formats as defined in STD 63 [RFC3629].",
           "translation": "本文書ではUTF-8の値を参照し、STD 63 [RFC3629]で定義されているUTF-8の表記形式を使用する。",
-          "score": 0.990,
+          "score": 0.99,
           "iterations": 1
         },
         {

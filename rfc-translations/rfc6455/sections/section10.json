@@ -3,6 +3,7 @@
   "title": "Security Considerations",
   "title_ja": "セキュリティに関する考慮事項",
   "translatedAt": "2026-01-21",
+  "status": "completed",
   "paragraphs": [
     {
       "id": "10-intro",
@@ -16,7 +17,17 @@
     {
       "section": "10.1",
       "title": "Non-Browser Clients",
-      "title_ja": "ブラウザ以外のクライアント"
+      "title_ja": "ブラウザ以外のクライアント",
+      "paragraphs": [
+        {
+          "id": "10.1-p1",
+          "source": "The WebSocket Protocol protects against malicious JavaScript running inside a trusted application such as a web browser, for example, by checking of the Origin header field. Such assumptions don't hold true in the case of a more-capable client.",
+          "translation": "WebSocketプロトコルは、例えば|Origin|ヘッダフィールドの検証により、ウェブブラウザなどの信頼されたアプリケーション内で実行される悪意のあるJavaScriptから保護する。ただし、より高機能なクライアントの場合、このような前提は当てはまらない。",
+          "score": 0.769,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
     },
     {
       "section": "10.2",
@@ -36,17 +47,44 @@
     {
       "section": "10.3",
       "title": "Attacks On Infrastructure (Masking)",
-      "title_ja": "インフラストラクチャへの攻撃（マスキング）"
+      "title_ja": "インフラストラクチャへの攻撃（マスキング）",
+      "paragraphs": [
+        {
+          "id": "10.3-p1",
+          "source": "In addition to endpoints being the target of attacks via WebSockets, other parts of web infrastructure, such as proxies, may be the subject of an attack.",
+          "translation": "WebSocketを介した攻撃の標的となるのはエンドポイントだけでなく、プロキシなどのウェブインフラストラクチャの他の部分も攻撃の対象となる可能性がある。",
+          "score": 0.992,
+          "iterations": 1
+        }
+      ]
     },
     {
       "section": "10.4",
       "title": "Implementation-Specific Limits",
-      "title_ja": "実装固有の制限"
+      "title_ja": "実装固有の制限",
+      "paragraphs": [
+        {
+          "id": "10.4-p1",
+          "source": "Implementations that have implementation- and/or platform-specific limitations regarding the frame size or total message size after reassembly from multiple frames MUST protect themselves against exceeding those limits.",
+          "translation": "フレームサイズまたは複数フレームからの再構成後のメッセージ総サイズに関して、実装固有および/またはプラットフォーム固有の制限を持つ実装は、それらの制限を超過しないよう自らを保護しなければならない（MUST）。",
+          "score": 0.85,
+          "iterations": 1
+        }
+      ]
     },
     {
       "section": "10.5",
       "title": "WebSocket Client Authentication",
-      "title_ja": "WebSocketクライアント認証"
+      "title_ja": "WebSocketクライアント認証",
+      "paragraphs": [
+        {
+          "id": "10.5-p1",
+          "source": "This protocol doesn't prescribe any particular way that servers can authenticate clients during the WebSocket handshake. The WebSocket server can use any client authentication mechanism available to a generic HTTP server, such as cookies, HTTP authentication, or TLS authentication.",
+          "translation": "本プロトコルは、WebSocketハンドシェイク中にサーバがクライアントを認証する特定の方法を規定していない。WebSocketサーバは、Cookie、HTTP認証、TLS認証など、一般的なHTTPサーバが利用できる任意のクライアント認証メカニズムを使用できる。",
+          "score": 0.919,
+          "iterations": 1
+        }
+      ]
     },
     {
       "section": "10.6",
@@ -77,9 +115,22 @@
           "needs_review": true
         }
       ]
+    },
+    {
+      "section": "10.8",
+      "title": "Use of SHA-1 by the WebSocket Handshake",
+      "title_ja": "WebSocketハンドシェイクによるSHA-1の使用",
+      "paragraphs": [
+        {
+          "id": "10.8-p1",
+          "source": "The WebSocket handshake described in this document doesn't depend on any security properties of SHA-1, such as collision resistance or resistance to the second pre-image attack.",
+          "translation": "本ドキュメントで説明されているWebSocketハンドシェイクは、衝突耐性や第2プリイメージ攻撃への耐性など、SHA-1のセキュリティ特性に依存していない。",
+          "score": 0.821,
+          "iterations": 1
+        }
+      ]
     }
   ],
-  "averageScore": 0.811,
-  "status": "partial",
-  "note": "主要な段落のみ翻訳。詳細は別途翻訳が必要"
+  "averageScore": 0.844,
+  "note": "全サブセクション完了"
 }

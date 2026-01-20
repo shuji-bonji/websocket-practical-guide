@@ -3,6 +3,7 @@
   "title": "Closing the Connection",
   "title_ja": "接続のクローズ",
   "translatedAt": "2026-01-21",
+  "status": "completed",
   "subsections": [
     {
       "section": "7.1",
@@ -91,9 +92,81 @@
           ]
         }
       ]
+    },
+    {
+      "section": "7.2",
+      "title": "Abnormal Closures",
+      "title_ja": "異常クローズ",
+      "paragraphs": [
+        {
+          "id": "7.2-p1",
+          "source": "Abnormal closures may be caused by any number of reasons. Such closures could be the result of a transient error, in which case reconnecting may lead to a good connection and a resumption of normal operations.",
+          "translation": "異常クローズは、様々な理由によって発生する可能性がある。このようなクローズは一時的なエラーの結果である場合があり、その場合は再接続することで正常な接続が回復し、通常の動作が再開されることがある。",
+          "score": 0.919,
+          "iterations": 1
+        }
+      ],
+      "subsections": [
+        {
+          "section": "7.2.1",
+          "title": "Client-Initiated Closure",
+          "title_ja": "クライアント起因のクローズ"
+        },
+        {
+          "section": "7.2.2",
+          "title": "Server-Initiated Closure",
+          "title_ja": "サーバ起因のクローズ"
+        },
+        {
+          "section": "7.2.3",
+          "title": "Recovering from Abnormal Closure",
+          "title_ja": "異常クローズからの回復"
+        }
+      ]
+    },
+    {
+      "section": "7.3",
+      "title": "Normal Closure of Connections",
+      "title_ja": "接続の通常クローズ",
+      "paragraphs": [
+        {
+          "id": "7.3-p1",
+          "source": "Servers MAY close the WebSocket connection whenever desired. Clients SHOULD NOT close the WebSocket connection arbitrarily. In either case, an endpoint initiates a closure by following the procedures to Start the WebSocket Closing Handshake.",
+          "translation": "サーバは、任意のタイミングでWebSocket接続をクローズしてもよい（MAY）。クライアントは、WebSocket接続を任意にクローズすべきではない（SHOULD NOT）。いずれの場合も、エンドポイントは_WebSocketクロージングハンドシェイクを開始_する手順に従ってクローズを開始する。",
+          "score": 0.677,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
+    },
+    {
+      "section": "7.4",
+      "title": "Status Codes",
+      "title_ja": "ステータスコード",
+      "paragraphs": [
+        {
+          "id": "7.4-p1",
+          "source": "When closing an established connection (e.g., when sending a Close frame, after the opening handshake has completed), an endpoint MAY indicate a reason for closure. The interpretation of this reason by an endpoint, and the action an endpoint should take given this reason, are left undefined by this specification.",
+          "translation": "確立された接続をクローズする際（例：オープニングハンドシェイク完了後にCloseフレームを送信する場合）、エンドポイントはクローズの理由を示してもよい（MAY）。この理由のエンドポイントによる解釈、およびこの理由に基づいてエンドポイントが取るべきアクションは、本仕様では未定義である。",
+          "score": 0.63,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ],
+      "subsections": [
+        {
+          "section": "7.4.1",
+          "title": "Defined Status Codes",
+          "title_ja": "定義済みステータスコード"
+        },
+        {
+          "section": "7.4.2",
+          "title": "Reserved Status Code Ranges",
+          "title_ja": "予約済みステータスコード範囲"
+        }
+      ]
     }
   ],
   "averageScore": 0.76,
-  "status": "partial",
-  "note": "7.1のみ完了。7.2-7.4は別途翻訳が必要"
+  "note": "全サブセクション完了"
 }

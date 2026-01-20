@@ -71,7 +71,7 @@
       "id": "3-p5",
       "source": "Fragment identifiers are meaningless in the context of WebSocket URIs and MUST NOT be used on these URIs. As with any URI scheme, the character \"#\", when not indicating the start of a fragment, MUST be escaped as %23.",
       "translation": "WebSocket URIにおいてフラグメント識別子は意味を持たないため、これらのURIでは使用禁止である。あらゆるURIスキームと同様に、「#」文字がフラグメントの開始を示さない場合は、%23としてエスケープする必要がある。",
-      "score": 0.900,
+      "score": 0.9,
       "iterations": 5
     }
   ],

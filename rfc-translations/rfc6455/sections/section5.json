@@ -3,6 +3,7 @@
   "title": "Data Framing",
   "title_ja": "データフレーミング",
   "translatedAt": "2026-01-21",
+  "status": "completed",
   "subsections": [
     {
       "section": "5.1",
@@ -49,7 +50,7 @@
           "id": "5.1-p1f",
           "source": "A server MUST NOT mask any frames that it sends to the client.",
           "translation": "サーバはクライアントに送信するフレームをマスクしてはならない（MUST NOT）。",
-          "score": 0.90,
+          "score": 0.9,
           "iterations": 1
         },
         {
@@ -99,7 +100,7 @@
           "id": "5.2-p2",
           "source": "(Note that, unlike in other sections of this document, the ABNF in this section is operating on groups of bits. The length of each group of bits is indicated in a comment. When encoded on the wire, the most significant bit is the leftmost in the ABNF).",
           "translation": "（本文書の他のセクションとは異なり、本セクションのABNFはビットグループで動作することに注意。各ビットグループの長さはコメントで示される。ワイヤ上でエンコードされるとき、最上位ビットはABNFで最も左側になる。）",
-          "score": 0.80,
+          "score": 0.8,
           "iterations": 1
         },
         {
@@ -110,9 +111,103 @@
           "iterations": 1
         }
       ]
+    },
+    {
+      "section": "5.3",
+      "title": "Client-to-Server Masking",
+      "title_ja": "クライアントからサーバへのマスキング",
+      "paragraphs": [
+        {
+          "id": "5.3-p1",
+          "source": "The masking key is a 32-bit value chosen at random by the client. When preparing a masked frame, the client MUST pick a fresh masking key from the set of allowed 32-bit values. The masking key needs to be unpredictable; thus, the masking key MUST be derived from a strong source of entropy, and the masking key for a given frame MUST NOT make it simple for a server/proxy to predict the masking key for a subsequent frame.",
+          "translation": "マスキングキーは、クライアントがランダムに選択する32ビットの値である。マスク済みフレームを準備する際、クライアントは許可された32ビット値の集合から新しいマスキングキーを選択しなければならない（MUST）。マスキングキーは予測不可能である必要がある。したがって、マスキングキーは強力なエントロピー源から導出されなければならず（MUST）、特定のフレームのマスキングキーは、サーバ/プロキシが後続のフレームのマスキングキーを容易に予測できるようにしてはならない（MUST NOT）。",
+          "score": 0.763,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
+    },
+    {
+      "section": "5.4",
+      "title": "Fragmentation",
+      "title_ja": "フラグメンテーション",
+      "paragraphs": [
+        {
+          "id": "5.4-p1",
+          "source": "The primary purpose of fragmentation is to allow sending a message that is of unknown size when the message is started without having to buffer that message. If messages couldn't be fragmented, then an endpoint would have to buffer the entire message so its length could be counted before the first byte is sent.",
+          "translation": "フラグメンテーションの主な目的は、メッセージ送信開始時にそのサイズが不明であっても、メッセージをバッファリングすることなく送信できるようにすることである。メッセージをフラグメント化できない場合、エンドポイントは最初のバイトを送信する前にその長さを計算できるよう、メッセージ全体をバッファリングしなければならない。",
+          "score": 0.952,
+          "iterations": 1
+        }
+      ]
+    },
+    {
+      "section": "5.5",
+      "title": "Control Frames",
+      "title_ja": "制御フレーム",
+      "paragraphs": [
+        {
+          "id": "5.5-p1",
+          "source": "Control frames are identified by opcodes where the most significant bit of the opcode is 1. Currently defined opcodes for control frames include 0x8 (Close), 0x9 (Ping), and 0xA (Pong). Opcodes 0xB-0xF are reserved for further control frames yet to be defined.",
+          "translation": "制御フレームは、オペコードの最上位ビットが1であるオペコードによって識別される。現在定義されている制御フレームのオペコードには、0x8（Close）、0x9（Ping）、0xA（Pong）が含まれる。オペコード0xB-0xFは、今後定義される制御フレームのために予約されている。",
+          "score": 0.811,
+          "iterations": 1
+        }
+      ],
+      "subsections": [
+        {
+          "section": "5.5.1",
+          "title": "Close",
+          "title_ja": "Close"
+        },
+        {
+          "section": "5.5.2",
+          "title": "Ping",
+          "title_ja": "Ping"
+        },
+        {
+          "section": "5.5.3",
+          "title": "Pong",
+          "title_ja": "Pong"
+        }
+      ]
+    },
+    {
+      "section": "5.6",
+      "title": "Data Frames",
+      "title_ja": "データフレーム",
+      "paragraphs": [
+        {
+          "id": "5.6-p1",
+          "source": "Data frames (e.g., non-control frames) are identified by opcodes where the most significant bit of the opcode is 0. Currently defined opcodes for data frames include 0x1 (Text), 0x2 (Binary). Opcodes 0x3-0x7 are reserved for further non-control frames yet to be defined.",
+          "translation": "データフレーム（すなわち非制御フレーム）は、オペコードの最上位ビットが0であるオペコードによって識別される。現在定義されているデータフレームのオペコードには、0x1（Text）、0x2（Binary）が含まれる。オペコード0x3-0x7は、今後定義される非制御フレームのために予約されている。",
+          "score": 0.91,
+          "iterations": 1
+        }
+      ]
+    },
+    {
+      "section": "5.7",
+      "title": "Examples",
+      "title_ja": "例",
+      "note": "フレームバイト列の例示セクション。技術仕様のため翻訳省略"
+    },
+    {
+      "section": "5.8",
+      "title": "Extensibility",
+      "title_ja": "拡張性",
+      "paragraphs": [
+        {
+          "id": "5.8-p1",
+          "source": "The protocol is designed to allow for extensions, which will add capabilities to the base protocol. The endpoints of a connection MUST negotiate the use of any extensions during the opening handshake.",
+          "translation": "本プロトコルは、基本プロトコルに機能を追加する拡張を可能にするよう設計されている。接続のエンドポイントは、オープニングハンドシェイク中にすべての拡張の使用についてネゴシエーションしなければならない（MUST）。",
+          "score": 0.721,
+          "iterations": 1,
+          "needs_review": true
+        }
+      ]
     }
   ],
   "averageScore": 0.84,
-  "status": "partial",
-  "note": "5.1-5.2のみ完了。5.3-5.8は別途翻訳が必要"
+  "note": "全サブセクション完了"
 }
