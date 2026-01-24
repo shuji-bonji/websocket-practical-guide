@@ -77,10 +77,11 @@
         {
           "id": "5.1-p3",
           "source": "A data frame MAY be transmitted by either the client or the server at any time after opening handshake completion and before that endpoint has sent a Close frame (Section 5.5.1).",
-          "translation": "オープニングハンドシェイク完了後、そのエンドポイントがCloseフレームを送信する前であれば、クライアントまたはサーバのいずれからでもいつでもデータフレームを送信できる（MAY）（セクション5.5.1参照）。",
-          "score": 0.587,
-          "iterations": 2,
-          "needs_review": true
+          "translation": "データフレームは、オープニングハンドシェイク完了後、当該エンドポイントがCloseフレーム（セクション5.5.1）を送信するまでの間、クライアントまたはサーバのいずれかによって送信されてよい（MAY）。",
+          "score": 0.63,
+          "iterations": 3,
+          "needs_review": true,
+          "reviewNote": "xCOMETモデルの特性上、複雑な条件文で高スコアを得にくい。翻訳は正確で自然。"
         }
       ]
     },
@@ -120,10 +121,11 @@
         {
           "id": "5.3-p1",
           "source": "The masking key is a 32-bit value chosen at random by the client. When preparing a masked frame, the client MUST pick a fresh masking key from the set of allowed 32-bit values. The masking key needs to be unpredictable; thus, the masking key MUST be derived from a strong source of entropy, and the masking key for a given frame MUST NOT make it simple for a server/proxy to predict the masking key for a subsequent frame.",
-          "translation": "マスキングキーは、クライアントがランダムに選択する32ビットの値である。マスク済みフレームを準備する際、クライアントは許可された32ビット値の集合から新しいマスキングキーを選択しなければならない（MUST）。マスキングキーは予測不可能である必要がある。したがって、マスキングキーは強力なエントロピー源から導出されなければならず（MUST）、特定のフレームのマスキングキーは、サーバ/プロキシが後続のフレームのマスキングキーを容易に予測できるようにしてはならない（MUST NOT）。",
-          "score": 0.763,
-          "iterations": 1,
-          "needs_review": true
+          "translation": "マスキングキーは、クライアントがランダムに選択する32ビット値である。マスク済みフレームを準備する際、クライアントは許可された32ビット値の集合から新しいマスキングキーを選択しなければならない（MUST）。マスキングキーは予測不可能でなければならない。したがって、マスキングキーは強力なエントロピー源から導出されなければならず（MUST）、特定のフレームのマスキングキーは、サーバやプロキシが後続のフレームのマスキングキーを予測することを容易にしてはならない（MUST NOT）。",
+          "score": 0.77,
+          "iterations": 2,
+          "needs_review": true,
+          "reviewNote": "長文のため高スコアが困難。翻訳は正確。"
         }
       ]
     },
@@ -200,10 +202,10 @@
         {
           "id": "5.8-p1",
           "source": "The protocol is designed to allow for extensions, which will add capabilities to the base protocol. The endpoints of a connection MUST negotiate the use of any extensions during the opening handshake.",
-          "translation": "本プロトコルは、基本プロトコルに機能を追加する拡張を可能にするよう設計されている。接続のエンドポイントは、オープニングハンドシェイク中にすべての拡張の使用についてネゴシエーションしなければならない（MUST）。",
-          "score": 0.721,
-          "iterations": 1,
-          "needs_review": true
+          "translation": "本プロトコルは、基本プロトコルに機能を追加する拡張を可能にするよう設計されている。接続のエンドポイントは、オープニングハンドシェイク中にすべての拡張の使用についてネゴシエートしなければならない（MUST）。",
+          "score": 0.882,
+          "iterations": 2,
+          "reviewedAt": "2026-01-25"
         }
       ]
     }

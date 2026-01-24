@@ -94,10 +94,10 @@
         {
           "id": "2.1-p8",
           "source": "Comparing two strings in an _ASCII case-insensitive_ manner means comparing them exactly, code point for code point, except that the characters in the range U+0041 to U+005A (i.e., LATIN CAPITAL LETTER A to LATIN CAPITAL LETTER Z) and the corresponding characters in the range U+0061 to U+007A (i.e., LATIN SMALL LETTER A to LATIN SMALL LETTER Z) are considered to also match.",
-          "translation": "_ASCII大文字小文字を区別しない_方法で2つの文字列を比較するとは、コードポイントごとに正確に比較することを意味するが、U+0041からU+005Aの範囲の文字（LATIN CAPITAL LETTER AからLATIN CAPITAL LETTER Z）と、U+0061からU+007Aの範囲の対応する文字（LATIN SMALL LETTER AからLATIN SMALL LETTER Z）は一致するものとみなされる。",
-          "score": 0.795,
-          "iterations": 3,
-          "needs_review": true
+          "translation": "_ASCII大文字小文字を区別しない_方法で2つの文字列を比較するとは、コードポイントごとに正確に比較することを意味する。ただし、U+0041からU+005Aの範囲（すなわちLATIN CAPITAL LETTER AからLATIN CAPITAL LETTER Z）の文字と、U+0061からU+007Aの範囲（すなわちLATIN SMALL LETTER AからLATIN SMALL LETTER Z）の対応する文字も一致するとみなされる。",
+          "score": 0.806,
+          "iterations": 4,
+          "reviewedAt": "2026-01-25"
         },
         {
           "id": "2.1-p9",

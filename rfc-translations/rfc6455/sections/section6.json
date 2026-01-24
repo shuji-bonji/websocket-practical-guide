@@ -27,10 +27,11 @@
         {
           "id": "6.2-p1",
           "source": "To receive WebSocket data, an endpoint listens on the underlying network connection. Incoming data MUST be parsed as WebSocket frames as defined in Section 5.2. If a control frame (Section 5.5) is received, the frame MUST be handled as defined by Section 5.5.",
-          "translation": "WebSocketデータを受信するため、エンドポイントは基盤となるネットワーク接続をリッスンする。受信データは、セクション5.2で定義されているWebSocketフレームとして解析されなければならない（MUST）。制御フレーム（セクション5.5）を受信した場合、そのフレームはセクション5.5で定義されている通りに処理されなければならない（MUST）。",
-          "score": 0.77,
-          "iterations": 1,
-          "needs_review": true
+          "translation": "WebSocketデータを受信するには、エンドポイントは基盤となるネットワーク接続上でリッスンする。受信データはセクション5.2で定義されているWebSocketフレームとして解析されなければならない（MUST）。制御フレーム（セクション5.5）を受信した場合、そのフレームはセクション5.5の定義に従って処理されなければならない（MUST）。",
+          "score": 0.786,
+          "iterations": 2,
+          "needs_review": true,
+          "reviewNote": "スコアは改善したが0.8未達。翻訳は正確。"
         }
       ]
     }

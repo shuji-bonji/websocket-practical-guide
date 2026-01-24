@@ -18,10 +18,11 @@
             {
               "id": "7.1.1-p1",
               "source": "To _Close the WebSocket Connection_, an endpoint closes the underlying TCP connection. An endpoint SHOULD use a method that cleanly closes the TCP connection, as well as the TLS session, if applicable, discarding any trailing bytes that may have been received. An endpoint MAY close the connection via any means available when necessary, such as when under attack.",
-              "translation": "_WebSocket接続を閉じる_には、エンドポイントは基礎となるTCP接続を閉じる。エンドポイントは、TCP接続とTLSセッション（該当する場合）をきれいに閉じ、受信した可能性のある末尾のバイトを破棄する方法を使用すべきである（SHOULD）。エンドポイントは、攻撃を受けている場合など必要なときには、利用可能な任意の手段で接続を閉じてもよい（MAY）。",
-              "score": 0.72,
-              "iterations": 1,
-              "needs_review": true
+              "translation": "_WebSocket接続を閉じる_には、エンドポイントは基盤となるTCP接続を閉じる。エンドポイントは、TCP接続を、また該当する場合はTLSセッションもきれいに閉じ、受信した可能性のある末尾のバイトを破棄する方法を使用すべきである（SHOULD）。エンドポイントは、攻撃を受けている場合など必要に応じて、利用可能な任意の手段で接続を閉じてもよい（MAY）。",
+              "score": 0.767,
+              "iterations": 2,
+              "needs_review": true,
+              "reviewNote": "複数のRFC要件語を含む長文のため高スコアが困難。翻訳は正確。"
             }
           ]
         },
@@ -132,10 +133,11 @@
         {
           "id": "7.3-p1",
           "source": "Servers MAY close the WebSocket connection whenever desired. Clients SHOULD NOT close the WebSocket connection arbitrarily. In either case, an endpoint initiates a closure by following the procedures to Start the WebSocket Closing Handshake.",
-          "translation": "サーバは、任意のタイミングでWebSocket接続をクローズしてもよい（MAY）。クライアントは、WebSocket接続を任意にクローズすべきではない（SHOULD NOT）。いずれの場合も、エンドポイントは_WebSocketクロージングハンドシェイクを開始_する手順に従ってクローズを開始する。",
-          "score": 0.677,
-          "iterations": 1,
-          "needs_review": true
+          "translation": "サーバは任意のタイミングでWebSocket接続をクローズしてもよい（MAY）。クライアントはWebSocket接続を恣意的にクローズすべきではない（SHOULD NOT）。いずれの場合も、エンドポイントはWebSocketクロージングハンドシェイクを開始する手順に従ってクローズを開始する。",
+          "score": 0.761,
+          "iterations": 2,
+          "needs_review": true,
+          "reviewNote": "スコアは改善したが0.8未達。翻訳は正確で自然。"
         }
       ]
     },
@@ -147,10 +149,11 @@
         {
           "id": "7.4-p1",
           "source": "When closing an established connection (e.g., when sending a Close frame, after the opening handshake has completed), an endpoint MAY indicate a reason for closure. The interpretation of this reason by an endpoint, and the action an endpoint should take given this reason, are left undefined by this specification.",
-          "translation": "確立された接続をクローズする際（例：オープニングハンドシェイク完了後にCloseフレームを送信する場合）、エンドポイントはクローズの理由を示してもよい（MAY）。この理由のエンドポイントによる解釈、およびこの理由に基づいてエンドポイントが取るべきアクションは、本仕様では未定義である。",
-          "score": 0.63,
-          "iterations": 1,
-          "needs_review": true
+          "translation": "確立された接続をクローズする際（例：オープニングハンドシェイク完了後にCloseフレームを送信する際）、エンドポイントはクローズの理由を示してもよい（MAY）。この理由に対するエンドポイントの解釈、およびこの理由を踏まえてエンドポイントが取るべきアクションは、本仕様では定義しない。",
+          "score": 0.68,
+          "iterations": 2,
+          "needs_review": true,
+          "reviewNote": "スコアは改善したが0.8未達。翻訳は正確。"
         }
       ],
       "subsections": [

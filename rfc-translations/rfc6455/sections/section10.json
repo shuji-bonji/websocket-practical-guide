@@ -94,10 +94,10 @@
         {
           "id": "10.6-p1",
           "source": "Connection confidentiality and integrity is provided by running the WebSocket Protocol over TLS (wss URIs). WebSocket implementations MUST support TLS and SHOULD employ it when communicating with their peers.",
-          "translation": "接続の機密性と完全性は、TLS上でWebSocketプロトコルを実行することで提供される（wss URI）。WebSocket実装はTLSをサポートしなければならず（MUST）、ピアとの通信時にはTLSを使用すべきである（SHOULD）。",
-          "score": 0.756,
-          "iterations": 1,
-          "needs_review": true
+          "translation": "接続の機密性と完全性は、TLS上でWebSocketプロトコルを実行することにより提供される（wss URI）。WebSocket実装はTLSをサポートしなければならず（MUST）、ピアと通信する際にはTLSを使用すべきである（SHOULD）。",
+          "score": 0.812,
+          "iterations": 2,
+          "reviewedAt": "2026-01-25"
         }
       ]
     },

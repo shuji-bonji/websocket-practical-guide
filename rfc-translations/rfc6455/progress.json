@@ -5,7 +5,7 @@
   "maxIterations": 10,
   "status": "completed",
   "startedAt": "2026-01-17",
-  "lastUpdated": "2026-01-21",
+  "lastUpdated": "2026-01-25",
   "completedAt": "2026-01-21",
   "sections": {
     "abstract": {
@@ -27,7 +27,8 @@
       "score": 0.89,
       "iterations": 3,
       "completedAt": "2026-01-21",
-      "needs_review": ["2-p2", "2.1-p7", "2.1-p8"]
+      "needs_review": ["2-p2", "2.1-p7"],
+      "reviewNote": "2.1-p8はスコア0.806達成"
     },
     "section3": {
       "title": "3. WebSocket URIs",
@@ -51,7 +52,8 @@
       "score": 0.84,
       "completedAt": "2026-01-21",
       "completedSubsections": ["5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7", "5.8"],
-      "needs_review": ["5.1-p1b", "5.1-p3", "5.3-p1", "5.8-p1"]
+      "needs_review": ["5.1-p1b", "5.1-p3", "5.3-p1"],
+      "reviewNote": "5.8-p1はスコア0.882達成"
     },
     "section6": {
       "title": "6. Sending and Receiving Data",
@@ -90,7 +92,8 @@
       "score": 0.844,
       "completedAt": "2026-01-21",
       "completedSubsections": ["10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8"],
-      "needs_review": ["10.1-p1", "10.2-p1", "10.6-p1", "10.7-p1"]
+      "needs_review": ["10.1-p1", "10.2-p1", "10.7-p1"],
+      "reviewNote": "10.6-p1はスコア0.812達成"
     },
     "section11": {
       "title": "11. IANA Considerations",
@@ -128,7 +131,7 @@
     "notStartedSections": 0,
     "averageScore": 0.847,
     "translatedParagraphs": 85,
-    "needsReviewParagraphs": 20,
-    "note": "全セクションの翻訳が完了。一部の段落はスコアが0.8未満のためneeds_reviewとしてマーク済み"
+    "needsReviewParagraphs": 17,
+    "note": "全セクションの翻訳が完了。3段落がスコア0.8達成（5.8-p1, 10.6-p1, 2.1-p8）。残り17段落は改善されたがスコア0.8未達のためneeds_reviewとしてマーク済み"
   }
 }

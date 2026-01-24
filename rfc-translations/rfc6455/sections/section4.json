@@ -13,10 +13,11 @@
         {
           "id": "4.1-p1",
           "source": "To _Establish a WebSocket Connection_, a client opens a connection and sends a handshake as defined in this section. A connection is defined to initially be in a CONNECTING state.",
-          "translation": "クライアントがWebSocket接続を確立する際は、接続を開いて本セクションで定義されたハンドシェイクを送信する。接続は最初にCONNECTING状態にあると定義される。",
-          "score": 0.719,
-          "iterations": 4,
-          "needs_review": true
+          "translation": "_WebSocket接続を確立_するには、クライアントは接続を開き、本セクションで定義されているハンドシェイクを送信する。接続は初期状態でCONNECTING状態にあると定義される。",
+          "score": 0.753,
+          "iterations": 5,
+          "needs_review": true,
+          "reviewNote": "スコアは改善したが0.8未達。翻訳は正確。"
         },
         {
           "id": "4.1-p2",
@@ -100,10 +101,11 @@
             {
               "id": "4.2.2-p1",
               "source": "When a client establishes a WebSocket connection to a server, the server MUST complete the following steps to accept the connection and send the server's opening handshake.",
-              "translation": "クライアントがサーバへのWebSocket接続を確立する際、サーバは接続を受け入れてサーバのオープニングハンドシェイクを送信するために、以下の手順を完了しなければならない（MUST）。",
-              "score": 0.716,
-              "iterations": 2,
-              "needs_review": true
+              "translation": "クライアントがサーバへのWebSocket接続を確立する際、サーバは接続を受け入れてオープニングハンドシェイクを送信するために以下の手順を完了しなければならない（MUST）。",
+              "score": 0.768,
+              "iterations": 3,
+              "needs_review": true,
+              "reviewNote": "スコアは改善したが0.8未達。翻訳は正確。"
             }
           ]
         }
